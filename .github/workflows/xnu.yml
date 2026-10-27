@@ -57,14 +57,7 @@ jobs:
           ls dxb/patches
           # M30LTE: add symbols that are exported by the kernel but missing from
           # the arm64 export list (needed for check_all_exports to pass)
-          cat >> dxb/xnu/config/Private.arm64.exports << 'EOF'
-_pmap_claim_reserved_ppl_page
-_pmap_free_reserved_ppl_page
-_pmap_iofilter_protected_write
-_pmap_lookup_in_loaded_trust_caches
-_pmap_lookup_in_static_trust_cache
-_Switch_context
-EOF
+          printf '_pmap_claim_reserved_ppl_page\n_pmap_free_reserved_ppl_page\n_pmap_iofilter_protected_write\n_pmap_lookup_in_loaded_trust_caches\n_pmap_lookup_in_static_trust_cache\n_Switch_context\n' >> dxb/xnu/config/Private.arm64.exports
 
       - name: Deps
         run: |
