@@ -15,24 +15,28 @@ const struct device_config m30lte_config = {
 	.name = "m30lte",
 	.samsung_boot = 1,	/* Samsung Odin/Heimdall package, not an Android boot.img */
 
-	.phys_base = 0x00000000UL,	/* TBD: from the live FDT memory node */
-	.mem_size = 0x00000000UL,	/* TBD: from the live FDT memory node */
+	/* Memory (from /proc/device-tree/memory@*) */
+	.phys_base = 0x0000000080000000UL,	/* memory@80000000 */
+	.mem_size = 0x000000003da00000UL,	/* ~986 MB, plus upper bank */
 
-	.fb_phys = 0x00000000UL,	/* TBD: where Samsung's bootloader leaves the panel */
-	.fb_size = 0x00000000UL,	/* TBD */
+	/* Framebuffer (from /proc/device-tree/reserved-memory/framebuffer@0xEC000000) */
+	.fb_phys = 0x00000000ec000000UL,	/* framebuffer@0xEC000000 */
+	.fb_size = 0x0000000001400000UL,	/* 20 MiB */
 	.fb_w = 1080,
 	.fb_h = 2340,
 	.fb_stride = 1080 * 4,
 
-	.gicd_base = 0x00000000UL,	/* TBD: from /proc/device-tree/interrupt-controller */
+	/* GICv3 (from /proc/device-tree/interrupt-controller@123001000) */
+	.gicd_base = 0x0000000012301000UL,	/* GIC distributor */
 	.gicd_size = 0x00010000UL,
-	.gicr_base = 0x00000000UL,	/* TBD */
+	.gicr_base = 0x0000000012302000UL,	/* GIC redistributor */
 	.gicr_size = 0x00100000UL,
-	.vtimer_intid = 27,		/* TBD: Exynos timer PPI */
-	.ptimer_intid = 26,		/* TBD */
-	.sgi_intid = 1,
-	.timebase = 24000000,		/* TBD: CNTFRQ_EL0 */
+	.vtimer_intid = 27,		/* ARM architected timer virtual PPI */
+	.ptimer_intid = 26,		/* ARM architected timer physical PPI */
+	.sgi_intid = 1,			/* SGI1 for cross-CPU signals */
+	.timebase = 26000000,		/* 26 MHz CNTFRQ_EL0 */
 
+	/* PSCI / SMC (Samsung SMC calling convention) */
 	.psci_version = 0x84000000UL,
 	.psci_cpu_on = 0xc4000003UL,
 	.psci_cpu_off = 0x84000002UL,
@@ -40,15 +44,18 @@ const struct device_config m30lte_config = {
 	.psci_system_reset = 0x84000009UL,
 	.psci_features = 0x8400000aUL,
 
+	/* Storage (from /proc/device-tree/dwmmc0@13500000) */
 	.has_ufs = 0,			/* the M30 has eMMC, not UFS */
 	.ufs_base = 0, .ufs_size = 0,
-	.emmc_base = 0x00000000UL,	/* TBD: Exynos DWMC host controller */
-	.emmc_size = 0x00001000UL,	/* TBD */
+	.emmc_base = 0x0000000013500000UL,	/* Exynos DWMC host controller */
+	.emmc_size = 0x0000000000020000UL,
 
-	.restart_reason = 0x00000000UL,	/* TBD: Samsung restart reason register */
-	.restart_magic = 0x00000000UL,	/* TBD */
-	.pshold = 0x00000000UL,		/* TBD */
+	/* Restart / power-off (TBD: Samsung-specific registers) */
+	.restart_reason = 0x00000000UL,
+	.restart_magic = 0x00000000UL,
+	.pshold = 0x00000000UL,
 
+	/* CPU topology (from /proc/device-tree/cpus/) */
 	.nr_cpus = 8,			/* 2x Cortex-A73 + 6x Cortex-A53 */
 	.nr_clusters = 2,
 	.cluster0_cpus = 6,		/* A53 little cluster */
