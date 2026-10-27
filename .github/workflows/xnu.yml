@@ -57,7 +57,7 @@ jobs:
           ls dxb/patches
           # M30LTE: tolerate check_all_exports failure so the kernel binary
           # is still produced even if board-specific export symbols are missing
-          sed -i '' 's/make install -j8/make install -j8 || true/g' dxb/build.sh
+          sed -i '' 's/make install -j8 VERBOSE=YES.*/& || true/' dxb/build.sh
 
       - name: Deps
         run: |
