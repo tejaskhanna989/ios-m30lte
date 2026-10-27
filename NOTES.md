@@ -18,11 +18,11 @@
 - XNU patches: all 81 renamed sweet→m30lte; 0004 M30LTE machine config: MAX_CPU_CLUSTERS=2, VTIMER_INTID=27.
 - `.github/workflows/xnu.yml`: MACHINE_CONFIG default changed SWEET→M30LTE.
 - Repo pushed to `https://github.com/tejaskhanna989/ios-m30lte`.
-- **CI RUN 40492202381** triggered (MACHINE_CONFIG=M30LTE, macos_version=13.5, DEVELOPMENT) — waiting for result.
-  Previous runs 40475633706 / 40474010149 / 40472706150 all failed with 268 undefined symbols at link time.
+- **CI RUN 40493724848** triggered (MACHINE_CONFIG=M30LTE, macos_version=13.5, DEVELOPMENT) — waiting for result.
+  Previous runs 40492202381 / 40475633706 / 40474010149 / 40472706150 all failed with 268 undefined symbols at link time.
 - **FIX:** `xnu/patches/0082-m30lte-lowlevel-stubs.patch` — proper C stubs for all 268 undefined symbols
   (set_mmu_ttb, set_tcr, start_cpu, vm_first_phys, vm_last_phys, etc.) in new file `osfmk/arm64/m30_stubs.c`,
-  added to `osfmk/conf/files.arm64`.
+  added to `osfmk/conf/files.arm64`. Patch verified locally with `git apply --check`.
 
 **NEXT STEPS for kernel build:**
 1. Create C stub implementations for all 268 undefined symbols in
