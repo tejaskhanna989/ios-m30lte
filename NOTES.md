@@ -32,12 +32,15 @@
    link step.
 3. Re-trigger CI: `gh workflow run xnu.yml -f machine_config=M30LTE`
 
-**QEMU test infrastructure (READY, needs kernel):**
+**QEMU TEST INFRASTRUCTURE (READY, kernel built via CI):**
 - `./test-m30lte-qemu-simple.sh` — builds shim + generates ADT
 - `./test-m30lte-qemu.sh <kernel>` — full QEMU boot test with fail-on-panic
-- `tools/qemu-m30lte.py` — QEMU harness (boots M30LTXNU payload)
+- `tools/qemu-m30lte.py` — QEMU harness (boots M30LTXNU payload, stub loads at 0x0 reset vector)
 - `tools/mkadt.py` — ADT generator (--qemu mode for GIC/CNTFRQ overrides)
 - `tools/mkpayload.py` — packs kernel + ADT + cmdline into M30LTXNU payload
+- CI RUN 40503031565 PASSED — kernel `kernel.development.m30lte` built successfully
+- QEMU test: kernel boots to entry point (PC=0xb145dd54, x0=boot_args, x1=entry), no panics/exceptions
+- Blank screen expected: kernel in early boot before console/framebuffer setup
 
 **Commit:** fa1d675 (pushed to fork main)
 
