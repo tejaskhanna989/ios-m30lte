@@ -140,7 +140,7 @@ The log contains crash reports with backtraces (`CRASH name ...`), IOKit traces 
 
 ### QEMU
 
-`tools/qemu-m30.py` boots the same kernel on QEMU `virt` with a test RAM-disk root. It is useful for kernel-only changes; see `NOTES.md`.
+`tools/qemu-m30lte.py` boots the same kernel on QEMU `virt` with a test RAM-disk root. It is useful for kernel-only changes; see `NOTES.md`.
 
 ## Repository layout
 
@@ -156,7 +156,7 @@ The log contains crash reports with backtraces (`CRASH name ...`), IOKit traces 
 | `tools/m30-log-pull.sh`, `m30-log.py` | Read the persistent kernel log from recovery |
 | `tools/m30-crash.py` | Symbolicate console crash reports |
 | `tools/xnu-cc.py` | Local single-file compile check from a CI log |
-| `tools/qemu-m30.py` | QEMU test boots with framebuffer text decoding |
+| `tools/qemu-m30lte.py` | QEMU test boots with framebuffer text decoding |
 | `tools/adt.py`, `remotezip.py`, `unpack_bootv2.py`, `sparsediff.py` | Helpers |
 | `NOTES.md` | Detailed engineering log: every boot, crash and decision, plus hardware facts |
 
