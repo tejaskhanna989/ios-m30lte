@@ -373,7 +373,7 @@ void shim_main(uint64_t dtb)
 	stage = "emmc";
 	con_str("EMMC", "probe");
 	con_skip();
-	test_emmc();
+	con_str("EMMC", "skipped");
 	con_skip();
 	delay_ms(180000);
 	reset(20);

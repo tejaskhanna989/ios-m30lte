@@ -100,11 +100,11 @@ def build_image(payload):
 
 
 def stub(ba_pa, entry_pa):
-    # ldr x0, [pc, #12] ; ldr x1, [pc, #20] ; br x1 ; nop ; .quad ba ; .quad entry
+    # ldr x0, [pc, #12] ; ldr x1, [pc, #16] ; br x1 ; nop ; .quad ba ; .quad entry
     # AArch64 PC-relative: loads from PC+4+imm9*4
     #   ldr x0, [pc, #12] -> loads from PC+4+12 = 0x10 (.quad ba_pa)
-    #   ldr x1, [pc, #20] -> loads from PC+4+20 = 0x18 (.quad entry_pa)
-    return struct.pack('<4I2Q', 0x58000c1f, 0x5800143f, 0xd61f0020, 0xd503201f, ba_pa, entry_pa)
+    #   ldr x1, [pc, #16] -> loads from PC+4+16 = 0x18 (.quad entry_pa)
+    return struct.pack('<4I2Q', 0x58000c1f, 0x5800043f, 0xd61f0020, 0xd503201f, ba_pa, entry_pa)
 
 
 def write_png(path, raw):
