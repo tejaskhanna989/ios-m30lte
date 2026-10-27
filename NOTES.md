@@ -16,17 +16,40 @@
 - `tools/mkpayload.py` already uses M30LTXNU magic.
 - `tools/m30lte-rename.py` deleted (one-time script).
 - XNU patches: all 81 renamed sweet→m30lte; 0004 M30LTE machine config: MAX_CPU_CLUSTERS=2, VTIMER_INTID=27.
-- Added `xnu/patches/0082-m30lte-lowlevel-stubs.patch`: assembly stubs for 268 undefined board-specific symbols (set_mmu_ttb, start_cpu, vm_first_phys, etc.) needed for linker.
 - `.github/workflows/xnu.yml`: MACHINE_CONFIG default changed SWEET→M30LTE.
 - Repo pushed to `https://github.com/tejaskhanna989/ios-m30lte`.
-- **CI RUN 40472706150** triggered (MACHINE_CONFIG=M30LTE, macos_version=13.5, DEVELOPMENT) — waiting for kernel artifact `kernel.development.m30lte`.
+- **CI RUN 40475633706** triggered (MACHINE_CONFIG=M30LTE, macos_version=13.5, DEVELOPMENT) — **FAILED** (8m46s).
+- **CI RUN 40474010149** — **FAILED** (9m14s).
+- **CI RUN 40472706150** — **FAILED** (9m21s).
 
-**NEXT STEPS:**
-1. Wait for CI run 40472706150 → download `xnu-kernel` artifact → `kernel.development.m30lte`
-2. If CI fails: check linker errors, add more stubs or fix patches, re-trigger
-3. Run full QEMU boot test: `./test-m30lte-qemu.sh <kernel>`
-4. Update README.md, docs/QEMU_TESTING.md, docs/porting.html for M30-only target
-5. Commit all changes
+**BLOCKER: XNU kernel link fails with 268 undefined board-specific symbols**
+(set_mmu_ttb, set_tcr, start_cpu, vm_first_phys, vm_last_phys, and 263 more).
+These are normally provided by Apple's closed per-SoC libraries. The M30LTE
+MASTER config uses `nos_arm_asm nos_arm_pmap` (open-source assembly/pmap) but
+the open-source XNU sources don't include all board-specific functions.
+
+Attempted fixes (all failed):
+- `xnu/patches/0082-m30lte-lowlevel-stubs.patch`: assembly stubs — patch was
+  rejected as "malformed" by `git apply` during CI (patch file deleted).
+- `.github/workflows/xnu.yml`: added `LDFLAGS="-Wl,-undefined,dynamic_lookup"`
+  — environment variable is set but not passed to the kernel linker.
+
+**NEXT STEPS for kernel build:**
+1. Create C stub implementations for all 268 undefined symbols in
+   `osfmk/arm64/m30_early.c` (already compiled via files.arm64) or a new
+   source file added to files.arm64 with correct patch context.
+2. Or patch `MASTER.arm64.m30` to add `makeoptions LDFLAGS` for the kernel
+   link step.
+3. Re-trigger CI: `gh workflow run xnu.yml -f machine_config=M30LTE`
+
+**QEMU test infrastructure (READY, needs kernel):**
+- `./test-m30lte-qemu-simple.sh` — builds shim + generates ADT
+- `./test-m30lte-qemu.sh <kernel>` — full QEMU boot test with fail-on-panic
+- `tools/qemu-m30lte.py` — QEMU harness (boots M30LTXNU payload)
+- `tools/mkadt.py` — ADT generator (--qemu mode for GIC/CNTFRQ overrides)
+- `tools/mkpayload.py` — packs kernel + ADT + cmdline into M30LTXNU payload
+
+**Commit:** fa1d675 (pushed to fork main)
 
 ---
 
