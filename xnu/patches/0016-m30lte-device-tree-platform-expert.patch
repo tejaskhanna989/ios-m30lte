@@ -1,0 +1,119 @@
+diff --git a/iokit/KernelConfigTables.cpp b/iokit/KernelConfigTables.cpp
+--- a/iokit/KernelConfigTables.cpp
++++ b/iokit/KernelConfigTables.cpp
+@@ -34,6 +34,14 @@
+ 
+ const char * gIOKernelConfigTables =
+     "("
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++    "   {"
++    "     'IOClass'         = M30PlatformExpert;"
++    "     'IOProviderClass' = IOPlatformExpertDevice;"
++    "     'IONameMatch'     = 'samsung,m30lte';"
++    "     'IOProbeScore'    = 10000:32;"
++    "   },"
++#endif
+     "   {"
+     "     'IOClass'         = IOPanicPlatform;"
+     "     'IOProviderClass' = IOPlatformExpertDevice;"
+diff --git a/iokit/conf/files.arm64 b/iokit/conf/files.arm64
+--- a/iokit/conf/files.arm64
++++ b/iokit/conf/files.arm64
+@@ -5,3 +5,6 @@
+ 
+ # SMP
+ iokit/Kernel/arm/AppleARMSMP.cpp    					optional iokitcpp
++
++# M30LTE device-tree platform (empty translation unit on other boards)
++iokit/Kernel/arm/M30PlatformExpert.cpp                         optional iokitcpp
+diff --git a/iokit/Kernel/arm/M30PlatformExpert.cpp b/iokit/Kernel/arm/M30PlatformExpert.cpp
+new file mode 100644
+--- /dev/null
++++ b/iokit/Kernel/arm/M30PlatformExpert.cpp
+@@ -0,0 +1,86 @@
++/*
++ * Minimal device-tree platform expert for Galaxy M30 (m30).
++ * Uses XNU's normal platform, power-domain and nub initialization. Hardware
++ * interrupt and power-management services are supplied by separate drivers.
++ */
++#include <pexpert/arm64/board_config.h>
++
++#if defined(M30LTE)
++#include <IOKit/IOPlatformExpert.h>
++#include <IOKit/IODeviceTreeSupport.h>
++#include <IOKit/IOLib.h>
++
++class M30PlatformExpert : public IODTPlatformExpert {
++	OSDeclareDefaultStructors(M30PlatformExpert);
++
++public:
++	bool start(IOService *provider) APPLE_KEXT_OVERRIDE;
++	void processTopLevel(IORegistryEntry *root) APPLE_KEXT_OVERRIDE;
++	const char *deleteList(void) APPLE_KEXT_OVERRIDE;
++	const char *excludeList(void) APPLE_KEXT_OVERRIDE;
++	bool getTargetName(char *name, int maxLength) APPLE_KEXT_OVERRIDE;
++	bool getProductName(char *name, int maxLength) APPLE_KEXT_OVERRIDE;
++};
++
++OSDefineMetaClassAndStructors(M30PlatformExpert, IODTPlatformExpert);
++
++bool
++M30PlatformExpert::start(IOService *provider)
++{
++	IOLog("M30LTE: starting device-tree platform expert\n");
++	if (!IODTPlatformExpert::start(provider)) {
++		return false;
++	}
++	registerService();
++	IOLog("M30LTE: platform expert registered\n");
++	return true;
++}
++
++const char *
++M30PlatformExpert::deleteList(void)
++{
++	return "()";
++}
++
++const char *
++M30PlatformExpert::excludeList(void)
++{
++	return "('chosen', 'defaults', 'cpus', 'options')";
++}
++
++void
++M30PlatformExpert::processTopLevel(IORegistryEntry *root)
++{
++	/*
++	 * The stock implementation requires an Apple NVRAM /options node.
++	 * M30LTE has no NVRAM controller; publish real CPU/device nodes without
++	 * inventing one. createNubs adds the topology's logical CPU/cluster IDs.
++	 */
++	IORegistryEntry *cpus = root->childFromPath("cpus", gIODTPlane);
++	if (cpus != NULL) {
++		createNubs(this, IODTFindMatchingEntries(cpus, kIODTExclusive, NULL));
++		cpus->release();
++	}
++	createNubs(this, IODTFindMatchingEntries(root, kIODTExclusive, excludeList()));
++}
++
++bool
++M30PlatformExpert::getTargetName(char *name, int maxLength)
++{
++	if (name == NULL || maxLength <= 0) {
++		return false;
++	}
++	strlcpy(name, "m30", (size_t)maxLength);
++	return true;
++}
++
++bool
++M30PlatformExpert::getProductName(char *name, int maxLength)
++{
++	if (name == NULL || maxLength <= 0) {
++		return false;
++	}
++	strlcpy(name, "Galaxy M30", (size_t)maxLength);
++	return true;
++}
++#endif /* M30LTE */
