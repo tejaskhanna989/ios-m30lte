@@ -1,9 +1,8 @@
 /*
- * Galaxy M30 bootstrap console.
- * No allocation, locks, ADT parsing or per-CPU state: panic() can reach
- * this before a current thread exists. start.s maps the splash framebuffer
- * VA=PA as Normal Non-Cacheable memory. Stop using that mapping before
- * arm_vm_init tears down bootstrap TTBR0.
+ * Galaxy M30 bootstrap console. No allocation, locks, ADT parsing or
+ * per-CPU state: panic() can reach this before a current thread exists.
+ * start.s maps the splash framebuffer VA=PA as Normal Non-Cacheable memory.
+ * Stop using that mapping before arm_vm_init tears down bootstrap TTBR0.
  */
 #include <arm64/m30_early.h>
 
@@ -23,6 +22,7 @@
 
 extern unsigned char iso_font[256 * 16];
 
+/* Initialized data must remain writable until disable, including panics. */
 static unsigned int early_row, early_col;
 static unsigned int early_started, early_disabled, early_panicking;
 
@@ -69,9 +69,10 @@ m30_early_putc(char c)
 			}
 		}
 	}
+	early_col++;
 }
 
-void
+static void
 m30_early_string(const char *s)
 {
 	while (*s)
@@ -81,10 +82,17 @@ m30_early_string(const char *s)
 void
 m30_early_mark(unsigned int stage, const char *label)
 {
-	if (early_disabled || early_panicking)
+	if (early_disabled || stage > 8) {
 		return;
-	early_panicking = 1;
-	m30_early_string("\nM30LTE EARLY ");
+	}
+	uint32_t color = 0xff00ff00u | (stage * 28u << 16);
+	for (unsigned int y = EARLY_HEIGHT - 32; y < EARLY_HEIGHT; y++) {
+		for (unsigned int x = stage * 64; x < (stage + 1) * 64; x++) {
+			EARLY_FB[y * EARLY_STRIDE + x] = color;
+		}
+	}
+	__asm__ volatile("dsb sy" ::: "memory");
+	m30_early_string("M30LTE EARLY ");
 	m30_early_putc((char)('0' + stage));
 	m30_early_string(": ");
 	m30_early_string(label);
@@ -94,8 +102,9 @@ m30_early_mark(unsigned int stage, const char *label)
 void
 m30_early_panic(const char *fmt, va_list *args)
 {
-	if (early_disabled || early_panicking)
+	if (early_disabled || early_panicking) {
 		return;
+	}
 	early_panicking = 1;
 	m30_early_string("\nM30LTE EARLY PANIC: ");
 	va_list copy;
@@ -113,6 +122,7 @@ m30_early_disable(void)
 	early_disabled = 1;
 	__asm__ volatile("dsb sy" ::: "memory");
 }
+#endif /* M30LTE */
 
 /* M30LTE: stub implementations for low-level board-specific functions
  * normally provided by Apple's closed per-SoC libraries. QEMU bring-up
@@ -217,6 +227,7 @@ unsigned int kpc_set_period_arch(void) { return 0; }
 unsigned int kpc_set_running_arch(void) { return 0; }
 unsigned int kpc_set_sw_inc(void) { return 0; }
 unsigned long kvtophys(void) { return 0; }
+void m30_secondary_entry(void) {}
 void machine_csv(void) {}
 void machine_load_context(void) {}
 void machine_set_current_thread(void) {}
@@ -360,5 +371,3 @@ unsigned long vm_first_phys(void) { return 0; }
 unsigned long vm_last_phys(void) { return 0; }
 void vm_footprint_suspend(void) {}
 #endif /* M30LTE */
-EOF
-wc -l xnu/osfmk/arm64/m30_early.c
