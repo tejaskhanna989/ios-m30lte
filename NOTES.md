@@ -1,8 +1,36 @@
-# iOS 16 on m30 (Galaxy M30, SM7150) - working notes
+# iOS 16 on m30lte (Galaxy M30, Samsung Exynos 7885) - working notes
 
-## Agent handoff / active work (2026-10-15, latest)
+## >>> UPDATE 2026-10-27 (read first) <<<
 
-### >>> UPDATE 2026-10-18 (read first, then the 10-17 handoff below) <<<
+**STATE: M30-only port in progress. Repo converted from sweet→m30lte.**
+
+- Cloned `https://github.com/dipa-studio/ios-sweet` into `~/Projects/m30lte-ios` (branch `main`).
+- Mechanical rename: SWEET→M30LTE, Sweet→M30, sweet→m30 across all patches, shim, tools, docs.
+- Deleted sweet-only files: shim/devices/sweet.c, tools/sweet-*, devices/m30lte/config.h.
+- Kept single device config: shim/devices/m30lte.c (struct device_config, all TBD values).
+- Shim builds cleanly (aarch64-linux-gnu-gcc): `./build.sh` → out/Image, out/shim-boot.img.
+- `shim/device.h` + `dev->fb_*` parameterization applied to console.c, console.h, loader.c, mmu.c.
+- `shim/ufs.c` → UFS probe removed from shim.c (M30 uses eMMC, driver TBD).
+- `tools/mkadt.py` rewritten for M30LTE: Exynos 7885 compatible, eMMC node (samsung,dw-mshc), 2 CPU clusters (6×A53 + 2×A73), QEMU overrides.
+- `tools/qemu-sweet.py` → `tools/qemu-m30lte.py` (M30LTXNU payload magic).
+- `tools/mkpayload.py` already uses M30LTXNU magic.
+- `tools/m30lte-rename.py` deleted (one-time script).
+- XNU patches: all 81 renamed sweet→m30lte; 0004 M30LTE machine config: MAX_CPU_CLUSTERS=2, VTIMER_INTID=27.
+- Added `xnu/patches/0082-m30lte-lowlevel-stubs.patch`: assembly stubs for 268 undefined board-specific symbols (set_mmu_ttb, start_cpu, vm_first_phys, etc.) needed for linker.
+- `.github/workflows/xnu.yml`: MACHINE_CONFIG default changed SWEET→M30LTE.
+- Repo pushed to `https://github.com/tejaskhanna989/ios-m30lte`.
+- **CI RUN 40472706150** triggered (MACHINE_CONFIG=M30LTE, macos_version=13.5, DEVELOPMENT) — waiting for kernel artifact `kernel.development.m30lte`.
+
+**NEXT STEPS:**
+1. Wait for CI run 40472706150 → download `xnu-kernel` artifact → `kernel.development.m30lte`
+2. If CI fails: check linker errors, add more stubs or fix patches, re-trigger
+3. Run full QEMU boot test: `./test-m30lte-qemu.sh <kernel>`
+4. Update README.md, docs/QEMU_TESTING.md, docs/porting.html for M30-only target
+5. Commit all changes
+
+---
+
+## >>> UPDATE 2026-10-18 (read first, then the 10-17 handoff below) <<<
 
 **STATE at end of 2026-10-18 (evening):**
 - On the phone: userdata = **image v15** (`/run/media/dipa/android/ios-m30-ipsw/ios16-root-20H392-v15.img/.simg`; = v14 + `/private/var/preferences/SystemConfiguration/preferences.plist` with one network service "USB Ethernet": Interface DeviceName ue0 Type Ethernet, IPv4 Manual 192.168.7.2/24 router 192.168.7.1, DNS 1.1.1.1 8.8.8.8, set "Automatic" as CurrentSet). Fallback image v14 (v12/v13 deleted).

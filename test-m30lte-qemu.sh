@@ -1,40 +1,66 @@
 #!/bin/bash
-# Full boot test for M30 LTE in QEMU
-# This script builds all components and runs a QEMU test
+# M30 LTE QEMU boot test - Part 2: Full boot test with kernel
+# Usage: ./test-m30lte-qemu.sh <kernel.macho>
+#
+# Boots the M30LTE XNU kernel in QEMU with the M30LTE ADT.
+# Requires: kernel (from CI build with MACHINE_CONFIG=M30LTE)
+#
+# Example:
+#   gh run download <run-id> -R tejaskhanna989/ios-m30lte -n xnu-kernel -D /tmp/kernel
+#   ./test-m30lte-qemu.sh /tmp/kernel/kernel.development.m30lte
 
 set -euo pipefail
 
-echo "=== Building M30 LTE QEMU test components ==="
+REPO=~/Projects/m30lte-ios
+KERNEL="${1:-}"
 
-# Build the shim for QEMU mode
-echo "Building shim for QEMU mode..."
-cd ~/Projects/m30lte-ios/shim
-export SELECTED_DEVICE_M30LTE_QEMU=1
-./build.sh qemu
+if [ -z "$KERNEL" ]; then
+    echo "Usage: $0 <kernel.macho>"
+    echo ""
+    echo "Obtain the kernel from CI:"
+    echo "  gh run download <run-id> -R tejaskhanna989/ios-m30lte -n xnu-kernel -D /tmp/kernel"
+    echo "  $0 /tmp/kernel/kernel.development.m30lte"
+    exit 1
+fi
 
-echo "Building kernel and root image for M30..."
-cd ~/Projects/m30lte-ios
-# Build root image for M30
-sudo tools/mkiosroot.sh OS.dmg SystemOS.dmg AppOS.dmg ios16-root-m30.img 16G
+if [ ! -f "$KERNEL" ]; then
+    echo "ERROR: Kernel not found: $KERNEL"
+    exit 1
+fi
 
-echo "Building boot image for QEMU..."
-cd shim
-./build.sh qemu
+cd "$REPO"
 
-echo "=== Running QEMU test ==="
-echo "Starting QEMU with M30 LTE configuration..."
+echo "=== M30 LTE QEMU Full Boot Test ==="
+echo "Kernel: $KERNEL"
 
-# Run QEMU
-qemu-system-aarch64 \
-  -machine virt,gic-version=3 \
-  -cpu cortex-a53 \
-  -m 2048 \
-  -kernel out/shim-boot-qemu.img \
-  -initrd out/ramdisk.bin \
-  -dtb ../dtb/boot_unpacked/dtb \
-  -append "console=ttyAMA0 earlyprintk=serial,uart,0x9c000000,115200 earlyboot root=/dev/mmcblk0p2 ro" \
-  -nographic \
-  -s -S \
-  -monitor stdio
+OUTDIR="out/qemu-test"
+mkdir -p "$OUTDIR"
 
-echo "=== QEMU test completed ==="
+# 1. Generate the M30LTE ADT (QEMU mode)
+echo "--- Generating M30LTE ADT ---"
+python3 tools/mkadt.py "$OUTDIR/m30lte.adt" --qemu
+
+# 2. Pack the payload (kernel + ADT + cmdline)
+echo "--- Packing M30LTXNU payload ---"
+python3 tools/mkpayload.py "$KERNEL" "$OUTDIR/m30lte.adt" "$OUTDIR/payload.bin" \
+    --cmdline 'debug=0xc serial=3 cpus=1 keepsyms=1 -enable_kprintf_spam rd=md0'
+
+# 3. Run QEMU boot test
+echo "--- Booting M30LTE in QEMU ---"
+python3 tools/qemu-m30lte.py "$OUTDIR/payload.bin" "$OUTDIR" \
+    --secs 40 \
+    --kernel "$KERNEL" \
+    --fail-on-panic
+
+RC=$?
+echo ""
+echo "=== QEMU test exit code: $RC ==="
+case $RC in
+    0) echo "RESULT: QEMU boot completed, no panic observed" ;;
+    1) echo "RESULT: QEMU exited early (possible boot failure)" ;;
+    2) echo "RESULT: PANIC detected in QEMU boot" ;;
+    3) echo "RESULT: Incomplete/blank framebuffer decode" ;;
+    *) echo "RESULT: Unexpected exit code" ;;
+esac
+
+exit $RC
