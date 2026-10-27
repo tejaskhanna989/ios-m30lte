@@ -31,6 +31,9 @@ env:
   MACOS_VERSION: ${{ inputs.macos_version || '13.5' }}
   KERNEL_CONFIG: ${{ inputs.kernel_config || 'DEVELOPMENT' }}
   MACHINE_CONFIG: ${{ inputs.machine_config || 'M30LTE' }}
+  # Allow undefined board-specific symbols for QEMU bring-up;
+  # real hardware bring-up will replace stubs with proper implementations.
+  LDFLAGS: "-Wl,-undefined,dynamic_lookup"
 
 jobs:
   build:
