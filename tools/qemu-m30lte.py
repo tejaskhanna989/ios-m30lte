@@ -277,8 +277,7 @@ def main():
            '-nographic', '-serial', f'file:{out}/serial.txt', '-qmp', f'unix:{mon},server,nowait',
            '-d', 'int,guest_errors,unimp', '-D', f'{out}/qemu.log', '-no-reboot',
            '-device', f'loader,file={out}/ram.bin,addr={phys_base:#x},force-raw=on',
-           '-device', f'loader,file={out}/stub.bin,addr={STUB_PA:#x},force-raw=on',
-           '-device', f'loader,addr={STUB_PA:#x},cpu-num=0']
+           '-device', f'loader,file={out}/stub.bin,addr=0x0,force-raw=on']
     if a.gdb:
         cmd += ['-S', '-gdb', 'tcp::1234']
 
