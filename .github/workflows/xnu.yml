@@ -75,11 +75,7 @@ jobs:
         env:
           # keep going after errors so one run reports every compile failure
           MAKEFLAGS: ${{ inputs.keep_going == 'false' && '' || '-k' }}
-        run: |
-          # M30LTE: add symbols that are exported by the kernel but missing from
-          # the arm64 export list (needed for check_all_exports to pass)
-          printf '_pmap_claim_reserved_ppl_page\n_pmap_free_reserved_ppl_page\n_pmap_iofilter_protected_write\n_pmap_lookup_in_loaded_trust_caches\n_pmap_lookup_in_static_trust_cache\n_Switch_context\n' >> xnu/config/Private.arm64.exports
-          bash build.sh
+        run: bash build.sh
 
       - name: Package build tree for local compiles
         if: always()
