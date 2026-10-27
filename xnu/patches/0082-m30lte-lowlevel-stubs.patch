@@ -1,903 +1,1088 @@
-diff --git a/osfmk/arm64/m30_stubs.c b/osfmk/arm64/m30_stubs.c
+diff --git a/osfmk/arm64/m30_lowlevel_stubs.s b/osfmk/arm64/m30_lowlevel_stubs.s
 new file mode 100644
 --- /dev/null
-+++ b/osfmk/arm64/m30_stubs.c
-@@ -0,0 +1,896 @@
++++ b/osfmk/arm64/m30_lowlevel_stubs.s
+@@ -0,0 +1,1081 @@
 +/*
-+ * M30LTE: stub implementations for low-level board-specific functions
-+ * normally provided by Apple's closed per-SoC libraries.
-+ * QEMU bring-up only needs these to exist at link time; real hardware
-+ * bring-up will replace them with proper implementations.
++ * M30LTE: assembly stub implementations for low-level board-specific
++ * functions normally provided by Apple's closed per-SoC libraries.
++ * Assembly labels have no type info, so they won't conflict with
++ * existing C declarations. Real hardware bring-up will replace them.
 + */
 +
-+#include <pexpert/pexpert.h>
-+#include <arm64/proc_reg.h>
-+#include <vm/vm_map.h>
-+#include <mach/kern_return.h>
-+#include <mach/vm_types.h>
-+#include <mach/boolean.h>
-+#include <stddef.h>
-+
-+#if defined(M30LTE)
-+
-+void * ads_zone(void) {
-+    return NULL;
-+}
-+
-+boolean_t allow_data_exec(void) {
-+    return TRUE;
-+}
-+
-+boolean_t allow_stack_exec(void) {
-+    return TRUE;
-+}
-+
-+void arm64_force_wfi_clock_gate(void) {
-+}
-+
-+void arm64_prepare_for_sleep(void) {
-+}
-+
-+void arm64_replace_bootstack(void) {
-+}
-+
-+void arm64_thread_exception_return(void) {
-+}
-+
-+void arm_debug_set(void) {
-+}
-+
-+void arm_debug_set32(void) {
-+}
-+
-+void arm_debug_set64(void) {
-+}
-+
-+void arm_fast_fault(void) {
-+}
-+
-+unsigned int arm_hardware_page_size(void) {
-+    return 0;
-+}
-+
-+unsigned int arm_pt_desc_size(void) {
-+    return 0;
-+}
-+
-+unsigned int arm_pt_root_size(void) {
-+    return 0;
-+}
-+
-+void bcopyin(void) {
-+}
-+
-+void bcopyinstr(void) {
-+}
-+
-+void bcopyout(void) {
-+}
-+
-+void call_continuation(void) {
-+}
-+
-+void clean_dcache64(void) {
-+}
-+
-+void CleanPoC_Dcache(void) {
-+}
-+
-+void CleanPoC_DcacheRegion(void) {
-+}
-+
-+void CleanPoC_DcacheRegion_Force(void) {
-+}
-+
-+void CleanPoU_Dcache(void) {
-+}
-+
-+void CleanPoU_DcacheRegion(void) {
-+}
-+
-+int compute_pmap_gc_throttle(void) {
-+    return 0;
-+}
-+
-+void configure_misc_apple_boot_args(void) {
-+}
-+
-+void configure_misc_apple_regs(void) {
-+}
-+
-+void configure_timer_apple_regs(void) {
-+}
-+
-+void consider_machine_adjust(void) {
-+}
-+
-+void consider_machine_collect(void) {
-+}
-+
-+int copy_debug_state32(void) {
-+    return 0;
-+}
-+
-+int copy_debug_state64(void) {
-+    return 0;
-+}
-+
-+void copyin_atomic32(void) {
-+}
-+
-+void copyin_atomic32_wait_if_equals(void) {
-+}
-+
-+void copyin_atomic64(void) {
-+}
-+
-+int copyinframe(void) {
-+    return 0;
-+}
-+
-+int copyio_recover_table(void) {
-+    return 0;
-+}
-+
-+int copyio_recover_table_end(void) {
-+    return 0;
-+}
-+
-+int copy_legacy_debug_state(void) {
-+    return 0;
-+}
-+
-+void copyout_atomic32(void) {
-+}
-+
-+void copyout_atomic64(void) {
-+}
-+
-+boolean_t coredumpok(void) {
-+    return TRUE;
-+}
-+
-+int cpu_tte(void) {
-+    return 0;
-+}
-+
-+int cpu_ttep(void) {
-+    return 0;
-+}
-+
-+boolean_t debug_legacy_state_is_valid(void) {
-+    return FALSE;
-+}
-+
-+boolean_t debug_state_is_valid32(void) {
-+    return FALSE;
-+}
-+
-+boolean_t debug_state_is_valid64(void) {
-+    return FALSE;
-+}
-+
-+int dtrace_copyio_postflight(void) {
-+    return 0;
-+}
-+
-+int dtrace_copyio_preflight(void) {
-+    return 0;
-+}
-+
-+int dtrace_nofault_copy16(void) {
-+    return 0;
-+}
-+
-+int dtrace_nofault_copy32(void) {
-+    return 0;
-+}
-+
-+int dtrace_nofault_copy64(void) {
-+    return 0;
-+}
-+
-+int dtrace_nofault_copy8(void) {
-+    return 0;
-+}
-+
-+void fill32_dczva(void) {
-+}
-+
-+void fill32_nt(void) {
-+}
-+
-+void fillPage(void) {
-+}
-+
-+void flush_dcache64(void) {
-+}
-+
-+void flush_mmu_tlb_region(void) {
-+}
-+
-+void FlushPoC_Dcache(void) {
-+}
-+
-+void FlushPoC_DcacheRegion(void) {
-+}
-+
-+void FlushPoU_Dcache(void) {
-+}
-+
-+int free_page_size_tt_count(void) {
-+    return 0;
-+}
-+
-+int free_tt_count(void) {
-+    return 0;
-+}
-+
-+int free_two_page_size_tt_count(void) {
-+    return 0;
-+}
-+
-+void hw_lck_ticket_reserve_orig_allow_invalid(void) {
-+}
-+
-+void Idle_context(void) {
-+}
-+
-+void Idle_load_context(void) {
-+}
-+
-+int inuse_kernel_ptepages_count(void) {
-+    return 0;
-+}
-+
-+int inuse_kernel_ttepages_count(void) {
-+    return 0;
-+}
-+
-+void inuse_kernel_tteroot_count(void) {
-+}
-+
-+void inuse_user_ptepages_count(void) {
-+}
-+
-+void inuse_user_ttepages_count(void) {
-+}
-+
-+void inuse_user_tteroot_count(void) {
-+}
-+
-+void invalidate_icache(void) {
-+}
-+
-+void invalidate_icache64(void) {
-+}
-+
-+void InvalidatePoU_Icache(void) {
-+}
-+
-+void InvalidatePoU_IcacheRegion(void) {
-+}
-+
-+void * invalid_tte(void) {
-+    return NULL;
-+}
-+
-+void * invalid_ttep(void) {
-+    return NULL;
-+}
-+
-+void * io_attr_table(void) {
-+    return NULL;
-+}
-+
-+void * kernel_pmap(void) {
-+    return NULL;
-+}
-+
-+int kpc_arch_init(void) {
-+    return 0;
-+}
-+
-+int kpc_configurable_config_count(void) {
-+    return 0;
-+}
-+
-+int kpc_configurable_count(void) {
-+    return 0;
-+}
-+
-+int kpc_configurable_max(void) {
-+    return 0;
-+}
-+
-+int kpc_fixed_config_count(void) {
-+    return 0;
-+}
-+
-+int kpc_fixed_count(void) {
-+    return 0;
-+}
-+
-+int kpc_fixed_max(void) {
-+    return 0;
-+}
-+
-+int kpc_get_all_cpus_counters(void) {
-+    return 0;
-+}
-+
-+int kpc_get_classes(void) {
-+    return 0;
-+}
-+
-+int kpc_get_configurable_config(void) {
-+    return 0;
-+}
-+
-+int kpc_get_configurable_counters(void) {
-+    return 0;
-+}
-+
-+int kpc_get_fixed_config(void) {
-+    return 0;
-+}
-+
-+int kpc_get_fixed_counters(void) {
-+    return 0;
-+}
-+
-+int kpc_get_pmu_version(void) {
-+    return 0;
-+}
-+
-+int kpc_get_rawpmu_config(void) {
-+    return 0;
-+}
-+
-+int kpc_idle(void) {
-+    return 0;
-+}
-+
-+int kpc_idle_exit(void) {
-+    return 0;
-+}
-+
-+int kpc_is_running_configurable(void) {
-+    return 0;
-+}
-+
-+int kpc_is_running_fixed(void) {
-+    return 0;
-+}
-+
-+int kpc_pc_capture(void) {
-+    return 0;
-+}
-+
-+int kpc_rawpmu_config_count(void) {
-+    return 0;
-+}
-+
-+int kpc_set_config_arch(void) {
-+    return 0;
-+}
-+
-+int kpc_set_period_arch(void) {
-+    return 0;
-+}
-+
-+int kpc_set_running_arch(void) {
-+    return 0;
-+}
-+
-+int kpc_set_sw_inc(void) {
-+    return 0;
-+}
-+
-+vm_offset_t kvtophys(void) {
-+    return 0;
-+}
-+
-+void m30_secondary_entry(void) {
-+}
-+
-+void machine_csv(void) {
-+}
-+
-+void machine_load_context(void) {
-+}
-+
-+void machine_set_current_thread(void) {
-+}
-+
-+void machine_stack_attach(void) {
-+}
-+
-+void machine_stack_detach(void) {
-+}
-+
-+void machine_stack_handoff(void) {
-+}
-+
-+void machine_switch_context(void) {
-+}
-+
-+void machine_tecs(void) {
-+}
-+
-+void machine_thread_create(void) {
-+}
-+
-+void machine_thread_destroy(void) {
-+}
-+
-+void machine_thread_init(void) {
-+}
-+
-+void machine_thread_on_core(void) {
-+}
-+
-+void machine_thread_on_core_allow_invalid(void) {
-+}
-+
-+void machine_thread_process_signature(void) {
-+}
-+
-+void machine_thread_set_tsd_base(void) {
-+}
-+
-+void machine_thread_template_init(void) {
-+}
-+
-+void * mapping_adjust(void) {
-+    return NULL;
-+}
-+
-+void * mapping_free_prime(void) {
-+    return NULL;
-+}
-+
-+void * mapping_set_mod(void) {
-+    return NULL;
-+}
-+
-+void ml_panic_trap_to_debugger(void) {
-+}
-+
-+void * mmu_kvtop(void) {
-+    return NULL;
-+}
-+
-+void * mmu_kvtop_wpreflight(void) {
-+    return NULL;
-+}
-+
-+unsigned int native_pt_attr(void) {
-+    return 0;
-+}
-+
-+unsigned int num_io_rgns(void) {
-+    return 0;
-+}
-+
-+boolean_t nx_enabled(void) {
-+    return TRUE;
-+}
-+
-+void PLK_DATA_CONST(void) {
-+}
-+
-+void PLK_LINKEDIT(void) {
-+}
-+
-+void PLK_LLVM_COV(void) {
-+}
-+
-+void PLK_TEXT_EXEC(void) {
-+}
-+
-+void pmap_adjust_unnest_parameters(void) {
-+}
-+
-+void pmap_advise_pagezero_range(void) {
-+}
-+
-+void pmap_asid_flushes(void) {
-+}
-+
-+void pmap_asid_hits(void) {
-+}
-+
-+void pmap_asid_misses(void) {
-+}
-+
-+void pmap_assert_free(void) {
-+}
-+
-+void pmap_attribute_cache_sync(void) {
-+}
-+
-+void pmap_batch_set_cache_attributes(void) {
-+}
-+
-+void pmap_bootloader_page(void) {
-+}
-+
-+void pmap_bootstrap(void) {
-+}
-+
-+void pmap_cache_attributes(void) {
-+}
-+
-+void pmap_change_wiring(void) {
-+}
-+
-+void pmap_clear_modify(void) {
-+}
-+
-+void pmap_clear_noencrypt(void) {
-+}
-+
-+void pmap_clear_reference(void) {
-+}
-+
-+void pmap_clear_refmod(void) {
-+}
-+
-+void pmap_clear_refmod_options(void) {
-+}
-+
-+void pmap_clear_refmod_range_options(void) {
-+}
-+
-+void pmap_clear_user_ttb(void) {
-+}
-+
-+void pmap_copy_page(void) {
-+}
-+
-+void pmap_copy_part_page(void) {
-+}
-+
-+void pmap_cpu_data_init(void) {
-+}
-+
-+void pmap_cpu_windows_copy_addr(void) {
-+}
-+
-+void pmap_create_commpages(void) {
-+}
-+
-+void pmap_create_options(void) {
-+}
-+
-+void pmap_destroy(void) {
-+}
-+
-+void pmap_disable_NX(void) {
-+}
-+
-+void pmap_disconnect(void) {
-+}
-+
-+void pmap_disconnect_options(void) {
-+}
-+
-+void pmap_dump_page_tables(void) {
-+}
-+
-+void pmap_enforces_execute_only(void) {
-+}
-+
-+void pmap_enter(void) {
-+}
-+
-+void pmap_enter_options(void) {
-+}
-+
-+void pmap_enter_options_addr(void) {
-+}
-+
-+void pmap_find_pa(void) {
-+}
-+
-+void pmap_find_phys(void) {
-+}
-+
-+void pmap_find_phys_nofault(void) {
-+}
-+
-+void pmap_flush(void) {
-+}
-+
-+void pmap_flush_context_init(void) {
-+}
-+
-+void pmap_footprint_suspend(void) {
-+}
-+
-+void pmap_fork_nest(void) {
-+}
-+
-+void pmap_free_pages(void) {
-+}
-+
-+void pmap_free_pages_span(void) {
-+}
-+
-+void pmap_get_jit_entitled(void) {
-+}
-+
-+void pmap_get_refmod(void) {
-+}
-+
-+void pmap_get_tpro(void) {
-+}
-+
-+void pmap_get_vm_map_cs_enforced(void) {
-+}
-+
-+void pmap_has_managed_page(void) {
-+}
-+
-+void pmap_has_prot_policy(void) {
-+}
-+
-+void pmap_init(void) {
-+}
-+
-+void pmap_init_pte_page(void) {
-+}
-+
-+void pmap_in_ppl(void) {
-+}
-+
-+void pmap_insert_commpage(void) {
-+}
-+
-+void pmap_is_exotic(void) {
-+}
-+
-+void pmap_is_modified(void) {
-+}
-+
-+void pmap_is_noencrypt(void) {
-+}
-+
-+void pmap_is_referenced(void) {
-+}
-+
-+void pmap_kernel_va_bits(void) {
-+}
-+
-+void pmap_ledger_alloc(void) {
-+}
-+
-+void pmap_ledger_free(void) {
-+}
-+
-+void pmap_ledger_verify_size(void) {
-+}
-+
-+void pmap_lock_phys_page(void) {
-+}
-+
-+void pmap_map(void) {
-+}
-+
-+void pmap_map_bd(void) {
-+}
-+
-+void pmap_map_bd_with_options(void) {
-+}
-+
-+void pmap_map_block(void) {
-+}
-+
-+void pmap_map_block_addr(void) {
-+}
-+
-+void pmap_map_compressor_page(void) {
-+}
-+
-+void pmap_map_cpu_windows_copy(void) {
-+}
-+
-+void pmap_map_globals(void) {
-+}
-+
-+void pmap_map_high_window_bd(void) {
-+}
-+
-+void pmap_max_offset(void) {
-+}
-+
-+void pmap_nest(void) {
-+}
-+
-+void pmap_next_page(void) {
-+}
-+
-+void pmap_next_page_hi(void) {
-+}
-+
-+void pmap_nop(void) {
-+}
-+
-+void pmap_object_store(void) {
-+}
-+
-+void pmap_page_protect(void) {
-+}
-+
-+void pmap_page_protect_options(void) {
-+}
-+
-+void pmap_protect(void) {
-+}
-+
-+void pmap_protect_options(void) {
-+}
-+
-+void pmap_query_page_info(void) {
-+}
-+
-+void pmap_query_page_info_retries(void) {
-+}
-+
-+void pmap_query_resident(void) {
-+}
-+
-+void pmap_reference(void) {
-+}
-+
-+void pmap_release_pages_fast(void) {
-+}
-+
-+void pmap_remove(void) {
-+}
-+
-+void pmap_remove_options(void) {
-+}
-+
-+void pmap_require(void) {
-+}
-+
-+void pmap_ro_zone_atomic_op(void) {
-+}
-+
-+void pmap_ro_zone_bzero(void) {
-+}
-+
-+void pmap_ro_zone_memcpy(void) {
-+}
-+
-+void pmap_set_cache_attributes(void) {
-+}
-+
-+void pmap_set_jit_entitled(void) {
-+}
-+
-+void pmap_set_nested(void) {
-+}
-+
-+void pmap_set_noencrypt(void) {
-+}
-+
-+void pmap_set_process(void) {
-+}
-+
-+void pmap_set_tpro(void) {
-+}
-+
-+void pmap_set_vm_map_cs_enforced(void) {
-+}
-+
-+void pmap_shared_region_size_min(void) {
-+}
-+
-+void pmap_switch(void) {
-+}
-+
-+void pmap_switch_user(void) {
-+}
-+
-+void pmap_sync_page_attributes_phys(void) {
-+}
-+
-+void pmap_sync_page_data_phys(void) {
-+}
-+
-+void pmap_test(void) {
-+}
-+
-+void pmap_test_text_corruption(void) {
-+}
-+
-+void pmap_trim(void) {
-+}
-+
-+void pmap_unlock_phys_page(void) {
-+}
-+
-+void pmap_unmap_compressor_page(void) {
-+}
-+
-+void pmap_unmap_cpu_windows_copy(void) {
-+}
-+
-+void pmap_unnest(void) {
-+}
-+
-+void pmap_unnest_options(void) {
-+}
-+
-+void pmap_user_va_bits(void) {
-+}
-+
-+void pmap_valid_address(void) {
-+}
-+
-+void pmap_valid_page(void) {
-+}
-+
-+void pmap_virtual_region(void) {
-+}
-+
-+void pmap_virtual_space(void) {
-+}
-+
-+void pmap_zero_page(void) {
-+}
-+
-+void pmap_zero_part_page(void) {
-+}
-+
-+void ResetHandlerData(void) {
-+}
-+
-+kern_return_t resume_idle_cpu(void) {
-+    return KERN_FAILURE;
-+}
-+
-+void set_mmu_ttb(void) {
-+}
-+
-+void set_mmu_ttb_alternate(void) {
-+}
-+
-+void set_tcr(void) {
-+}
-+
-+void Shutdown_context(void) {
-+}
-+
-+void start(void) {
-+}
-+
-+kern_return_t start_cpu(void) {
-+    return KERN_FAILURE;
-+}
-+
-+kern_return_t thread_bootstrap_return(void) {
-+    return KERN_FAILURE;
-+}
-+
-+vm_offset_t vm_first_phys(void) {
-+    return 0;
-+}
-+
-+void vm_footprint_suspend_allowed(void) {
-+}
-+
-+vm_offset_t vm_last_phys(void) {
-+    return 0;
-+}
-+
-+#endif /* M30LTE */
++.text
++
++.globl _ads_zone
++_ads_zone:
++    ret
++
++.globl _allow_data_exec
++_allow_data_exec:
++    ret
++
++.globl _allow_stack_exec
++_allow_stack_exec:
++    ret
++
++.globl _arm64_force_wfi_clock_gate
++_arm64_force_wfi_clock_gate:
++    ret
++
++.globl _arm64_prepare_for_sleep
++_arm64_prepare_for_sleep:
++    ret
++
++.globl _arm64_replace_bootstack
++_arm64_replace_bootstack:
++    ret
++
++.globl _arm64_thread_exception_return
++_arm64_thread_exception_return:
++    ret
++
++.globl _arm_debug_set
++_arm_debug_set:
++    ret
++
++.globl _arm_debug_set32
++_arm_debug_set32:
++    ret
++
++.globl _arm_debug_set64
++_arm_debug_set64:
++    ret
++
++.globl _arm_fast_fault
++_arm_fast_fault:
++    ret
++
++.globl _arm_hardware_page_size
++_arm_hardware_page_size:
++    ret
++
++.globl _arm_pt_desc_size
++_arm_pt_desc_size:
++    ret
++
++.globl _arm_pt_root_size
++_arm_pt_root_size:
++    ret
++
++.globl __bcopyin
++__bcopyin:
++    ret
++
++.globl __bcopyinstr
++__bcopyinstr:
++    ret
++
++.globl __bcopyout
++__bcopyout:
++    ret
++
++.globl _call_continuation
++_call_continuation:
++    ret
++
++.globl _clean_dcache64
++_clean_dcache64:
++    ret
++
++.globl _CleanPoC_Dcache
++_CleanPoC_Dcache:
++    ret
++
++.globl _CleanPoC_DcacheRegion
++_CleanPoC_DcacheRegion:
++    ret
++
++.globl _CleanPoC_DcacheRegion_Force
++_CleanPoC_DcacheRegion_Force:
++    ret
++
++.globl _CleanPoU_Dcache
++_CleanPoU_Dcache:
++    ret
++
++.globl _CleanPoU_DcacheRegion
++_CleanPoU_DcacheRegion:
++    ret
++
++.globl _compute_pmap_gc_throttle
++_compute_pmap_gc_throttle:
++    ret
++
++.globl _configure_misc_apple_boot_args
++_configure_misc_apple_boot_args:
++    ret
++
++.globl _configure_misc_apple_regs
++_configure_misc_apple_regs:
++    ret
++
++.globl _configure_timer_apple_regs
++_configure_timer_apple_regs:
++    ret
++
++.globl _consider_machine_adjust
++_consider_machine_adjust:
++    ret
++
++.globl _consider_machine_collect
++_consider_machine_collect:
++    ret
++
++.globl _copy_debug_state32
++_copy_debug_state32:
++    ret
++
++.globl _copy_debug_state64
++_copy_debug_state64:
++    ret
++
++.globl __copyin_atomic32
++__copyin_atomic32:
++    ret
++
++.globl __copyin_atomic32_wait_if_equals
++__copyin_atomic32_wait_if_equals:
++    ret
++
++.globl __copyin_atomic64
++__copyin_atomic64:
++    ret
++
++.globl _copyinframe
++_copyinframe:
++    ret
++
++.globl _copyio_recover_table
++_copyio_recover_table:
++    ret
++
++.globl _copyio_recover_table_end
++_copyio_recover_table_end:
++    ret
++
++.globl _copy_legacy_debug_state
++_copy_legacy_debug_state:
++    ret
++
++.globl __copyout_atomic32
++__copyout_atomic32:
++    ret
++
++.globl __copyout_atomic64
++__copyout_atomic64:
++    ret
++
++.globl _coredumpok
++_coredumpok:
++    ret
++
++.globl _cpu_tte
++_cpu_tte:
++    ret
++
++.globl _cpu_ttep
++_cpu_ttep:
++    ret
++
++.globl _debug_legacy_state_is_valid
++_debug_legacy_state_is_valid:
++    ret
++
++.globl _debug_state_is_valid32
++_debug_state_is_valid32:
++    ret
++
++.globl _debug_state_is_valid64
++_debug_state_is_valid64:
++    ret
++
++.globl _dtrace_copyio_postflight
++_dtrace_copyio_postflight:
++    ret
++
++.globl _dtrace_copyio_preflight
++_dtrace_copyio_preflight:
++    ret
++
++.globl _dtrace_nofault_copy16
++_dtrace_nofault_copy16:
++    ret
++
++.globl _dtrace_nofault_copy32
++_dtrace_nofault_copy32:
++    ret
++
++.globl _dtrace_nofault_copy64
++_dtrace_nofault_copy64:
++    ret
++
++.globl _dtrace_nofault_copy8
++_dtrace_nofault_copy8:
++    ret
++
++.globl _fill32_dczva
++_fill32_dczva:
++    ret
++
++.globl _fill32_nt
++_fill32_nt:
++    ret
++
++.globl _fillPage
++_fillPage:
++    ret
++
++.globl _flush_dcache64
++_flush_dcache64:
++    ret
++
++.globl _flush_mmu_tlb_region
++_flush_mmu_tlb_region:
++    ret
++
++.globl _FlushPoC_Dcache
++_FlushPoC_Dcache:
++    ret
++
++.globl _FlushPoC_DcacheRegion
++_FlushPoC_DcacheRegion:
++    ret
++
++.globl _FlushPoU_Dcache
++_FlushPoU_Dcache:
++    ret
++
++.globl _free_page_size_tt_count
++_free_page_size_tt_count:
++    ret
++
++.globl _free_tt_count
++_free_tt_count:
++    ret
++
++.globl _free_two_page_size_tt_count
++_free_two_page_size_tt_count:
++    ret
++
++.globl _hw_lck_ticket_reserve_orig_allow_invalid
++_hw_lck_ticket_reserve_orig_allow_invalid:
++    ret
++
++.globl _Idle_context
++_Idle_context:
++    ret
++
++.globl _Idle_load_context
++_Idle_load_context:
++    ret
++
++.globl _inuse_kernel_ptepages_count
++_inuse_kernel_ptepages_count:
++    ret
++
++.globl _inuse_kernel_ttepages_count
++_inuse_kernel_ttepages_count:
++    ret
++
++.globl _inuse_kernel_tteroot_count
++_inuse_kernel_tteroot_count:
++    ret
++
++.globl _inuse_user_ptepages_count
++_inuse_user_ptepages_count:
++    ret
++
++.globl _inuse_user_ttepages_count
++_inuse_user_ttepages_count:
++    ret
++
++.globl _inuse_user_tteroot_count
++_inuse_user_tteroot_count:
++    ret
++
++.globl _invalidate_icache
++_invalidate_icache:
++    ret
++
++.globl _invalidate_icache64
++_invalidate_icache64:
++    ret
++
++.globl _InvalidatePoU_Icache
++_InvalidatePoU_Icache:
++    ret
++
++.globl _InvalidatePoU_IcacheRegion
++_InvalidatePoU_IcacheRegion:
++    ret
++
++.globl _invalid_tte
++_invalid_tte:
++    ret
++
++.globl _invalid_ttep
++_invalid_ttep:
++    ret
++
++.globl _io_attr_table
++_io_attr_table:
++    ret
++
++.globl _kernel_pmap
++_kernel_pmap:
++    ret
++
++.globl _kpc_arch_init
++_kpc_arch_init:
++    ret
++
++.globl _kpc_configurable_config_count
++_kpc_configurable_config_count:
++    ret
++
++.globl _kpc_configurable_count
++_kpc_configurable_count:
++    ret
++
++.globl _kpc_configurable_max
++_kpc_configurable_max:
++    ret
++
++.globl _kpc_fixed_config_count
++_kpc_fixed_config_count:
++    ret
++
++.globl _kpc_fixed_count
++_kpc_fixed_count:
++    ret
++
++.globl _kpc_fixed_max
++_kpc_fixed_max:
++    ret
++
++.globl _kpc_get_all_cpus_counters
++_kpc_get_all_cpus_counters:
++    ret
++
++.globl _kpc_get_classes
++_kpc_get_classes:
++    ret
++
++.globl _kpc_get_configurable_config
++_kpc_get_configurable_config:
++    ret
++
++.globl _kpc_get_configurable_counters
++_kpc_get_configurable_counters:
++    ret
++
++.globl _kpc_get_fixed_config
++_kpc_get_fixed_config:
++    ret
++
++.globl _kpc_get_fixed_counters
++_kpc_get_fixed_counters:
++    ret
++
++.globl _kpc_get_pmu_version
++_kpc_get_pmu_version:
++    ret
++
++.globl _kpc_get_rawpmu_config
++_kpc_get_rawpmu_config:
++    ret
++
++.globl _kpc_idle
++_kpc_idle:
++    ret
++
++.globl _kpc_idle_exit
++_kpc_idle_exit:
++    ret
++
++.globl _kpc_is_running_configurable
++_kpc_is_running_configurable:
++    ret
++
++.globl _kpc_is_running_fixed
++_kpc_is_running_fixed:
++    ret
++
++.globl _kpc_pc_capture
++_kpc_pc_capture:
++    ret
++
++.globl _kpc_rawpmu_config_count
++_kpc_rawpmu_config_count:
++    ret
++
++.globl _kpc_set_config_arch
++_kpc_set_config_arch:
++    ret
++
++.globl _kpc_set_period_arch
++_kpc_set_period_arch:
++    ret
++
++.globl _kpc_set_running_arch
++_kpc_set_running_arch:
++    ret
++
++.globl _kpc_set_sw_inc
++_kpc_set_sw_inc:
++    ret
++
++.globl _kvtophys
++_kvtophys:
++    ret
++
++.globl _m30_secondary_entry
++_m30_secondary_entry:
++    ret
++
++.globl _machine_csv
++_machine_csv:
++    ret
++
++.globl _machine_load_context
++_machine_load_context:
++    ret
++
++.globl _machine_set_current_thread
++_machine_set_current_thread:
++    ret
++
++.globl _machine_stack_attach
++_machine_stack_attach:
++    ret
++
++.globl _machine_stack_detach
++_machine_stack_detach:
++    ret
++
++.globl _machine_stack_handoff
++_machine_stack_handoff:
++    ret
++
++.globl _machine_switch_context
++_machine_switch_context:
++    ret
++
++.globl _machine_tecs
++_machine_tecs:
++    ret
++
++.globl _machine_thread_create
++_machine_thread_create:
++    ret
++
++.globl _machine_thread_destroy
++_machine_thread_destroy:
++    ret
++
++.globl _machine_thread_init
++_machine_thread_init:
++    ret
++
++.globl _machine_thread_on_core
++_machine_thread_on_core:
++    ret
++
++.globl _machine_thread_on_core_allow_invalid
++_machine_thread_on_core_allow_invalid:
++    ret
++
++.globl _machine_thread_process_signature
++_machine_thread_process_signature:
++    ret
++
++.globl _machine_thread_set_tsd_base
++_machine_thread_set_tsd_base:
++    ret
++
++.globl _machine_thread_template_init
++_machine_thread_template_init:
++    ret
++
++.globl _mapping_adjust
++_mapping_adjust:
++    ret
++
++.globl _mapping_free_prime
++_mapping_free_prime:
++    ret
++
++.globl _mapping_set_mod
++_mapping_set_mod:
++    ret
++
++.globl _ml_panic_trap_to_debugger
++_ml_panic_trap_to_debugger:
++    ret
++
++.globl _mmu_kvtop
++_mmu_kvtop:
++    ret
++
++.globl _mmu_kvtop_wpreflight
++_mmu_kvtop_wpreflight:
++    ret
++
++.globl _native_pt_attr
++_native_pt_attr:
++    ret
++
++.globl _num_io_rgns
++_num_io_rgns:
++    ret
++
++.globl _nx_enabled
++_nx_enabled:
++    ret
++
++.globl __PLK_DATA_CONST
++__PLK_DATA_CONST:
++    ret
++
++.globl __PLK_LINKEDIT
++__PLK_LINKEDIT:
++    ret
++
++.globl __PLK_LLVM_COV
++__PLK_LLVM_COV:
++    ret
++
++.globl __PLK_TEXT_EXEC
++__PLK_TEXT_EXEC:
++    ret
++
++.globl _pmap_adjust_unnest_parameters
++_pmap_adjust_unnest_parameters:
++    ret
++
++.globl _pmap_advise_pagezero_range
++_pmap_advise_pagezero_range:
++    ret
++
++.globl _pmap_asid_flushes
++_pmap_asid_flushes:
++    ret
++
++.globl _pmap_asid_hits
++_pmap_asid_hits:
++    ret
++
++.globl _pmap_asid_misses
++_pmap_asid_misses:
++    ret
++
++.globl _pmap_assert_free
++_pmap_assert_free:
++    ret
++
++.globl _pmap_attribute_cache_sync
++_pmap_attribute_cache_sync:
++    ret
++
++.globl _pmap_batch_set_cache_attributes
++_pmap_batch_set_cache_attributes:
++    ret
++
++.globl _pmap_bootloader_page
++_pmap_bootloader_page:
++    ret
++
++.globl _pmap_bootstrap
++_pmap_bootstrap:
++    ret
++
++.globl _pmap_cache_attributes
++_pmap_cache_attributes:
++    ret
++
++.globl _pmap_change_wiring
++_pmap_change_wiring:
++    ret
++
++.globl _pmap_clear_modify
++_pmap_clear_modify:
++    ret
++
++.globl _pmap_clear_noencrypt
++_pmap_clear_noencrypt:
++    ret
++
++.globl _pmap_clear_reference
++_pmap_clear_reference:
++    ret
++
++.globl _pmap_clear_refmod
++_pmap_clear_refmod:
++    ret
++
++.globl _pmap_clear_refmod_options
++_pmap_clear_refmod_options:
++    ret
++
++.globl _pmap_clear_refmod_range_options
++_pmap_clear_refmod_range_options:
++    ret
++
++.globl _pmap_clear_user_ttb
++_pmap_clear_user_ttb:
++    ret
++
++.globl _pmap_copy_page
++_pmap_copy_page:
++    ret
++
++.globl _pmap_copy_part_page
++_pmap_copy_part_page:
++    ret
++
++.globl _pmap_cpu_data_init
++_pmap_cpu_data_init:
++    ret
++
++.globl _pmap_cpu_windows_copy_addr
++_pmap_cpu_windows_copy_addr:
++    ret
++
++.globl _pmap_create_commpages
++_pmap_create_commpages:
++    ret
++
++.globl _pmap_create_options
++_pmap_create_options:
++    ret
++
++.globl _pmap_destroy
++_pmap_destroy:
++    ret
++
++.globl _pmap_disable_NX
++_pmap_disable_NX:
++    ret
++
++.globl _pmap_disconnect
++_pmap_disconnect:
++    ret
++
++.globl _pmap_disconnect_options
++_pmap_disconnect_options:
++    ret
++
++.globl _pmap_dump_page_tables
++_pmap_dump_page_tables:
++    ret
++
++.globl _pmap_enforces_execute_only
++_pmap_enforces_execute_only:
++    ret
++
++.globl _pmap_enter
++_pmap_enter:
++    ret
++
++.globl _pmap_enter_options
++_pmap_enter_options:
++    ret
++
++.globl _pmap_enter_options_addr
++_pmap_enter_options_addr:
++    ret
++
++.globl _pmap_find_pa
++_pmap_find_pa:
++    ret
++
++.globl _pmap_find_phys
++_pmap_find_phys:
++    ret
++
++.globl _pmap_find_phys_nofault
++_pmap_find_phys_nofault:
++    ret
++
++.globl _pmap_flush
++_pmap_flush:
++    ret
++
++.globl _pmap_flush_context_init
++_pmap_flush_context_init:
++    ret
++
++.globl _pmap_footprint_suspend
++_pmap_footprint_suspend:
++    ret
++
++.globl _pmap_fork_nest
++_pmap_fork_nest:
++    ret
++
++.globl _pmap_free_pages
++_pmap_free_pages:
++    ret
++
++.globl _pmap_free_pages_span
++_pmap_free_pages_span:
++    ret
++
++.globl _pmap_get_jit_entitled
++_pmap_get_jit_entitled:
++    ret
++
++.globl _pmap_get_refmod
++_pmap_get_refmod:
++    ret
++
++.globl _pmap_get_tpro
++_pmap_get_tpro:
++    ret
++
++.globl _pmap_get_vm_map_cs_enforced
++_pmap_get_vm_map_cs_enforced:
++    ret
++
++.globl _pmap_has_managed_page
++_pmap_has_managed_page:
++    ret
++
++.globl _pmap_has_prot_policy
++_pmap_has_prot_policy:
++    ret
++
++.globl _pmap_init
++_pmap_init:
++    ret
++
++.globl _pmap_init_pte_page
++_pmap_init_pte_page:
++    ret
++
++.globl _pmap_in_ppl
++_pmap_in_ppl:
++    ret
++
++.globl _pmap_insert_commpage
++_pmap_insert_commpage:
++    ret
++
++.globl _pmap_is_exotic
++_pmap_is_exotic:
++    ret
++
++.globl _pmap_is_modified
++_pmap_is_modified:
++    ret
++
++.globl _pmap_is_noencrypt
++_pmap_is_noencrypt:
++    ret
++
++.globl _pmap_is_referenced
++_pmap_is_referenced:
++    ret
++
++.globl _pmap_kernel_va_bits
++_pmap_kernel_va_bits:
++    ret
++
++.globl _pmap_ledger_alloc
++_pmap_ledger_alloc:
++    ret
++
++.globl _pmap_ledger_free
++_pmap_ledger_free:
++    ret
++
++.globl _pmap_ledger_verify_size
++_pmap_ledger_verify_size:
++    ret
++
++.globl _pmap_lock_phys_page
++_pmap_lock_phys_page:
++    ret
++
++.globl _pmap_map
++_pmap_map:
++    ret
++
++.globl _pmap_map_bd
++_pmap_map_bd:
++    ret
++
++.globl _pmap_map_bd_with_options
++_pmap_map_bd_with_options:
++    ret
++
++.globl _pmap_map_block
++_pmap_map_block:
++    ret
++
++.globl _pmap_map_block_addr
++_pmap_map_block_addr:
++    ret
++
++.globl _pmap_map_compressor_page
++_pmap_map_compressor_page:
++    ret
++
++.globl _pmap_map_cpu_windows_copy
++_pmap_map_cpu_windows_copy:
++    ret
++
++.globl _pmap_map_globals
++_pmap_map_globals:
++    ret
++
++.globl _pmap_map_high_window_bd
++_pmap_map_high_window_bd:
++    ret
++
++.globl _pmap_max_offset
++_pmap_max_offset:
++    ret
++
++.globl _pmap_nest
++_pmap_nest:
++    ret
++
++.globl _pmap_next_page
++_pmap_next_page:
++    ret
++
++.globl _pmap_next_page_hi
++_pmap_next_page_hi:
++    ret
++
++.globl _pmap_nop
++_pmap_nop:
++    ret
++
++.globl _pmap_object_store
++_pmap_object_store:
++    ret
++
++.globl _pmap_page_protect
++_pmap_page_protect:
++    ret
++
++.globl _pmap_page_protect_options
++_pmap_page_protect_options:
++    ret
++
++.globl _pmap_protect
++_pmap_protect:
++    ret
++
++.globl _pmap_protect_options
++_pmap_protect_options:
++    ret
++
++.globl _pmap_query_page_info
++_pmap_query_page_info:
++    ret
++
++.globl _pmap_query_page_info_retries
++_pmap_query_page_info_retries:
++    ret
++
++.globl _pmap_query_resident
++_pmap_query_resident:
++    ret
++
++.globl _pmap_reference
++_pmap_reference:
++    ret
++
++.globl _pmap_release_pages_fast
++_pmap_release_pages_fast:
++    ret
++
++.globl _pmap_remove
++_pmap_remove:
++    ret
++
++.globl _pmap_remove_options
++_pmap_remove_options:
++    ret
++
++.globl _pmap_require
++_pmap_require:
++    ret
++
++.globl _pmap_ro_zone_atomic_op
++_pmap_ro_zone_atomic_op:
++    ret
++
++.globl _pmap_ro_zone_bzero
++_pmap_ro_zone_bzero:
++    ret
++
++.globl _pmap_ro_zone_memcpy
++_pmap_ro_zone_memcpy:
++    ret
++
++.globl _pmap_set_cache_attributes
++_pmap_set_cache_attributes:
++    ret
++
++.globl _pmap_set_jit_entitled
++_pmap_set_jit_entitled:
++    ret
++
++.globl _pmap_set_nested
++_pmap_set_nested:
++    ret
++
++.globl _pmap_set_noencrypt
++_pmap_set_noencrypt:
++    ret
++
++.globl _pmap_set_process
++_pmap_set_process:
++    ret
++
++.globl _pmap_set_tpro
++_pmap_set_tpro:
++    ret
++
++.globl _pmap_set_vm_map_cs_enforced
++_pmap_set_vm_map_cs_enforced:
++    ret
++
++.globl _pmap_shared_region_size_min
++_pmap_shared_region_size_min:
++    ret
++
++.globl _pmap_switch
++_pmap_switch:
++    ret
++
++.globl _pmap_switch_user
++_pmap_switch_user:
++    ret
++
++.globl _pmap_sync_page_attributes_phys
++_pmap_sync_page_attributes_phys:
++    ret
++
++.globl _pmap_sync_page_data_phys
++_pmap_sync_page_data_phys:
++    ret
++
++.globl _pmap_test
++_pmap_test:
++    ret
++
++.globl _pmap_test_text_corruption
++_pmap_test_text_corruption:
++    ret
++
++.globl _pmap_trim
++_pmap_trim:
++    ret
++
++.globl _pmap_unlock_phys_page
++_pmap_unlock_phys_page:
++    ret
++
++.globl _pmap_unmap_compressor_page
++_pmap_unmap_compressor_page:
++    ret
++
++.globl _pmap_unmap_cpu_windows_copy
++_pmap_unmap_cpu_windows_copy:
++    ret
++
++.globl _pmap_unnest
++_pmap_unnest:
++    ret
++
++.globl _pmap_unnest_options
++_pmap_unnest_options:
++    ret
++
++.globl _pmap_user_va_bits
++_pmap_user_va_bits:
++    ret
++
++.globl _pmap_valid_address
++_pmap_valid_address:
++    ret
++
++.globl _pmap_valid_page
++_pmap_valid_page:
++    ret
++
++.globl _pmap_virtual_region
++_pmap_virtual_region:
++    ret
++
++.globl _pmap_virtual_space
++_pmap_virtual_space:
++    ret
++
++.globl _pmap_zero_page
++_pmap_zero_page:
++    ret
++
++.globl _pmap_zero_part_page
++_pmap_zero_part_page:
++    ret
++
++.globl _ResetHandlerData
++_ResetHandlerData:
++    ret
++
++.globl _resume_idle_cpu
++_resume_idle_cpu:
++    ret
++
++.globl _set_mmu_ttb
++_set_mmu_ttb:
++    ret
++
++.globl _set_mmu_ttb_alternate
++_set_mmu_ttb_alternate:
++    ret
++
++.globl _set_tcr
++_set_tcr:
++    ret
++
++.globl _Shutdown_context
++_Shutdown_context:
++    ret
++
++.globl __start
++__start:
++    ret
++
++.globl _start_cpu
++_start_cpu:
++    ret
++
++.globl _thread_bootstrap_return
++_thread_bootstrap_return:
++    ret
++
++.globl _vm_first_phys
++_vm_first_phys:
++    ret
++
++.globl _vm_footprint_suspend_allowed
++_vm_footprint_suspend_allowed:
++    ret
++
++.globl _vm_last_phys
++_vm_last_phys:
++    ret
 +
 
 diff --git a/osfmk/conf/files.arm64 b/osfmk/conf/files.arm64
@@ -905,5 +1090,5 @@ diff --git a/osfmk/conf/files.arm64 b/osfmk/conf/files.arm64
 +++ b/osfmk/conf/files.arm64
 @@ -44,2 +44,3 @@
  osfmk/arm64/m30_early.c	standard
-+osfmk/arm64/m30_stubs.c	standard
++osfmk/arm64/m30_lowlevel_stubs.s	standard
  osfmk/arm64/arm64_hypercall.c	standard
