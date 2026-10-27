@@ -11,6 +11,7 @@
 #include "mmu.h"
 #include "loader.h"
 #include "device.h"
+#include "emmc.h"
 
 /* ---- Device selection (compile-time: -DSELECTED_DEVICE_M30LTE) ---------- */
 #include "devices/m30lte.c"
@@ -368,9 +369,11 @@ void shim_main(uint64_t dtb)
 	con_str("LOADER", why);
 	con_skip();
 
-	/* No payload: M30LTE uses eMMC (Exynos DWMC) - probe not yet implemented. */
+	/* Storage: M30 uses eMMC (Exynos DWMC) */
 	stage = "emmc";
-	con_str("EMMC", "driver not implemented (TODO)");
+	con_str("EMMC", "probe");
+	con_skip();
+	test_emmc();
 	con_skip();
 	delay_ms(180000);
 	reset(20);
