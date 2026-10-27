@@ -901,10 +901,9 @@ new file mode 100644
 +
 
 diff --git a/osfmk/conf/files.arm64 b/osfmk/conf/files.arm64
-index b0dad49..0000000 100644
 --- a/osfmk/conf/files.arm64
 +++ b/osfmk/conf/files.arm64
-@@ -43,3 +43,4 @@ osfmk/arm64/arm_vm_init.c	optional config_pmap_ppl
+@@ -44,2 +44,3 @@
  osfmk/arm64/m30_early.c	standard
 +osfmk/arm64/m30_stubs.c	standard
  osfmk/arm64/arm64_hypercall.c	standard
