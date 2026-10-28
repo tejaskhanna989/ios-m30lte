@@ -277,10 +277,12 @@ def main():
     mem_size = struct.unpack_from('<Q', payload, 0x40)[0]
     ram_gib = max(4, -(-(phys_base + mem_size - 0x40000000) // (1 << 30)))
     cmd = ['qemu-system-aarch64', '-M', 'virt,gic-version=3', '-cpu', a.cpu, '-smp', '1', '-m', f'{ram_gib}G',
-           '-nographic', '-serial', f'file:{out}/serial.txt', '-qmp', f'unix:{mon},server,nowait',
+           '-nodefaults', '-nographic', '-serial', f'file:{out}/serial.txt', '-qmp', f'unix:{mon},server,nowait',
            '-d', 'int,guest_errors,unimp', '-D', f'{out}/qemu.log', '-no-reboot',
            '-device', f'loader,file={out}/ram.bin,addr={phys_base:#x},force-raw=on',
-           '-device', f'loader,file={out}/stub.bin,addr=0x0,force-raw=on']
+           '-device', f'loader,file={out}/stub.bin,addr=0x40100000,force-raw=on,cpu-num=0']
+    if a.gdb:
+        cmd += ['-S', '-gdb', 'tcp::1234']
     if a.gdb:
         cmd += ['-S', '-gdb', 'tcp::1234']
 
@@ -290,10 +292,6 @@ def main():
 
     try:
         p = subprocess.Popen(cmd, stdin=subprocess.DEVNULL)
-        if a.gdb:
-            print('gdb stub on :1234; QMP socket:', mon, file=sys.stderr)
-            p.wait()
-            return 0
 
         t0 = time.time()
         while p.poll() is None and time.time() - t0 < a.secs:

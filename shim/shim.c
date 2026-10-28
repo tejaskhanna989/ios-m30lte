@@ -1,10 +1,6 @@
 /*
- * Milestone 2: one boot answers the questions that decide the XNU port.
- *   - CPU feature registers (16K granule, GIC sysreg interface)
- *   - PSCI/SMCCC version and which PSCI calls the Samsung TZ offers
- *   - SMP: PSCI CPU_ON for the 7 secondaries, each reports its MPIDR
- *   - GICv3 Group 1 IRQ from the virtual timer (INTID 19 on Samsung)
- * Any unexpected exception paints a blue panic screen.
+ * Milestone 2: boot XNU kernel on M30LTE (Galaxy M30).
+ * Loads payload from ABL ramdisk, sets up GIC/timer, jumps to kernel entry.
  */
 #include <stdint.h>
 #include "console.h"
@@ -13,10 +9,7 @@
 #include "device.h"
 #include "emmc.h"
 
-/* ---- Device selection (compile-time: -DSELECTED_DEVICE_M30LTE) ---------- */
-#include "devices/m30lte.c"
-
-/* GIC register offsets (common to all GICv3 implementations). */
+/* GIC register offsets */
 #define GICR_PE_SIZE		0x20000UL
 #define GICR_TYPER		0x08
 #define GICR_WAKER		0x14
@@ -28,7 +21,8 @@
 #define GICR_ISPENDR0		(GICR_SGI + 0x200)
 #define GICR_ISACTIVER0		(GICR_SGI + 0x300)
 #define GICR_ICFGR1		(GICR_SGI + 0xc04)
-#define PSCI_MIGRATE_INFO_TYPE	0x84000006UL
+
+#define PSCI_VERSION		0x84000000UL
 #define PSCI_SYSTEM_SUSPEND	0xc400000eUL
 #define PSCI_SYSTEM_RESET2	0xc4000012UL
 #define SMCCC_VERSION		0x80000000UL
@@ -44,20 +38,19 @@ static inline void wr8(uintptr_t a, uint8_t v) { *(volatile uint8_t *)a = v; }
 
 extern char secondary_entry[];
 
-static const char *stage;	/* set at runtime: no absolute pointers in data */
-static volatile uint64_t sec_mpidr[8];	/* sized for the max; dev->nr_cpus limits usage */
-static volatile uint64_t sec_probe[4];	/* CPU1 redistributor write test */
+static const char *stage;
+static volatile uint64_t sec_mpidr[8];
+static volatile uint64_t sec_probe[4];
 static volatile uint32_t irq_count, irq_other, irq_last;
 static volatile int irq_src;
 
-/* ICC_SGI1R_EL1 value targeting the calling core only. */
 static uint64_t sgi_self(unsigned id)
 {
 	uint64_t m = rsr("mpidr_el1");
-	return ((m >> 16) & 0xff) << 32 |	/* Aff2 */
-	       ((m >> 8) & 0xff) << 16 |	/* Aff1 */
+	return ((m >> 16) & 0xff) << 32 |
+	       ((m >> 8) & 0xff) << 16 |
 	       (uint64_t)id << 24 |
-	       (1U << (m & 0xf));		/* target list: Aff0 */
+	       (1U << (m & 0xf));
 }
 
 static uint64_t smc(uint64_t fn, uint64_t a1, uint64_t a2, uint64_t a3)
@@ -68,9 +61,8 @@ static uint64_t smc(uint64_t fn, uint64_t a1, uint64_t a2, uint64_t a3)
 	register uint64_t x3 __asm__("x3") = a3;
 	__asm__ volatile("smc #0"
 			 : "+r"(x0), "+r"(x1), "+r"(x2), "+r"(x3)
-			 :
-			 : "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11",
-			   "x12", "x13", "x14", "x15", "x16", "x17", "memory");
+			 : : "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11",
+			     "x12", "x13", "x14", "x15", "x16", "x17", "memory");
 	return x0;
 }
 
@@ -100,22 +92,20 @@ static void __attribute__((noreturn)) reset(unsigned after_s)
 		__asm__ volatile("wfe");
 }
 
-/* ---- exceptions ---- */
-
 static void irq_handler(void)
 {
 	uint64_t iar = rsr("icc_iar1_el1");
 	uint32_t id = iar & 0xffffff;
 
 	if (id >= 1020 && id <= 1023)
-		return;	/* spurious */
+		return;
 	irq_last = id;
 	if (id == (uint32_t)irq_src)
 		irq_count++;
 	else
 		irq_other++;
 	if ((uint32_t)dev->vtimer_intid == id)
-		wsr("cntv_tval_el0", rsr("cntfrq_el0") / 100);	/* 10 ms */
+		wsr("cntv_tval_el0", rsr("cntfrq_el0") / 100);
 	else if ((uint32_t)dev->ptimer_intid == id)
 		wsr("cntp_tval_el0", rsr("cntfrq_el0") / 100);
 	wsr("icc_eoir1_el1", iar);
@@ -124,7 +114,7 @@ static void irq_handler(void)
 
 void exc_handler(uint64_t slot, uint64_t *regs)
 {
-	if (slot == 5) {	/* IRQ from current EL, SPx */
+	if (slot == 5) {
 		irq_handler();
 		return;
 	}
@@ -143,30 +133,8 @@ void exc_handler(uint64_t slot, uint64_t *regs)
 	con_hex("SPSR", rsr("spsr_el1"));
 	con_hex("X0", regs[0]);
 	con_hex("X1", regs[1]);
-	con_hex("X30", regs[29]);	/* stashed lr is just above the frame */
+	con_hex("X30", regs[29]);
 	reset(40);
-}
-
-/* ---- SMP ---- */
-
-static uintptr_t find_gicr(void);
-
-void secondary_main(uint64_t idx)
-{
-	sec_mpidr[idx] = rsr("mpidr_el1") | (1ULL << 63);
-	if (idx == 1) {
-		uintptr_t r = find_gicr();
-		if (r) {
-			sec_probe[0] = rd32(r + GICR_IGROUPR0);
-			wr32(r + GICR_IGROUPR0, 0xffffffff);
-			sec_probe[1] = rd32(r + GICR_IGROUPR0);
-			wr8(r + GICR_IPRIORITYR + 19, 0xa0);
-			sec_probe[2] = rd32(r + GICR_IPRIORITYR + 16);
-		}
-		sec_probe[3] = r ? 1 : 0xdead;
-	}
-	__asm__ volatile("dsb sy" ::: "memory");
-	smc(dev->psci_cpu_off, 0, 0, 0);
 }
 
 static void __attribute__((unused)) test_smp(void)
@@ -189,8 +157,6 @@ static void __attribute__((unused)) test_smp(void)
 	}
 }
 
-/* ---- GIC + timer ---- */
-
 static uintptr_t find_gicr(void)
 {
 	uint64_t aff = rsr("mpidr_el1");
@@ -200,7 +166,7 @@ static uintptr_t find_gicr(void)
 		uint64_t typer = rd64(dev->gicr_base + off + GICR_TYPER);
 		if ((uint32_t)(typer >> 32) == want)
 			return dev->gicr_base + off;
-		if (typer & (1 << 4))	/* Last */
+		if (typer & (1 << 4))
 			break;
 	}
 	return 0;
@@ -212,14 +178,13 @@ static void gicd_wait_rwp(void)
 		;
 }
 
-/* Run one interrupt source for ~300 ms and report what the GIC saw. */
 static void irq_window(const char *label, uintptr_t r, int src)
 {
 	uint64_t f = rsr("cntfrq_el0");
 	uint32_t pend = 0, act = 0, isr = 0, hppi = 0x3ff, ist = 0;
 
 	irq_count = irq_other = 0;
-	irq_last = 0x3ff;
+	irq_last = 0;
 	irq_src = src;
 	if (src == dev->vtimer_intid) {
 		wsr("cntv_tval_el0", f / 100);
@@ -229,7 +194,6 @@ static void irq_window(const char *label, uintptr_t r, int src)
 		wsr("cntp_ctl_el0", 1);
 	}
 	isb();
-	/* sample state with IRQs still masked, after the first period */
 	uint64_t t = now() + f / 50;
 	while (now() < t)
 		;
@@ -244,7 +208,6 @@ static void irq_window(const char *label, uintptr_t r, int src)
 
 	__asm__ volatile("msr daifclr, #2" ::: "memory");
 	t = now() + f * 3 / 10;
-	/* SGI: one already sent above, send 9 more 10 ms apart -> expect 10 */
 	uint64_t next = now() + f / 100;
 	for (int sent = 1; now() < t;)
 		if (src == dev->sgi_intid && sent < 10 && now() >= next) {
@@ -266,20 +229,19 @@ static void irq_window(const char *label, uintptr_t r, int src)
 
 static void test_gic(void)
 {
-	stage = "gic sre";
+	stage = "gic ser";
 	uint64_t sre = rsr("icc_sre_el1");
 	if (!(sre & 1)) {
 		wsr("icc_sre_el1", sre | 1);
 		isb();
 	}
 	if (!(rsr("icc_sre_el1") & 1)) {
-		con_str("GIC", "no sysreg iface, skip");
+		con_str("GIC", "no sysreg iface");
 		return;
 	}
 
 	stage = "gic dist";
 	uint32_t dctlr = rd32(dev->gicd_base);
-	/* Non-secure view (DS=0): bit0 EnableGrp1, bit1 EnableGrp1A, bit4 ARE_NS; Linux writes 0x13 */
 	wr32(dev->gicd_base, dctlr | 0x13);
 	gicd_wait_rwp();
 	con_hex2("GICD", "was=", dctlr, "now=", rd32(dev->gicd_base));
@@ -299,19 +261,15 @@ static void test_gic(void)
 	con_hex2("GICR", "base=", r, "waker=", rd32(r + GICR_WAKER));
 
 	stage = "gic config";
-	uint32_t grp = rd32(r + GICR_IGROUPR0);
-	wr32(r + GICR_IGROUPR0, 0xffffffff);	/* NS view: secure bits are WI */
+	wr32(r + GICR_IGROUPR0, 0xffffffff);
 	uint32_t en_before = rd32(r + GICR_ISENABLER0);
-	uint32_t pri_before = rd32(r + GICR_IPRIORITYR + 16);	/* INTIDs 16..19 */
 	for (int id = 0; id < 32; id++)
 		wr8(r + GICR_IPRIORITYR + id, 0xa0);
 	wr32(r + GICR_ISENABLER0, (1U << dev->vtimer_intid) | (1U << dev->ptimer_intid) | (1U << dev->sgi_intid));
 	con_hex2("ENABLE", "was=", en_before, "now=", rd32(r + GICR_ISENABLER0));
-	(void)grp;
-	(void)pri_before;
 
 	uint64_t ctlr = rsr("icc_ctlr_el1");
-	wsr("icc_ctlr_el1", ctlr & ~2ULL);	/* EOImode 0: EOIR also deactivates */
+	wsr("icc_ctlr_el1", ctlr & ~2ULL);
 	wsr("icc_pmr_el1", 0xf0);
 	wsr("icc_bpr1_el1", 0);
 	wsr("icc_igrpen1_el1", 1);
@@ -326,96 +284,24 @@ static void test_gic(void)
 	isb();
 }
 
-/* ---- main ---- */
-
-static void __attribute__((unused)) psci_line(const char *label, uint64_t fn)
+void secondary_main(void)
 {
-	con_hex2(label, "feat=", smc(dev->psci_features, fn, 0, 0), 0, 0);
-}
-
-static uint64_t scratch[8192];	/* 64KB, lives in our (later cacheable) image */
-
-static uint64_t ticks_fill(uint32_t c)
-{
-	uint64_t t = now();
-	con_clear(c);
-	return now() - t;
-}
-
-static uint64_t ticks_mem(void)
-{
-	uint64_t t = now();
-	for (int pass = 0; pass < 16; pass++)
-		for (int i = 0; i < 8192; i++)
-			scratch[i] = scratch[i] * 3 + i;
-	return now() - t;
-}
-
-static uint32_t to_us(uint64_t ticks)
-{
-	return ticks * 10 / 192;	/* 19.2 MHz */
+	/* Secondary CPU entry: park here until XNU brings us online via PSCI. */
+	for (;;)
+		__asm__ volatile("wfe");
 }
 
 void shim_main(uint64_t dtb)
 {
-	struct mmu_info mi;
-
-	/* An xnu payload in the ramdisk means: boot it (MMU stays off). */
-	stage = "loader";
-	con_clear(RED);
-	con_str("SHIM", "milestone 4: xnu loader");
-	con_skip();
-	const char *why = loader_boot(dtb);
-	con_str("LOADER", why);
-	con_skip();
-
-	/* Storage: M30 uses eMMC (Exynos DWMC) */
-	stage = "emmc";
-	con_str("EMMC", "probe");
-	con_skip();
-	con_str("EMMC", "skipped");
-	con_skip();
-	delay_ms(180000);
-	reset(20);
-
-	stage = "fill off";
-	uint64_t fill_off = ticks_fill(RED);
-	uint64_t mem_off = ticks_mem();
-
-	stage = "mmu enable";
-	int rc = mmu_enable(&mi);
-
-	stage = "fill on";
-	uint64_t fill_on = rc ? 0 : ticks_fill(RED);
-	uint64_t mem_on = rc ? 0 : ticks_mem();
-	if (rc)
-		con_clear(RED);
-
-	con_str("SHIM", "milestone 3");
-	con_skip();
-	con_hex2("DTB", "at=", dtb, "magic=", dtb ? __builtin_bswap32(rd32(dtb)) : 0);
-	con_hex2("IMAGE", "lo=", mi.img_lo, "hi=", mi.img_hi);
-	con_hex2("MMU", "rc=", rc, "l3=", mi.n_l3);
-	con_hex2("TTBR0", "pa=", mi.ttbr, "pa_hi=", mi.ttbr >> 32);
-	con_hex("SCTLR0", mi.sctlr_before);
-	con_hex("SCTLR1", mi.sctlr_after);
-	con_hex("TCR", rsr("tcr_el1"));
-	con_hex2("PARANGE", "mmfr0=", rsr("id_aa64mmfr0_el1") & 0xf, "tg16=", (rsr("id_aa64mmfr0_el1") >> 20) & 0xf);
-	con_skip();
-	con_hex("PAR img", mmu_probe((uintptr_t)shim_main));
-	con_hex("PAR fb", mmu_probe(dev->fb_phys + 0x1000));
-	con_hex("PAR gic", mmu_probe(dev->gicd_base));
-	con_hex("PAR 12G", mmu_probe(0x300000000UL));
-	con_skip();
-	con_hex2("FILL us", "off=", to_us(fill_off), "on=", to_us(fill_on));
-	con_hex2("MEM us", "off=", to_us(mem_off), "on=", to_us(mem_on));
-	con_skip();
-
-	stage = "psci";
-	con_hex2("PSCI", "ver=", smc(dev->psci_version, 0, 0, 0), "smccc=", smc(SMCCC_VERSION, 0, 0, 0));
-	con_skip();
+	/* Initialize GICv3 distributor for this PE before XNU takes over. */
 	test_gic();
 
-	stage = "done";
-	reset(40);
+	/* Load XNU kernel payload and jump to its entry point.
+	 * loader_boot() transfers control to XNU and never returns on success. */
+	const char *why = loader_boot(dtb);
+	con_str("LOADER", why);
+
+	/* If we get here, loader_boot failed. Spin forever. */
+	for (;;)
+		__asm__ volatile("wfe");
 }
