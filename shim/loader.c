@@ -1,14 +1,8 @@
 /*
  * Milestone 4: act as iBoot for xnu.
- *
- * mkpayload.py already resolved the kernel's chained fixups and built the
- * ADT, so this only has to: find the payload in the ABL ramdisk, copy the
- * segments to phys_base + (vmaddr - virt_base), place the ADT and
- * boot_args behind the kernel, and jump to the entry point with the MMU
- * and caches off, x0 = boot_args (physical).
+ * Minimal: find payload, copy segments, build boot_args, jump to entry.
  */
 #include <stdint.h>
-#include "console.h"
 #include "fdt.h"
 #include "loader.h"
 #include "device.h"
@@ -29,7 +23,6 @@ struct payload {
 	struct payload_seg segs[];
 };
 
-/* pexpert/pexpert/arm64/boot.h, Revision/Version 2 */
 struct boot_video {
 	uint64_t v_baseAddr, v_display, v_rowBytes, v_width, v_height, v_depth;
 };
@@ -50,13 +43,21 @@ _Static_assert(__builtin_offsetof(struct boot_args, Video) == 40, "boot_args lay
 _Static_assert(__builtin_offsetof(struct boot_args, CommandLine) == 108, "boot_args layout");
 _Static_assert(sizeof(struct boot_args) == 736, "boot_args layout");
 
-/* MMU off: everything is Device memory, so copy in aligned 8-byte words. */
 static void copy64(uintptr_t dst, uintptr_t src, uint64_t n)
 {
 	volatile uint64_t *d = (volatile uint64_t *)dst;
 	volatile const uint64_t *s = (volatile const uint64_t *)src;
 	for (uint64_t i = 0; i < (n + 7) / 8; i++)
 		d[i] = s[i];
+}
+
+void *memcpy(void *dst, const void *src, uint64_t n)
+{
+	uint8_t *d = (uint8_t *)dst;
+	const uint8_t *s = (const uint8_t *)src;
+	for (uint64_t i = 0; i < n; i++)
+		d[i] = s[i];
+	return dst;
 }
 
 static void zero64(uintptr_t dst, uint64_t n)
@@ -81,10 +82,28 @@ const char *loader_boot(uintptr_t dtb)
 {
 	uint64_t rd_start, rd_end;
 
-	if (!fdt_chosen_u64(dtb, "linux,initrd-start", &rd_start) ||
-	    !fdt_chosen_u64(dtb, "linux,initrd-end", &rd_end))
-		return "no initrd in /chosen";
-	con_hex2("INITRD", "lo=", rd_start, "hi=", rd_end);
+	/* Scan RAM for M30LTXNU magic - payload could be anywhere */
+	uintptr_t scan_addrs[] = {
+		0x11000000UL, 0x12000000UL, 0x13000000UL, 0x14000000UL,
+		0x15000000UL, 0x16000000UL, 0x17000000UL, 0x18000000UL,
+		0x41000000UL, 0x42000000UL, 0x43000000UL, 0x44000000UL,
+		0x45000000UL, 0x46000000UL, 0x47000000UL, 0x48000000UL,
+		0x49000000UL, 0x4A000000UL, 0x4B000000UL, 0x4C000000UL,
+		0x50000000UL, 0x60000000UL, 0x70000000UL, 0x80000000UL,
+		0x90000000UL, 0xA0000000UL, 0xB0000000UL, 0xC0000000UL,
+	};
+	int found = 0;
+	for (int s = 0; s < 28; s++) {
+		const struct payload *probe = (const struct payload *)scan_addrs[s];
+		if (magic_ok(probe->magic)) {
+			rd_start = scan_addrs[s];
+			rd_end   = scan_addrs[s] + 0x1000000UL;
+			found = 1;
+			break;
+		}
+	}
+	if (!found)
+		return "no initrd payload found";
 
 	const struct payload *p = (const struct payload *)rd_start;
 	if (!magic_ok(p->magic))
@@ -92,12 +111,8 @@ const char *loader_boot(uintptr_t dtb)
 	if (p->version != 1 || (p->adt_off & 7) || (rd_start & 7))
 		return "bad payload header";
 
-	uint64_t pa_of_va_base = p->phys_base - p->virt_base;	/* pa = va + this */
-	con_hex2("PHYS", "base=", p->phys_base, "size=", p->mem_size);
-	con_hex("VIRT", p->virt_base);
-	con_hex("ENTRY", p->entry_va);
+	uint64_t pa_of_va_base = p->phys_base - p->virt_base;
 
-	/* The payload must not overlap where the kernel goes. */
 	if (rd_end > p->phys_base && rd_start < p->phys_base + p->mem_size)
 		return "ramdisk overlaps kernel memory";
 
@@ -106,11 +121,10 @@ const char *loader_boot(uintptr_t dtb)
 		uintptr_t dst = s->vmaddr + pa_of_va_base;
 		copy64(dst, rd_start + s->file_off, s->file_size);
 		if (s->vmsize > s->file_size)
-			zero64(dst + ((s->file_size + 7) & ~7UL), s->vmsize - ((s->file_size + 7) & ~7UL));
+			zero64(dst + ((s->file_size + 7) & ~7UL),
+			       s->vmsize - ((s->file_size + 7) & ~7UL));
 	}
-	con_hex2("SEGS", "n=", p->nsegs, "end=", p->kernel_end + pa_of_va_base);
 
-	/* ADT, then boot_args, behind the kernel; everything below topOfKernelData is ours. */
 	uintptr_t adt_pa = p->kernel_end + pa_of_va_base;
 	copy64(adt_pa, rd_start + p->adt_off, p->adt_size);
 	uintptr_t ba_pa = (adt_pa + p->adt_size + PAGE_16K - 1) & ~(PAGE_16K - 1);
@@ -130,18 +144,14 @@ const char *loader_boot(uintptr_t dtb)
 	ba->Video.v_width = dev->fb_w;
 	ba->Video.v_height = dev->fb_h;
 	ba->Video.v_depth = 32;
-	ba->deviceTreeP = adt_pa - pa_of_va_base;	/* xnu reads it with the MMU on: a VA */
+	ba->deviceTreeP = adt_pa - pa_of_va_base;
 	ba->deviceTreeLength = (uint32_t)p->adt_size;
 	for (int i = 0; i < BOOT_LINE_LENGTH; i++)
 		ba->CommandLine[i] = p->cmdline[i];
 	ba->memSizeActual = p->mem_size;
-	con_hex2("BOOTARG", "pa=", ba_pa, "top=", top);
 
 	uintptr_t entry_pa = p->entry_va + pa_of_va_base;
-	con_hex("JUMP", entry_pa);
-	con_str("XNU", "jumping (fbcon clears screen)");
 
-	/* Everything was written with the MMU and caches off; drop any stale I-cache lines too. */
 	__asm__ volatile("dsb sy; ic iallu; dsb sy; isb" ::: "memory");
 	((xnu_entry_t)entry_pa)(ba_pa);
 	return "xnu returned";

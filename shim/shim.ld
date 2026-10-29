@@ -1,11 +1,12 @@
-ENTRY(_head)
+ENTRY(_start)
 SECTIONS
 {
-	. = 0;
+	. = 0x10008000;
 	.text : { *(.text.head) *(.text*) }
 	.rodata : { *(.rodata*) }
 	.data : { *(.data*) }
 	. = ALIGN(16);
+	_data_end = .;
 	_bss_start = .;
 	.bss : { *(.bss*) *(COMMON) }
 	. = ALIGN(16);
