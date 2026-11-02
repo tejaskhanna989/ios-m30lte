@@ -2,7 +2,7 @@ diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
 index 8460893..9a748ea 100644
 --- a/makedefs/MakeInc.def
 +++ b/makedefs/MakeInc.def
-@@ -312,6 +312,12 @@ LDFLAGS_KERNEL_DEBUGARM64 = $(LDFLAGS_KERNEL_DEVELOPMENTARM64)
+@@ -828,6 +828,12 @@ LDFLAGS_KERNEL_DEBUGARM64 = $(LDFLAGS_KERNEL_DEVELOPMENTARM64)
  
  LDFLAGS_KERNEL_ONLY_SUBARCH_arm64e = \
  	-Wl,-add_split_seg_info \

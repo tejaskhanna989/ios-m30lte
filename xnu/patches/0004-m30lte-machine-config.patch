@@ -1,25 +1,23 @@
-diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
-index 8460893..9a748ea 100644
---- a/makedefs/MakeInc.def
-+++ b/makedefs/MakeInc.def
-@@ -29,7 +29,7 @@ SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
+--- a/makedefs/MakeInc.def	2026-11-02 15:00:08.447362136 +0530
++++ b/makedefs/MakeInc.def	2026-11-02 15:09:35.640211049 +0530
+@@ -29,7 +29,7 @@
  else ifneq ($(findstring _host,$(RC_ProjectName)),)
  SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
  else
 -SUPPORTED_ARM64_MACHINE_CONFIGS = BCM2837 T6000 T8101 T8103 VMAPPLE
 +SUPPORTED_ARM64_MACHINE_CONFIGS = BCM2837 T6000 T8101 T8103 VMAPPLE M30LTE
-
+ 
  endif
-
-@@ -61,6 +61,7 @@ MACHINE_FLAGS_ARM64_T8103 = -DARM64_BOARD_CONFIG_T8103                  -mcpu=ap
+ 
+@@ -61,6 +61,7 @@
  MACHINE_FLAGS_ARM64_T6000 = -DARM64_BOARD_CONFIG_T6000 		-mcpu=apple-a14
  MACHINE_FLAGS_ARM64_VMAPPLE = -DARM64_BOARD_CONFIG_VMAPPLE              -march=armv8.5a
  MACHINE_FLAGS_ARM64_BCM2837 = -DARM64_BOARD_CONFIG_BCM2837
 +MACHINE_FLAGS_ARM64_M30LTE = -DARM64_BOARD_CONFIG_M30LTE                -march=armv8.2-a+crypto
-
-
+ 
+ 
  #
-@@ -259,8 +260,11 @@ ifeq ($(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG),)
+@@ -259,8 +260,13 @@
  # Without embdedded device map, use a default arch string
  export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := $(shell echo $(CURRENT_ARCH_CONFIG) | tr A-Z a-z)
  ifneq ($(filter arm64,$(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG)),)
@@ -28,17 +26,30 @@ index 8460893..9a748ea 100644
  export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := arm64e
  endif
 +endif
-
++
++endif
+ 
  endif
-
-diff --git a/osfmk/arm64/proc_reg.h b/osfmk/arm64/proc_reg.h
-index 133b07f..e01c124 100644
---- a/osfmk/arm64/proc_reg.h
-+++ b/osfmk/arm64/proc_reg.h
+ 
+@@ -828,6 +834,12 @@
+ # arm64e specific linker flags that should be used only when linking the kernel
+ # (and not the static kernel cache / kcgen)
+ #
++# M30LTE: allow undefined symbols at link time (board-specific stubs provided at runtime)
++LDFLAGS_KERNEL_DEVELOPMENTARM64 += -Wl,-undefined,dynamic_lookup
++LDFLAGS_KERNEL_DEBUGARM64 += -Wl,-undefined,dynamic_lookup
++LDFLAGS_KERNEL_RELEASEARM64 += -Wl,-undefined,dynamic_lookup
++LDFLAGS_KERNEL_KASANARM64 += -Wl,-undefined,dynamic_lookup
++
+ LDFLAGS_KERNEL_ONLY_SUBARCH_arm64e = \
+ 	-Wl,-add_split_seg_info \
+ 	-Wl,-kernel
+--- a/osfmk/arm64/proc_reg.h	2026-11-02 15:00:08.501363104 +0530
++++ b/osfmk/arm64/proc_reg.h	2026-11-02 15:04:02.324489212 +0530
 @@ -213,6 +213,14 @@
  /* D-Cache. */
  #define MMU_CLINE   6
-
+ 
 +#elif defined (M30LTE) /* Samsung Kryo 470: Cortex-A76 + Cortex-A55 */
 +
 +/* I-Cache. */
@@ -48,12 +59,10 @@ index 133b07f..e01c124 100644
 +#define MMU_CLINE   6
 +
  #elif defined (VMAPPLE)
-
+ 
  /* I-Cache. */
-diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c
-index c40c6ea..9888608 100644
---- a/osfmk/arm64/sleh.c
-+++ b/osfmk/arm64/sleh.c
+--- xnu-8796/osfmk/arm64/sleh.c	2026-11-02 15:00:08.501363104 +0530
++++ xnu-patched/osfmk/arm64/sleh.c	2026-11-02 15:04:16.894349408 +0530
 @@ -32,6 +32,7 @@
  #include <arm/misc_protos.h>
  #include <arm/thread.h>
@@ -62,84 +71,13 @@ index c40c6ea..9888608 100644
  #include <arm/trap.h> /* for IS_ARM_GDB_TRAP() et al */
  #include <arm64/proc_reg.h>
  #include <arm64/machine_machdep.h>
-@@ -1855,6 +1856,42 @@ sleh_irq(arm_saved_state_t *state)
- #endif
-
-
-+#if defined(M30LTE)
-+	/*
-+	 * m30: TrustZone owns GIC Group 0, so the timer and IPIs that other
-+	 * ARM64 targets take as FIQs arrive here as Group 1 IRQs.
-+	 */
-+	uint64_t iar = __builtin_arm_rsr64("ICC_IAR1_EL1");
-+	uint32_t intid = (uint32_t)(iar & 0xFFFFFF);
-+
-+	if (intid >= 1020 && intid <= 1023) {
-+		return; /* spurious */
-+	}
-+	if (intid == M30LTE_VTIMER_INTID) {
-+		sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_TIMER);
-+		cdp->cpu_decrementer = -1; /* Large */
-+		INTERRUPT_MASKED_DEBUG_START(rtclock_intr, DBG_INTR_TYPE_TIMER);
-+		rtclock_intr(TRUE);
-+		INTERRUPT_MASKED_DEBUG_END();
-+		__builtin_arm_wsr64("ICC_EOIR1_EL1", iar);
-+	} else if (intid < 16) {
-+		sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_IPI);
-+		/* Ack before handling so an IPI raised meanwhile is not lost */
-+		__builtin_arm_wsr64("ICC_EOIR1_EL1", iar);
-+		__builtin_arm_isb(ISB_SY);
-+		cpu_signal_handler();
-+	} else {
-+		sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_OTHER);
-+		if (cdp->interrupt_handler) {
-+			cdp->interrupt_handler(cdp->interrupt_target,
-+			    cdp->interrupt_refCon,
-+			    cdp->interrupt_nub,
-+			    intid);
-+		}
-+		__builtin_arm_wsr64("ICC_EOIR1_EL1", iar);
-+	}
-+	__builtin_arm_isb(ISB_SY);
-+#else
- 	sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_OTHER);
-
- #if USE_APPLEARMSMP
-@@ -1866,6 +1903,7 @@ sleh_irq(arm_saved_state_t *state)
- 	    cdp->interrupt_nub,
- 	    cdp->interrupt_source);
- #endif
-+#endif /* M30LTE */
-
- 	entropy_collect();
-
-diff --git a/osfmk/arm64/start.s b/osfmk/arm64/start.s
-index e5336e5..f8d0d2e 100644
---- a/osfmk/arm64/start.s
-+++ b/osfmk/arm64/start.s
-@@ -745,11 +745,11 @@ common_start:
- 	MSR_SCTLR_EL1_X0
- 	isb		sy
-
--#if !VMAPPLE
-+#if !VMAPPLE && !defined(M30LTE)
- 	MOV64   x1, SCTLR_EL1_DEFAULT
- 	cmp		x0, x1
- 	bne		.
--#endif /* !VMAPPLE */
-+#endif /* !VMAPPLE && !M30LTE */
-
- #if (!CONFIG_KERNEL_INTEGRITY || (CONFIG_KERNEL_INTEGRITY && !defined(KERNEL_INTEGRITY_WT)))
- 	/* Watchtower
-diff --git a/pexpert/arm/pe_fiq.c b/pexpert/arm/pe_fiq.c
-index 3ad743f..4ec6989 100644
---- a/pexpert/arm/pe_fiq.c
-+++ b/pexpert/arm/pe_fiq.c
-@@ -141,11 +141,25 @@ pe_init_fiq()
+--- xnu-8796/pexpert/arm/pe_fiq.c	2026-11-02 15:00:08.736978375 +0530
++++ xnu-patched/pexpert/arm/pe_fiq.c	2026-11-02 15:05:29.018357799 +0530
+@@ -141,11 +141,25 @@
  		}
  	}
  
-+#if defined(M30LTE)
++	#if defined(M30LTE)
 +	/*
 +	 * Real hardware with two security states: Group 0 is TrustZone's and
 +	 * non-secure writes to it are ignored. Everything we own is Group 1 NS
@@ -161,11 +99,11 @@ index 3ad743f..4ec6989 100644
  
  	// Enable system register access
  	uint64_t icc_sre = __builtin_arm_rsr64("ICC_SRE_EL1");
-@@ -153,8 +167,12 @@ pe_init_fiq()
+@@ -153,8 +167,12 @@
  	__builtin_arm_wsr64("ICC_SRE_EL1", icc_sre);
  	__builtin_arm_isb(ISB_SY);
  
-+#if defined(M30LTE)
++	#if defined(M30LTE)
 +	__builtin_arm_wsr64("ICC_BPR1_EL1", 0);
 +#else
  	// Set priority masks and binary point for group 0
@@ -174,11 +112,11 @@ index 3ad743f..4ec6989 100644
  	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF);
  
  	// Set EOI mode of this processor
-@@ -162,12 +180,24 @@ pe_init_fiq()
+@@ -162,12 +180,24 @@
  	icc_ctlr &= ~ICC_CTLR_EOIMODE;
  	__builtin_arm_wsr64("ICC_CTLR_EL1", icc_ctlr);
  
-+#if defined(M30LTE)
++	#if defined(M30LTE)
 +	// ABL leaves only ARE_NS set; Linux writes ARE_NS | EnableGrp1A | EnableGrp1
 +	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
 +	gicd_ctlr |= GICD_CTLR_ARE_NS | GICD_CTLR_ENABLEGRP1A | GICD_CTLR_ENABLEGRP1;
@@ -199,25 +137,8 @@ index 3ad743f..4ec6989 100644
  }
  #else
  void
-diff --git a/pexpert/pexpert/arm64/Makefile b/pexpert/pexpert/arm64/Makefile
-index 8226b8c..c7d274f 100644
---- a/pexpert/pexpert/arm64/Makefile
-+++ b/pexpert/pexpert/arm64/Makefile
-@@ -17,7 +17,8 @@ PRIVATE_KERNELFILES = \
- 	boot.h \
- 	H13.h \
- 	VMAPPLE.h \
--	BCM2837.h
-+	BCM2837.h \
-+	M30LTE.h
- 
- 
- # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
-diff --git a/pexpert/pexpert/arm64/M30LTE.h b/pexpert/pexpert/arm64/M30LTE.h
-new file mode 100644
-index 0000000..a044ad0
---- /dev/null
-+++ b/pexpert/pexpert/arm64/M30LTE.h
+--- /dev/null	2026-11-02 11:19:04.886792128 +0530
++++ xnu-patched/pexpert/pexpert/arm64/M30LTE.h	2026-11-02 15:05:46.688295579 +0530
 @@ -0,0 +1,75 @@
 +/*
 + * Board config for the Galaxy M30 ("m30", Samsung Exynos 7885 /
@@ -294,10 +215,8 @@ index 0000000..a044ad0
 +/* End of GICv3 register definitions */
 +
 +#endif /* ! _PEXPERT_ARM64_M30LTE_H */
-diff --git a/pexpert/pexpert/arm64/board_config.h b/pexpert/pexpert/arm64/board_config.h
-index 9454534..88e524a 100644
---- a/pexpert/pexpert/arm64/board_config.h
-+++ b/pexpert/pexpert/arm64/board_config.h
+--- xnu-8796/pexpert/pexpert/arm64/board_config.h	2026-11-02 15:00:08.742367427 +0530
++++ xnu-patched/pexpert/pexpert/arm64/board_config.h	2026-11-02 15:05:58.611500856 +0530
 @@ -97,6 +97,17 @@
  #define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
  #endif  /* ARM64_BOARD_CONFIG_BCM2837 */
@@ -315,3 +234,4 @@ index 9454534..88e524a 100644
 +
  #ifdef ARM64_BOARD_CONFIG_VMAPPLE
  #include <pexpert/arm64/VMAPPLE.h>
+ 
