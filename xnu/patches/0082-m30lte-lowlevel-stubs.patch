@@ -1,7 +1,7 @@
-diff --git a/xnu/osfmk/arm64/m30_early.c b/xnu/osfmk/arm64/m30_early.c
+diff --git a/osfmk/arm64/m30_early.c b/osfmk/arm64/m30_early.c
 index 61d7322..6f3b13b 100644
---- a/xnu/osfmk/arm64/m30_early.c
-+++ b/xnu/osfmk/arm64/m30_early.c
+--- a/osfmk/arm64/m30_early.c
++++ b/osfmk/arm64/m30_early.c
 @@ -124,3 +124,251 @@ m30_early_disable(void)
  	__asm__ volatile("dsb sy" ::: "memory");
  }
