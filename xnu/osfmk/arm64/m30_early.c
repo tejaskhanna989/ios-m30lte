@@ -119,7 +119,8 @@ m30_early_disable(void)
 /* M30LTE: stub implementations for low-level board-specific functions
  * normally provided by Apple's closed per-SoC libraries. QEMU bring-up
  * only needs these to exist at link time; real hardware bring-up will
- * replace them with proper implementations. */
+ * replace them with proper implementations. 
+ * Only symbols that are actually undefined in the kernel link are stubbed here. */
 void *ads_zone(void) { return NULL; }
 boolean_t allow_data_exec(void) { return TRUE; }
 boolean_t allow_stack_exec(void) { return TRUE; }
@@ -134,9 +135,9 @@ void arm_fast_fault(void) {}
 unsigned int arm_hardware_page_size(void) { return 0; }
 unsigned int arm_pt_desc_size(void) { return 0; }
 unsigned int arm_pt_root_size(void) { return 0; }
-void __bcopyin(void *dst, const void *src, unsigned long len) { return; }
-void __bcopyinstr(const void *src, void *dst, unsigned long len, size_t *len_res) { return; }
-void __bcopyout(const void *src, void *dst, unsigned long len) { return; }
+void __bcopyin(void *dst, const void *src, unsigned long len) {}
+void __bcopyinstr(const void *src, void *dst, unsigned long len, size_t *len_res) {}
+void __bcopyout(const void *src, void *dst, unsigned long len) {}
 void __call_continuation(void) {}
 void clean_dcache64(void) {}
 void CleanPoC_Dcache(void) {}
@@ -169,10 +170,6 @@ boolean_t debug_state_is_valid32(void) { return FALSE; }
 boolean_t debug_state_is_valid64(void) { return FALSE; }
 int dtrace_copyio_postflight(void) { return 0; }
 int dtrace_copyio_preflight(void) { return 0; }
-int dtrace_nofault_copy16(void) { return 0; }
-int dtrace_nofault_copy32(void) { return 0; }
-int dtrace_nofault_copy64(void) { return 0; }
-int dtrace_nofault_copy8(void) { return 0; }
 void fill32_dczva(void) {}
 void fill32_nt(void) {}
 void fillPage(void) {}
@@ -227,7 +224,6 @@ void machine_stack_attach(void) {}
 void machine_stack_detach(void) {}
 void machine_stack_handoff(void) {}
 void machine_switch_context(void) {}
-void machine_tecs(void) {}
 void machine_thread_create(void) {}
 void machine_thread_destroy(void) {}
 void machine_thread_init(void) {}
@@ -236,7 +232,6 @@ void machine_thread_on_core_allow_invalid(void) {}
 void machine_thread_process_signature(void) {}
 void machine_thread_set_tsd_base(void) {}
 void machine_thread_template_init(void) {}
-void machine_tecs(void) {}
 void mapping_adjust(void) {}
 void mapping_free_prime(void) {}
 void mapping_set_mod(void) {}
@@ -253,7 +248,6 @@ void pmap_attribute_cache_sync(void) {}
 void pmap_asid_flushes(void) {}
 void pmap_asid_hits(void) {}
 void pmap_asid_misses(void) {}
-void pmap_attribute_cache_sync(void) {}
 void pmap_batch_set_cache_attributes(void) {}
 void pmap_bootstrap(void) {}
 void pmap_bootloader_page(void) {}
