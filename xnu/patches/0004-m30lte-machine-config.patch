@@ -1,5 +1,5 @@
---- a/makedefs/MakeInc.def	2026-11-02 15:00:08.447362136 +0530
-+++ b/makedefs/MakeInc.def	2026-11-02 15:09:35.640211049 +0530
+--- xnu-8796/makedefs/MakeInc.def	2026-11-02 15:00:08.447362136 +0530
++++ xnu-patched/makedefs/MakeInc.def	2026-11-02 15:27:13.022712370 +0530
 @@ -29,7 +29,7 @@
  else ifneq ($(findstring _host,$(RC_ProjectName)),)
  SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
@@ -17,21 +17,7 @@
  
  
  #
-@@ -259,8 +260,13 @@
- # Without embdedded device map, use a default arch string
- export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := $(shell echo $(CURRENT_ARCH_CONFIG) | tr A-Z a-z)
- ifneq ($(filter arm64,$(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG)),)
-+# m30's Cortex-A76/A55 have no pointer authentication: stay plain arm64
-+ifneq ($(CURRENT_MACHINE_CONFIG),M30LTE)
- export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := arm64e
- endif
-+endif
-+
-+endif
- 
- endif
- 
-@@ -828,6 +834,12 @@
+@@ -828,6 +829,12 @@
  # arm64e specific linker flags that should be used only when linking the kernel
  # (and not the static kernel cache / kcgen)
  #
@@ -44,13 +30,13 @@
  LDFLAGS_KERNEL_ONLY_SUBARCH_arm64e = \
  	-Wl,-add_split_seg_info \
  	-Wl,-kernel
---- a/osfmk/arm64/proc_reg.h	2026-11-02 15:00:08.501363104 +0530
-+++ b/osfmk/arm64/proc_reg.h	2026-11-02 15:04:02.324489212 +0530
+--- xnu-8796/osfmk/arm64/proc_reg.h	2026-11-02 15:00:08.501363104 +0530
++++ xnu-patched/osfmk/arm64/proc_reg.h	2026-11-02 15:24:35.197689188 +0530
 @@ -213,6 +213,14 @@
  /* D-Cache. */
  #define MMU_CLINE   6
  
-+#elif defined (M30LTE) /* Samsung Kryo 470: Cortex-A76 + Cortex-A55 */
++#elif defined (M30LTE) /* Samsung Exynos 7904: Cortex-A76 + Cortex-A55 */
 +
 +/* I-Cache. */
 +#define MMU_I_CLINE 6
@@ -62,7 +48,7 @@
  
  /* I-Cache. */
 --- xnu-8796/osfmk/arm64/sleh.c	2026-11-02 15:00:08.501363104 +0530
-+++ xnu-patched/osfmk/arm64/sleh.c	2026-11-02 15:04:16.894349408 +0530
++++ xnu-patched/osfmk/arm64/sleh.c	2026-11-02 15:24:35.202689343 +0530
 @@ -32,6 +32,7 @@
  #include <arm/misc_protos.h>
  #include <arm/thread.h>
@@ -71,8 +57,22 @@
  #include <arm/trap.h> /* for IS_ARM_GDB_TRAP() et al */
  #include <arm64/proc_reg.h>
  #include <arm64/machine_machdep.h>
+--- xnu-8796/osfmk/arm64/start.s	2026-11-02 15:00:08.502363122 +0530
++++ xnu-patched/osfmk/arm64/start.s	2026-11-02 15:24:35.203162548 +0530
+@@ -745,9 +745,11 @@
+ 	MSR_SCTLR_EL1_X0
+ 	isb		sy
+ 
++#if !defined(M30LTE)
+ 	MOV64   x1, SCTLR_EL1_DEFAULT
+ 	cmp		x0, x1
+ 	bne		.
++#endif
+ 
+ #if (!CONFIG_KERNEL_INTEGRITY || (CONFIG_KERNEL_INTEGRITY && !defined(KERNEL_INTEGRITY_WT)))
+ 	/* Watchtower
 --- xnu-8796/pexpert/arm/pe_fiq.c	2026-11-02 15:00:08.736978375 +0530
-+++ xnu-patched/pexpert/arm/pe_fiq.c	2026-11-02 15:05:29.018357799 +0530
++++ xnu-patched/pexpert/arm/pe_fiq.c	2026-11-02 15:24:35.203319202 +0530
 @@ -141,11 +141,25 @@
  		}
  	}
@@ -138,11 +138,11 @@
  #else
  void
 --- /dev/null	2026-11-02 11:19:04.886792128 +0530
-+++ xnu-patched/pexpert/pexpert/arm64/M30LTE.h	2026-11-02 15:05:46.688295579 +0530
++++ xnu-patched/pexpert/pexpert/arm64/M30LTE.h	2026-11-02 15:24:35.205704003 +0530
 @@ -0,0 +1,75 @@
 +/*
-+ * Board config for the Galaxy M30 ("m30", Samsung Exynos 7885 /
-+ * Exynos 7885): Kryo 470 = Cortex-A76 + Cortex-A55, ARMv8.2, no PAC.
++ * Board config for the Galaxy M30 ("m30", Samsung Exynos 7904 /
++ * Exynos 7904): Kryo 470 = Cortex-A76 + Cortex-A55, ARMv8.2, no PAC.
 + *
 + * Generic ARM like BCM2837 (no APPLE_ARM64_ARCH_FAMILY: none of Apple's
 + * implementation-defined system registers exist), 16K pages and GICv3 like
@@ -215,8 +215,20 @@
 +/* End of GICv3 register definitions */
 +
 +#endif /* ! _PEXPERT_ARM64_M30LTE_H */
+--- xnu-8796/pexpert/pexpert/arm64/Makefile	2026-11-02 15:00:08.742338590 +0530
++++ xnu-patched/pexpert/pexpert/arm64/Makefile	2026-11-02 15:24:35.205949448 +0530
+@@ -17,7 +17,8 @@
+ 	boot.h \
+ 	H13.h \
+ 	VMAPPLE.h \
+-	BCM2837.h
++	BCM2837.h \
++	M30LTE.h
+ 
+ 
+ # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
 --- xnu-8796/pexpert/pexpert/arm64/board_config.h	2026-11-02 15:00:08.742367427 +0530
-+++ xnu-patched/pexpert/pexpert/arm64/board_config.h	2026-11-02 15:05:58.611500856 +0530
++++ xnu-patched/pexpert/pexpert/arm64/board_config.h	2026-11-02 15:24:35.206065147 +0530
 @@ -97,6 +97,17 @@
  #define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
  #endif  /* ARM64_BOARD_CONFIG_BCM2837 */
