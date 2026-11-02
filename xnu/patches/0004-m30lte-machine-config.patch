@@ -1,5 +1,5 @@
---- xnu-8796/makedefs/MakeInc.def	2026-11-02 15:00:08.447362136 +0530
-+++ xnu-patched/makedefs/MakeInc.def	2026-11-02 15:27:13.022712370 +0530
+--- a/makedefs/MakeInc.def	2026-11-02 15:00:08.447362136 +0530
++++ b/makedefs/MakeInc.def	2026-11-02 15:27:13.022712370 +0530
 @@ -29,7 +29,7 @@
  else ifneq ($(findstring _host,$(RC_ProjectName)),)
  SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
@@ -30,8 +30,8 @@
  LDFLAGS_KERNEL_ONLY_SUBARCH_arm64e = \
  	-Wl,-add_split_seg_info \
  	-Wl,-kernel
---- xnu-8796/osfmk/arm64/proc_reg.h	2026-11-02 15:00:08.501363104 +0530
-+++ xnu-patched/osfmk/arm64/proc_reg.h	2026-11-02 15:24:35.197689188 +0530
+--- a/osfmk/arm64/proc_reg.h	2026-11-02 15:00:08.501363104 +0530
++++ b/osfmk/arm64/proc_reg.h	2026-11-02 15:24:35.197689188 +0530
 @@ -213,6 +213,14 @@
  /* D-Cache. */
  #define MMU_CLINE   6
@@ -47,8 +47,8 @@
  #elif defined (VMAPPLE)
  
  /* I-Cache. */
---- xnu-8796/osfmk/arm64/sleh.c	2026-11-02 15:00:08.501363104 +0530
-+++ xnu-patched/osfmk/arm64/sleh.c	2026-11-02 15:24:35.202689343 +0530
+--- a/osfmk/arm64/sleh.c	2026-11-02 15:00:08.501363104 +0530
++++ b/osfmk/arm64/sleh.c	2026-11-02 15:24:35.202689343 +0530
 @@ -32,6 +32,7 @@
  #include <arm/misc_protos.h>
  #include <arm/thread.h>
@@ -57,8 +57,8 @@
  #include <arm/trap.h> /* for IS_ARM_GDB_TRAP() et al */
  #include <arm64/proc_reg.h>
  #include <arm64/machine_machdep.h>
---- xnu-8796/osfmk/arm64/start.s	2026-11-02 15:00:08.502363122 +0530
-+++ xnu-patched/osfmk/arm64/start.s	2026-11-02 15:24:35.203162548 +0530
+--- a/osfmk/arm64/start.s	2026-11-02 15:00:08.502363122 +0530
++++ b/osfmk/arm64/start.s	2026-11-02 15:24:35.203162548 +0530
 @@ -745,9 +745,11 @@
  	MSR_SCTLR_EL1_X0
  	isb		sy
@@ -71,8 +71,8 @@
  
  #if (!CONFIG_KERNEL_INTEGRITY || (CONFIG_KERNEL_INTEGRITY && !defined(KERNEL_INTEGRITY_WT)))
  	/* Watchtower
---- xnu-8796/pexpert/arm/pe_fiq.c	2026-11-02 15:00:08.736978375 +0530
-+++ xnu-patched/pexpert/arm/pe_fiq.c	2026-11-02 15:24:35.203319202 +0530
+--- a/pexpert/arm/pe_fiq.c	2026-11-02 15:00:08.736978375 +0530
++++ b/pexpert/arm/pe_fiq.c	2026-11-02 15:24:35.203319202 +0530
 @@ -141,11 +141,25 @@
  		}
  	}
@@ -138,7 +138,7 @@
  #else
  void
 --- /dev/null	2026-11-02 11:19:04.886792128 +0530
-+++ xnu-patched/pexpert/pexpert/arm64/M30LTE.h	2026-11-02 15:24:35.205704003 +0530
++++ b/pexpert/pexpert/arm64/M30LTE.h	2026-11-02 15:24:35.205704003 +0530
 @@ -0,0 +1,75 @@
 +/*
 + * Board config for the Galaxy M30 ("m30", Samsung Exynos 7904 /
@@ -215,8 +215,8 @@
 +/* End of GICv3 register definitions */
 +
 +#endif /* ! _PEXPERT_ARM64_M30LTE_H */
---- xnu-8796/pexpert/pexpert/arm64/Makefile	2026-11-02 15:00:08.742338590 +0530
-+++ xnu-patched/pexpert/pexpert/arm64/Makefile	2026-11-02 15:24:35.205949448 +0530
+--- a/pexpert/pexpert/arm64/Makefile	2026-11-02 15:00:08.742338590 +0530
++++ b/pexpert/pexpert/arm64/Makefile	2026-11-02 15:24:35.205949448 +0530
 @@ -17,7 +17,8 @@
  	boot.h \
  	H13.h \
@@ -227,8 +227,8 @@
  
  
  # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
---- xnu-8796/pexpert/pexpert/arm64/board_config.h	2026-11-02 15:00:08.742367427 +0530
-+++ xnu-patched/pexpert/pexpert/arm64/board_config.h	2026-11-02 15:24:35.206065147 +0530
+--- a/pexpert/pexpert/arm64/board_config.h	2026-11-02 15:00:08.742367427 +0530
++++ b/pexpert/pexpert/arm64/board_config.h	2026-11-02 15:24:35.206065147 +0530
 @@ -97,6 +97,17 @@
  #define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
  #endif  /* ARM64_BOARD_CONFIG_BCM2837 */
