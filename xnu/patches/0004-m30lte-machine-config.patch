@@ -31,22 +31,6 @@ index 8460893..9a748ea 100644
 
  endif
 
-@@ -312,6 +320,12 @@ LDFLAGS_KERNEL_DEBUGARM64 = $(LDFLAGS_KERNEL_DEVELOPMENTARM64)
-
- LDFLAGS_KERNEL_ONLY_SUBARCH_arm64e = \
- 	-Wl,-add_split_seg_info \
- 	-Wl,-kernel
-
-+# M30LTE: allow undefined symbols at link time (board-specific stubs provided at runtime)
-+LDFLAGS_KERNEL_DEVELOPMENTARM64 += -Wl,-undefined,dynamic_lookup
-+LDFLAGS_KERNEL_DEBUGARM64 += -Wl,-undefined,dynamic_lookup
-+LDFLAGS_KERNEL_RELEASEARM64 += -Wl,-undefined,dynamic_lookup
-+LDFLAGS_KERNEL_KASANARM64 += -Wl,-undefined,dynamic_lookup
-+
- LDFLAGS_KERNEL_ONLY_SUBARCH_x86_64 = \
- 	-Wl,-add_split_seg_info \
- 	-Wl,-kernel
-
 diff --git a/osfmk/arm64/proc_reg.h b/osfmk/arm64/proc_reg.h
 index 133b07f..e01c124 100644
 --- a/osfmk/arm64/proc_reg.h
@@ -118,7 +102,7 @@ index c40c6ea..9888608 100644
 +	}
 +	__builtin_arm_isb(ISB_SY);
 +#else
- 	sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_OTHER);
+ 	sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_OTHER)
 
  #if USE_APPLEARMSMP
 @@ -1866,6 +1903,7 @@ sleh_irq(arm_saved_state_t *state)
@@ -166,51 +150,51 @@ index 3ad743f..4ec6989 100644
 +	for (unsigned int i = 0; i < 32; i += 4) {
 +		gicr_write32(GICR_IPRIORITYR0 + i, 0xA0A0A0A0);
 +	}
-+	gicr_write32(GICR_ISENABLER0, (1U << M30LTE_VTIMER_INTID) | (1U << M30LTE_IPI_SGI));
++	gicr_write32(GICR_ISENABLER0, (1U << M30LTE_VTIMER_INTID) | (1U << M30LTE_IPI_SGI))
 +#else
   	// Configure timers and legacy FIQ to be group 0
-  	gicr_write32(GICR_IGROUPR0, 0x81FFFFFF);
+  	gicr_write32(GICR_IGROUPR0, 0x81FFFFFF)
   
   	// Enable PPI 27
-  	gicr_write32(GICR_ISENABLER0, (1 << 27));
+  	gicr_write32(GICR_ISENABLER0, (1 << 27))
 +#endif /* M30LTE */
   
   	// Enable system register access
-  	uint64_t icc_sre = __builtin_arm_rsr64("ICC_SRE_EL1");
+  	uint64_t icc_sre = __builtin_arm_rsr64("ICC_SRE_EL1")
 @@ -153,8 +167,12 @@ pe_init_fiq()
-  	__builtin_arm_wsr64("ICC_SRE_EL1", icc_sre);
-  	__builtin_arm_isb(ISB_SY);
+  	__builtin_arm_wsr64("ICC_SRE_EL1", icc_sre)
+  	__builtin_arm_isb(ISB_SY)
   
 +#if defined(M30LTE)
-+	__builtin_arm_wsr64("ICC_BPR1_EL1", 0);
++	__builtin_arm_wsr64("ICC_BPR1_EL1", 0)
 +#else
   	// Set priority masks and binary point for group 0
-  	__builtin_arm_wsr64("ICC_BPR0_EL1", 0);
+  	__builtin_arm_wsr64("ICC_BPR0_EL1", 0)
 +#endif /* M30LTE */
-  	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF);
+  	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF)
   
   	// Set EOI mode of this processor
 @@ -162,12 +180,24 @@ pe_init_fiq()
-  	icc_ctlr &= ~ICC_CTLR_EOIMODE;
-  	__builtin_arm_wsr64("ICC_CTLR_EL1", icc_ctlr);
+  	icc_ctlr &= ~ICC_CTLR_EOIMODE
+  	__builtin_arm_wsr64("ICC_CTLR_EL1", icc_ctlr)
   
 +#if defined(M30LTE)
 +	// ABL leaves only ARE_NS set; Linux writes ARE_NS | EnableGrp1A | EnableGrp1
-+	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
-+	gicd_ctlr |= GICD_CTLR_ARE_NS | GICD_CTLR_ENABLEGRP1A | GICD_CTLR_ENABLEGRP1;
-+	gicd_write32(GICD_CTLR, gicd_ctlr);
++	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR)
++	gicd_ctlr |= GICD_CTLR_ARE_NS | GICD_CTLR_ENABLEGRP1A | GICD_CTLR_ENABLEGRP1
++	gicd_write32(GICD_CTLR, gicd_ctlr)
 +	while (gicd_read32(GICD_CTLR) & GICD_CTLR_RWP) {
 +		;
 +	}
-+	__builtin_arm_wsr64("ICC_IGRPEN1_EL1", 1);
-+	__builtin_arm_isb(ISB_SY);
++	__builtin_arm_wsr64("ICC_IGRPEN1_EL1", 1)
++	__builtin_arm_isb(ISB_SY)
 +#else
   	// Enable the forwarding of the vtimer interrupt
-  	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
-  	gicd_ctlr |= GICD_CTLR_ENABLEGRP0;
-  	gicd_write32(GICD_CTLR, gicd_ctlr);
-  	__builtin_arm_wsr64("ICC_IGRPEN0_EL1", 1);
-  	__builtin_arm_isb(ISB_SY);
+  	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR)
+  	gicd_ctlr |= GICD_CTLR_ENABLEGRP0
+  	gicd_write32(GICD_CTLR, gicd_ctlr)
+  	__builtin_arm_wsr64("ICC_IGRPEN0_EL1", 1)
+  	__builtin_arm_isb(ISB_SY)
 +#endif /* M30LTE */
  }
  #else
@@ -261,7 +245,7 @@ index 0000000..a044ad0
 +#define __ARM_DEBUG__             7
 +#define __ARM_ENABLE_SWAP__       1
 +#define __ARM_V8_CRYPTO_EXTENSIONS__ 1
-+#define __ARM_PAN_AVAILABLE__     1
++define __ARM_PAN_AVAILABLE__     1
 +#define __ARM_16K_PG__            1
 +
 +#define HAS_GIC_V3                1
