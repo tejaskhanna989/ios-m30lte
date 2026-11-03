@@ -94,6 +94,8 @@ jobs:
             patch -p1 --no-backup-if-mismatch --forward < "$patch" 2>&1 | tail -3 || true
           done
           # Build the actual XNU Mach-O kernel via do_build_all
+          # Capture full output and exit code for debugging
+          set +e
           make build_all -j8 VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
@@ -104,12 +106,16 @@ jobs:
             FAKEROOT_DIR="$PWD/../fakeroot" \
             BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
             ARCH_FLAGS_ARM64="-arch arm64" \
-            2>&1 | tee /tmp/xnu-build-all.log | tail -60 || true
+            > /tmp/xnu-build-all.log 2>&1
+          BUILD_EXIT=$?
+          echo "make build_all exit code: $BUILD_EXIT"
+          echo "=== Build log (last 80 lines) ==="
+          tail -80 /tmp/xnu-build-all.log
+          echo "=== Build log (first 40 lines) ==="
+          head -40 /tmp/xnu-build-all.log
           echo "=== Kernel artifacts ==="
           find ../../build/xnu.obj -name "kernel.*" -type f 2>/dev/null | head -10
           find ../../build/xnu.obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
-          echo "=== Build log tail ==="
-          tail -20 /tmp/xnu-build-all.log 2>/dev/null || true
 
       - name: Package build tree for local compiles
         if: always()
