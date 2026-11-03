@@ -1,15 +1,17 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-index ab51507..12c9fe4 100644
+index ab51507..b96cf33 100644
 --- a/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-@@ -6,6 +6,7 @@
+@@ -1,9 +1,6 @@
+ #ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
+ #define _OS_FIREHOSE_BUFFER_PRIVATE_H
  
+-#include <stdint.h>
+-#include <stddef.h>
+-
  /* firehose_tracepoint_t and firehose_buffer_t are defined elsewhere in XNU */
  
-+/* Declare only the functions we need from firehose_internal.h */
  firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
- void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp);
- 
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
 index 0cb85dd..60eb84f 100644
 --- a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
