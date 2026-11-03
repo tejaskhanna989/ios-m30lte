@@ -63,11 +63,6 @@ jobs:
           # and linked via do_build_all -> do_build_kernel -> ld -filelist.
           sed -i '' 's/make install -j8 VERBOSE=YES/make build_all install -j8 VERBOSE=YES/' dxb/build.sh
           grep -c 'make build_all install' dxb/build.sh
-          # KEY FIX: DXB's make install does NOT build/link the kernel.
-          # Replace with make build_all install so the kernel is actually compiled
-          # and linked via do_build_all -> do_build_kernel -> ld -filelist.
-          sed -i '' 's/make install -j8 VERBOSE=YES/make build_all install -j8 VERBOSE=YES/' dxb/build.sh
-          grep -c 'make build_all install' dxb/build.sh
 
       - name: Deps
         run: |
@@ -83,18 +78,43 @@ jobs:
           xcodebuild -version
           xcrun --find iig
 
-      - name: Build
+      - name: Build dependencies and XNU source
         working-directory: dxb
         env:
-          # keep going after errors so one run reports every compile failure
           MAKEFLAGS: ${{ inputs.keep_going == 'false' && '' || '-k' }}
         run: bash build.sh
+
+      - name: Apply M30LTE patches and rebuild kernel
+        if: always()
+        working-directory: dxb/xnu
+        run: |
+          # DXB's build.sh applies patches with git apply, which is strict and skips
+          # patches that don't apply cleanly (e.g. 0004 after DXB's sed modifications
+          # to MakeInc.def change line numbers). Re-apply all patches using
+          # patch -p1 --forward (skips already-applied patches), then rebuild.
+          for patch in ../patches/00*.patch; do
+            name=$(basename "$patch")
+            echo "Applying: $name"
+            patch -p1 --no-backup-if-mismatch --forward < "$patch" 2>&1 | tail -3 || true
+          done
+          # Rebuild the kernel now that all patches are applied
+          make build_all install -j8 VERBOSE=YES \
+            SDKROOT=macosx \
+            TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
+            SRCROOT="$PWD" \
+            OBJROOT="$PWD/../build/xnu.obj" \
+            SYMROOT="$PWD/../build/xnu.sym" \
+            DSTROOT="$PWD/../fakeroot" \
+            FAKEROOT_DIR="$PWD/../fakeroot" \
+            BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
+            2>&1 | tee /tmp/xnu-build-all.log | tail -80 || true
+          echo "=== Kernel artifacts ==="
+          find ../../build/xnu.obj -name "kernel.*" -type f 2>/dev/null | head -10
+          find ../../build/xnu.obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
 
       - name: Package build tree for local compiles
         if: always()
         run: |
-          # Generated headers, config option headers, mig output and the patched
-          # source: enough to re-run any single compile command from the log locally.
           SDK=$(xcrun --sdk macosx --show-sdk-path)
           mkdir -p sdk-kernel-platform
           cp -R "$SDK/System/Library/Frameworks/Kernel.framework/Versions/A/PrivateHeaders/platform" sdk-kernel-platform/ || true
@@ -124,12 +144,11 @@ jobs:
           done
           ls -la out/kdk-libs
 
-      - name: Collect
+      - name: Collect kernel artifact
         if: always()
         run: |
           mkdir -p out
-          # Try installed location first, then objroot (make install may fail
-          # due to check_all_exports but objroot still has the kernel binary)
+          # Try installed location first, then objroot
           cp -R dxb/fakeroot/System/Library/Kernels/. out/ 2>/dev/null || true
           cp dxb/build/xnu.obj/DEVELOPMENT_ARM64_M30LTE/mach_kernel out/ 2>/dev/null || true
           cp dxb/build/xnu.obj/DEVELOPMENT_ARM64_M30LTE/kernel.development.m30lte out/ 2>/dev/null || true
