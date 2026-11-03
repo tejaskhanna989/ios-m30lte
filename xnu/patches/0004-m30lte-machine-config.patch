@@ -31,7 +31,7 @@ index 0000000..b61d5b3
 +#endif /* BEARSSL_H */
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
 new file mode 100644
-index 0000000..fa6ed1d
+index 0000000..1f48700
 --- /dev/null
 +++ b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
 @@ -0,0 +1,69 @@
@@ -44,31 +44,31 @@ index 0000000..fa6ed1d
 +typedef struct br_hash_class br_hash_class;
 +
 +typedef struct {
-+    uint64_t count;
++    unsigned char count[8];
 +    unsigned char buf[64];
 +    unsigned char val[32];
 +} br_sha256_context;
 +
 +typedef struct {
-+    uint64_t count;
++    unsigned char count[8];
 +    unsigned char buf[64];
 +    unsigned char val[20];
 +} br_sha1_context;
 +
 +typedef struct {
-+    uint64_t count;
++    unsigned char count[8];
 +    unsigned char buf[128];
 +    unsigned char val[64];
 +} br_sha512_context;
 +
 +typedef struct {
-+    uint64_t count;
++    unsigned char count[8];
 +    unsigned char buf[128];
 +    unsigned char val[48];
 +} br_sha384_context;
 +
 +typedef struct {
-+    uint64_t count;
++    unsigned char count[8];
 +    unsigned char buf[64];
 +    unsigned char val[16];
 +} br_md5_context;
@@ -104,6 +104,19 @@ index 0000000..fa6ed1d
 +void br_md5_output(br_md5_context *ctx, void *out, size_t len);
 +
 +#endif /* BEARSSL_HASH_H */
+diff --git a/libkern/os/log.c b/libkern/os/log.c
+index 74d54c8..953d4f9 100644
+--- a/libkern/os/log.c
++++ b/libkern/os/log.c
+@@ -30,7 +30,7 @@
+ 
+ #include <firehose/tracepoint_private.h>
+ #include <firehose/chunk_private.h>
+-#include <os/firehose_buffer_private.h>
++/* firehose_buffer_private.h not available in M30LTE build */
+ #include <os/firehose.h>
+ 
+ #include <os/log_private.h>
 diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
 index 5bd6f23..71d4797 100644
 --- a/makedefs/MakeInc.def
