@@ -1,14 +1,11 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 new file mode 100644
-index 0000000..ab51507
+index 0000000..b96cf33
 --- /dev/null
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,9 @@
 +#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
 +#define _OS_FIREHOSE_BUFFER_PRIVATE_H
-+
-+#include <stdint.h>
-+#include <stddef.h>
 +
 +/* firehose_tracepoint_t and firehose_buffer_t are defined elsewhere in XNU */
 +
@@ -133,9 +130,18 @@ index 0000000..2677c4a
 +
 +#endif /* BEARSSL_HASH_H */
 diff --git a/libkern/os/log.c b/libkern/os/log.c
-index 74d54c8..ae53e82 100644
+index 74d54c8..be0ae78 100644
 --- a/libkern/os/log.c
 +++ b/libkern/os/log.c
+@@ -30,7 +30,7 @@
+ 
+ #include <firehose/tracepoint_private.h>
+ #include <firehose/chunk_private.h>
+-#include <os/firehose_buffer_private.h>
++/* firehose_buffer_private.h not available in M30LTE build */
+ #include <os/firehose.h>
+ 
+ #include <os/log_private.h>
 @@ -623,13 +623,14 @@ _firehose_trace(firehose_stream_t stream, firehose_tracepoint_id_u ftid,
  	const size_t __assert_only _firehose_chunk_payload_size = sizeof(((struct firehose_chunk_s *)0)->fc_data);
  	assert((ft_size + datalen) <= _firehose_chunk_payload_size);
