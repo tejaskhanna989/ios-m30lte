@@ -125,6 +125,11 @@ jobs:
           cp dxb/build/xnu.obj/DEVELOPMENT_ARM64_M30LTE/kernel.development.m30lte out/ 2>/dev/null || true
           # DXB build.sh writes kernel to build/xnu.obj/kernel.<config>.<machine>
           cp dxb/build/xnu.obj/kernel.development.m30lte out/ 2>/dev/null || true
+          # Fallback: search the entire objroot for any kernel binary
+          KERNEL_PATH=$(find dxb/build/xnu.obj -maxdepth 4 -name "kernel.development.m30lte" -o -name "mach_kernel" 2>/dev/null | head -1)
+          if [ -n "$KERNEL_PATH" ]; then
+            cp "$KERNEL_PATH" out/ 2>/dev/null || true
+          fi
           ls -la out
           (cd out && shasum -a 256 kernel.* > SHA256SUMS) || true
 
