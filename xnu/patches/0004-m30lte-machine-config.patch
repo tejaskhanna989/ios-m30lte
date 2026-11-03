@@ -1,3 +1,19 @@
+diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
+new file mode 100644
+index 0000000..3fd6bde
+--- /dev/null
++++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
+@@ -0,0 +1,10 @@
++#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
++#define _OS_FIREHOSE_BUFFER_PRIVATE_H
++
++#include <stdint.h>
++#include <stddef.h>
++#include <mach/mach_types.h>
++
++typedef struct firehose_buffer firehose_buffer_t;
++
++#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
 diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
 index 5bd6f23..71d4797 100644
 --- a/makedefs/MakeInc.def
@@ -127,7 +143,7 @@ index e5336e5..0cfbf7d 100644
  #if (!CONFIG_KERNEL_INTEGRITY || (CONFIG_KERNEL_INTEGRITY && !defined(KERNEL_INTEGRITY_WT)))
  	/* Watchtower
 diff --git a/pexpert/arm/pe_fiq.c b/pexpert/arm/pe_fiq.c
-index 3ad743f..73154c0 100644
+index 3ad743f..5d5526e 100644
 --- a/pexpert/arm/pe_fiq.c
 +++ b/pexpert/arm/pe_fiq.c
 @@ -3,6 +3,7 @@
@@ -208,9 +224,9 @@ index 3ad743f..73154c0 100644
  
 +#if defined(M30LTE)
 +	// ABL leaves only ARE_NS set; Linux writes ARE_NS | EnableGrp1A | EnableGrp1
-+	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR)
-+	gicd_ctlr |= GICD_CTLR_ARE_NS | GICD_CTLR_ENABLEGRP1A | GICD_CTLR_ENABLEGRP1
-+	gicd_write32(GICD_CTLR, gicd_ctlr)
++	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
++	gicd_ctlr |= GICD_CTLR_ARE_NS | GICD_CTLR_ENABLEGRP1A | GICD_CTLR_ENABLEGRP1;
++	gicd_write32(GICD_CTLR, gicd_ctlr);
 +	while (gicd_read32(GICD_CTLR) & GICD_CTLR_RWP) {
 +		;
 +	}
@@ -218,14 +234,11 @@ index 3ad743f..73154c0 100644
 +	__builtin_arm_isb(ISB_SY)
 +#else
  	// Enable the forwarding of the vtimer interrupt
--	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
--	gicd_ctlr |= GICD_CTLR_ENABLEGRP0;
--	gicd_write32(GICD_CTLR, gicd_ctlr);
+ 	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
+ 	gicd_ctlr |= GICD_CTLR_ENABLEGRP0;
+ 	gicd_write32(GICD_CTLR, gicd_ctlr);
 -	__builtin_arm_wsr64("ICC_IGRPEN0_EL1", 1);
 -	__builtin_arm_isb(ISB_SY);
-+	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR)
-+	gicd_ctlr |= GICD_CTLR_ENABLEGRP0
-+	gicd_write32(GICD_CTLR, gicd_ctlr)
 +	__builtin_arm_wsr64("ICC_IGRPEN0_EL1", 1)
 +	__builtin_arm_isb(ISB_SY)
 +#endif
@@ -248,10 +261,10 @@ index 404b50b..32ad6e7 100644
  /**
 diff --git a/pexpert/pexpert/arm64/M30LTE.h b/pexpert/pexpert/arm64/M30LTE.h
 new file mode 100644
-index 0000000..b310188
+index 0000000..32b813a
 --- /dev/null
 +++ b/pexpert/pexpert/arm64/M30LTE.h
-@@ -0,0 +1,80 @@
+@@ -0,0 +1,81 @@
 +/*
 + * Copyright (c) 2024 Apple Inc. All rights reserved.
 + *
@@ -288,6 +301,7 @@ index 0000000..b310188
 +
 +#define M30LTE_VTIMER_INTID          27
 +#define M30LTE_IPI_SGI                 1
++#define M30LTE_SMP_MAX_CPUS            8
 +
 +/* GICv3 register definitions */
 +#define GICR_CTLR            0x004
