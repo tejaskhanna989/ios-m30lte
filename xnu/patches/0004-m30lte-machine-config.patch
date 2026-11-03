@@ -248,10 +248,10 @@ index 404b50b..32ad6e7 100644
  /**
 diff --git a/pexpert/pexpert/arm64/M30LTE.h b/pexpert/pexpert/arm64/M30LTE.h
 new file mode 100644
-index 0000000..5aeb8db
+index 0000000..b310188
 --- /dev/null
 +++ b/pexpert/pexpert/arm64/M30LTE.h
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,80 @@
 +/*
 + * Copyright (c) 2024 Apple Inc. All rights reserved.
 + *
@@ -288,6 +288,39 @@ index 0000000..5aeb8db
 +
 +#define M30LTE_VTIMER_INTID          27
 +#define M30LTE_IPI_SGI                 1
++
++/* GICv3 register definitions */
++#define GICR_CTLR            0x004
++#define GICR_WAKER           0x014
++#define GICR_WAKER_PROCESSORSLEEP (1U << 0)
++#define GICR_WAKER_CHILDRENASLEEP (1U << 1)
++#define GICR_PE_SIZE         0x008
++#define GICR_TYPER           0x000
++#define GICR_TYPER_AFFINITY_VALUE_SHIFT  0
++#define GICR_TYPER_LAST      (1U << 12)
++#define GICR_ISENABLER0      0x100
++#define GICD_CTLR            0x000
++#define GICD_CTLR_ENABLEGRP0 (1U << 0)
++#define GICD_CTLR_ARE_NS     (1U << 1)
++#define GICD_CTLR_ENABLEGRP1A (1U << 1)
++#define GICD_CTLR_ENABLEGRP1 (1U << 1)
++#define GICD_CTLR_RWP        (1U << 31)
++#define ICC_SRE_SRE          (1U << 0)
++#define ICC_CTLR_EOIMODE     (1U << 1)
++#define ICC_IGRPEN0_EL1      0
++#define ICC_IGRPEN1_EL1      0
++#define ICC_BPR0_EL1         0
++#define ICC_BPR1_EL1         0
++#define ICC_PMR_EL1          0
++#define ICC_CTLR_EL1         0
++#define ICC_IAR1_EL1         0
++#define ICC_EOIR1_EL1        0
++#define ICC_SRE_EL1          0
++#define ICC_SRE_ENABLE       (1U << 0)
++#define ICC_SRE_DFB          (1U << 1)
++#define ICC_SRE_TFB          (1U << 2)
++#define ICC_CTLR_EL1         0
++
 +
 +#define CPU_HAS_APPLE_PAC         0
 +#define HAS_PARAVIRTUALIZED_PAC   0
