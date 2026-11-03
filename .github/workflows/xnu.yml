@@ -134,6 +134,10 @@ jobs:
             > /tmp/xnu-build.log 2>&1
           BUILD_EXIT=$?
           echo "make exit code: $BUILD_EXIT"
+          if [ $BUILD_EXIT -ne 0 ]; then
+            echo "KERNEL BUILD FAILED with exit code $BUILD_EXIT"
+            exit $BUILD_EXIT
+          fi
           echo "=== Errors in build log ==="
           grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found" /tmp/xnu-build.log | head -20 || echo "No errors found in log"
           echo "=== Kernel artifacts ==="
