@@ -1,9 +1,9 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 new file mode 100644
-index 0000000..e3dc81c
+index 0000000..ab51507
 --- /dev/null
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-@@ -0,0 +1,16 @@
+@@ -0,0 +1,12 @@
 +#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
 +#define _OS_FIREHOSE_BUFFER_PRIVATE_H
 +
@@ -11,12 +11,8 @@ index 0000000..e3dc81c
 +#include <stddef.h>
 +
 +/* firehose_tracepoint_t and firehose_buffer_t are defined elsewhere in XNU */
-+typedef void *firehose_tracepoint_t;
-+typedef void *firehose_buffer_t;
 +
-+#define FIREHOSE_BUFFER_KERNEL_CHUNK_COUNT 16
-+
-+firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3, void *arg4);
++firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
 +void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp);
 +
 +#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
@@ -35,7 +31,7 @@ index 0000000..b61d5b3
 +#endif /* BEARSSL_H */
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
 new file mode 100644
-index 0000000..eda5dc8
+index 0000000..6d42258
 --- /dev/null
 +++ b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
 @@ -0,0 +1,70 @@
@@ -48,31 +44,31 @@ index 0000000..eda5dc8
 +typedef struct br_hash_class br_hash_class;
 +
 +typedef struct {
-+    uint64_t count;
++    unsigned char count[8];
 +    unsigned char buf[64];
 +    unsigned char val[32];
 +} br_sha256_context;
 +
 +typedef struct {
-+    uint64_t count;
++    unsigned char count[8];
 +    unsigned char buf[64];
 +    unsigned char val[20];
 +} br_sha1_context;
 +
 +typedef struct {
-+    uint64_t count;
++    unsigned char count[8];
 +    unsigned char buf[128];
 +    unsigned char val[64];
 +} br_sha512_context;
 +
 +typedef struct {
-+    uint64_t count;
++    unsigned char count[8];
 +    unsigned char buf[128];
 +    unsigned char val[48];
 +} br_sha384_context;
 +
 +typedef struct {
-+    uint64_t count;
++    unsigned char count[8];
 +    unsigned char buf[64];
 +    unsigned char val[16];
 +} br_md5_context;
@@ -90,7 +86,7 @@ index 0000000..eda5dc8
 +void br_sha1_init(br_sha1_context *ctx);
 +void br_sha1_update(br_sha1_context *ctx, const void *data, size_t len);
 +void br_sha1_output(br_sha1_context *ctx, void *out, size_t len);
-+void br_sha1_out(br_sha1_context *ctx, void *out, size_t len);
++void br_sha1_out(br_sha1_context *ctx, void *out);
 +
 +void br_sha512_init(br_sha512_context *ctx);
 +void br_sha512_update(br_sha512_context *ctx, const void *data, size_t len);
@@ -99,14 +95,14 @@ index 0000000..eda5dc8
 +void br_sha384_init(br_sha384_context *ctx);
 +void br_sha384_update(br_sha384_context *ctx, const void *data, size_t len);
 +void br_sha384_output(br_sha384_context *ctx, void *out, size_t len);
-+void br_sha384_out(br_sha384_context *ctx, void *out, size_t len);
++void br_sha384_out(br_sha384_context *ctx, void *out);
 +
-+void br_sha512_out(br_sha512_context *ctx, void *out, size_t len);
++void br_sha512_out(br_sha512_context *ctx, void *out);
 +
 +void br_md5_init(br_md5_context *ctx);
 +void br_md5_update(br_md5_context *ctx, const void *data, size_t len);
 +void br_md5_output(br_md5_context *ctx, void *out, size_t len);
-+void br_md5_out(br_md5_context *ctx, void *out, size_t len);
++void br_md5_out(br_md5_context *ctx, void *out);
 +
 +#endif /* BEARSSL_HASH_H */
 diff --git a/libkern/os/log.c b/libkern/os/log.c
