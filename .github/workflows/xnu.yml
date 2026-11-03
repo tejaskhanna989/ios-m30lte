@@ -101,7 +101,8 @@ jobs:
       - name: Build XNU kernel
         run: |
           cd xnu-source
-          make -k -j8 VERBOSE=YES build \
+          # First try just setup to see the error
+          make -j8 VERBOSE=YES do_build_setup \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
             SRCROOT="$PWD" \
@@ -117,10 +118,9 @@ jobs:
             SYSCTL_HW_LOGICALCPU="" \
             KERNEL_BUILDS_IN_PARALLEL=1 \
             BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
-            2>&1 | tee /tmp/xnu-build.log | tail -100 || true
-          echo "=== Kernel artifacts ==="
-          find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
-          find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
+            2>&1 | tee /tmp/xnu-setup.log | tail -80 || true
+          echo "=== Setup done ==="
+          ls -la BUILD/obj/makedefs/ 2>/dev/null | head -10 || echo "No makedefs dir"
 
       - name: Collect kernel artifact
         if: always()
