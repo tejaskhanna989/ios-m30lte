@@ -86,15 +86,12 @@ jobs:
         run: |
           # DXB's build.sh applies patches with git apply, which is strict and skips
           # patches that don't apply cleanly (e.g. 0004 after DXB's sed modifications to MakeInc.def).
-          # Re-apply all patches using patch -p1 (more forgiving), then build the kernel.
+          # Re-apply all patches using patch -p1 --forward (skips already-applied patches),
+          # then build the kernel.
           for patch in ../patches/00*.patch; do
             name=$(basename "$patch")
-            if patch -p1 --no-backup-if-mismatch --dry-run < "$patch" >/dev/null 2>&1; then
-              echo "Applying: $name"
-              patch -p1 --no-backup-if-mismatch < "$patch" 2>&1 | tail -3 || true
-            else
-              echo "SKIP (dry-run failed): $name"
-            fi
+            echo "Applying: $name"
+            patch -p1 --no-backup-if-mismatch --forward < "$patch" 2>&1 | tail -3 || true
           done
           # Build the actual XNU Mach-O kernel via do_build_all
           make build_all -j8 VERBOSE=YES \
