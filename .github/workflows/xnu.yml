@@ -68,6 +68,36 @@ jobs:
             patch -p1 --no-backup-if-mismatch --forward < "$patch" 2>&1 | tail -3 || true
           done
 
+      - name: Build bootstrap_cmds (mig)
+        run: |
+          cd xnu-source
+          BOOTSTRAP_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json" | jq -r '.projects[] | select(.project=="bootstrap_cmds") | .tag')
+          git clone --branch "${BOOTSTRAP_VERSION}" --depth 1 https://github.com/apple-oss-distributions/bootstrap_cmds.git bootstrap_cmds
+          cd bootstrap_cmds
+          sed -i '' 's|-o root -g wheel||g' xcodescripts/install-mig.sh
+          xcodebuild install -sdk macosx -project mig.xcodeproj ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/bootstrap_cmds.obj" SYMROOT="$PWD/../BUILD/bootstrap_cmds.sym" DSTROOT="$PWD/../fakeroot" RC_ProjectNameAndSourceVersion="${BOOTSTRAP_VERSION}" 2>&1 | tail -20 || true
+
+      - name: Build dtrace (ctf tools)
+        run: |
+          cd xnu-source
+          DTRACE_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json" | jq -r '.projects[] | select(.project=="dtrace") | .tag')
+          git clone --branch "${DTRACE_VERSION}" --depth 1 https://github.com/apple-oss-distributions/dtrace.git dtrace
+          cd dtrace
+          xcodebuild install -sdk macosx -target ctfconvert -target ctfdump -target ctfmerge ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/dtrace.obj" SYMROOT="$PWD/../BUILD/dtrace.sym" DSTROOT="$PWD/../fakeroot" 2>&1 | tail -20 || true
+
+      - name: Build availability versions
+        run: |
+          cd xnu-source
+          AVAILABILITYVERSIONS_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json" | jq -r '.projects[] | select(.project=="AvailabilityVersions") | .tag')
+          git clone --branch "${AVAILABILITYVERSIONS_VERSION}" --depth 1 https://github.com/apple-oss-distributions/AvailabilityVersions.git AvailabilityVersions
+          cd AvailabilityVersions
+          make install -j8 OBJROOT="$PWD/../BUILD/" SYMROOT="$PWD/../BUILD/" DSTROOT="$PWD/../fakeroot" 2>&1 | tail -20 || true
+
+      - name: Install xnu headers
+        run: |
+          cd xnu-source
+          make installhdrs -j8 SDKROOT=macosx ARCH_CONFIGS="X86_64 ARM64" OBJROOT="$PWD/BUILD/xnu-hdrs.obj" SYMROOT="$PWD/BUILD/xnu-hdrs.sym" DSTROOT="$PWD/fakeroot" FAKEROOT_DIR="$PWD/fakeroot" KDKROOT="/Library/Developer/KDKs" TIGHTBEAMC="" RC_DARWIN_KERNEL_VERSION="22.6.0" MEMORY_SIZE="" SYSCTL_HW_PHYSICALCPU="" SYSCTL_HW_LOGICALCPU="" KERNEL_BUILDS_IN_PARALLEL=1 2>&1 | tail -20 || true
+
       - name: Build XNU kernel
         run: |
           cd xnu-source
@@ -78,6 +108,14 @@ jobs:
             OBJROOT="$PWD/BUILD/obj" \
             SYMROOT="$PWD/BUILD/sym" \
             DSTROOT="$PWD/BUILD/dst" \
+            FAKEROOT_DIR="$PWD/fakeroot" \
+            KDKROOT="/Library/Developer/KDKs" \
+            TIGHTBEAMC="" \
+            RC_DARWIN_KERNEL_VERSION="22.6.0" \
+            MEMORY_SIZE="" \
+            SYSCTL_HW_PHYSICALCPU="" \
+            SYSCTL_HW_LOGICALCPU="" \
+            KERNEL_BUILDS_IN_PARALLEL=1 \
             BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
             2>&1 | tee /tmp/xnu-build.log | tail -100 || true
           echo "=== Kernel artifacts ==="
