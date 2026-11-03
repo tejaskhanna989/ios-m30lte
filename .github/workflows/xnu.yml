@@ -148,6 +148,18 @@ jobs:
             echo "KERNEL BUILD FAILED with exit code $BUILD_EXIT"
             exit $BUILD_EXIT
           fi
+
+      - name: Upload build log
+        if: always()
+        run: |
+          cp /tmp/xnu-build.log xnu-build.log 2>/dev/null || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xnu-build-log
+          path: xnu-build.log
+          if-no-files-found: warn
           echo "=== Errors in build log ==="
           grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found" /tmp/xnu-build.log | head -20 || echo "No errors found in log"
           echo "=== Kernel artifacts ==="
