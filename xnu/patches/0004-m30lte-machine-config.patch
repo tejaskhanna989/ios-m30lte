@@ -1,9 +1,9 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 new file mode 100644
-index 0000000..db42bce
+index 0000000..953e635
 --- /dev/null
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,18 @@
 +#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
 +#define _OS_FIREHOSE_BUFFER_PRIVATE_H
 +
@@ -11,6 +11,12 @@ index 0000000..db42bce
 +#include <stddef.h>
 +
 +/* firehose_tracepoint_t and firehose_buffer_t are defined elsewhere in XNU */
++
++/* Forward declarations */
++typedef void *firehose_tracepoint_t;
++typedef void *firehose_buffer_t;
++
++#define FIREHOSE_BUFFER_KERNEL_CHUNK_COUNT 16
 +
 +firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(firehose_buffer_t *fb, unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
 +void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp, int flush);
@@ -106,18 +112,26 @@ index 0000000..eda5dc8
 +
 +#endif /* BEARSSL_HASH_H */
 diff --git a/libkern/os/log.c b/libkern/os/log.c
-index 74d54c8..953d4f9 100644
+index 74d54c8..ae53e82 100644
 --- a/libkern/os/log.c
 +++ b/libkern/os/log.c
-@@ -30,7 +30,7 @@
+@@ -623,13 +623,14 @@ _firehose_trace(firehose_stream_t stream, firehose_tracepoint_id_u ftid,
+ 	const size_t __assert_only _firehose_chunk_payload_size = sizeof(((struct firehose_chunk_s *)0)->fc_data);
+ 	assert((ft_size + datalen) <= _firehose_chunk_payload_size);
  
- #include <firehose/tracepoint_private.h>
- #include <firehose/chunk_private.h>
--#include <os/firehose_buffer_private.h>
-+/* firehose_buffer_private.h not available in M30LTE build */
- #include <os/firehose.h>
+-	firehose_tracepoint_t ft = __firehose_buffer_tracepoint_reserve(stamp, stream, (uint16_t)datalen, 0, NULL);
++	/* firehose not available in M30LTE build */
++    firehose_tracepoint_t ft = NULL;
  
- #include <os/log_private.h>
+ 	if (fastpath(ft)) {
+ 		oslog_boot_done = true;
+ 
+ 		memcpy(ft->ft_data, data, datalen);
+-		__firehose_buffer_tracepoint_flush(ft, ftid);
++		/* firehose_tracepoint_flush not available in M30LTE build */
+ 
+ 		if (stream == firehose_stream_metadata) {
+ 			counter_inc(&oslog_p_metadata_saved_msgcount);
 diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
 index 5bd6f23..71d4797 100644
 --- a/makedefs/MakeInc.def
@@ -247,7 +261,7 @@ index e5336e5..0cfbf7d 100644
  #if (!CONFIG_KERNEL_INTEGRITY || (CONFIG_KERNEL_INTEGRITY && !defined(KERNEL_INTEGRITY_WT)))
  	/* Watchtower
 diff --git a/pexpert/arm/pe_fiq.c b/pexpert/arm/pe_fiq.c
-index 3ad743f..1d8f141 100644
+index 3ad743f..b72de1e 100644
 --- a/pexpert/arm/pe_fiq.c
 +++ b/pexpert/arm/pe_fiq.c
 @@ -3,6 +3,7 @@
@@ -341,8 +355,7 @@ index 3ad743f..1d8f141 100644
  	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
  	gicd_ctlr |= GICD_CTLR_ENABLEGRP0;
  	gicd_write32(GICD_CTLR, gicd_ctlr);
--	__builtin_arm_wsr64("ICC_IGRPEN0_EL1", 1);
-+	__builtin_arm_wsr64("ICC_IGRPEN0_EL1", 1)
+ 	__builtin_arm_wsr64("ICC_IGRPEN0_EL1", 1);
  	__builtin_arm_isb(ISB_SY);
 +#endif
  }
