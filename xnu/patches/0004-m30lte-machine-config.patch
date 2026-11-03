@@ -145,7 +145,7 @@ index 0000000..ae537ea
 +
 +#endif /* BEARSSL_HASH_H */
 diff --git a/libkern/os/log.c b/libkern/os/log.c
-index 74d54c8..be0ae78 100644
+index 74d54c8..fe580ea 100644
 --- a/libkern/os/log.c
 +++ b/libkern/os/log.c
 @@ -30,7 +30,7 @@
@@ -174,6 +174,15 @@ index 74d54c8..be0ae78 100644
  
  		if (stream == firehose_stream_metadata) {
  			counter_inc(&oslog_p_metadata_saved_msgcount);
+@@ -752,7 +753,7 @@ __firehose_allocate(vm_offset_t *addr, vm_size_t size __unused)
+ 	// Now that we are done adding logs to this chunk, set the number of writers to 0
+ 	// Without this, logd won't flush when the page is full
+ 	firehose_boot_chunk->fc_pos.fcp_refcnt = 0;
+-	memcpy(&kernel_buffer[FIREHOSE_BUFFER_KERNEL_CHUNK_COUNT - 1], (const void *)firehose_boot_chunk, FIREHOSE_CHUNK_SIZE);
++	memcpy(&kernel_buffer[16 - 1], (const void *)firehose_boot_chunk, FIREHOSE_CHUNK_SIZE);
+ 	return;
+ }
+ // There isnt a lock held in this case.
 diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
 index 5bd6f23..71d4797 100644
 --- a/makedefs/MakeInc.def
