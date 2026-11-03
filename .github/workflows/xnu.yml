@@ -59,6 +59,11 @@ jobs:
           cd xnu-source
           git describe --tags --always
 
+      - name: Stage BearSSL dependency
+        run: |
+          cd xnu-source
+          MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-bearssl.sh || true
+
       - name: Apply M30LTE patches
         run: |
           cd xnu-source
@@ -109,13 +114,13 @@ jobs:
       - name: Build XNU kernel
         run: |
           cd xnu-source
-          set +e
+          set -e
           SYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)
           SYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
-          # Run default make target which triggers the full build pipeline via MakeInc.top
-          make -j8 VERBOSE=YES -k \
+          # Build XNU kernel (default make target builds and links kernel via MakeInc.top)
+          make -j8 VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
             SRCROOT="$PWD" \
@@ -132,12 +137,11 @@ jobs:
             KERNEL_BUILDS_IN_PARALLEL=1 \
             BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
             > /tmp/xnu-build.log 2>&1
-          BUILD_EXIT=$?
-          echo "make exit code: $BUILD_EXIT"
-          if [ $BUILD_EXIT -ne 0 ]; then
-            echo "KERNEL BUILD FAILED with exit code $BUILD_EXIT"
-            exit $BUILD_EXIT
-          fi
+          echo "=== Errors in build log ==="
+          grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found" /tmp/xnu-build.log | head -20 || echo "No errors found in log"
+          echo "=== Kernel artifacts ==="
+          find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
+          find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
           echo "=== Errors in build log ==="
           grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found" /tmp/xnu-build.log | head -20 || echo "No errors found in log"
           echo "=== Kernel artifacts ==="
