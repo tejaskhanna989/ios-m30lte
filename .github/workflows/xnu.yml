@@ -148,8 +148,12 @@ jobs:
         if: always()
         run: |
           mkdir -p out
-          KERNEL_PATH=$(find xnu-source/BUILD/obj -maxdepth 4 -name "kernel.development.m30lte" -o -name "mach_kernel" 2>/dev/null | head -1)
+          echo "=== Searching for kernel binary ==="
+          find xnu-source/BUILD/obj -name "*kernel*" -type f 2>/dev/null | head -20
+          echo "=== Checking for any kernel binary ==="
+          KERNEL_PATH=$(find xnu-source/BUILD/obj -maxdepth 5 -name "kernel.development.m30lte" -o -name "mach_kernel" -o -name "kernel" 2>/dev/null | head -1)
           if [ -n "$KERNEL_PATH" ]; then
+            echo "Found kernel at: $KERNEL_PATH"
             cp "$KERNEL_PATH" out/kernel.development.m30lte
           fi
           ls -la out
