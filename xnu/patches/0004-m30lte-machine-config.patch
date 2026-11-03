@@ -248,7 +248,7 @@ index 133b07f..af5fe1a 100644
  
  /* I-Cache. */
 diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c
-index c40c6ea..20b9587 100644
+index c40c6ea..1dd14b9 100644
 --- a/osfmk/arm64/sleh.c
 +++ b/osfmk/arm64/sleh.c
 @@ -32,6 +32,7 @@
@@ -259,11 +259,10 @@ index c40c6ea..20b9587 100644
  #include <arm/trap.h> /* for IS_ARM_GDB_TRAP() et al */
  #include <arm64/proc_reg.h>
  #include <arm64/machine_machdep.h>
-@@ -1857,7 +1858,44 @@ sleh_irq(arm_saved_state_t *state)
- 
+@@ -1858,7 +1859,45 @@ sleh_irq(arm_saved_state_t *state)
  	sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_OTHER);
  
--#if USE_APPLEARMSMP
+ #if USE_APPLEARMSMP
 +#if defined(M30LTE)
 +	/*
 +	 * m30: TrustZone owns GIC Group 0, so the timer and IPIs that other
@@ -299,12 +298,13 @@ index c40c6ea..20b9587 100644
 +		__builtin_arm_wsr64("ICC_EOIR1_EL1", iar);
 +	}
 +	__builtin_arm_isb(ISB_SY);
-+#endif
-+
++#else
 +	sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_OTHER);
  	PE_handle_ext_interrupt();
++#endif
  #else
  	/* Run the registered interrupt handler. */
+ 	cdp->interrupt_handler(cdp->interrupt_target,
 diff --git a/osfmk/arm64/start.s b/osfmk/arm64/start.s
 index e5336e5..0cfbf7d 100644
 --- a/osfmk/arm64/start.s
