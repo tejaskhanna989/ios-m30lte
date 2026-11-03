@@ -1,9 +1,9 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 new file mode 100644
-index 0000000..953e635
+index 0000000..e3dc81c
 --- /dev/null
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-@@ -0,0 +1,18 @@
+@@ -0,0 +1,16 @@
 +#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
 +#define _OS_FIREHOSE_BUFFER_PRIVATE_H
 +
@@ -11,15 +11,13 @@ index 0000000..953e635
 +#include <stddef.h>
 +
 +/* firehose_tracepoint_t and firehose_buffer_t are defined elsewhere in XNU */
-+
-+/* Forward declarations */
 +typedef void *firehose_tracepoint_t;
 +typedef void *firehose_buffer_t;
 +
 +#define FIREHOSE_BUFFER_KERNEL_CHUNK_COUNT 16
 +
-+firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(firehose_buffer_t *fb, unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
-+void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp, int flush);
++firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3, void *arg4);
++void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp);
 +
 +#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl.h b/libkern/crypto/m30_bearssl/inc/bearssl.h
