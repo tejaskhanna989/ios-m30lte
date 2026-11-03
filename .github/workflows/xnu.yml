@@ -132,7 +132,7 @@ jobs:
           BUILD_EXIT=$?
           echo "make exit code: $BUILD_EXIT"
           echo "=== Errors in build log ==="
-          grep -i "error:" /tmp/xnu-build.log | head -20 || echo "No errors found in log"
+          grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found" /tmp/xnu-build.log | head -20 || echo "No errors found in log"
           echo "=== Kernel artifacts ==="
           find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
           find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
