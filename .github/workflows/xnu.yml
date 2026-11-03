@@ -71,7 +71,7 @@ jobs:
       - name: Build XNU kernel
         run: |
           cd xnu-source
-          make build_all -j8 VERBOSE=YES \
+          make build -j8 VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
             SRCROOT="$PWD" \
