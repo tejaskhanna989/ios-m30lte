@@ -120,7 +120,7 @@ jobs:
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
           # Build XNU kernel (default make target builds and links kernel via MakeInc.top)
-          make -j8 VERBOSE=YES \
+          make -j1 VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
             SRCROOT="$PWD" \
