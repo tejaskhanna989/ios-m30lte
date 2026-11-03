@@ -55,13 +55,13 @@ jobs:
 
       - name: Clone XNU
         run: |
-          git clone --branch xnu-8796.141.3 --depth 1 https://github.com/apple-oss-distributions/xnu.git xnu
-          cd xnu
+          git clone --branch xnu-8796.141.3 --depth 1 https://github.com/apple-oss-distributions/xnu.git xnu-source
+          cd xnu-source
           git describe --tags --always
 
       - name: Apply M30LTE patches
         run: |
-          cd xnu
+          cd xnu-source
           for patch in ../xnu/patches/00*.patch; do
             name=$(basename "$patch")
             echo "Applying: $name"
@@ -70,7 +70,7 @@ jobs:
 
       - name: Build XNU kernel
         run: |
-          cd xnu
+          cd xnu-source
           make build_all -j8 VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
@@ -88,7 +88,7 @@ jobs:
         if: always()
         run: |
           mkdir -p out
-          KERNEL_PATH=$(find xnu/BUILD/obj -maxdepth 4 -name "kernel.development.m30lte" -o -name "mach_kernel" 2>/dev/null | head -1)
+          KERNEL_PATH=$(find xnu-source/BUILD/obj -maxdepth 4 -name "kernel.development.m30lte" -o -name "mach_kernel" 2>/dev/null | head -1)
           if [ -n "$KERNEL_PATH" ]; then
             cp "$KERNEL_PATH" out/kernel.development.m30lte
           fi
