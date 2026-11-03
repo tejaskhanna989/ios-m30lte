@@ -1,11 +1,14 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 new file mode 100644
-index 0000000..b96cf33
+index 0000000..ab51507
 --- /dev/null
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-@@ -0,0 +1,9 @@
+@@ -0,0 +1,12 @@
 +#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
 +#define _OS_FIREHOSE_BUFFER_PRIVATE_H
++
++#include <stdint.h>
++#include <stddef.h>
 +
 +/* firehose_tracepoint_t and firehose_buffer_t are defined elsewhere in XNU */
 +
@@ -55,10 +58,10 @@ index 0000000..714a440
 +#endif /* BEARSSL_HASH_H */
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
 new file mode 100644
-index 0000000..597f796
+index 0000000..ae537ea
 --- /dev/null
 +++ b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
-@@ -0,0 +1,80 @@
+@@ -0,0 +1,82 @@
 +#ifndef BEARSSL_HASH_H
 +#define BEARSSL_HASH_H
 +
@@ -66,6 +69,8 @@ index 0000000..597f796
 +#include <stdint.h>
 +
 +typedef struct br_hash_class br_hash_class;
++typedef struct br_aes_ct_cbcenc_state br_aes_ct_cbcenc_state;
++typedef struct br_aes_ct_cbcdec_state br_aes_ct_cbcdec_state;
 +
 +typedef struct {
 +    uint64_t count;
