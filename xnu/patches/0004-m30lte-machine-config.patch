@@ -1,22 +1,20 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-index ab51507..b96cf33 100644
+index ab51507..12c9fe4 100644
 --- a/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-@@ -1,9 +1,6 @@
- #ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
- #define _OS_FIREHOSE_BUFFER_PRIVATE_H
+@@ -6,6 +6,7 @@
  
--#include <stdint.h>
--#include <stddef.h>
--
  /* firehose_tracepoint_t and firehose_buffer_t are defined elsewhere in XNU */
  
++/* Declare only the functions we need from firehose_internal.h */
  firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
+ void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp);
+ 
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
-index 0cb85dd..bc6ef69 100644
+index 0cb85dd..60eb84f 100644
 --- a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
 +++ b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
-@@ -5,9 +5,11 @@
+@@ -5,15 +5,17 @@
  #include <stdint.h>
  
  typedef struct br_hash_class br_hash_class;
@@ -29,6 +27,13 @@ index 0cb85dd..bc6ef69 100644
      unsigned char buf[64];
      unsigned char val[32];
  } br_sha256_context;
+ 
+ typedef struct {
+-    unsigned char count[8];
++    uint64_t count;
+     unsigned char buf[64];
+     unsigned char val[20];
+ } br_sha1_context;
 @@ -49,7 +51,7 @@ void br_sha256_output(br_sha256_context *ctx, void *out, size_t len);
  void br_sha1_init(br_sha1_context *ctx);
  void br_sha1_update(br_sha1_context *ctx, const void *data, size_t len);
