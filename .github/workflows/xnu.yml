@@ -123,6 +123,8 @@ jobs:
           cp -R dxb/fakeroot/System/Library/Kernels/. out/ 2>/dev/null || true
           cp dxb/build/xnu.obj/DEVELOPMENT_ARM64_M30LTE/mach_kernel out/ 2>/dev/null || true
           cp dxb/build/xnu.obj/DEVELOPMENT_ARM64_M30LTE/kernel.development.m30lte out/ 2>/dev/null || true
+          # DXB build.sh writes kernel to build/xnu.obj/kernel.<config>.<machine>
+          cp dxb/build/xnu.obj/kernel.development.m30lte out/ 2>/dev/null || true
           ls -la out
           (cd out && shasum -a 256 kernel.* > SHA256SUMS) || true
 
