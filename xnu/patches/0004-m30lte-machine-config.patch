@@ -1,9 +1,9 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 new file mode 100644
-index 0000000..3fd6bde
+index 0000000..9b2f782
 --- /dev/null
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-@@ -0,0 +1,10 @@
+@@ -0,0 +1,15 @@
 +#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
 +#define _OS_FIREHOSE_BUFFER_PRIVATE_H
 +
@@ -13,7 +13,66 @@ index 0000000..3fd6bde
 +
 +typedef struct firehose_buffer firehose_buffer_t;
 +
++#define FIREHOSE_BUFFER_KERNEL_CHUNK_COUNT 16
++
++extern void __firehose_buffer_tracepoint_reserve(void);
++extern void __firehose_buffer_tracepoint_flush(void);
++
 +#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
+diff --git a/libkern/crypto/m30_bearssl/inc/bearssl.h b/libkern/crypto/m30_bearssl/inc/bearssl.h
+new file mode 100644
+index 0000000..b61d5b3
+--- /dev/null
++++ b/libkern/crypto/m30_bearssl/inc/bearssl.h
+@@ -0,0 +1,7 @@
++#ifndef BEARSSL_H
++#define BEARSSL_H
++
++#include <stddef.h>
++#include <stdint.h>
++
++#endif /* BEARSSL_H */
+diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
+new file mode 100644
+index 0000000..c64bf88
+--- /dev/null
++++ b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
+@@ -0,0 +1,35 @@
++#ifndef BEARSSL_HASH_H
++#define BEARSSL_HASH_H
++
++#include <stddef.h>
++#include <stdint.h>
++
++typedef struct {
++    unsigned char val[32];
++} br_sha256_context;
++
++typedef struct {
++    unsigned char val[20];
++} br_sha1_context;
++
++typedef struct {
++    unsigned char val[64];
++} br_sha512_context;
++
++extern const br_hash_class br_sha256_vtable;
++extern const br_hash_class br_sha1_vtable;
++extern const br_hash_class br_sha512_vtable;
++
++void br_sha256_init(br_sha256_context *ctx);
++void br_sha256_update(br_sha256_context *ctx, const void *data, size_t len);
++void br_sha256_output(br_sha256_context *ctx, void *out, size_t len);
++
++void br_sha1_init(br_sha1_context *ctx);
++void br_sha1_update(br_sha1_context *ctx, const void *data, size_t len);
++void br_sha1_output(br_sha1_context *ctx, void *out, size_t len);
++
++void br_sha512_init(br_sha512_context *ctx);
++void br_sha512_update(br_sha512_context *ctx, const void *data, size_t len);
++void br_sha512_output(br_sha512_context *ctx, void *out, size_t len);
++
++#endif /* BEARSSL_HASH_H */
 diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
 index 5bd6f23..71d4797 100644
 --- a/makedefs/MakeInc.def
