@@ -67,6 +67,9 @@ jobs:
             echo "Applying: $name"
             patch -p1 --no-backup-if-mismatch --forward < "$patch" 2>&1 | tail -3 || true
           done
+          # Verify M30LTE.h exists (new file from patch 0004)
+          ls -la pexpert/pexpert/arm64/M30LTE.h 2>&1 || echo "M30LTE.h NOT FOUND - creating from patch"
+          cat ../xnu/patches/0004-m30lte-machine-config.patch | grep -A 50 "M30LTE.h" | head -60 || true
           # DXB fix: availability.pl path in make_symbol_aliasing.sh
           sed -i '' 's|^AVAILABILITY_PL="${SDKROOT}/${DRIVERKITROOT}|AVAILABILITY_PL="${FAKEROOT_DIR}|g' bsd/sys/make_symbol_aliasing.sh 2>/dev/null || true
 
