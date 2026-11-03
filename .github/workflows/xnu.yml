@@ -97,7 +97,12 @@ jobs:
             echo "Applying: $name"
             patch -p1 --no-backup-if-mismatch --forward < "$patch" 2>&1 | tail -3 || true
           done
+          # Check that MakeInc files exist in objroot
+          echo "=== Checking MakeInc files ==="
+          ls -la ../../build/xnu.obj/makedefs/ 2>/dev/null || echo "No makedefs in objroot"
+          ls -la ../../build/xnu.obj/DEVELOPMENT_ARM64_M30LTE/makedefs/ 2>/dev/null || echo "No config makedefs"
           # Rebuild the kernel now that all patches are applied
+          set +e
           make build_all install -j8 VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
@@ -107,7 +112,13 @@ jobs:
             DSTROOT="$PWD/../fakeroot" \
             FAKEROOT_DIR="$PWD/../fakeroot" \
             BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
-            2>&1 | tee /tmp/xnu-build-all.log | tail -80 || true
+            > /tmp/xnu-build-all.log 2>&1
+          BUILD_EXIT=$?
+          echo "make build_all install exit code: $BUILD_EXIT"
+          echo "=== Build log (last 60 lines) ==="
+          tail -60 /tmp/xnu-build-all.log
+          echo "=== Build log (first 40 lines) ==="
+          head -40 /tmp/xnu-build-all.log
           echo "=== Kernel artifacts ==="
           find ../../build/xnu.obj -name "kernel.*" -type f 2>/dev/null | head -10
           find ../../build/xnu.obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
