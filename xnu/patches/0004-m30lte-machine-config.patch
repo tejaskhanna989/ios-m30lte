@@ -1,135 +1,64 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-new file mode 100644
-index 0000000..b96cf33
---- /dev/null
+index ab51507..c4b2264 100644
+--- a/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-@@ -0,0 +1,9 @@
-+#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
-+#define _OS_FIREHOSE_BUFFER_PRIVATE_H
-+
+@@ -6,6 +6,8 @@
+ 
+ /* firehose_tracepoint_t and firehose_buffer_t are defined elsewhere in XNU */
+ 
 +/* firehose_tracepoint_t and firehose_buffer_t are defined elsewhere in XNU */
 +
-+firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
-+void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp);
-+
-+#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
-diff --git a/libkern/crypto/m30_bearssl/inc/bearssl.h b/libkern/crypto/m30_bearssl/inc/bearssl.h
-new file mode 100644
-index 0000000..b61d5b3
---- /dev/null
-+++ b/libkern/crypto/m30_bearssl/inc/bearssl.h
-@@ -0,0 +1,7 @@
-+#ifndef BEARSSL_H
-+#define BEARSSL_H
-+
-+#include <stddef.h>
-+#include <stdint.h>
-+
-+#endif /* BEARSSL_H */
-diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_block.h b/libkern/crypto/m30_bearssl/inc/bearssl_block.h
-new file mode 100644
-index 0000000..714a440
---- /dev/null
-+++ b/libkern/crypto/m30_bearssl/inc/bearssl_block.h
-@@ -0,0 +1,21 @@
-+#ifndef BEARSSL_BLOCK_H
-+#define BEARSSL_HASH_H
-+
-+#include <stddef.h>
-+#include <stdint.h>
-+
-+typedef struct br_hash_class br_hash_class;
-+
-+typedef struct {
-+    uint64_t count;
-+    unsigned char buf[64];
-+    unsigned char val[32];
-+} br_sha256_context;
-+
-+extern const br_hash_class br_sha256_vtable;
-+
-+void br_sha256_init(br_sha256_context *ctx);
-+void br_sha256_update(br_sha256_context *ctx, const void *data, size_t len);
-+void br_sha256_output(br_sha256_context *ctx, void *out, size_t len);
-+
-+#endif /* BEARSSL_HASH_H */
+ firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
+ void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp);
+ 
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
-new file mode 100644
-index 0000000..ae537ea
---- /dev/null
+index 0cb85dd..60eb84f 100644
+--- a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
 +++ b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
-@@ -0,0 +1,82 @@
-+#ifndef BEARSSL_HASH_H
-+#define BEARSSL_HASH_H
-+
-+#include <stddef.h>
-+#include <stdint.h>
-+
-+typedef struct br_hash_class br_hash_class;
+@@ -5,15 +5,17 @@
+ #include <stdint.h>
+ 
+ typedef struct br_hash_class br_hash_class;
 +typedef struct br_aes_ct_cbcenc_state br_aes_ct_cbcenc_state;
 +typedef struct br_aes_ct_cbcdec_state br_aes_ct_cbcdec_state;
-+
-+typedef struct {
+ 
+ typedef struct {
+-    unsigned char count[8];
 +    uint64_t count;
-+    unsigned char buf[64];
-+    unsigned char val[32];
-+} br_sha256_context;
-+
-+typedef struct {
+     unsigned char buf[64];
+     unsigned char val[32];
+ } br_sha256_context;
+ 
+ typedef struct {
+-    unsigned char count[8];
 +    uint64_t count;
-+    unsigned char buf[64];
-+    unsigned char val[20];
-+} br_sha1_context;
-+
-+typedef struct {
-+    uint64_t count;
-+    unsigned char buf[128];
-+    unsigned char val[64];
-+} br_sha512_context;
-+
-+typedef struct {
-+    uint64_t count;
-+    unsigned char buf[128];
-+    unsigned char val[48];
-+} br_sha384_context;
-+
-+typedef struct {
-+    uint64_t count;
-+    unsigned char buf[64];
-+    unsigned char val[16];
-+} br_md5_context;
-+
-+extern const br_hash_class br_sha256_vtable;
-+extern const br_hash_class br_sha1_vtable;
-+extern const br_hash_class br_sha512_vtable;
-+extern const br_hash_class br_sha384_vtable;
-+extern const br_hash_class br_md5_vtable;
-+
-+void br_sha256_init(br_sha256_context *ctx);
-+void br_sha256_update(br_sha256_context *ctx, const void *data, size_t len);
-+void br_sha256_output(br_sha256_context *ctx, void *out, size_t len);
-+
-+void br_sha1_init(br_sha1_context *ctx);
-+void br_sha1_update(br_sha1_context *ctx, const void *data, size_t len);
-+void br_sha1_output(br_sha1_context *ctx, void *out, size_t len);
-+void br_sha1_out(br_sha1_context *ctx, void *out);
-+
-+void br_sha512_init(br_sha512_context *ctx);
-+void br_sha512_update(br_sha512_context *ctx, const void *data, size_t len);
-+void br_sha512_output(br_sha512_context *ctx, void *out, size_t len);
-+
-+void br_sha384_init(br_sha384_context *ctx);
-+void br_sha384_update(br_sha384_context *ctx, const void *data, size_t len);
-+void br_sha384_output(br_sha384_context *ctx, void *out, size_t len);
-+void br_sha384_out(br_sha384_context *ctx, void *out);
-+
-+void br_sha512_out(br_sha512_context *ctx, void *out);
-+
-+void br_md5_init(br_md5_context *ctx);
-+void br_md5_update(br_md5_context *ctx, const void *data, size_t len);
-+void br_md5_output(br_md5_context *ctx, void *out, size_t len);
-+void br_md5_out(br_md5_context *ctx, void *out);
-+
+     unsigned char buf[64];
+     unsigned char val[20];
+ } br_sha1_context;
+@@ -49,7 +51,7 @@ void br_sha256_output(br_sha256_context *ctx, void *out, size_t len);
+ void br_sha1_init(br_sha1_context *ctx);
+ void br_sha1_update(br_sha1_context *ctx, const void *data, size_t len);
+ void br_sha1_output(br_sha1_context *ctx, void *out, size_t len);
+-void br_sha1_out(br_sha1_context *ctx, void *out);
++void br_sha1_out(br_sha1_context *ctx, void *out, size_t len);
+ 
+ void br_sha512_init(br_sha512_context *ctx);
+ void br_sha512_update(br_sha512_context *ctx, const void *data, size_t len);
+@@ -58,13 +60,23 @@ void br_sha512_output(br_sha512_context *ctx, void *out, size_t len);
+ void br_sha384_init(br_sha384_context *ctx);
+ void br_sha384_update(br_sha384_context *ctx, const void *data, size_t len);
+ void br_sha384_output(br_sha384_context *ctx, void *out, size_t len);
+-void br_sha384_out(br_sha384_context *ctx, void *out);
++void br_sha384_out(br_sha384_context *ctx, void *out, size_t len);
+ 
+-void br_sha512_out(br_sha512_context *ctx, void *out);
++void br_sha512_out(br_sha512_context *ctx, void *out, size_t len);
+ 
+ void br_md5_init(br_md5_context *ctx);
+ void br_md5_update(br_md5_context *ctx, const void *data, size_t len);
+ void br_md5_output(br_md5_context *ctx, void *out, size_t len);
+ void br_md5_out(br_md5_context *ctx, void *out);
+ 
 +void br_aes_ct_cbcenc_init(br_aes_ct_cbcenc_state *ctx, const unsigned char *key, size_t len);
 +void br_aes_ct_cbcenc_update(br_aes_ct_cbcenc_state *ctx, const void *data, size_t len);
 +void br_aes_ct_cbcenc_out(br_aes_ct_cbcenc_state *ctx, void *out, size_t len);
@@ -140,408 +69,4 @@ index 0000000..ae537ea
 +void br_aes_ct_cbcdec_out(br_aes_ct_cbcdec_state *ctx, void *out, size_t len);
 +void br_aes_ct_cbcdec_keys(const unsigned char *key, size_t len, void *out);
 +
-+#endif /* BEARSSL_HASH_H */
-diff --git a/libkern/os/log.c b/libkern/os/log.c
-index 74d54c8..fe580ea 100644
---- a/libkern/os/log.c
-+++ b/libkern/os/log.c
-@@ -30,7 +30,7 @@
- 
- #include <firehose/tracepoint_private.h>
- #include <firehose/chunk_private.h>
--#include <os/firehose_buffer_private.h>
-+/* firehose_buffer_private.h not available in M30LTE build */
- #include <os/firehose.h>
- 
- #include <os/log_private.h>
-@@ -623,13 +623,14 @@ _firehose_trace(firehose_stream_t stream, firehose_tracepoint_id_u ftid,
- 	const size_t __assert_only _firehose_chunk_payload_size = sizeof(((struct firehose_chunk_s *)0)->fc_data);
- 	assert((ft_size + datalen) <= _firehose_chunk_payload_size);
- 
--	firehose_tracepoint_t ft = __firehose_buffer_tracepoint_reserve(stamp, stream, (uint16_t)datalen, 0, NULL);
-+	/* firehose not available in M30LTE build */
-+    firehose_tracepoint_t ft = NULL;
- 
- 	if (fastpath(ft)) {
- 		oslog_boot_done = true;
- 
- 		memcpy(ft->ft_data, data, datalen);
--		__firehose_buffer_tracepoint_flush(ft, ftid);
-+		/* firehose_tracepoint_flush not available in M30LTE build */
- 
- 		if (stream == firehose_stream_metadata) {
- 			counter_inc(&oslog_p_metadata_saved_msgcount);
-@@ -752,7 +753,7 @@ __firehose_allocate(vm_offset_t *addr, vm_size_t size __unused)
- 	// Now that we are done adding logs to this chunk, set the number of writers to 0
- 	// Without this, logd won't flush when the page is full
- 	firehose_boot_chunk->fc_pos.fcp_refcnt = 0;
--	memcpy(&kernel_buffer[FIREHOSE_BUFFER_KERNEL_CHUNK_COUNT - 1], (const void *)firehose_boot_chunk, FIREHOSE_CHUNK_SIZE);
-+	memcpy(&kernel_buffer[16 - 1], (const void *)firehose_boot_chunk, FIREHOSE_CHUNK_SIZE);
- 	return;
- }
- // There isnt a lock held in this case.
-diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
-index 5bd6f23..71d4797 100644
---- a/makedefs/MakeInc.def
-+++ b/makedefs/MakeInc.def
-@@ -29,7 +29,7 @@ SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
- else ifneq ($(findstring _host,$(RC_ProjectName)),)
- SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
- else
--SUPPORTED_ARM64_MACHINE_CONFIGS = BCM2837 T6000 T8101 T8103 VMAPPLE
-+SUPPORTED_ARM64_MACHINE_CONFIGS = BCM2837 T6000 T8101 T8103 VMAPPLE M30LTE
- 
- endif
- 
-@@ -61,6 +61,7 @@ MACHINE_FLAGS_ARM64_T8103 = -DARM64_BOARD_CONFIG_T8103                  -mcpu=ap
- MACHINE_FLAGS_ARM64_T6000 = -DARM64_BOARD_CONFIG_T6000 		-mcpu=apple-a14
- MACHINE_FLAGS_ARM64_VMAPPLE = -DARM64_BOARD_CONFIG_VMAPPLE              -march=armv8.5a
- MACHINE_FLAGS_ARM64_BCM2837 = -DARM64_BOARD_CONFIG_BCM2837
-+MACHINE_FLAGS_ARM64_M30LTE = -DARM64_BOARD_CONFIG_M30LTE                -arch arm64 -march=armv8-a+crypto
- 
- 
- #
-@@ -259,8 +260,11 @@ ifeq ($(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG),)
- # Without embdedded device map, use a default arch string
- export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := $(shell echo $(CURRENT_ARCH_CONFIG) | tr A-Z a-z)
- ifneq ($(filter arm64,$(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG)),)
-+# m30's Cortex-A73/A53 have no pointer authentication: stay plain arm64
-+ifneq ($(CURRENT_MACHINE_CONFIG),M30LTE)
- export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := arm64e
- endif
-+endif
- 
- endif
- 
-diff --git a/osfmk/arm64/proc_reg.h b/osfmk/arm64/proc_reg.h
-index 133b07f..af5fe1a 100644
---- a/osfmk/arm64/proc_reg.h
-+++ b/osfmk/arm64/proc_reg.h
-@@ -213,6 +213,14 @@
- /* D-Cache. */
- #define MMU_CLINE   6
- 
-+#elif defined (M30LTE) /* Samsung Exynos 7904: Cortex-A73 + Cortex-A53, ARMv8.0 */
-+
-+/* I-Cache. */
-+#define MMU_I_CLINE 6
-+
-+/* D-Cache. */
-+#define MMU_CLINE   6
-+
- #elif defined (VMAPPLE)
- 
- /* I-Cache. */
-diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c
-index c40c6ea..20b9587 100644
---- a/osfmk/arm64/sleh.c
-+++ b/osfmk/arm64/sleh.c
-@@ -32,6 +32,7 @@
- #include <arm/misc_protos.h>
- #include <arm/thread.h>
- #include <arm/rtclock.h>
-+#include <arm/machine_cpu.h>
- #include <arm/trap.h> /* for IS_ARM_GDB_TRAP() et al */
- #include <arm64/proc_reg.h>
- #include <arm64/machine_machdep.h>
-@@ -1857,7 +1858,44 @@ sleh_irq(arm_saved_state_t *state)
- 
- 	sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_OTHER);
- 
--#if USE_APPLEARMSMP
-+#if defined(M30LTE)
-+	/*
-+	 * m30: TrustZone owns GIC Group 0, so the timer and IPIs that other
-+	 * ARM64 targets take as FIQs arrive here as Group 1 IRQs.
-+	 */
-+	uint64_t iar = __builtin_arm_rsr64("ICC_IAR1_EL1");
-+	uint32_t intid = (uint32_t)(iar & 0xFFFFFF);
-+
-+	if (intid >= 1020 && intid <= 1023) {
-+		return; /* spurious */
-+	}
-+	if (intid == m30_vtimer_intid) {
-+		sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_TIMER);
-+		cdp->cpu_decrementer = -1; /* Large */
-+		INTERRUPT_MASKED_DEBUG_START(rtclock_intr, DBG_INTR_TYPE_TIMER);
-+		rtclock_intr(TRUE);
-+		INTERRUPT_MASKED_DEBUG_END();
-+		__builtin_arm_wsr64("ICC_EOIR1_EL1", iar);
-+	} else if (intid < 16) {
-+		sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_IPI);
-+		/* Ack before handling so an IPI raised meanwhile is not lost */
-+		__builtin_arm_wsr64("ICC_EOIR1_EL1", iar);
-+		__builtin_arm_isb(ISB_SY);
-+		cpu_signal_handler();
-+	} else {
-+		sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_OTHER);
-+		if (cdp->interrupt_handler) {
-+			cdp->interrupt_handler(cdp->interrupt_target,
-+			    cdp->interrupt_refCon,
-+			    cdp->interrupt_nub,
-+			    intid);
-+		}
-+		__builtin_arm_wsr64("ICC_EOIR1_EL1", iar);
-+	}
-+	__builtin_arm_isb(ISB_SY);
-+#endif
-+
-+	sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_OTHER);
- 	PE_handle_ext_interrupt();
- #else
- 	/* Run the registered interrupt handler. */
-diff --git a/osfmk/arm64/start.s b/osfmk/arm64/start.s
-index e5336e5..0cfbf7d 100644
---- a/osfmk/arm64/start.s
-+++ b/osfmk/arm64/start.s
-@@ -745,11 +745,11 @@ common_start:
- 	MSR_SCTLR_EL1_X0
- 	isb		sy
- 
--#if !VMAPPLE
-+#if !VMAPPLE && !defined(M30LTE)
- 	MOV64   x1, SCTLR_EL1_DEFAULT
- 	cmp		x0, x1
- 	bne		.
--#endif /* !VMAPPLE */
-+#endif /* !VMAPPLE && !M30LTE */
- 
- #if (!CONFIG_KERNEL_INTEGRITY || (CONFIG_KERNEL_INTEGRITY && !defined(KERNEL_INTEGRITY_WT)))
- 	/* Watchtower
-diff --git a/pexpert/arm/pe_fiq.c b/pexpert/arm/pe_fiq.c
-index 3ad743f..b72de1e 100644
---- a/pexpert/arm/pe_fiq.c
-+++ b/pexpert/arm/pe_fiq.c
-@@ -3,6 +3,7 @@
-  */
- 
- #include <stdint.h>
-+#include <libkern/section_keywords.h>
- #include <arm64/proc_reg.h>
- #include <kern/clock.h>
- #include <mach/mach_time.h>
-@@ -16,6 +17,11 @@
- #define GICR_WAKE_TIMEOUT_NS (1000000000ULL) // timeout for redistributor wakeup (default 1s)
- MACHINE_TIMEOUT(gicr_wake_timeout_ns, "gicr-wake-timeout", GICR_WAKE_TIMEOUT_NS, MACHINE_TIMEOUT_UNIT_NSEC, NULL);
- 
-+#if defined(M30LTE)
-+/* Phone default; QEMU virt wires the architected virtual timer to INTID 27. */
-+SECURITY_READ_ONLY_LATE(uint32_t) m30_vtimer_intid = M30LTE_VTIMER_INTID;
-+#endif
-+
- static vm_offset_t gicd_base;
- static vm_offset_t gicr_base;
- static vm_offset_t gicr_size;
-@@ -118,6 +124,23 @@ pe_init_fiq()
- 		}
- 
- 		gicr_size = gicr_size_prop;
-+
-+#if defined(M30LTE)
-+	/* Read only on the boot CPU, before the GIC and RO-late lockdown. */
-+	void const *timer_prop;
-+	unsigned int timer_size;
-+	if (SecureDTGetProperty(entry, "virtual-timer-intid", &timer_prop, &timer_size) == kSuccess) {
-+		if (timer_size != sizeof(uint32_t)) {
-+			panic("%s: invalid virtual-timer-intid size %u", __func__, timer_size);
-+		}
-+		uint32_t intid = *(const uint32_t *)timer_prop;
-+		if (intid < 16 || intid >= 32) {
-+			panic("%s: virtual timer INTID %u is not a PPI", __func__, intid);
-+		}
-+		m30_vtimer_intid = intid;
-+	}
-+	kprintf("M30LTE GIC: virtual timer INTID %u\n", m30_vtimer_intid);
-+#endif
- 	}
- 
- 	// Find the redistributor for this processor
-@@ -141,11 +164,15 @@ pe_init_fiq()
- 		}
- 	}
- 
-+#if defined(M30LTE)
-+	gicr_write32(GICR_ISENABLER0, (1U << m30_vtimer_intid) | (1U << M30LTE_IPI_SGI));
-+#else
- 	// Configure timers and legacy FIQ to be group 0
- 	gicr_write32(GICR_IGROUPR0, 0x81FFFFFF);
- 
- 	// Enable PPI 27
- 	gicr_write32(GICR_ISENABLER0, (1 << 27));
-+#endif
- 
- 	// Enable system register access
- 	uint64_t icc_sre = __builtin_arm_rsr64("ICC_SRE_EL1");
-@@ -154,7 +181,11 @@ pe_init_fiq()
- 	__builtin_arm_isb(ISB_SY);
- 
- 	// Set priority masks and binary point for group 0
-+	#if defined(M30LTE)
-+	__builtin_arm_wsr64("ICC_BPR1_EL1", 0);
-+#else
- 	__builtin_arm_wsr64("ICC_BPR0_EL1", 0);
-+#endif
- 	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF);
- 
- 	// Set EOI mode of this processor
-@@ -162,12 +193,24 @@ pe_init_fiq()
- 	icc_ctlr &= ~ICC_CTLR_EOIMODE;
- 	__builtin_arm_wsr64("ICC_CTLR_EL1", icc_ctlr);
- 
-+#if defined(M30LTE)
-+	// ABL leaves only ARE_NS set; Linux writes ARE_NS | EnableGrp1A | EnableGrp1
-+	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
-+	gicd_ctlr |= GICD_CTLR_ARE_NS | GICD_CTLR_ENABLEGRP1A | GICD_CTLR_ENABLEGRP1;
-+	gicd_write32(GICD_CTLR, gicd_ctlr);
-+	while (gicd_read32(GICD_CTLR) & GICD_CTLR_RWP) {
-+		;
-+	}
-+	__builtin_arm_wsr64("ICC_IGRPEN1_EL1", 1);
-+	__builtin_arm_isb(ISB_SY);
-+#else
- 	// Enable the forwarding of the vtimer interrupt
- 	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
- 	gicd_ctlr |= GICD_CTLR_ENABLEGRP0;
- 	gicd_write32(GICD_CTLR, gicd_ctlr);
- 	__builtin_arm_wsr64("ICC_IGRPEN0_EL1", 1);
- 	__builtin_arm_isb(ISB_SY);
-+#endif
- }
- #else
- void
-diff --git a/pexpert/pexpert/arm/protos.h b/pexpert/pexpert/arm/protos.h
-index 404b50b..32ad6e7 100644
---- a/pexpert/pexpert/arm/protos.h
-+++ b/pexpert/pexpert/arm/protos.h
-@@ -36,6 +36,9 @@ void uart_putc_options(char, bool);
- int uart_getc(void);
- 
- void pe_init_fiq(void);
-+#if defined(ARM64_BOARD_CONFIG_M30LTE)
-+extern uint32_t m30_vtimer_intid;
-+#endif
- 
- #ifdef PRIVATE
- /**
-diff --git a/pexpert/pexpert/arm64/M30LTE.h b/pexpert/pexpert/arm64/M30LTE.h
-new file mode 100644
-index 0000000..32b813a
---- /dev/null
-+++ b/pexpert/pexpert/arm64/M30LTE.h
-@@ -0,0 +1,81 @@
-+/*
-+ * Copyright (c) 2024 Apple Inc. All rights reserved.
-+ *
-+ * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
-+ *
-+ * This file contains Original Code and/or Modifications of Original Code
-+ * as defined in and that are subject to the Apple Public Source License
-+ * Version 2.0 (the 'License'). You may not use this file except in
-+ * compliance with the License. The rights granted to you under the License
-+ * may not be used to create or distribute modified versions of this file,
-+ * except as permitted under the terms of the License.
-+ *
-+ * Please obtain a copy of the License at
-+ * http://www.opensource.apple.com/apsl/ and read it before using this file.
-+ *
-+ * The Original Code and all software distributed under the License are
-+ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
-+ * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
-+ * INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
-+ * Please see the License for the specific language governing rights and
-+ * limitations under the License.
-+ *
-+ * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
-+ */
-+
-+#ifndef _PEXPERT_ARM64_M30LTE_H
-+#define _PEXPERT_ARM64_M30LTE_H
-+
-+#define NO_MONITOR                1
-+#define NO_ECORE                  1
-+
-+#define M30LTE                     1
-+
-+#define M30LTE_VTIMER_INTID          27
-+#define M30LTE_IPI_SGI                 1
-+#define M30LTE_SMP_MAX_CPUS            8
-+
-+/* GICv3 register definitions */
-+#define GICR_CTLR            0x004
-+#define GICR_WAKER           0x014
-+#define GICR_WAKER_PROCESSORSLEEP (1U << 0)
-+#define GICR_WAKER_CHILDRENASLEEP (1U << 1)
-+#define GICR_PE_SIZE         0x008
-+#define GICR_TYPER           0x000
-+#define GICR_TYPER_AFFINITY_VALUE_SHIFT  0
-+#define GICR_TYPER_LAST      (1U << 12)
-+#define GICR_ISENABLER0      0x100
-+#define GICD_CTLR            0x000
-+#define GICD_CTLR_ENABLEGRP0 (1U << 0)
-+#define GICD_CTLR_ARE_NS     (1U << 1)
-+#define GICD_CTLR_ENABLEGRP1A (1U << 1)
-+#define GICD_CTLR_ENABLEGRP1 (1U << 1)
-+#define GICD_CTLR_RWP        (1U << 31)
-+#define ICC_SRE_SRE          (1U << 0)
-+#define ICC_CTLR_EOIMODE     (1U << 1)
-+#define ICC_IGRPEN0_EL1      0
-+#define ICC_IGRPEN1_EL1      0
-+#define ICC_BPR0_EL1         0
-+#define ICC_BPR1_EL1         0
-+#define ICC_PMR_EL1          0
-+#define ICC_CTLR_EL1         0
-+#define ICC_IAR1_EL1         0
-+#define ICC_EOIR1_EL1        0
-+#define ICC_SRE_EL1          0
-+#define ICC_SRE_ENABLE       (1U << 0)
-+#define ICC_SRE_DFB          (1U << 1)
-+#define ICC_SRE_TFB          (1U << 2)
-+#define ICC_CTLR_EL1         0
-+
-+
-+#define CPU_HAS_APPLE_PAC         0
-+#define HAS_PARAVIRTUALIZED_PAC   0
-+#define HAS_GIC_V3                1
-+
-+#define __ARM_PAN_AVAILABLE__     1
-+#define __ARM_16K_PG__            1
-+
-+#include <pexpert/arm64/apple_arm64_common.h>
-+
-+#endif /* _PEXPERT_ARM64_M30LTE_H */
-diff --git a/pexpert/pexpert/arm64/Makefile b/pexpert/pexpert/arm64/Makefile
-index 8226b8c..2ddbb0c 100644
---- a/pexpert/pexpert/arm64/Makefile
-+++ b/pexpert/pexpert/arm64/Makefile
-@@ -17,7 +17,8 @@ PRIVATE_KERNELFILES = \
- 	boot.h \
- 	H13.h \
- 	VMAPPLE.h \
--	BCM2837.h
-+	BCM2837.h \
-+	M30LTE.h
- 
- 
- # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
-diff --git a/pexpert/pexpert/arm64/board_config.h b/pexpert/pexpert/arm64/board_config.h
-index 9454534..97dd8a5 100644
---- a/pexpert/pexpert/arm64/board_config.h
-+++ b/pexpert/pexpert/arm64/board_config.h
-@@ -97,6 +97,16 @@
- #define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
- #endif  /* ARM64_BOARD_CONFIG_BCM2837 */
- 
-+#ifdef ARM64_BOARD_CONFIG_M30LTE
-+#include <pexpert/arm64/M30LTE.h>
-+
-+#define MAX_L2_CLINE                   6
-+#define MAX_CPUS                       8
-+#define MAX_CPU_CLUSTERS               2
-+
-+#define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
-+#endif  /* ARM64_BOARD_CONFIG_M30LTE */
-+
- #ifdef ARM64_BOARD_CONFIG_VMAPPLE
- #include <pexpert/arm64/VMAPPLE.h>
- 
+ #endif /* BEARSSL_HASH_H */
