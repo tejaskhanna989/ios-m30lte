@@ -85,7 +85,7 @@ jobs:
         working-directory: dxb
         run: |
           # make install only runs xnu_tests; build the actual kernel via do_build_all
-          make -C build/xnu.obj/DEVELOPMENT_ARM64_M30LTE -f xnu/Makefile \
+          make -C build/xnu.obj/DEVELOPMENT_ARM64_M30LTE -f "$PWD/xnu/Makefile" \
             CURRENT_KERNEL_CONFIG=DEVELOPMENT \
             CURRENT_ARCH_CONFIG=ARM64 \
             CURRENT_MACHINE_CONFIG=M30LTE \
@@ -94,7 +94,7 @@ jobs:
             RELATIVE_SOURCE_PATH=. \
             TARGET="$PWD/build/xnu.obj/DEVELOPMENT_ARM64_M30LTE/.." \
             OBJPATH="$PWD/build/xnu.obj/DEVELOPMENT_ARM64_M30LTE" \
-            do_build_all 2>&1 | tail -20 || true
+            do_build_all 2>&1 | tail -30 || true
           ls -la build/xnu.obj/DEVELOPMENT_ARM64_M30LTE/kernel.* 2>/dev/null || true
           ls -la build/xnu.obj/kernel.* 2>/dev/null || true
 
