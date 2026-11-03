@@ -58,6 +58,16 @@ jobs:
           # M30LTE: tolerate check_all_exports failure so the kernel binary
           # is still produced even if board-specific export symbols are missing
           sed -i '' 's/make install -j8 VERBOSE=YES.*/& || true/' dxb/build.sh
+          # KEY FIX: DXB's make install does NOT build/link the kernel.
+          # Replace with make build_all install so the kernel is actually compiled
+          # and linked via do_build_all -> do_build_kernel -> ld -filelist.
+          sed -i '' 's/make install -j8 VERBOSE=YES/make build_all install -j8 VERBOSE=YES/' dxb/build.sh
+          grep -c 'make build_all install' dxb/build.sh
+          # KEY FIX: DXB's make install does NOT build/link the kernel.
+          # Replace with make build_all install so the kernel is actually compiled
+          # and linked via do_build_all -> do_build_kernel -> ld -filelist.
+          sed -i '' 's/make install -j8 VERBOSE=YES/make build_all install -j8 VERBOSE=YES/' dxb/build.sh
+          grep -c 'make build_all install' dxb/build.sh
 
       - name: Deps
         run: |
@@ -79,43 +89,6 @@ jobs:
           # keep going after errors so one run reports every compile failure
           MAKEFLAGS: ${{ inputs.keep_going == 'false' && '' || '-k' }}
         run: bash build.sh
-
-      - name: Apply patches and build XNU kernel
-        if: always()
-        working-directory: dxb/xnu
-        run: |
-          # DXB's build.sh applies patches with git apply, which is strict and skips
-          # patches that don't apply cleanly (e.g. 0004 after DXB's sed modifications to MakeInc.def).
-          # Re-apply all patches using patch -p1 --forward (skips already-applied patches),
-          # then build the kernel.
-          for patch in ../patches/00*.patch; do
-            name=$(basename "$patch")
-            echo "Applying: $name"
-            patch -p1 --no-backup-if-mismatch --forward < "$patch" 2>&1 | tail -3 || true
-          done
-          # Build the actual XNU Mach-O kernel via do_build_all
-          # Capture full output and exit code for debugging
-          set +e
-          make build_all -j8 VERBOSE=YES \
-            SDKROOT=macosx \
-            TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
-            SRCROOT="$PWD" \
-            OBJROOT="$PWD/../build/xnu.obj" \
-            SYMROOT="$PWD/../build/xnu.sym" \
-            DSTROOT="$PWD/../fakeroot" \
-            FAKEROOT_DIR="$PWD/../fakeroot" \
-            BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
-            ARCH_FLAGS_ARM64="-arch arm64" \
-            > /tmp/xnu-build-all.log 2>&1
-          BUILD_EXIT=$?
-          echo "make build_all exit code: $BUILD_EXIT"
-          echo "=== Build log (last 80 lines) ==="
-          tail -80 /tmp/xnu-build-all.log
-          echo "=== Build log (first 40 lines) ==="
-          head -40 /tmp/xnu-build-all.log
-          echo "=== Kernel artifacts ==="
-          find ../../build/xnu.obj -name "kernel.*" -type f 2>/dev/null | head -10
-          find ../../build/xnu.obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
 
       - name: Package build tree for local compiles
         if: always()
