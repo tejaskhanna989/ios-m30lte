@@ -51,7 +51,7 @@ jobs:
           curl -L -o /tmp/KDK.dmg "${KDK_URL}"
           hdiutil attach /tmp/KDK.dmg
           sudo installer -pkg '/Volumes/Kernel Debug Kit/KernelDebugKit.pkg' -target /
-          hdiutil detach '/Volumes/Kernel Debug Disk'
+          hdiutil detach '/Volumes/Kernel Debug Disk' 2>/dev/null || true
 
       - name: Clone XNU
         run: |
