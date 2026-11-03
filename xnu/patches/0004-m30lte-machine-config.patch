@@ -498,10 +498,10 @@ index 404b50b..ed5d585 100644
  kern_return_t serial_irq_enable(serial_device_t device);
 diff --git a/pexpert/pexpert/arm64/M30LTE.h b/pexpert/pexpert/arm64/M30LTE.h
 new file mode 100644
-index 0000000..34d77b1
+index 0000000..5aeb8db
 --- /dev/null
 +++ b/pexpert/pexpert/arm64/M30LTE.h
-@@ -0,0 +1,44 @@
+@@ -0,0 +1,47 @@
 +/*
 + * Copyright (c) 2024 Apple Inc. All rights reserved.
 + *
@@ -535,6 +535,9 @@ index 0000000..34d77b1
 +#define NO_ECORE                  1
 +
 +#define M30LTE                     1
++
++#define M30LTE_VTIMER_INTID          27
++#define M30LTE_IPI_SGI                 1
 +
 +#define CPU_HAS_APPLE_PAC         0
 +#define HAS_PARAVIRTUALIZED_PAC   0
