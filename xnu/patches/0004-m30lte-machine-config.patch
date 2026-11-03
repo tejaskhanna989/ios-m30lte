@@ -1,11 +1,14 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 new file mode 100644
-index 0000000..b96cf33
+index 0000000..ab51507
 --- /dev/null
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-@@ -0,0 +1,9 @@
+@@ -0,0 +1,12 @@
 +#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
 +#define _OS_FIREHOSE_BUFFER_PRIVATE_H
++
++#include <stdint.h>
++#include <stddef.h>
 +
 +/* firehose_tracepoint_t and firehose_buffer_t are defined elsewhere in XNU */
 +
