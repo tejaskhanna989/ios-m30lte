@@ -1,24 +1,31 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 new file mode 100644
-index 0000000..8ad62ee
+index 0000000..e1e4f8e
 --- /dev/null
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-@@ -0,0 +1,17 @@
+@@ -0,0 +1,24 @@
 +#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
 +#define _OS_FIREHOSE_BUFFER_PRIVATE_H
 +
 +#include <stdint.h>
 +#include <stddef.h>
 +
-+/* Opaque types - actual definitions in libdispatch */
++struct firehose_tracepoint_s {
++    void *fb;
++    unsigned char type;
++    uint64_t arg1;
++    uint64_t arg2;
++    uint64_t arg3;
++};
++typedef struct firehose_tracepoint_s *firehose_tracepoint_t;
++
 +struct firehose_buffer;
 +typedef struct firehose_buffer firehose_buffer_t;
 +
 +#define FIREHOSE_BUFFER_KERNEL_CHUNK_COUNT 16
 +
-+/* Function declarations matching actual signatures */
-+void __firehose_buffer_tracepoint_reserve(firehose_buffer_t *fb, unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
-+void __firehose_buffer_tracepoint_flush(firehose_buffer_t *fb, int flush);
++firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(firehose_buffer_t *fb, unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
++void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t *tp);
 +
 +#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl.h b/libkern/crypto/m30_bearssl/inc/bearssl.h
@@ -36,7 +43,7 @@ index 0000000..b61d5b3
 +#endif /* BEARSSL_H */
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
 new file mode 100644
-index 0000000..574ab77
+index 0000000..c058311
 --- /dev/null
 +++ b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
 @@ -0,0 +1,50 @@
@@ -46,32 +53,32 @@ index 0000000..574ab77
 +#include <stddef.h>
 +#include <stdint.h>
 +
-+/* Opaque hash class */
 +typedef struct br_hash_class br_hash_class;
 +
-+/* SHA-256 */
 +typedef struct {
-+    unsigned char val[32];
++    unsigned char count[8];
++    unsigned char buf[64];
 +} br_sha256_context;
 +
-+/* SHA-1 */
 +typedef struct {
-+    unsigned char val[20];
++    unsigned char count[8];
++    unsigned char buf[64];
 +} br_sha1_context;
 +
-+/* SHA-512 */
 +typedef struct {
-+    unsigned char val[64];
++    unsigned char count[8];
++    unsigned char buf[128];
 +} br_sha512_context;
 +
-+/* SHA-384 */
 +typedef struct {
-+    unsigned char val[48];
++    unsigned char count[8];
++    unsigned char buf[128];
 +} br_sha384_context;
 +
 +extern const br_hash_class br_sha256_vtable;
 +extern const br_hash_class br_sha1_vtable;
 +extern const br_hash_class br_sha512_vtable;
++extern const br_hash_class br_sha384_vtable;
 +
 +void br_sha256_init(br_sha256_context *ctx);
 +void br_sha256_update(br_sha256_context *ctx, const void *data, size_t len);
