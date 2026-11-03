@@ -80,36 +80,32 @@ jobs:
           MAKEFLAGS: ${{ inputs.keep_going == 'false' && '' || '-k' }}
         run: bash build.sh
 
-      - name: Build kernel binary
+      - name: Build XNU kernel
         if: always()
-        working-directory: dxb
+        working-directory: dxb/xnu
         run: |
-          # make install only runs xnu_tests; build the actual kernel
-          # VERSDIR/SRCROOT must point to source tree so MakeInc files resolve
-          make -C build/xnu.obj/DEVELOPMENT_ARM64_M30LTE -f "$PWD/xnu/Makefile" \
-            VERSDIR="$PWD/xnu" SRCROOT="$PWD/xnu" \
-            CURRENT_KERNEL_CONFIG=DEVELOPMENT \
-            CURRENT_ARCH_CONFIG=ARM64 \
-            CURRENT_MACHINE_CONFIG=M30LTE \
-            CURRENT_BUILD_CONFIG=DEVELOPMENT^ARM64^M30LTE \
-            SOURCE="$PWD/xnu" \
-            RELATIVE_SOURCE_PATH=. \
-            TARGET="$PWD/build/xnu.obj/DEVELOPMENT_ARM64_M30LTE/.." \
-            OBJPATH="$PWD/build/xnu.obj/DEVELOPMENT_ARM64_M30LTE" \
-            do_build_setup 2>&1 | tail -10 || true
-          make -C build/xnu.obj/DEVELOPMENT_ARM64_M30LTE -f "$PWD/xnu/Makefile" \
-            VERSDIR="$PWD/xnu" SRCROOT="$PWD/xnu" \
-            CURRENT_KERNEL_CONFIG=DEVELOPMENT \
-            CURRENT_ARCH_CONFIG=ARM64 \
-            CURRENT_MACHINE_CONFIG=M30LTE \
-            CURRENT_BUILD_CONFIG=DEVELOPMENT^ARM64^M30LTE \
-            SOURCE="$PWD/xnu" \
-            RELATIVE_SOURCE_PATH=. \
-            TARGET="$PWD/build/xnu.obj/DEVELOPMENT_ARM64_M30LTE/.." \
-            OBJPATH="$PWD/build/xnu.obj/DEVELOPMENT_ARM64_M30LTE" \
-            do_build_all 2>&1 | tail -30 || true
-          ls -la build/xnu.obj/DEVELOPMENT_ARM64_M30LTE/kernel.* 2>/dev/null || true
-          ls -la build/xnu.obj/kernel.* 2>/dev/null || true
+          # DXB's make install only installs headers/tests; it does NOT build/link the kernel.
+          # We must run make build_all to actually compile and link the XNU Mach-O kernel.
+          #
+          # Pipeline: make build_all -> MakeInc.top build_all_bootstrap ->
+          #   per-config sub-make -> do_build_all -> do_build_kernel ->
+          #   ld -filelist link.filelist -> kernel.development.m30lte
+          #
+          make build_all -j8 VERBOSE=YES \
+            SDKROOT=macosx \
+            TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
+            SRCROOT="$PWD" \
+            OBJROOT="$PWD/../build/xnu.obj" \
+            SYMROOT="$PWD/../build/xnu.sym" \
+            DSTROOT="$PWD/../fakeroot" \
+            FAKEROOT_DIR="$PWD/../fakeroot" \
+            BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
+            2>&1 | tee /tmp/xnu-build-all.log | tail -60 || true
+          echo "=== Kernel artifacts ==="
+          find ../../build/xnu.obj -name "kernel.*" -type f 2>/dev/null | head -10
+          find ../../build/xnu.obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
+          echo "=== Build log tail ==="
+          tail -20 /tmp/xnu-build-all.log 2>/dev/null || true
 
       - name: Package build tree for local compiles
         if: always()
