@@ -143,7 +143,7 @@ index e5336e5..0cfbf7d 100644
  #if (!CONFIG_KERNEL_INTEGRITY || (CONFIG_KERNEL_INTEGRITY && !defined(KERNEL_INTEGRITY_WT)))
  	/* Watchtower
 diff --git a/pexpert/arm/pe_fiq.c b/pexpert/arm/pe_fiq.c
-index 3ad743f..5d5526e 100644
+index 3ad743f..1d8f141 100644
 --- a/pexpert/arm/pe_fiq.c
 +++ b/pexpert/arm/pe_fiq.c
 @@ -3,6 +3,7 @@
@@ -230,17 +230,16 @@ index 3ad743f..5d5526e 100644
 +	while (gicd_read32(GICD_CTLR) & GICD_CTLR_RWP) {
 +		;
 +	}
-+	__builtin_arm_wsr64("ICC_IGRPEN1_EL1", 1)
-+	__builtin_arm_isb(ISB_SY)
++	__builtin_arm_wsr64("ICC_IGRPEN1_EL1", 1);
++	__builtin_arm_isb(ISB_SY);
 +#else
  	// Enable the forwarding of the vtimer interrupt
  	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
  	gicd_ctlr |= GICD_CTLR_ENABLEGRP0;
  	gicd_write32(GICD_CTLR, gicd_ctlr);
 -	__builtin_arm_wsr64("ICC_IGRPEN0_EL1", 1);
--	__builtin_arm_isb(ISB_SY);
 +	__builtin_arm_wsr64("ICC_IGRPEN0_EL1", 1)
-+	__builtin_arm_isb(ISB_SY)
+ 	__builtin_arm_isb(ISB_SY);
 +#endif
  }
  #else
