@@ -496,6 +496,56 @@ index 404b50b..ed5d585 100644
  } serial_device_t;
  
  kern_return_t serial_irq_enable(serial_device_t device);
+diff --git a/pexpert/pexpert/arm64/M30LTE.h b/pexpert/pexpert/arm64/M30LTE.h
+new file mode 100644
+index 0000000..34d77b1
+--- /dev/null
++++ b/pexpert/pexpert/arm64/M30LTE.h
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (c) 2024 Apple Inc. All rights reserved.
++ *
++ * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
++ *
++ * This file contains Original Code and/or Modifications of Original Code
++ * as defined in and that are subject to the Apple Public Source License
++ * Version 2.0 (the 'License'). You may not use this file except in
++ * compliance with the License. The rights granted to you under the License
++ * may not be used to create or distribute modified versions of this file,
++ * except as permitted under the terms of the License.
++ *
++ * Please obtain a copy of the License at
++ * http://www.opensource.apple.com/apsl/ and read it before using this file.
++ *
++ * The Original Code and all software distributed under the License are
++ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
++ * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
++ * INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
++ * Please see the License for the specific language governing rights and
++ * limitations under the License.
++ *
++ * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
++ */
++
++#ifndef _PEXPERT_ARM64_M30LTE_H
++#define _PEXPERT_ARM64_M30LTE_H
++
++#define NO_MONITOR                1
++#define NO_ECORE                  1
++
++#define M30LTE                     1
++
++#define CPU_HAS_APPLE_PAC         0
++#define HAS_PARAVIRTUALIZED_PAC   0
++#define HAS_GIC_V3                1
++
++#define __ARM_PAN_AVAILABLE__     1
++#define __ARM_16K_PG__            1
++
++#include <pexpert/arm64/apple_arm64_common.h>
++
++#endif /* _PEXPERT_ARM64_M30LTE_H */
 diff --git a/pexpert/pexpert/arm64/Makefile b/pexpert/pexpert/arm64/Makefile
 index 8226b8c..2ddbb0c 100644
 --- a/pexpert/pexpert/arm64/Makefile
