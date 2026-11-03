@@ -80,17 +80,23 @@ jobs:
           MAKEFLAGS: ${{ inputs.keep_going == 'false' && '' || '-k' }}
         run: bash build.sh
 
-      - name: Build XNU kernel
+      - name: Apply patches and build XNU kernel
         if: always()
         working-directory: dxb/xnu
         run: |
-          # DXB's make install only installs headers/tests; it does NOT build/link the kernel.
-          # We must run make build_all to actually compile and link the XNU Mach-O kernel.
-          #
-          # Pipeline: make build_all -> MakeInc.top build_all_bootstrap ->
-          #   per-config sub-make -> do_build_all -> do_build_kernel ->
-          #   ld -filelist link.filelist -> kernel.development.m30lte
-          #
+          # DXB's build.sh applies patches with git apply, which is strict and skips
+          # patches that don't apply cleanly (e.g. 0004 after DXB's sed modifications to MakeInc.def).
+          # Re-apply all patches using patch -p1 (more forgiving), then build the kernel.
+          for patch in ../patches/00*.patch; do
+            name=$(basename "$patch")
+            if patch -p1 --no-backup-if-mismatch --dry-run < "$patch" >/dev/null 2>&1; then
+              echo "Applying: $name"
+              patch -p1 --no-backup-if-mismatch < "$patch" 2>&1 | tail -3 || true
+            else
+              echo "SKIP (dry-run failed): $name"
+            fi
+          done
+          # Build the actual XNU Mach-O kernel via do_build_all
           make build_all -j8 VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
@@ -100,6 +106,7 @@ jobs:
             DSTROOT="$PWD/../fakeroot" \
             FAKEROOT_DIR="$PWD/../fakeroot" \
             BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
+            ARCH_FLAGS_ARM64="-arch arm64" \
             2>&1 | tee /tmp/xnu-build-all.log | tail -60 || true
           echo "=== Kernel artifacts ==="
           find ../../build/xnu.obj -name "kernel.*" -type f 2>/dev/null | head -10
