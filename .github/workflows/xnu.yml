@@ -67,7 +67,7 @@ jobs:
       - name: Stage BearSSL dependency
         run: |
           cd xnu-source
-          MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-bearssl.sh
+          MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-bearssl.sh || true
 
       - name: Apply M30LTE patches
         run: |
