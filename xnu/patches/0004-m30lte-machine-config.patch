@@ -1,6 +1,6 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 new file mode 100644
-index 0000000..e343af1
+index 0000000..57724e5
 --- /dev/null
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 @@ -0,0 +1,24 @@
@@ -21,7 +21,7 @@ index 0000000..e343af1
 +
 +/* Function declarations needed by bsd/kern/subr_log.c */
 +boolean_t __firehose_kernel_configuration_valid(uint32_t chunk_count, uint32_t io_pages);
-+boolean_t __firehose_merge_updates(firehose_push_reply_t *reply);
++boolean_t __firehose_merge_updates(firehose_push_reply_t reply);
 +vm_offset_t __firehose_buffer_create(size_t *size);
 +
 +firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
