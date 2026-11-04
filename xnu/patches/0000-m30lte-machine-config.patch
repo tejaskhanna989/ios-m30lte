@@ -11,6 +11,25 @@ index 3ff7646..cb033aa 100644
  
  #include <os/log_private.h>
  #include <sys/ioctl.h>
+diff --git a/config/MASTER.arm64.MacOSX b/config/MASTER.arm64.MacOSX
+index d3751b8..97da168 100644
+--- a/config/MASTER.arm64.MacOSX
++++ b/config/MASTER.arm64.MacOSX
+@@ -16,7 +16,7 @@
+ #  Standard Apple OS Configurations:
+ #  -------- ----- -- ---------------
+ #
+-#  KERNEL_BASE =    [ arm64 config_pmap_ppl medium msgb_large config_requires_u32_munging config_delay_idle_sleep config_proc_udata_storage config_uexc config_darkboot ARM_EXTRAS_BASE ]
++#  KERNEL_BASE =    [ arm64 config_pmap_ppl medium msgb_large config_requires_u32_munging config_delay_idle_sleep config_proc_udata_storage config_uexc config_darkboot ARM_EXTRAS_BASE nos_arm_asm nos_arm_pmap ]
+ #  KERNEL_RELEASE = [ KERNEL_BASE ]
+ #  KERNEL_DEV =     [ KERNEL_BASE development mach_assert config_xnupost proc_ref_debug config_proc_resource_limits ]
+ #  KERNEL_DEBUG =   [ KERNEL_BASE debug mach_assert config_xnupost config_waitq_stats config_workloop_debug config_proc_resource_limits ]
+@@ -106,3 +106,5 @@ options CONFIG_HYPERVISOR_PUBLIC   # unrestricted entitlement for hypervisor
+ 
+ options   CONFIG_RESLIDE_SHARED_CACHE		# <reslide_shared_cache>
+ options   CONFIG_KERNEL_TBI		# <kernel_tbi>
++options   NOS_ARM_ASM			# <nos_arm_asm>
++options   NOS_ARM_PMAP			# <nos_arm_pmap>
 diff --git a/config/MASTER.arm64.m30lte b/config/MASTER.arm64.m30lte
 new file mode 100644
 index 0000000..97da168
@@ -560,17 +579,3 @@ index 9454534..97dd8a5 100644
  #ifdef ARM64_BOARD_CONFIG_VMAPPLE
  #include <pexpert/arm64/VMAPPLE.h>
  
-diff --git a/pexpert/pexpert/arm64/Makefile b/pexpert/pexpert/arm64/Makefile
-index 8226b8c..2ddbb0c 100644
---- a/pexpert/pexpert/arm64/Makefile
-+++ b/pexpert/pexpert/arm64/Makefile
-@@ -17,7 +17,8 @@ PRIVATE_KERNELFILES = \
- 	boot.h \
- 	H13.h \
- 	VMAPPLE.h \
--	BCM2837.h
-+	BCM2837.h \
-+	M30LTE.h
- 
- 
- # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
