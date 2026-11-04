@@ -676,9 +676,6 @@ index 9454534..97dd8a5 100644
 --- a/pexpert/pexpert/arm64/board_config.h
 +++ b/pexpert/pexpert/arm64/board_config.h
 @@ -97,6 +97,16 @@
- #define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
- #endif  /* ARM64_BOARD_CONFIG_BCM2837 */
- 
 +#ifdef ARM64_BOARD_CONFIG_M30LTE
 +#include <pexpert/arm64/M30LTE.h>
 +
@@ -692,3 +689,64 @@ index 9454534..97dd8a5 100644
  #ifdef ARM64_BOARD_CONFIG_VMAPPLE
  #include <pexpert/arm64/VMAPPLE.h>
  
+diff --git a/osfmk/conf/files.arm64 b/osfmk/conf/files.arm64
+index e6b7c0e..f4a2d9b 100644
+--- a/osfmk/conf/files.arm64
++++ b/osfmk/conf/files.arm64
+@@ -10,15 +10,15 @@
+ osfmk/arm/pmap/pmap.c
+ osfmk/arm/pmap/pmap_cs.c
+ osfmk/arm/pmap/pmap_data.c
+ osfmk/arm/pmap/pmap_iommu.c
+ osfmk/arm/pmap/pmap_misc.c
+ osfmk/arm/pmap/pmap_ppl_interface.c
+@@ -30,15 +30,15 @@
+ osfmk/arm64/caches_asm.s
+ osfmk/arm64/locore.s
+ osfmk/arm64/iofilter_asm.s
+ osfmk/arm64/iofilter.c
+ osfmk/arm64/gxf_exceptions.s
+ osfmk/arm64/lowmem_vectors.c
+ osfmk/arm64/sleh.c
+ osfmk/arm64/start.s		optional config_pmap_ppl
+ osfmk/arm64/pinst.s
+ osfmk/arm64/cswitch.s
+ osfmk/arm/machine_cpuid.c
+ osfmk/arm/machine_routines_common.c
+ osfmk/arm64/lock_ticket_pv.c		optional config_pv_ticket
+ osfmk/arm64/machine_routines.c
+ osfmk/arm64/machine_routines_asm.s
+ osfmk/arm64/machine_task.c
+ osfmk/arm/machine_routines_apple.c
+ osfmk/arm/pal_routines.c
+ osfmk/arm64/mcount.s		optional profile
+ osfmk/arm64/memcmp_zero.s
+ osfmk/arm64/strnlen.s   standard
+ osfmk/arm64/strncmp.s   standard
+ osfmk/arm/model_dep.c
+ osfmk/arm64/pcb.c
+ osfmk/arm/rtclock.c
+ osfmk/arm64/status.c
+ osfmk/arm/status_shared.c
+ osfmk/arm/commpage/commpage.c
+ osfmk/arm/commpage/commpage_asm.s	optional config_arm_pfz
+ osfmk/kdp/ml/arm/kdp_machdep.c	optional	mach_kdp
+ osfmk/kdp/ml/arm/kdp_vm.c	optional	mach_kdp
+ osfmk/arm64/hibernate_arm64.c        optional hibernation
+ osfmk/arm64/hibernate_restore.c      optional hibernation
+ osfmk/arm64/hibernate_asm.s          optional hibernation
+ osfmk/OPTIONS/ln		optional ln
+ osfmk/OPTIONS/eisa		optional eisa
+ osfmk/OPTIONS/himem		optional himem
+ osfmk/OPTIONS/ec		optional ec
+ osfmk/OPTIONS/hi_res_clock	optional hi_res_clock
+ osfmk/arm64/perfmon_arm64.c optional config_perfmon
+ osfmk/arm64/kpc.c		optional kpc
+ osfmk/arm64/monotonic_arm64.c optional monotonic
+ osfmk/arm64/platform_tests.c			optional config_xnupost
+ osfmk/arm64/platform_tests_asm.s		optional config_xnupost
+ osfmk/arm64/alternate_debugger.c		optional alternate_debugger
+ osfmk/arm64/alternate_debugger_asm.s		optional alternate_debugger
+ osfmk/arm64/machine_remote_time.c optional config_mach_bridge_recv_time
+ osfmk/arm64/corecrypto/sha256_compress_arm64.s	standard
+ osfmk/arm/counter.c	standard
