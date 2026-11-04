@@ -384,7 +384,7 @@ index 133b07f..af5fe1a 100644
  #elif defined (VMAPPLE)
  
  /* I-Cache. */
-@@ -232,5 +240,4 @@
+@@ -231,6 +241,5 @@
  #else
 -#error processor not supported
 +#warning processor not supported
