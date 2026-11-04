@@ -59,6 +59,11 @@ jobs:
           cd xnu-source
           git describe --tags --always
 
+      - name: Stage libpthread dependency
+        run: |
+          cd xnu-source
+          MACHINE_CONFIG=M30LTE bash ../xnu/patches/0019-stage-libpthread.sh || true
+
       - name: Stage BearSSL dependency
         run: |
           cd xnu-source
