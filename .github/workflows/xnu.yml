@@ -62,12 +62,12 @@ jobs:
       - name: Stage libpthread dependency
         run: |
           cd xnu-source
-          MACHINE_CONFIG=M30LTE bash ../xnu/patches/0019-stage-libpthread.sh || true
+          MACHINE_CONFIG=M30LTE bash ../xnu/patches/0019-stage-libpthread.sh
 
       - name: Stage BearSSL dependency
         run: |
           cd xnu-source
-          MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-bearssl.sh || true
+          MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-bearssl.sh
 
       - name: Apply M30LTE patches
         run: |
@@ -119,12 +119,11 @@ jobs:
       - name: Build XNU kernel
         run: |
           cd xnu-source
-          set +e
           SYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)
           SYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
-          # Build XNU kernel (default make target builds and links kernel via MakeInc.top)
+          # Build XNU kernel via install target (triggers kernel link via MakeInc.top)
           make -j1 install VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \

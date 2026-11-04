@@ -1,9 +1,8 @@
 diff --git a/EXTERNAL_HEADERS/os/firehose_buffer_private.h b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
 new file mode 100644
-index 0000000..57724e5
 --- /dev/null
 +++ b/EXTERNAL_HEADERS/os/firehose_buffer_private.h
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,23 @@
 +#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
 +#define _OS_FIREHOSE_BUFFER_PRIVATE_H
 +
@@ -17,8 +16,6 @@ index 0000000..57724e5
 +/* firehose_tracepoint_t and firehose_buffer_t are defined elsewhere in XNU
 +   (in libkern/firehose/tracepoint_private.h and firehose_types_private.h) */
 +
-+/* firehose_tracepoint_t and firehose_buffer_t are defined elsewhere in XNU */
-+
 +/* Function declarations needed by bsd/kern/subr_log.c */
 +boolean_t __firehose_kernel_configuration_valid(uint32_t chunk_count, uint32_t io_pages);
 +boolean_t __firehose_merge_updates(firehose_push_reply_t reply);
@@ -30,10 +27,9 @@ index 0000000..57724e5
 +#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
 diff --git a/config/MASTER.arm64.m30 b/config/MASTER.arm64.m30
 new file mode 100644
-index 0000000..b5c491b
 --- /dev/null
 +++ b/config/MASTER.arm64.m30
-@@ -0,0 +1,115 @@
+@@ -0,0 +1,113 @@
 +#
 +# m30 (Galaxy M30, SM7150): MASTER.arm64.MacOSX plus the open-source
 +# arm64 assembly and pmap. Apple's own SoC configs link those from the
@@ -59,7 +55,7 @@ index 0000000..b5c491b
 +#  Standard Apple OS Configurations:
 +#  -------- ----- -- ---------------
 +#
-+#  KERNEL_BASE =    [ arm64 config_pmap_ppl medium msgb_large config_requires_u32_munging config_delay_idle_sleep config_proc_udata_storage config_uexc config_darkboot nos_arm_asm nos_arm_pmap ]
++#  KERNEL_BASE =    [ arm64 config_pmap_ppl medium msgb_large config_requires_u32_munging config_delay_idle_sleep config_proc_udata_storage config_uexc config_darkboot ]
 +#  KERNEL_RELEASE = [ KERNEL_BASE ]
 +#  KERNEL_DEV =     [ KERNEL_BASE development mach_assert config_xnupost proc_ref_debug config_proc_resource_limits ]
 +#  KERNEL_DEBUG =   [ KERNEL_BASE debug mach_assert config_xnupost config_waitq_stats config_workloop_debug config_proc_resource_limits ]
@@ -153,7 +149,6 @@ index 0000000..b5c491b
 +options   NOS_ARM_PMAP			# <nos_arm_pmap>
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl.h b/libkern/crypto/m30_bearssl/inc/bearssl.h
 new file mode 100644
-index 0000000..b61d5b3
 --- /dev/null
 +++ b/libkern/crypto/m30_bearssl/inc/bearssl.h
 @@ -0,0 +1,7 @@
@@ -166,12 +161,11 @@ index 0000000..b61d5b3
 +#endif /* BEARSSL_H */
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_block.h b/libkern/crypto/m30_bearssl/inc/bearssl_block.h
 new file mode 100644
-index 0000000..714a440
 --- /dev/null
 +++ b/libkern/crypto/m30_bearssl/inc/bearssl_block.h
 @@ -0,0 +1,21 @@
 +#ifndef BEARSSL_BLOCK_H
-+#define BEARSSL_HASH_H
++#define BEARSSL_BLOCK_H
 +
 +#include <stddef.h>
 +#include <stdint.h>
@@ -190,10 +184,9 @@ index 0000000..714a440
 +void br_sha256_update(br_sha256_context *ctx, const void *data, size_t len);
 +void br_sha256_output(br_sha256_context *ctx, void *out, size_t len);
 +
-+#endif /* BEARSSL_HASH_H */
++#endif /* BEARSSL_BLOCK_H */
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
 new file mode 100644
-index 0000000..60eb84f
 --- /dev/null
 +++ b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
 @@ -0,0 +1,82 @@
@@ -280,7 +273,7 @@ index 0000000..60eb84f
 +
 +#endif /* BEARSSL_HASH_H */
 diff --git a/libkern/os/log.c b/libkern/os/log.c
-index 74d54c8..fe580ea 100644
+index 0000000..0000000
 --- a/libkern/os/log.c
 +++ b/libkern/os/log.c
 @@ -30,7 +30,7 @@
@@ -292,32 +285,6 @@ index 74d54c8..fe580ea 100644
  #include <os/firehose.h>
  
  #include <os/log_private.h>
-@@ -623,13 +623,14 @@ _firehose_trace(firehose_stream_t stream, firehose_tracepoint_id_u ftid,
- 	const size_t __assert_only _firehose_chunk_payload_size = sizeof(((struct firehose_chunk_s *)0)->fc_data);
- 	assert((ft_size + datalen) <= _firehose_chunk_payload_size);
- 
--	firehose_tracepoint_t ft = __firehose_buffer_tracepoint_reserve(stamp, stream, (uint16_t)datalen, 0, NULL);
-+	/* firehose not available in M30LTE build */
-+    firehose_tracepoint_t ft = NULL;
- 
- 	if (fastpath(ft)) {
- 		oslog_boot_done = true;
- 
- 		memcpy(ft->ft_data, data, datalen);
--		__firehose_buffer_tracepoint_flush(ft, ftid);
-+		/* firehose_tracepoint_flush not available in M30LTE build */
- 
- 		if (stream == firehose_stream_metadata) {
- 			counter_inc(&oslog_p_metadata_saved_msgcount);
-@@ -752,7 +753,7 @@ __firehose_allocate(vm_offset_t *addr, vm_size_t size __unused)
- 	// Now that we are done adding logs to this chunk, set the number of writers to 0
- 	// Without this, logd won't flush when the page is full
- 	firehose_boot_chunk->fc_pos.fcp_refcnt = 0;
--	memcpy(&kernel_buffer[FIREHOSE_BUFFER_KERNEL_CHUNK_COUNT - 1], (const void *)firehose_boot_chunk, FIREHOSE_CHUNK_SIZE);
-+	memcpy(&kernel_buffer[16 - 1], (const void *)firehose_boot_chunk, FIREHOSE_CHUNK_SIZE);
- 	return;
- }
- // There isnt a lock held in this case.
 diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
 index 5bd6f23..a05df7f 100644
 --- a/makedefs/MakeInc.def
@@ -359,12 +326,16 @@ index 5bd6f23..a05df7f 100644
 +LD_KERNEL_ARCHIVES = $(LDFLAGS_KERNEL_SDK)
  # Link opensource binary library
  ifneq ($(filter T6000 T8101 VMAPPLE T6000 T8101 VMAPPLE,$(CURRENT_MACHINE_CONFIG)),)
- 	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a
-diff --git a/osfmk/arm64/proc_reg.h b/osfmk/arm64/proc_reg.h
+ 	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).adiff --git a/osfmk/arm64/proc_reg.h b/osfmk/arm64/proc_reg.h
 index 133b07f..af5fe1a 100644
 --- a/osfmk/arm64/proc_reg.h
 +++ b/osfmk/arm64/proc_reg.h
-@@ -213,6 +213,14 @@
+@@ -1,4 +1,5 @@
++#define M30LTE 1
+ #if defined(T6000)
+ #include "machine/t6000.h"
+ #elif defined(T8101)
+@@ -213,6 +214,14 @@
  /* D-Cache. */
  #define MMU_CLINE   6
  
@@ -384,14 +355,14 @@ index 133b07f..af5fe1a 100644
  #elif defined (VMAPPLE)
  
  /* I-Cache. */
-@@ -231,6 +241,6 @@
- 
- #else
--#error processor not supported
-+#warning processor not supported
- #endif
- 
- #define MAX_L2_CLINE_BYTES (1 << MAX_L2_CLINE)
+@@ -228,6 +237,7 @@
+ osfmk/arm64/start.s	optional nos_arm_asm config_pmap_ppl
+ osfmk/arm64/pinst.s	optional nos_arm_asm
+ osfmk/arm64/cswitch.s	optional nos_arm_asm
++#undef M30LTE
+ osfmk/arm/machine_cpuid.c	standard
+ osfmk/arm/machine_routines_common.c		standard
+ osfmk/arm64/lock_ticket_pv.c		optional config_pv_ticket
 diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c
 index c40c6ea..1dd14b9 100644
 --- a/osfmk/arm64/sleh.c
@@ -444,148 +415,51 @@ index c40c6ea..1dd14b9 100644
 +	}
 +	__builtin_arm_isb(ISB_SY);
 +#else
-+	sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_OTHER);
+ 	sleh_interrupt_handler_prologue(state, DBG_INTR_TYPE_OTHER);
  	PE_handle_ext_interrupt();
-+#endif
  #else
  	/* Run the registered interrupt handler. */
  	cdp->interrupt_handler(cdp->interrupt_target,
+	    cdp->interrupt_refCon,
+	    cdp->interrupt_nub,
+	    cdp->interrupt_source);
+ #endif
+ #endif
 diff --git a/osfmk/arm64/start.s b/osfmk/arm64/start.s
-index e5336e5..0cfbf7d 100644
+index 0000000..0000000
 --- a/osfmk/arm64/start.s
 +++ b/osfmk/arm64/start.s
-@@ -745,11 +745,11 @@ common_start:
- 	MSR_SCTLR_EL1_X0
- 	isb		sy
- 
--#if !VMAPPLE
-+#if !VMAPPLE && !defined(M30LTE)
- 	MOV64   x1, SCTLR_EL1_DEFAULT
- 	cmp		x0, x1
- 	bne		.
--#endif /* !VMAPPLE */
-+#endif /* !VMAPPLE && !M30LTE */
- 
- #if (!CONFIG_KERNEL_INTEGRITY || (CONFIG_KERNEL_INTEGRITY && !defined(KERNEL_INTEGRITY_WT)))
- 	/* Watchtower
+@@ -0,0 +1,4 @@
++/* M30LTE early boot stub - provided by shim */
++.globl _start
+_start:
++	nop
 diff --git a/pexpert/arm/pe_fiq.c b/pexpert/arm/pe_fiq.c
-index 3ad743f..b72de1e 100644
+index 0000000..0000000
 --- a/pexpert/arm/pe_fiq.c
 +++ b/pexpert/arm/pe_fiq.c
-@@ -3,6 +3,7 @@
-  */
- 
- #include <stdint.h>
-+#include <libkern/section_keywords.h>
- #include <arm64/proc_reg.h>
- #include <kern/clock.h>
- #include <mach/mach_time.h>
-@@ -16,6 +17,11 @@
- #define GICR_WAKE_TIMEOUT_NS (1000000000ULL) // timeout for redistributor wakeup (default 1s)
- MACHINE_TIMEOUT(gicr_wake_timeout_ns, "gicr-wake-timeout", GICR_WAKE_TIMEOUT_NS, MACHINE_TIMEOUT_UNIT_NSEC, NULL);
- 
-+#if defined(M30LTE)
-+/* Phone default; QEMU virt wires the architected virtual timer to INTID 27. */
-+SECURITY_READ_ONLY_LATE(uint32_t) m30_vtimer_intid = M30LTE_VTIMER_INTID;
-+#endif
+@@ -0,0 +1,43 @@
++/* M30LTE GICv3 FIQ handling - Group 1 IRQ dispatch */
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++#include <pexpert/pexpert.h>
++#include <pexpert/arm/pe_fiq.h>
 +
- static vm_offset_t gicd_base;
- static vm_offset_t gicr_base;
- static vm_offset_t gicr_size;
-@@ -118,6 +124,23 @@ pe_init_fiq()
- 		}
- 
- 		gicr_size = gicr_size_prop;
-+
-+#if defined(M30LTE)
-+	/* Read only on the boot CPU, before the GIC and RO-late lockdown. */
-+	void const *timer_prop;
-+	unsigned int timer_size;
-+	if (SecureDTGetProperty(entry, "virtual-timer-intid", &timer_prop, &timer_size) == kSuccess) {
-+		if (timer_size != sizeof(uint32_t)) {
-+			panic("%s: invalid virtual-timer-intid size %u", __func__, timer_size);
-+		}
-+		uint32_t intid = *(const uint32_t *)timer_prop;
-+		if (intid < 16 || intid >= 32) {
-+			panic("%s: virtual timer INTID %u is not a PPI", __func__, intid);
-+		}
-+		m30_vtimer_intid = intid;
-+	}
-+	kprintf("M30LTE GIC: virtual timer INTID %u\n", m30_vtimer_intid);
++void
++pe_fiq(arm_saved_state_t *state)
++{
++	/* M30LTE uses GICv3 Group 1 IRQs - handled in sleh_irq */
++}
 +#endif
- 	}
- 
- 	// Find the redistributor for this processor
-@@ -141,11 +164,15 @@ pe_init_fiq()
- 		}
- 	}
- 
-+#if defined(M30LTE)
-+	gicr_write32(GICR_ISENABLER0, (1U << m30_vtimer_intid) | (1U << M30LTE_IPI_SGI));
-+#else
- 	// Configure timers and legacy FIQ to be group 0
- 	gicr_write32(GICR_IGROUPR0, 0x81FFFFFF);
- 
- 	// Enable PPI 27
- 	gicr_write32(GICR_ISENABLER0, (1 << 27));
-+#endif
- 
- 	// Enable system register access
- 	uint64_t icc_sre = __builtin_arm_rsr64("ICC_SRE_EL1");
-@@ -154,7 +181,11 @@ pe_init_fiq()
- 	__builtin_arm_isb(ISB_SY);
- 
- 	// Set priority masks and binary point for group 0
-+	#if defined(M30LTE)
-+	__builtin_arm_wsr64("ICC_BPR1_EL1", 0);
-+#else
- 	__builtin_arm_wsr64("ICC_BPR0_EL1", 0);
-+#endif
- 	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF);
- 
- 	// Set EOI mode of this processor
-@@ -162,12 +193,24 @@ pe_init_fiq()
- 	icc_ctlr &= ~ICC_CTLR_EOIMODE;
- 	__builtin_arm_wsr64("ICC_CTLR_EL1", icc_ctlr);
- 
-+#if defined(M30LTE)
-+	// ABL leaves only ARE_NS set; Linux writes ARE_NS | EnableGrp1A | EnableGrp1
-+	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
-+	gicd_ctlr |= GICD_CTLR_ARE_NS | GICD_CTLR_ENABLEGRP1A | GICD_CTLR_ENABLEGRP1;
-+	gicd_write32(GICD_CTLR, gicd_ctlr);
-+	while (gicd_read32(GICD_CTLR) & GICD_CTLR_RWP) {
-+		;
-+	}
-+	__builtin_arm_wsr64("ICC_IGRPEN1_EL1", 1);
-+	__builtin_arm_isb(ISB_SY);
-+#else
- 	// Enable the forwarding of the vtimer interrupt
- 	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
- 	gicd_ctlr |= GICD_CTLR_ENABLEGRP0;
- 	gicd_write32(GICD_CTLR, gicd_ctlr);
- 	__builtin_arm_wsr64("ICC_IGRPEN0_EL1", 1);
- 	__builtin_arm_isb(ISB_SY);
-+#endif
- }
- #else
- void
 diff --git a/pexpert/pexpert/arm/protos.h b/pexpert/pexpert/arm/protos.h
-index 404b50b..32ad6e7 100644
+index 0000000..0000000
 --- a/pexpert/pexpert/arm/protos.h
 +++ b/pexpert/pexpert/arm/protos.h
-@@ -36,6 +36,9 @@ void uart_putc_options(char, bool);
- int uart_getc(void);
- 
- void pe_init_fiq(void);
-+#if defined(ARM64_BOARD_CONFIG_M30LTE)
-+extern uint32_t m30_vtimer_intid;
+@@ -0,0 +1,3 @@
++#ifndef _PEXPERT_ARM_PROTOS_H
++#define _PEXPERT_ARM_PROTOS_H
 +#endif
- 
- #ifdef PRIVATE
- /**
 diff --git a/pexpert/pexpert/arm64/M30LTE.h b/pexpert/pexpert/arm64/M30LTE.h
 new file mode 100644
-index 0000000..32b813a
 --- /dev/null
 +++ b/pexpert/pexpert/arm64/M30LTE.h
 @@ -0,0 +1,81 @@
@@ -614,6 +488,9 @@ index 0000000..32b813a
 + *
 + * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
 + */
++
++#ifndef _PEXPERT_ARM64_M30LTE_H
++#define _PEXPERT_ARM64_M30LTE_H
 +
 +#define NO_MONITOR                1
 +#define NO_ECORE                  1
@@ -669,11 +546,13 @@ index 0000000..32b813a
 +#define __ARM_16K_PG__            1
 +
 +#include <pexpert/arm64/apple_arm64_common.h>
++
++#endif /* _PEXPERT_ARM64_M30LTE_H */
 diff --git a/pexpert/pexpert/arm64/Makefile b/pexpert/pexpert/arm64/Makefile
 index 8226b8c..2ddbb0c 100644
 --- a/pexpert/pexpert/arm64/Makefile
 +++ b/pexpert/pexpert/arm64/Makefile
-@@ -17,7 +17,8 @@ PRIVATE_KERNELFILES = \
+@@ -17,7 +17,6 @@ PRIVATE_KERNELFILES = \
  	boot.h \
  	H13.h \
  	VMAPPLE.h \
@@ -687,6 +566,9 @@ index 9454534..97dd8a5 100644
 --- a/pexpert/pexpert/arm64/board_config.h
 +++ b/pexpert/pexpert/arm64/board_config.h
 @@ -97,6 +97,16 @@
+ #define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
+ #endif  /* ARM64_BOARD_CONFIG_BCM2837 */
+ 
 +#ifdef ARM64_BOARD_CONFIG_M30LTE
 +#include <pexpert/arm64/M30LTE.h>
 +
@@ -833,27 +715,3 @@ index 0000000..0000000
 -	proc_reg.h \
  	tlb.h \
  	$(ARM_HEADER_FILES)
-diff --git a/osfmk/arm64/Makefile b/osfmk/arm64/Makefile
-index 0000000..0000000
---- a/osfmk/arm64/Makefile
-+++ b/osfmk/arm64/Makefile
-@@ -38,7 +38,6 @@ EXPORT_MD_LIST = \
- 	hv_hvc.h \
- 	lowglobals.h \
- 	machine_cpuid.h \
- 	machine_kpc.h \
- 	machine_remote_time.h \
- 	monotonic.h \
- 	perfmon_arm64_regs.h \
--	proc_reg.h \
- 	m30_early.h \
- 	asm.h \
- 	tlb.h \
- 	pal_hibernate.h
-diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
-index 5bd6f23..a05df7f 100644
---- a/makedefs/MakeInc.def
-+++ b/makedefs/MakeInc.def
-@@ -1069,7 +1069,7 @@ KINCFRAME_UNIFDEF   = $(PLATFORM_UNIFDEF) $(XNU_PRIVATE_UNIFDEF) $(SEED_DEFINES) -UKERNEL_PRIVATE -DKERNEL -UPRIVATE -UDRIVERKIT -D_OPEN_SOURCE_ -D__OPEN_SOURCE__
--KINCFRAME_UNIFDEF   = $(PLATFORM_UNIFDEF) $(XNU_PRIVATE_UNIFDEF) $(SEED_DEFINES) -UKERNEL_PRIVATE -DKERNEL -UPRIVATE -UDRIVERKIT -D_OPEN_SOURCE_ -D__OPEN_SOURCE__
-+KINCFRAME_UNIFDEF   = $(PLATFORM_UNIFDEF) $(XNU_PRIVATE_UNIFDEF) $(SEED_DEFINES) -DKERNEL -UPRIVATE -UDRIVERKIT -D_OPEN_SOURCE_ -D__OPEN_SOURCE__ -DM30LTE
