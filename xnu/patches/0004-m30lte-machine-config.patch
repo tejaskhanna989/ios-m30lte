@@ -149,6 +149,8 @@ index 0000000..b5c491b
 +
 +options   CONFIG_RESLIDE_SHARED_CACHE		# <reslide_shared_cache>
 +options   CONFIG_KERNEL_TBI		# <kernel_tbi>
++options   NOS_ARM_ASM			# <nos_arm_asm>
++options   NOS_ARM_PMAP			# <nos_arm_pmap>
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl.h b/libkern/crypto/m30_bearssl/inc/bearssl.h
 new file mode 100644
 index 0000000..b61d5b3
