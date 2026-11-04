@@ -13,10 +13,10 @@ index 3ff7646..cb033aa 100644
  #include <sys/ioctl.h>
 diff --git a/config/MASTER.arm64.m30lte b/config/MASTER.arm64.m30lte
 new file mode 100644
-index 0000000..2fbbea3
+index 0000000..97da168
 --- /dev/null
 +++ b/config/MASTER.arm64.m30lte
-@@ -0,0 +1,108 @@
+@@ -0,0 +1,110 @@
 +#
 +# Mach Operating System
 +# Copyright (c) 1986 Carnegie-Mellon University
@@ -125,6 +125,8 @@ index 0000000..2fbbea3
 +
 +options   CONFIG_RESLIDE_SHARED_CACHE		# <reslide_shared_cache>
 +options   CONFIG_KERNEL_TBI		# <kernel_tbi>
++options   NOS_ARM_ASM			# <nos_arm_asm>
++options   NOS_ARM_PMAP			# <nos_arm_pmap>
 diff --git a/libkern/crypto/m30_bearssl/inc/bearssl.h b/libkern/crypto/m30_bearssl/inc/bearssl.h
 new file mode 100644
 index 0000000..b61d5b3
