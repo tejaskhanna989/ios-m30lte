@@ -134,12 +134,13 @@ index 74d54c8..953d4f9 100644
  
  #include <firehose/tracepoint_private.h>
  #include <firehose/chunk_private.h>
+-#include <os/firehose_buffer_private.h>
 +/* firehose_buffer_private.h not available in M30LTE build */
  #include <os/firehose.h>
  
  #include <os/log_private.h>
 diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
-index 5bd6f23..6ecc938 100644
+index 5bd6f23..12595ce 100644
 --- a/makedefs/MakeInc.def
 +++ b/makedefs/MakeInc.def
 @@ -29,7 +29,7 @@ SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
@@ -151,27 +152,26 @@ index 5bd6f23..6ecc938 100644
  
  endif
  
-@@ -61,6 +61,8 @@ MACHINE_FLAGS_ARM64_T8103 = -DARM64_BOARD_CONFIG_T8103                  -mcpu=ap
+@@ -61,6 +61,7 @@ MACHINE_FLAGS_ARM64_T8103 = -DARM64_BOARD_CONFIG_T8103                  -mcpu=ap
  MACHINE_FLAGS_ARM64_T6000 = -DARM64_BOARD_CONFIG_T6000 		-mcpu=apple-a14
  MACHINE_FLAGS_ARM64_VMAPPLE = -DARM64_BOARD_CONFIG_VMAPPLE              -march=armv8.5a
  MACHINE_FLAGS_ARM64_BCM2837 = -DARM64_BOARD_CONFIG_BCM2837
 +MACHINE_FLAGS_ARM64_M30LTE = -DARM64_BOARD_CONFIG_M30LTE	-arch arm64 -march=armv8-a+crypto
-+MACHINE_FLAGS_ARM64_M30LTE = -DARM64_BOARD_CONFIG_M30LTE	-arch arm64 -march=armv8-a+crypto
  
  
  #
-@@ -259,7 +261,9 @@ ifeq ($(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG),)
+@@ -259,8 +260,10 @@ ifeq ($(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG),)
  # Without embdedded device map, use a default arch string
  export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := $(shell echo $(CURRENT_ARCH_CONFIG) | tr A-Z a-z)
  ifneq ($(filter arm64,$(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG)),)
--export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := arm64e
 +ifneq ($(CURRENT_MACHINE_CONFIG),M30LTE)
-+export ARCH_STRING_FOR_CURRENT_MACHINEConfig := arm64e
-+endif
+ export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := arm64e
  endif
++endif
  
  endif
-@@ -857,7 +861,7 @@ LDFILES_KERNEL_ONLY = $(TARGET)/all-kpi.exp $(TARGET)/all-alias.exp $(TARGET)/sy
+ 
+@@ -857,7 +860,7 @@ LDFILES_KERNEL_ONLY = $(TARGET)/all-kpi.exp $(TARGET)/all-alias.exp $(TARGET)/sy
  # Default runtime libraries to be linked with the kernel
  #
  LD_KERNEL_LIBS	   = -lcc_kext
@@ -180,42 +180,43 @@ index 5bd6f23..6ecc938 100644
  # Link opensource binary library
  ifneq ($(filter T6000 T8101 VMAPPLE T6000 T8101 VMAPPLE,$(CURRENT_MACHINE_CONFIG)),)
  	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a
+diff --git a/osfmk/arm64/os/firehose_buffer_private.h b/osfmk/arm64/os/firehose_buffer_private.h
+new file mode 100644
+index 0000000..77db13e
+--- /dev/null
++++ b/osfmk/arm64/os/firehose_buffer_private.h
+@@ -0,0 +1,17 @@
++#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
++#define _OS_FIREHOSE_BUFFER_PRIVATE_H
++
++#include <stdint.h>
++#include <stddef.h>
++
++#define FIREHOSE_BUFFER_KERNEL_DEFAULT_CHUNK_COUNT 16
++#define FIREHOSE_BUFFER_KERNEL_DEFAULT_IO_PAGES 4
++
++boolean_t __firehose_kernel_configuration_valid(uint32_t chunk_count, uint32_t io_pages);
++boolean_t __firehose_merge_updates(firehose_push_reply_t reply);
++vm_offset_t __firehose_buffer_create(size_t *size);
++
++firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
++void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp);
++
++#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
 diff --git a/osfmk/arm64/proc_reg.h b/osfmk/arm64/proc_reg.h
-index 133b07f..46564cf 100644
+index 133b07f..3e29c8e 100644
 --- a/osfmk/arm64/proc_reg.h
 +++ b/osfmk/arm64/proc_reg.h
-@@ -25,6 +25,10 @@
+@@ -25,6 +25,8 @@
   *
   * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
   */
 +
 +#define M30LTE 1
-+
-+#define M30LTE 1
  /*
   * @OSF_COPYRIGHT@
   */
-@@ -213,6 +217,19 @@
- /* D-Cache. */
- #define MMU_CLINE   6
- 
-+#elif defined (M30LTE) /* Samsung Exynos 7904: Cortex-A73 + Cortex-A53, ARMv8.0 */
-+
-+/* I-Cache. */
-+#define MMU_I_CLINE 6
-+
-+/* D-Cache. */
-+#define MMU_CLINE   6
-+
-+/* CPU and cache configuration */
-+#define MAX_CPUS                        8
-+#define MAX_L2_CLINE                    6
-+#define MAX_CPU_CLUSTERS                2
-+
- #elif defined (VMAPPLE)
- 
- /* I-Cache. */
-@@ -222,7 +239,7 @@
+@@ -222,7 +224,7 @@
  #define MMU_CLINE   6
  
  #else
@@ -396,50 +397,3 @@ index 9454534..97dd8a5 100644
  #ifdef ARM64_BOARD_CONFIG_VMAPPLE
  #include <pexpert/arm64/VMAPPLE.h>
  
-diff --git a/pexpert/pexpert/arm64/Makefile b/pexpert/pexpert/arm64/Makefile
-index 100644..100644
---- a/pexpert/pexpert/arm64/Makefile
-+++ b/pexpert/pexpert/arm64/Makefile
-@@ -18,7 +18,8 @@ PRIVATE_KERNELFILES = \
- 	H13.h \
- 	VMAPPLE.h \
--	BCM2837.h
-+	BCM2837.h \
-+	M30LTE.h
- 
- 
- # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
-diff --git a/osfmk/arm64/os/firehose_buffer_private.h b/osfmk/arm64/os/firehose_buffer_private.h
-new file mode 100644
-index 0000000..77db13e
---- /dev/null
-+++ b/osfmk/arm64/os/firehose_buffer_private.h
-@@ -0,0 +1,17 @@
-+#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
-+#define _OS_FIREHOSE_BUFFER_PRIVATE_H
-+
-+#include <stdint.h>
-+#include <stddef.h>
-+
-+#define FIREHOSE_BUFFER_KERNEL_DEFAULT_CHUNK_COUNT 16
-+#define FIREHOSE_BUFFER_KERNEL_DEFAULT_IO_PAGES 4
-+
-+boolean_t __firehose_kernel_configuration_valid(uint32_t chunk_count, uint32_t io_pages);
-+boolean_t __firehose_merge_updates(firehose_push_reply_t reply);
-+vm_offset_t __firehose_buffer_create(size_t *size);
-+
-+firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
-+void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp);
-+
-+#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
-diff --git a/osfmk/arm64/Makefile b/osfmk/arm64/Makefile
-index 0000000..0000000
---- a/osfmk/arm64/Makefile
-+++ b/osfmk/arm64/Makefile
-@@ -37,6 +37,7 @@ EXPORT_MD_LIST = \
- 	perfmon_arm64_regs.h \
- 	proc_reg.h \
-+	os/firehose_buffer_private.h \
- 	asm.h \
- 	tlb.h \
- 	pal_hibernate.h
