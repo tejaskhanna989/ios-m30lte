@@ -1,3 +1,131 @@
+diff --git a/libkern/crypto/m30_bearssl/inc/bearssl.h b/libkern/crypto/m30_bearssl/inc/bearssl.h
+new file mode 100644
+index 0000000..b61d5b3
+--- /dev/null
++++ b/libkern/crypto/m30_bearssl/inc/bearssl.h
+@@ -0,0 +1,7 @@
++#ifndef BEARSSL_H
++#define BEARSSL_H
++
++#include <stddef.h>
++#include <stdint.h>
++
++#endif /* BEARSSL_H */
+diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_block.h b/libkern/crypto/m30_bearssl/inc/bearssl_block.h
+new file mode 100644
+index 0000000..57fade3
+--- /dev/null
++++ b/libkern/crypto/m30_bearssl/inc/bearssl_block.h
+@@ -0,0 +1,21 @@
++#ifndef BEARSSL_BLOCK_H
++#define BEARSSL_BLOCK_H
++
++#include <stddef.h>
++#include <stdint.h>
++
++typedef struct br_hash_class br_hash_class;
++
++typedef struct {
++    uint64_t count;
++    unsigned char buf[64];
++    unsigned char val[32];
++} br_sha256_context;
++
++extern const br_hash_class br_sha256_vtable;
++
++void br_sha256_init(br_sha256_context *ctx);
++void br_sha256_update(br_sha256_context *ctx, const void *data, size_t len);
++void br_sha256_output(br_sha256_context *ctx, void *out, size_t len);
++
++#endif /* BEARSSL_BLOCK_H */
+diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
+new file mode 100644
+index 0000000..60eb84f
+--- /dev/null
++++ b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
+@@ -0,0 +1,82 @@
++#ifndef BEARSSL_HASH_H
++#define BEARSSL_HASH_H
++
++#include <stddef.h>
++#include <stdint.h>
++
++typedef struct br_hash_class br_hash_class;
++typedef struct br_aes_ct_cbcenc_state br_aes_ct_cbcenc_state;
++typedef struct br_aes_ct_cbcdec_state br_aes_ct_cbcdec_state;
++
++typedef struct {
++    uint64_t count;
++    unsigned char buf[64];
++    unsigned char val[32];
++} br_sha256_context;
++
++typedef struct {
++    uint64_t count;
++    unsigned char buf[64];
++    unsigned char val[20];
++} br_sha1_context;
++
++typedef struct {
++    uint64_t count;
++    unsigned char buf[128];
++    unsigned char val[64];
++} br_sha512_context;
++
++typedef struct {
++    uint64_t count;
++    unsigned char buf[128];
++    unsigned char val[48];
++} br_sha384_context;
++
++typedef struct {
++    uint64_t count;
++    unsigned char buf[64];
++    unsigned char val[16];
++} br_md5_context;
++
++extern const br_hash_class br_sha256_vtable;
++extern const br_hash_class br_sha1_vtable;
++extern const br_hash_class br_sha512_vtable;
++extern const br_hash_class br_sha384_vtable;
++extern const br_hash_class br_md5_vtable;
++
++void br_sha256_init(br_sha256_context *ctx);
++void br_sha256_update(br_sha256_context *ctx, const void *data, size_t len);
++void br_sha256_output(br_sha256_context *ctx, void *out, size_t len);
++
++void br_sha1_init(br_sha1_context *ctx);
++void br_sha1_update(br_sha1_context *ctx, const void *data, size_t len);
++void br_sha1_output(br_sha1_context *ctx, void *out, size_t len);
++void br_sha1_out(br_sha1_context *ctx, void *out, size_t len);
++
++void br_sha512_init(br_sha512_context *ctx);
++void br_sha512_update(br_sha512_context *ctx, const void *data, size_t len);
++void br_sha512_output(br_sha512_context *ctx, void *out, size_t len);
++
++void br_sha384_init(br_sha384_context *ctx);
++void br_sha384_update(br_sha384_context *ctx, const void *data, size_t len);
++void br_sha384_output(br_sha384_context *ctx, void *out, size_t len);
++void br_sha384_out(br_sha384_context *ctx, void *out, size_t len);
++
++void br_sha512_out(br_sha512_context *ctx, void *out, size_t len);
++
++void br_md5_init(br_md5_context *ctx);
++void br_md5_update(br_md5_context *ctx, const void *data, size_t len);
++void br_md5_output(br_md5_context *ctx, void *out, size_t len);
++void br_md5_out(br_md5_context *ctx, void *out);
++
++void br_aes_ct_cbcenc_init(br_aes_ct_cbcenc_state *ctx, const unsigned char *key, size_t len);
++void br_aes_ct_cbcenc_update(br_aes_ct_cbcenc_state *ctx, const void *data, size_t len);
++void br_aes_ct_cbcenc_out(br_aes_ct_cbcenc_state *ctx, void *out, size_t len);
++void br_aes_ct_cbcenc_keys(const unsigned char *key, size_t len, void *out);
++
++void br_aes_ct_cbcdec_init(br_aes_ct_cbcdec_state *ctx, const unsigned char *key, size_t len);
++void br_aes_ct_cbcdec_update(br_aes_ct_cbcdec_state *ctx, const void *data, size_t len);
++void br_aes_ct_cbcdec_out(br_aes_ct_cbcdec_state *ctx, void *out, size_t len);
++void br_aes_ct_cbcdec_keys(const unsigned char *key, size_t len, void *out);
++
++#endif /* BEARSSL_HASH_H */
 diff --git a/libkern/os/log.c b/libkern/os/log.c
 index 74d54c8..953d4f9 100644
 --- a/libkern/os/log.c
@@ -12,7 +140,7 @@ index 74d54c8..953d4f9 100644
  
  #include <os/log_private.h>
 diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
-index 5bd6f23..5b8f1a9 100644
+index 5bd6f23..6ecc938 100644
 --- a/makedefs/MakeInc.def
 +++ b/makedefs/MakeInc.def
 @@ -29,7 +29,7 @@ SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
@@ -20,19 +148,20 @@ index 5bd6f23..5b8f1a9 100644
  SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
  else
 -SUPPORTED_ARM64_MACHINE_CONFIGS = BCM2837 T6000 T8101 T8103 VMAPPLE
-+SUPPORTED_ARM64_MACHINE_CONFIGS = BCM2837 T6000 T8101 T8103 VMAPPLE M30LTE
++SUPPORTED_ARM64_MACHINE_CONFIGS = BCM2837 T6000 T8101 T8103 VMAPPLE M30LTE M30LTE
  
  endif
  
-@@ -61,6 +61,7 @@ MACHINE_FLAGS_ARM64_T8103 = -DARM64_BOARD_CONFIG_T8103                  -mcpu=ap
+@@ -61,6 +61,8 @@ MACHINE_FLAGS_ARM64_T8103 = -DARM64_BOARD_CONFIG_T8103                  -mcpu=ap
  MACHINE_FLAGS_ARM64_T6000 = -DARM64_BOARD_CONFIG_T6000 		-mcpu=apple-a14
  MACHINE_FLAGS_ARM64_VMAPPLE = -DARM64_BOARD_CONFIG_VMAPPLE              -march=armv8.5a
  MACHINE_FLAGS_ARM64_BCM2837 = -DARM64_BOARD_CONFIG_BCM2837
 +MACHINE_FLAGS_ARM64_M30LTE = -DARM64_BOARD_CONFIG_M30LTE	-arch arm64 -march=armv8-a+crypto
++MACHINE_FLAGS_ARM64_M30LTE = -DARM64_BOARD_CONFIG_M30LTE	-arch arm64 -march=armv8-a+crypto
  
  
  #
-@@ -259,7 +260,9 @@ ifeq ($(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG),)
+@@ -259,7 +261,9 @@ ifeq ($(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG),)
  # Without embdedded device map, use a default arch string
  export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := $(shell echo $(CURRENT_ARCH_CONFIG) | tr A-Z a-z)
  ifneq ($(filter arm64,$(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG)),)
@@ -43,7 +172,7 @@ index 5bd6f23..5b8f1a9 100644
  endif
  
  endif
-@@ -857,7 +860,7 @@ LDFILES_KERNEL_ONLY = $(TARGET)/all-kpi.exp $(TARGET)/all-alias.exp $(TARGET)/sy
+@@ -857,7 +861,7 @@ LDFILES_KERNEL_ONLY = $(TARGET)/all-kpi.exp $(TARGET)/all-alias.exp $(TARGET)/sy
  # Default runtime libraries to be linked with the kernel
  #
  LD_KERNEL_LIBS	   = -lcc_kext
@@ -64,20 +193,45 @@ index f819fea..dbc369f 100644
  	tlb.h \
  	$(ARM_HEADER_FILES)
  
+diff --git a/osfmk/arm64/firehose_buffer_private.h b/osfmk/arm64/firehose_buffer_private.h
+new file mode 100644
+index 0000000..77db13e
+--- /dev/null
++++ b/osfmk/arm64/firehose_buffer_private.h
+@@ -0,0 +1,17 @@
++#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
++#define _OS_FIREHOSE_BUFFER_PRIVATE_H
++
++#include <stdint.h>
++#include <stddef.h>
++
++#define FIREHOSE_BUFFER_KERNEL_DEFAULT_CHUNK_COUNT 16
++#define FIREHOSE_BUFFER_KERNEL_DEFAULT_IO_PAGES 4
++
++boolean_t __firehose_kernel_configuration_valid(uint32_t chunk_count, uint32_t io_pages);
++boolean_t __firehose_merge_updates(firehose_push_reply_t reply);
++vm_offset_t __firehose_buffer_create(size_t *size);
++
++firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
++void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp);
++
++#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
 diff --git a/osfmk/arm64/proc_reg.h b/osfmk/arm64/proc_reg.h
-index 133b07f..e45b291 100644
+index 133b07f..46564cf 100644
 --- a/osfmk/arm64/proc_reg.h
 +++ b/osfmk/arm64/proc_reg.h
-@@ -25,6 +25,8 @@
+@@ -25,6 +25,10 @@
   *
   * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
   */
 +
 +#define M30LTE 1
++
++#define M30LTE 1
  /*
   * @OSF_COPYRIGHT@
   */
-@@ -213,6 +215,19 @@
+@@ -213,6 +217,19 @@
  /* D-Cache. */
  #define MMU_CLINE   6
  
@@ -97,7 +251,7 @@ index 133b07f..e45b291 100644
  #elif defined (VMAPPLE)
  
  /* I-Cache. */
-@@ -222,7 +237,7 @@
+@@ -222,7 +239,7 @@
  #define MMU_CLINE   6
  
  #else
@@ -106,38 +260,99 @@ index 133b07f..e45b291 100644
  #endif
  
  #define MAX_L2_CLINE_BYTES (1 << MAX_L2_CLINE)
+diff --git a/osfmk/conf/files.arm64 b/osfmk/conf/files.arm64
+index c40d57b..9946cc6 100644
+--- a/osfmk/conf/files.arm64
++++ b/osfmk/conf/files.arm64
+@@ -8,11 +8,11 @@ osfmk/vm/vm_fourk_pager.c	 standard
+ osfmk/arm64/hi_res_clock_map.c 	optional hi_res_clock
+ 
+ osfmk/arm/pmap/pmap.c			optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_cs.c		optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_data.c		optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_iommu.c		optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_misc.c		optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_ppl_interface.c	optional nos_arm_pmap
++osfmk/arm/pmap/pmap_cs.c
++osfmk/arm/pmap/pmap_data.c
++osfmk/arm/pmap/pmap_iommu.c
++osfmk/arm/pmap/pmap_misc.c
++osfmk/arm/pmap/pmap_ppl_interface.c
+ 
+ 
+ osfmk/arm64/bsd_arm64.c		optional mach_bsd
+@@ -25,12 +25,12 @@ osfmk/arm64/WKdmCompress_4k.s	standard
+ osfmk/arm64/WKdmData.s		standard
+ osfmk/arm64/lz4_decode_arm64.s  standard
+ osfmk/arm64/lz4_encode_arm64.s  standard
+-osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl
+-osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm
++osfmk/arm64/amcc_rorgn_ppl.c optional config_pmap_ppl
++osfmk/arm64/amcc_rorgn_common.c
+ osfmk/arm64/bcopy.s standard
+ osfmk/arm64/bzero.s standard
+ osfmk/arm/caches.c		standard
+-osfmk/arm64/caches_asm.s		optional nos_arm_asm
++osfmk/arm64/caches_asm.s
+ osfmk/arm64/copyio.c	standard
+ osfmk/arm64/cpu.c		standard
+ osfmk/arm/cpu_common.c		standard
+@@ -44,22 +44,22 @@ osfmk/arm64/arm64_hypercall.c	standard
+ osfmk/arm/io_map.c		standard
+ osfmk/arm64/loose_ends.c	standard
+ osfmk/arm/locks_arm.c	standard
+-osfmk/arm64/locore.s	optional nos_arm_asm
+-osfmk/arm64/iofilter_asm.s	optional nos_arm_asm
+-osfmk/arm64/iofilter.c	optional nos_arm_asm
+-osfmk/arm64/gxf_exceptions.s	optional nos_arm_asm
++osfmk/arm64/locore.s
++osfmk/arm64/iofilter_asm.s
++osfmk/arm64/iofilter.c
++osfmk/arm64/gxf_exceptions.s
+ osfmk/arm64/lowmem_vectors.c	standard
+ osfmk/arm64/sleh.c			standard
+-osfmk/arm64/start.s	optional nos_arm_asm config_pmap_ppl
+-osfmk/arm64/pinst.s	optional nos_arm_asm
+-osfmk/arm64/cswitch.s	optional nos_arm_asm
++osfmk/arm64/start.s	optional config_pmap_ppl
++osfmk/arm64/pinst.s
++osfmk/arm64/cswitch.s
+ osfmk/arm/machine_cpuid.c	standard
+ osfmk/arm/machine_routines_common.c		standard
+ osfmk/arm64/lock_ticket_pv.c		optional config_pv_ticket
+ osfmk/arm64/machine_routines.c		standard
+-osfmk/arm64/machine_routines_asm.s	optional nos_arm_asm
++osfmk/arm64/machine_routines_asm.s
+ osfmk/arm64/machine_task.c		standard
+-osfmk/arm/machine_routines_apple.c	optional nos_arm_asm
++osfmk/arm/machine_routines_apple.c
+ osfmk/arm/pal_routines.c		standard
+ osfmk/arm64/mcount.s		optional profile
+ osfmk/arm64/memcmp_zero.s	standard
+@@ -67,7 +67,7 @@ osfmk/arm64/strnlen.s   standard
+ osfmk/arm64/strncmp.s   standard
+ 
+ osfmk/arm/model_dep.c		standard
+-osfmk/arm64/pcb.c		optional nos_arm_asm
++osfmk/arm64/pcb.c
+ osfmk/arm/rtclock.c		standard
+ osfmk/arm64/status.c		standard
+ osfmk/arm/status_shared.c	standard
+@@ -91,7 +91,7 @@ osfmk/OPTIONS/hi_res_clock	optional hi_res_clock
+ 
+ # Kernel performance monitoring
+ osfmk/arm64/perfmon_arm64.c optional config_perfmon
+-osfmk/arm64/kpc.c		optional kpc nos_arm_asm
++osfmk/arm64/kpc.c		optional kpc
+ osfmk/arm64/monotonic_arm64.c optional monotonic
+ 
+ osfmk/arm64/platform_tests.c			optional config_xnupost
 diff --git a/pexpert/pexpert/arm64/M30LTE.h b/pexpert/pexpert/arm64/M30LTE.h
 new file mode 100644
-index 0000000..d78be3e
+index 0000000..1211a0c
 --- /dev/null
 +++ b/pexpert/pexpert/arm64/M30LTE.h
-@@ -0,0 +1,84 @@
-+/*
-+ * Copyright (c) 2024 Apple Inc. All rights reserved.
-+ *
-+ * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
-+ *
-+ * This file contains Original Code and/or Modifications of Original Code
-+ * as defined in and that are subject to the Apple Public Source License
-+ * Version 2.0 (the 'License'). You may not use this file except in
-+ * compliance with the License. The rights granted to you under the License
-+ * may not be used to create or distribute modified versions of this file,
-+ * except as permitted under the terms of the License.
-+ *
-+ * Please obtain a copy of the License at
-+ * http://www.opensource.apple.com/apsl/ and read it before using this file.
-+ *
-+ * The Original Code and all software distributed under the License are
-+ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
-+ * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
-+ * INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
-+ * Please see the License for the specific language governing rights and
-+ * limitations under the License.
-+ *
-+ * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
-+ */
-+
+@@ -0,0 +1,58 @@
 +#ifndef _PEXPERT_ARM64_M30LTE_H
 +#define _PEXPERT_ARM64_M30LTE_H
 +
