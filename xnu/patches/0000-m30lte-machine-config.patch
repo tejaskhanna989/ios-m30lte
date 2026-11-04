@@ -32,10 +32,13 @@ index d3751b8..97da168 100644
 +options   NOS_ARM_PMAP			# <nos_arm_pmap>
 diff --git a/config/MASTER.arm64.m30lte b/config/MASTER.arm64.m30lte
 new file mode 100644
-index 0000000..97da168
+index 0000000..240e92c
 --- /dev/null
 +++ b/config/MASTER.arm64.m30lte
-@@ -0,0 +1,110 @@
+@@ -0,0 +1,113 @@
++#define nos_arm_asm 1
++#define nos_arm_pmap 1
++
 +#
 +# Mach Operating System
 +# Copyright (c) 1986 Carnegie-Mellon University
