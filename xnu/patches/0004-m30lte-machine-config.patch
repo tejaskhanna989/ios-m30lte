@@ -196,7 +196,7 @@ index 74d54c8..fe580ea 100644
  }
  // There isnt a lock held in this case.
 diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
-index 5bd6f23..71d4797 100644
+index 5bd6f23..a05df7f 100644
 --- a/makedefs/MakeInc.def
 +++ b/makedefs/MakeInc.def
 @@ -29,7 +29,7 @@ SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
@@ -228,6 +228,15 @@ index 5bd6f23..71d4797 100644
  
  endif
  
+@@ -857,7 +861,7 @@ LDFILES_KERNEL_ONLY = $(TARGET)/all-kpi.exp $(TARGET)/all-alias.exp $(TARGET)/sy
+ # Default runtime libraries to be linked with the kernel
+ #
+ LD_KERNEL_LIBS	   = -lcc_kext
+-LD_KERNEL_ARCHIVES = $(LDFLAGS_KERNEL_SDK) -lfirehose_kernel
++LD_KERNEL_ARCHIVES = $(LDFLAGS_KERNEL_SDK)
+ # Link opensource binary library
+ ifneq ($(filter T6000 T8101 VMAPPLE T6000 T8101 VMAPPLE,$(CURRENT_MACHINE_CONFIG)),)
+ 	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a
 diff --git a/osfmk/arm64/proc_reg.h b/osfmk/arm64/proc_reg.h
 index 133b07f..af5fe1a 100644
 --- a/osfmk/arm64/proc_reg.h
