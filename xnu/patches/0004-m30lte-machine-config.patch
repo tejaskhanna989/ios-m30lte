@@ -385,6 +385,7 @@ index 133b07f..af5fe1a 100644
  
  /* I-Cache. */
 @@ -231,6 +241,5 @@
+ 
  #else
 -#error processor not supported
 +#warning processor not supported
@@ -819,3 +820,16 @@ index e6b7c0e..f4a2d9b 100644
  osfmk/arm64/machine_remote_time.c optional config_mach_bridge_recv_time
  osfmk/arm64/corecrypto/sha256_compress_arm64.s	standard
  osfmk/arm/counter.c	standard
+diff --git a/osfmk/arm64/Makefile b/osfmk/arm64/Makefile
+index 0000000..0000000
+--- a/osfmk/arm64/Makefile
++++ b/osfmk/arm64/Makefile
+@@ -14,7 +14,6 @@ INSTALL_KF_MD_LCL_LIST = \
+ 	hv_hvc.h \
+ 	lowglobals.h \
+ 	machine_kpc.h \
+ 	machine_remote_time.h \
+ 	monotonic.h \
+-	proc_reg.h \
+ 	tlb.h \
+ 	$(ARM_HEADER_FILES)
