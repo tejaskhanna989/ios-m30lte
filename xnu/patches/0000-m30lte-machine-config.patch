@@ -180,29 +180,6 @@ index 5bd6f23..12595ce 100644
  # Link opensource binary library
  ifneq ($(filter T6000 T8101 VMAPPLE T6000 T8101 VMAPPLE,$(CURRENT_MACHINE_CONFIG)),)
  	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a
-diff --git a/osfmk/arm64/os/firehose_buffer_private.h b/osfmk/arm64/os/firehose_buffer_private.h
-new file mode 100644
-index 0000000..77db13e
---- /dev/null
-+++ b/osfmk/arm64/os/firehose_buffer_private.h
-@@ -0,0 +1,17 @@
-+#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
-+#define _OS_FIREHOSE_BUFFER_PRIVATE_H
-+
-+#include <stdint.h>
-+#include <stddef.h>
-+
-+#define FIREHOSE_BUFFER_KERNEL_DEFAULT_CHUNK_COUNT 16
-+#define FIREHOSE_BUFFER_KERNEL_DEFAULT_IO_PAGES 4
-+
-+boolean_t __firehose_kernel_configuration_valid(uint32_t chunk_count, uint32_t io_pages);
-+boolean_t __firehose_merge_updates(firehose_push_reply_t reply);
-+vm_offset_t __firehose_buffer_create(size_t *size);
-+
-+firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
-+void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp);
-+
-+#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
 diff --git a/osfmk/arm64/proc_reg.h b/osfmk/arm64/proc_reg.h
 index 133b07f..3e29c8e 100644
 --- a/osfmk/arm64/proc_reg.h
@@ -398,7 +375,7 @@ index 9454534..97dd8a5 100644
  #include <pexpert/arm64/VMAPPLE.h>
  
 diff --git a/pexpert/pexpert/arm64/Makefile b/pexpert/pexpert/arm64/Makefile
-index 100644..100644
+index 0000000..100644
 --- a/pexpert/pexpert/arm64/Makefile
 +++ b/pexpert/pexpert/arm64/Makefile
 @@ -21,7 +21,8 @@ PRIVATE_KERNELFILES = \
@@ -412,14 +389,49 @@ index 100644..100644
  
  
  # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
+diff --git a/osfmk/arm64/firehose_buffer_private.h b/osfmk/arm64/firehose_buffer_private.h
+new file mode 100644
+index 0000000..77db13e
+--- /dev/null
++++ b/osfmk/arm64/firehose_buffer_private.h
+@@ -0,0 +1,17 @@
++#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
++#define _OS_FIREHOSE_BUFFER_PRIVATE_H
++
++#include <stdint.h>
++#include <stddef.h>
++
++#define FIREHOSE_BUFFER_KERNEL_DEFAULT_CHUNK_COUNT 16
++#define FIREHOSE_BUFFER_KERNEL_DEFAULT_IO_PAGES 4
++
++boolean_t __firehose_kernel_configuration_valid(uint32_t chunk_count, uint32_t io_pages);
++boolean_t __firehose_merge_updates(firehose_push_reply_t reply);
++vm_offset_t __firehose_buffer_create(size_t *size);
++
++firehose_tracepoint_t __firehose_buffer_tracepoint_reserve(unsigned char type, uint64_t arg1, uint64_t arg2, uint64_t arg3);
++void __firehose_buffer_tracepoint_flush(firehose_tracepoint_t tp);
++
++#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
+diff --git a/bsd/kern/subr_log.c b/bsd/kern/subr_log.c
+index 0000000..0000000
+--- a/bsd/kern/subr_log.c
++++ b/bsd/kern/subr_log.c
+@@ -74,7 +74,7 @@
+ #include <firehose/chunk_private.h>
+ #include <firehose/ioctl_private.h>
+-#include <os/firehose_buffer_private.h>
++#include <arm64/firehose_buffer_private.h>
+ 
+ #include <os/log_private.h>
+ #include <sys/ioctl.h>
 diff --git a/osfmk/arm64/Makefile b/osfmk/arm64/Makefile
-index 100644..100644
+index 0000000..0000000
 --- a/osfmk/arm64/Makefile
 +++ b/osfmk/arm64/Makefile
 @@ -37,6 +37,7 @@ EXPORT_MD_LIST = \
  	perfmon_arm64_regs.h \
  	proc_reg.h \
-+	os/firehose_buffer_private.h \
++	firehose_buffer_private.h \
  	asm.h \
  	tlb.h \
  	pal_hibernate.h
