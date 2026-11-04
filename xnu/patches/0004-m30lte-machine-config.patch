@@ -379,6 +379,12 @@ index 133b07f..af5fe1a 100644
  #elif defined (VMAPPLE)
  
  /* I-Cache. */
+@@ -232,5 +240,4 @@
+ #else
+-#error processor not supported
+ #endif
+ 
+ #define MAX_L2_CLINE_BYTES (1 << MAX_L2_CLINE)
 diff --git a/osfmk/arm64/sleh.c b/osfmk/arm64/sleh.c
 index c40c6ea..1dd14b9 100644
 --- a/osfmk/arm64/sleh.c
@@ -693,42 +699,99 @@ diff --git a/osfmk/conf/files.arm64 b/osfmk/conf/files.arm64
 index e6b7c0e..f4a2d9b 100644
 --- a/osfmk/conf/files.arm64
 +++ b/osfmk/conf/files.arm64
-@@ -10,15 +10,15 @@
- osfmk/arm/pmap/pmap.c
- osfmk/arm/pmap/pmap_cs.c
- osfmk/arm/pmap/pmap_data.c
- osfmk/arm/pmap/pmap_iommu.c
- osfmk/arm/pmap/pmap_misc.c
- osfmk/arm/pmap/pmap_ppl_interface.c
-@@ -30,15 +30,15 @@
- osfmk/arm64/caches_asm.s
- osfmk/arm64/locore.s
- osfmk/arm64/iofilter_asm.s
- osfmk/arm64/iofilter.c
- osfmk/arm64/gxf_exceptions.s
- osfmk/arm64/lowmem_vectors.c
- osfmk/arm64/sleh.c
- osfmk/arm64/start.s		optional config_pmap_ppl
- osfmk/arm64/pinst.s
- osfmk/arm64/cswitch.s
- osfmk/arm/machine_cpuid.c
- osfmk/arm/machine_routines_common.c
+@@ -10,12 +10,12 @@
+ osfmk/arm/pmap/pmap.c			optional nos_arm_pmap
+-osfmk/arm/pmap/pmap.c			optional nos_arm_pmap
++osfmk/arm/pmap/pmap.c
+ osfmk/arm/pmap/pmap_cs.c		optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_cs.c		optional nos_arm_pmap
++osfmk/arm/pmap/pmap_cs.c
+ osfmk/arm/pmap/pmap_data.c		optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_data.c		optional nos_arm_pmap
++osfmk/arm/pmap/pmap_data.c
+ osfmk/arm/pmap/pmap_iommu.c		optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_iommu.c		optional nos_arm_pmap
++osfmk/arm/pmap/pmap_iommu.c
+ osfmk/arm/pmap/pmap_misc.c		optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_misc.c		optional nos_arm_pmap
++osfmk/arm/pmap/pmap_misc.c
+ osfmk/arm/pmap/pmap_ppl_interface.c	optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_ppl_interface.c	optional nos_arm_pmap
++osfmk/arm/pmap/pmap_ppl_interface.c
+@@ -28,16 +28,16 @@
+ osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl
+-osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl
++osfmk/arm64/amcc_rorgn_ppl.c optional config_pmap_ppl
+ osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm
+-osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm
++osfmk/arm64/amcc_rorgn_common.c
+ osfmk/arm64/bcopy.s standard
+ osfmk/arm64/bzero.s standard
+ osfmk/arm/caches.c		standard
+ osfmk/arm64/caches_asm.s		optional nos_arm_asm
+-osfmk/arm64/caches_asm.s		optional nos_arm_asm
++osfmk/arm64/caches_asm.s
+ osfmk/arm64/copyio.c	standard
+ osfmk/arm64/cpu.c		standard
+ osfmk/arm/cpu_common.c		standard
+ osfmk/arm/cpuid.c   standard
+ osfmk/arm/data.s	standard
+ osfmk/arm64/dbgwrap.c		standard
+ osfmk/arm/arm_timer.c		standard
+ osfmk/arm/arm_init.c	optional config_pmap_ppl
+ osfmk/arm64/arm_vm_init.c	optional config_pmap_ppl
+ osfmk/arm64/m30_early.c	standard
+ osfmk/arm64/arm64_hypercall.c	standard
+ osfmk/arm/io_map.c		standard
+ osfmk/arm64/loose_ends.c	standard
+ osfmk/arm/locks_arm.c	standard
+ osfmk/arm64/locore.s	optional nos_arm_asm
+-osfmk/arm64/locore.s	optional nos_arm_asm
++osfmk/arm64/locore.s
+ osfmk/arm64/iofilter_asm.s	optional nos_arm_asm
+-osfmk/arm64/iofilter_asm.s	optional nos_arm_asm
++osfmk/arm64/iofilter_asm.s
+ osfmk/arm64/iofilter.c	optional nos_arm_asm
+-osfmk/arm64/iofilter.c	optional nos_arm_asm
++osfmk/arm64/iofilter.c
+ osfmk/arm64/gxf_exceptions.s	optional nos_arm_asm
+-osfmk/arm64/gxf_exceptions.s	optional nos_arm_asm
++osfmk/arm64/gxf_exceptions.s
+ osfmk/arm64/lowmem_vectors.c	standard
+ osfmk/arm64/sleh.c			standard
+ osfmk/arm64/start.s	optional nos_arm_asm config_pmap_ppl
+-osfmk/arm64/start.s	optional nos_arm_asm config_pmap_ppl
++osfmk/arm64/start.s optional config_pmap_ppl
+ osfmk/arm64/pinst.s	optional nos_arm_asm
+-osfmk/arm64/pinst.s	optional nos_arm_asm
++osfmk/arm64/pinst.s
+ osfmk/arm64/cswitch.s	optional nos_arm_asm
+-osfmk/arm64/cswitch.s	optional nos_arm_asm
++osfmk/arm64/cswitch.s
+ osfmk/arm/machine_cpuid.c	standard
+ osfmk/arm/machine_routines_common.c		standard
  osfmk/arm64/lock_ticket_pv.c		optional config_pv_ticket
- osfmk/arm64/machine_routines.c
- osfmk/arm64/machine_routines_asm.s
- osfmk/arm64/machine_task.c
- osfmk/arm/machine_routines_apple.c
- osfmk/arm/pal_routines.c
+ osfmk/arm64/machine_routines.c		standard
+ osfmk/arm64/machine_routines_asm.s	optional nos_arm_asm
+-osfmk/arm64/machine_routines_asm.s	optional nos_arm_asm
++osfmk/arm64/machine_routines_asm.s
+ osfmk/arm64/machine_task.c		standard
+ osfmk/arm/machine_routines_apple.c	optional nos_arm_asm
+-osfmk/arm/machine_routines_apple.c	optional nos_arm_asm
++osfmk/arm/machine_routines_apple.c
+ osfmk/arm/pal_routines.c		standard
  osfmk/arm64/mcount.s		optional profile
- osfmk/arm64/memcmp_zero.s
+ osfmk/arm64/memcmp_zero.s	standard
  osfmk/arm64/strnlen.s   standard
  osfmk/arm64/strncmp.s   standard
- osfmk/arm/model_dep.c
- osfmk/arm64/pcb.c
- osfmk/arm/rtclock.c
- osfmk/arm64/status.c
- osfmk/arm/status_shared.c
- osfmk/arm/commpage/commpage.c
+ osfmk/arm/model_dep.c	standard
+ osfmk/arm64/pcb.c		optional nos_arm_asm
+-osfmk/arm64/pcb.c		optional nos_arm_asm
++osfmk/arm64/pcb.c
+ osfmk/arm/rtclock.c	standard
+ osfmk/arm64/status.c		standard
+ osfmk/arm/status_shared.c	standard
+ osfmk/arm/commpage/commpage.c	standard
  osfmk/arm/commpage/commpage_asm.s	optional config_arm_pfz
  osfmk/kdp/ml/arm/kdp_machdep.c	optional	mach_kdp
  osfmk/kdp/ml/arm/kdp_vm.c	optional	mach_kdp
@@ -741,7 +804,9 @@ index e6b7c0e..f4a2d9b 100644
  osfmk/OPTIONS/ec		optional ec
  osfmk/OPTIONS/hi_res_clock	optional hi_res_clock
  osfmk/arm64/perfmon_arm64.c optional config_perfmon
- osfmk/arm64/kpc.c		optional kpc
+ osfmk/arm64/kpc.c		optional kpc nos_arm_asm
+-osfmk/arm64/kpc.c		optional kpc nos_arm_asm
++osfmk/arm64/kpc.c		optional kpc
  osfmk/arm64/monotonic_arm64.c optional monotonic
  osfmk/arm64/platform_tests.c			optional config_xnupost
  osfmk/arm64/platform_tests_asm.s		optional config_xnupost
