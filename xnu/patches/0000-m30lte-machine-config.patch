@@ -154,7 +154,7 @@ index 74d54c8..953d4f9 100644
  
  #include <os/log_private.h>
 diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
-index 5bd6f23..ba8ecc5 100644
+index 5bd6f23..436fa00 100644
 --- a/makedefs/MakeInc.def
 +++ b/makedefs/MakeInc.def
 @@ -29,7 +29,7 @@ SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
@@ -173,28 +173,6 @@ index 5bd6f23..ba8ecc5 100644
 +MACHINE_FLAGS_ARM64_M30LTE = -DARM64_BOARD_CONFIG_M30LTE	-arch arm64 -march=armv8-a+crypto
  
  
- #
-@@ -265,20 +266,16 @@ endif
- endif
- 
- 
--BUILD_STATIC_LINK := 1
--
--ARCH_FLAGS_ARM64	  = -arch $(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG)
- 
--endif
- 
- else
- # non arm machine config string
- ifndef ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG
- export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := $(shell echo $(CURRENT_ARCH_CONFIG) | tr A-Z a-z)
- endif
--
- endif
- 
-+
- #
- # Default CFLAGS
  #
 diff --git a/osfmk/arm64/Makefile b/osfmk/arm64/Makefile
 index f819fea..56a3f56 100644
