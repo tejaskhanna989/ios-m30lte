@@ -75,7 +75,7 @@ jobs:
           for patch in ../xnu/patches/00*.patch; do
             name=$(basename "$patch")
             echo "Applying: $name"
-            git apply --3way < "$patch" 2>&1 | tail -3 || true
+            git apply < "$patch" 2>&1 | tail -3 || true
           done
           # Verify M30LTE.h exists (new file from patch 0004)
           ls -la pexpert/pexpert/arm64/M30LTE.h 2>&1 || echo "M30LTE.h NOT FOUND - creating from patch"
