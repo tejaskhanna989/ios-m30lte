@@ -169,26 +169,6 @@ index 5bd6f23..bdfcb47 100644
  # Link opensource binary library
  ifneq ($(filter T6000 T8101 VMAPPLE T6000 T8101 VMAPPLE,$(CURRENT_MACHINE_CONFIG)),)
  	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a
-diff --git a/osfmk/arm64/Makefile b/osfmk/arm64/Makefile
-index f819fea..4befb69 100644
---- a/osfmk/arm64/Makefile
-+++ b/osfmk/arm64/Makefile
-@@ -22,6 +22,7 @@ INSTALL_KF_MD_LCL_LIST = \
- 	machine_remote_time.h \
- 	monotonic.h \
- 	proc_reg.h \
-+	os/firehose_buffer_private.h \
- 	tlb.h \
- 	$(ARM_HEADER_FILES)
- 
-@@ -40,6 +41,7 @@ EXPORT_MD_LIST = \
- 	monotonic.h \
- 	perfmon_arm64_regs.h \
- 	proc_reg.h \
-+	os/firehose_buffer_private.h \
- 	asm.h \
- 	tlb.h \
- 	pal_hibernate.h
 diff --git a/osfmk/arm64/firehose_buffer_private.h b/osfmk/arm64/firehose_buffer_private.h
 new file mode 100644
 index 0000000..77db13e
