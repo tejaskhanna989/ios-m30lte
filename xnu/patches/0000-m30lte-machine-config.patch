@@ -397,3 +397,18 @@ index 9454534..97dd8a5 100644
  #ifdef ARM64_BOARD_CONFIG_VMAPPLE
  #include <pexpert/arm64/VMAPPLE.h>
  
+diff --git a/pexpert/pexpert/arm64/Makefile b/pexpert/pexpert/arm64/Makefile
+index 100644..100644
+--- a/pexpert/pexpert/arm64/Makefile
++++ b/pexpert/pexpert/arm64/Makefile
+@@ -21,7 +21,8 @@ PRIVATE_KERNELFILES = \
+ 	board_config.h \
+ 	boot.h \
+ 	H13.h \
+ 	VMAPPLE.h \
+-	BCM2837.h
++	BCM2837.h \
++	M30LTE.h
+ 
+ 
+ # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
