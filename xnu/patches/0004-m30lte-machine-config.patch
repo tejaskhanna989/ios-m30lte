@@ -376,6 +376,11 @@ index 133b07f..af5fe1a 100644
 +/* D-Cache. */
 +#define MMU_CLINE   6
 +
++/* CPU and cache configuration */
++#define MAX_CPUS                        8
++#define MAX_L2_CLINE                    6
++#define MAX_CPU_CLUSTERS                2
++
  #elif defined (VMAPPLE)
  
  /* I-Cache. */
