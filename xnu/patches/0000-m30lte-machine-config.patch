@@ -140,7 +140,7 @@ index 74d54c8..953d4f9 100644
  
  #include <os/log_private.h>
 diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
-index 5bd6f23..bdfcb47 100644
+index 5bd6f23..6ecc938 100644
 --- a/makedefs/MakeInc.def
 +++ b/makedefs/MakeInc.def
 @@ -29,7 +29,7 @@ SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
@@ -148,19 +148,31 @@ index 5bd6f23..bdfcb47 100644
  SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
  else
 -SUPPORTED_ARM64_MACHINE_CONFIGS = BCM2837 T6000 T8101 T8103 VMAPPLE
-+SUPPORTED_ARM64_MACHINE_CONFIGS = BCM2837 T6000 T8101 T8103 VMAPPLE M30LTE
++SUPPORTED_ARM64_MACHINE_CONFIGS = BCM2837 T6000 T8101 T8103 VMAPPLE M30LTE M30LTE
  
  endif
  
-@@ -61,6 +61,7 @@ MACHINE_FLAGS_ARM64_T8103 = -DARM64_BOARD_CONFIG_T8103                  -mcpu=ap
+@@ -61,6 +61,8 @@ MACHINE_FLAGS_ARM64_T8103 = -DARM64_BOARD_CONFIG_T8103                  -mcpu=ap
  MACHINE_FLAGS_ARM64_T6000 = -DARM64_BOARD_CONFIG_T6000 		-mcpu=apple-a14
  MACHINE_FLAGS_ARM64_VMAPPLE = -DARM64_BOARD_CONFIG_VMAPPLE              -march=armv8.5a
  MACHINE_FLAGS_ARM64_BCM2837 = -DARM64_BOARD_CONFIG_BCM2837
 +MACHINE_FLAGS_ARM64_M30LTE = -DARM64_BOARD_CONFIG_M30LTE	-arch arm64 -march=armv8-a+crypto
++MACHINE_FLAGS_ARM64_M30LTE = -DARM64_BOARD_CONFIG_M30LTE	-arch arm64 -march=armv8-a+crypto
  
  
  #
-@@ -857,7 +858,7 @@ LDFILES_KERNEL_ONLY = $(TARGET)/all-kpi.exp $(TARGET)/all-alias.exp $(TARGET)/sy
+@@ -259,7 +261,9 @@ ifeq ($(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG),)
+ # Without embdedded device map, use a default arch string
+ export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := $(shell echo $(CURRENT_ARCH_CONFIG) | tr A-Z a-z)
+ ifneq ($(filter arm64,$(ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG)),)
+-export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := arm64e
++ifneq ($(CURRENT_MACHINE_CONFIG),M30LTE)
++export ARCH_STRING_FOR_CURRENT_MACHINEConfig := arm64e
++endif
+ endif
+ 
+ endif
+@@ -857,7 +861,7 @@ LDFILES_KERNEL_ONLY = $(TARGET)/all-kpi.exp $(TARGET)/all-alias.exp $(TARGET)/sy
  # Default runtime libraries to be linked with the kernel
  #
  LD_KERNEL_LIBS	   = -lcc_kext
@@ -193,19 +205,21 @@ index 0000000..77db13e
 +
 +#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
 diff --git a/osfmk/arm64/proc_reg.h b/osfmk/arm64/proc_reg.h
-index 133b07f..e45b291 100644
+index 133b07f..46564cf 100644
 --- a/osfmk/arm64/proc_reg.h
 +++ b/osfmk/arm64/proc_reg.h
-@@ -25,6 +25,8 @@
+@@ -25,6 +25,10 @@
   *
   * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
   */
 +
 +#define M30LTE 1
++
++#define M30LTE 1
  /*
   * @OSF_COPYRIGHT@
   */
-@@ -213,6 +215,19 @@
+@@ -213,6 +217,19 @@
  /* D-Cache. */
  #define MMU_CLINE   6
  
@@ -225,7 +239,7 @@ index 133b07f..e45b291 100644
  #elif defined (VMAPPLE)
  
  /* I-Cache. */
-@@ -222,7 +237,7 @@
+@@ -222,7 +239,7 @@
  #define MMU_CLINE   6
  
  #else
