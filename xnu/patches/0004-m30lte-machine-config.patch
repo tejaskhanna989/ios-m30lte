@@ -654,6 +654,10 @@ index 0000000..32b813a
 +
 +
 +#define CPU_HAS_APPLE_PAC         0
++#define MAX_CPUS                       8
++#define MAX_L2_CLINE                   6
++#define MAX_CPU_CLUSTERS               2
++#define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
 +#define HAS_PARAVIRTUALIZED_PAC   0
 +#define HAS_GIC_V3                1
 +
