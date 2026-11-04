@@ -833,3 +833,20 @@ index 0000000..0000000
 -	proc_reg.h \
  	tlb.h \
  	$(ARM_HEADER_FILES)
+diff --git a/osfmk/arm64/Makefile b/osfmk/arm64/Makefile
+index 0000000..0000000
+--- a/osfmk/arm64/Makefile
++++ b/osfmk/arm64/Makefile
+@@ -38,7 +38,6 @@ EXPORT_MD_LIST = \
+ 	hv_hvc.h \
+ 	lowglobals.h \
+ 	machine_cpuid.h \
+ 	machine_kpc.h \
+ 	machine_remote_time.h \
+ 	monotonic.h \
+ 	perfmon_arm64_regs.h \
+-	proc_reg.h \
+ 	m30_early.h \
+ 	asm.h \
+ 	tlb.h \
+ 	pal_hibernate.h
