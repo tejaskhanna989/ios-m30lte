@@ -665,8 +665,6 @@ index 0000000..32b813a
 +#define __ARM_16K_PG__            1
 +
 +#include <pexpert/arm64/apple_arm64_common.h>
-+
-+#endif /* _PEXPERT_ARM64_M30LTE_H */
 diff --git a/pexpert/pexpert/arm64/Makefile b/pexpert/pexpert/arm64/Makefile
 index 8226b8c..2ddbb0c 100644
 --- a/pexpert/pexpert/arm64/Makefile
