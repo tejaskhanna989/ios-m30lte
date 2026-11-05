@@ -1,3 +1,17 @@
+diff --git a/SETUP/config/doconf b/SETUP/config/doconf
+index 222158a..cde0ba2 100755
+--- a/SETUP/config/doconf
++++ b/SETUP/config/doconf
+@@ -109,6 +109,9 @@ while ($#argv >= 1)
+ 	    else
+ 	        set DEF_AVP="-USOC_IS_VIRTUALIZED"
+ 	    endif
++	    if ("$SOC_CONFIG" == "m30lte") then
++	        set DEF_AVP="$DEF_AVP -Dnos_arm_asm -Dnos_arm_pmap"
++	    endif
+ 	    shift
+ 	    breaksw
+ 	case "-platform":
 diff --git a/bsd/kern/subr_log.c b/bsd/kern/subr_log.c
 index 3ff7646..cb033aa 100644
 --- a/bsd/kern/subr_log.c
@@ -582,17 +596,3 @@ index 9454534..97dd8a5 100644
  #ifdef ARM64_BOARD_CONFIG_VMAPPLE
  #include <pexpert/arm64/VMAPPLE.h>
  
-diff --git a/pexpert/pexpert/arm64/Makefile b/pexpert/pexpert/arm64/Makefile
-index 8226b8c..2ddbb0c 100644
---- a/pexpert/pexpert/arm64/Makefile
-+++ b/pexpert/pexpert/arm64/Makefile
-@@ -17,7 +17,8 @@ PRIVATE_KERNELFILES = \
- 	boot.h \
- 	H13.h \
- 	VMAPPLE.h \
--	BCM2837.h
-+	BCM2837.h \
-+	M30LTE.h
- 
- 
- # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
