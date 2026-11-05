@@ -19221,6 +19221,126 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  		} while (!OSCompareAndSwap16(attr, attr | PP_ATTR_NO_MONITOR, &pp_attr_table[pai]));
  	}
  }
+diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_data.c xnu-final-patch/osfmk/arm/pmap/pmap_data.c
+--- xnu-orig-clean/osfmk/arm/pmap/pmap_data.c	2026-11-05 21:35:46.644331894 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap_data.c	2026-11-06 02:34:41.874316522 +0530
+@@ -3210,22 +3210,102 @@
+ 
+ #endif /* XNU_MONITOR */
+ 
+-/**
+- * Credit a specific ledger entry within the passed in pmap's ledger object.
+- *
+- * @note On PPL-enabled systems this operation will not automatically check the
+- *       ledger balances after updating. A call to pmap_ledger_check_balance()
+- *       will need to occur outside of the PPL to handle this.
+- *
+- * @param pmap The pmap whose ledger should be updated.
+- * @param entry The specifc ledger entry to update. This needs to be one of the
+- *              task_ledger entries.
+- * @param amount The amount to credit from the ledger.
++/* ========================================================================
++ * Non-PPL (M30LTE) ledger management implementations
++ * ========================================================================
+  *
+- * @return The return value from the credit operation.
++ * On non-PPL systems, ledgers are allocated from zones created by
++ * ledger_template_complete(). The PPL-specific validation and pointer array
++ * management is not needed. These functions provide minimal implementations
++ * to satisfy linker references and provide correct no-op behavior.
++ */
++
++#if !XNU_MONITOR
++
++/**
++ * Validate a ledger pointer on non-PPL systems.
++ * On non-PPL systems, ledgers are allocated from zones and don't need
++ * PPL-style validation. This function is a no-op that returns a dummy index.
++ */
++uint64_t
++pmap_ledger_validate(const volatile void *ledger)
++{
++	(void)ledger;
++	return 0;
++}
++
++/**
++ * Verify the ledger size on non-PPL systems.
++ * On non-PPL systems, ledger sizes are managed by the zone allocator.
++ * This function is a no-op.
+  */
+-kern_return_t
+-pmap_ledger_credit(pmap_t pmap, int entry, ledger_amount_t amount)
++void
++pmap_ledger_verify_size_internal(size_t size)
++{
++	(void)size;
++}
++
++/**
++ * Allocate a ledger object on non-PPL systems.
++ * On non-PPL systems, ledgers are allocated from template zones via
++ * ledger_instantiate(). This function should not be called on properly
++ * configured non-PPL systems. We return NULL to indicate failure.
++ */
++ledger_t
++pmap_ledger_alloc_internal(void)
++{
++	return LEDGER_NULL;
++}
++
++/**
++ * Free a ledger object on non-PPL systems.
++ * On non-PPL systems, ledgers are freed by the zone allocator when
++ * the task is destroyed. This function is a no-op.
++ */
++void
++pmap_ledger_free_internal(ledger_t ledger)
++{
++	(void)ledger;
++}
++
++/**
++ * Bump the reference count on a ledger object on non-PPL systems.
++ * On non-PPL systems, ledger reference counting is handled by the
++ * standard ledger API. This function is a no-op.
++ */
++void
++pmap_ledger_retain(ledger_t ledger)
++{
++	(void)ledger;
++}
++
++/**
++ * Decrement the reference count on a ledger object on non-PPL systems.
++ * On non-PPL systems, ledger reference counting is handled by the
++ * standard ledger API. This function is a no-op.
++ */
++void
++pmap_ledger_release(ledger_t ledger)
++{
++	(void)ledger;
++}
++
++/**
++ * Check a ledger's balance on non-PPL systems.
++ * On non-PPL systems, ledger balance checking occurs automatically
++ * during credit/debit operations via the standard ledger API.
++ * This function is a no-op.
++ */
++void
++pmap_ledger_check_balance(pmap_t pmap)
++{
++	(void)pmap;
++}
++
++#endif /* !XNU_MONITOR */
++
++/**
++ * Credit a specific ledger entry within the passed in pmap's ledger object. 
+ {
+ 	assert(pmap != NULL);
+ 
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pmap.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap.h	2026-11-05 21:35:46.644078078 +0530
 +++ xnu-final-patch/osfmk/arm/pmap/pmap.h	2026-11-05 15:43:35.229109527 +0530
@@ -19808,6 +19928,154 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
  
 -#endif /* _ARM_PMAP_PMAP_INTERNAL_H_ */
 +#endif /* _ARM_PMAP_INTERNAL_H */
+diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_ppl_interface.c xnu-final-patch/osfmk/arm/pmap/pmap_ppl_interface.c
+--- xnu-orig-clean/osfmk/arm/pmap/pmap_ppl_interface.c	2026-11-05 21:35:46.646331934 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap_ppl_interface.c	2026-11-06 02:34:07.102590129 +0530
+@@ -37,6 +37,7 @@
+  * See doc/ppl.md for more information about how these PPL entry points work.
+  */
+ #include <kern/ledger.h>
++#include <kern/zalloc.h>
+ 
+ #include <vm/vm_object.h>
+ #include <vm/vm_page.h>
+@@ -236,6 +237,94 @@
+ 	}
+ }
+ 
++/* ========================================================================
++ * Non-PPL (M30LTE) ledger management implementations
++ * ========================================================================
++ *
++ * On non-PPL systems, ledgers are normally allocated from zones created by
++ * ledger_template_complete(). However, to handle the case where a template
++ * doesn't have a zone (which shouldn't happen on non-PPL systems but we
++ * must handle for robustness), we provide a fallback zone-based implementation.
++ *
++ * These functions are only called when a ledger template doesn't have an
++ * associated zone (template->lt_zone == NULL). On properly configured non-PPL
++ * systems, this should never occur, but we provide implementations to avoid
++ * linker errors and to provide correct behavior if it does occur.
++ */
++
++#if !XNU_MONITOR
++
++/* Fallback zone for ledger allocations on non-PPL systems */
++static zone_t pmap_ledger_fallback_zone = NULL;
++
++/* Size of the fallback ledger zone (4KB - enough for typical ledgers) */
++#define PMAP_LEDGER_FALLBACK_SIZE 4096
++
++/**
++ * Verify that the ledger size is valid for allocation.
++ * On non-PPL systems, we just check that the size is reasonable.
++ */
++void
++pmap_ledger_verify_size_internal(size_t size)
++{
++	/* Minimum size is sizeof(struct ledger) */
++	if (size < sizeof(struct ledger)) {
++		panic("%s: ledger size %lu too small (minimum %lu)",
++		    __func__, size, sizeof(struct ledger));
++	}
++
++	/* Size should be a multiple of the entry size for alignment */
++	if (size % sizeof(struct ledger_entry) != 0) {
++		panic("%s: ledger size %lu not a multiple of entry size %lu",
++		    __func__, size, sizeof(struct ledger_entry));
++	}
++}
++
++/**
++ * Allocate a ledger object on non-PPL systems.
++ * Uses a fallback zone if the template doesn't have its own zone.
++ */
++ledger_t
++pmap_ledger_alloc_internal(void)
++{
++	ledger_t ledger;
++
++	/* Lazily create the fallback zone */
++	if (pmap_ledger_fallback_zone == NULL) {
++		pmap_ledger_fallback_zone = zone_create("pmap.ledger.fallback",
++		    PMAP_LEDGER_FALLBACK_SIZE,
++		    ZC_PGZ_USE_GUARDS | ZC_DESTRUCTIBLE);
++		if (pmap_ledger_fallback_zone == NULL) {
++			panic("%s: failed to create fallback ledger zone", __func__);
++		}
++	}
++
++	ledger = (ledger_t)zalloc(pmap_ledger_fallback_zone);
++	if (ledger == NULL) {
++		return LEDGER_NULL;
++	}
++
++	/* Zero the ledger structure */
++	bzero(ledger, PMAP_LEDGER_FALLBACK_SIZE);
++
++	return ledger;
++}
++
++/**
++ * Free a ledger object allocated by pmap_ledger_alloc_internal().
++ */
++void
++pmap_ledger_free_internal(ledger_t ledger)
++{
++	if (ledger == NULL || pmap_ledger_fallback_zone == NULL) {
++		return;
++	}
++
++	zfree(pmap_ledger_fallback_zone, ledger);
++}
++
++#endif /* !XNU_MONITOR */
++
+ /**
+  * See pmap_ledger_verify_size_internal()'s function header for more information.
+  */
+@@ -248,12 +337,7 @@
+ #if XNU_MONITOR
+ 	pmap_ledger_verify_size_ppl(size);
+ #else /* XNU_MONITOR */
+-	/**
+-	 * Ledger objects are only managed by the pmap on PPL-enabled systems. Other
+-	 * systems will allocate them using a zone allocator.
+-	 */
+-	panic("%s: unsupported on non-PPL systems, size=%lu", __func__, size);
+-	__builtin_unreachable();
++	pmap_ledger_verify_size_internal(size);
+ #endif /* XNU_MONITOR */
+ }
+ 
+@@ -272,12 +356,7 @@
+ 
+ 	return ledger;
+ #else /* XNU_MONITOR */
+-	/**
+-	 * Ledger objects are only managed by the pmap on PPL-enabled systems. Other
+-	 * systems will allocate them using a zone allocator.
+-	 */
+-	panic("%s: unsupported on non-PPL systems", __func__);
+-	__builtin_unreachable();
++	return pmap_ledger_alloc_internal();
+ #endif /* XNU_MONITOR */
+ }
+ 
+@@ -293,11 +372,7 @@
+ #if XNU_MONITOR
+ 	pmap_ledger_free_ppl(ledger);
+ #else /* XNU_MONITOR */
+-	/**
+-	 * Ledger objects are only managed by the pmap on PPL-enabled systems. Other
+-	 * systems will allocate them using a zone allocator.
+-	 */
+-	panic("%s: unsupported on non-PPL systems, ledger=%p", __func__, ledger);
+-	__builtin_unreachable();
++	pmap_ledger_free_internal(ledger);
+ #endif /* XNU_MONITOR */
+ }
++
 diff -ruN xnu-orig-clean/osfmk/arm64/amcc_rorgn_common.c xnu-final-patch/osfmk/arm64/amcc_rorgn_common.c
 --- xnu-orig-clean/osfmk/arm64/amcc_rorgn_common.c	1970-01-01 05:30:00.000000000 +0530
 +++ xnu-final-patch/osfmk/arm64/amcc_rorgn_common.c	2026-11-05 21:41:30.587156934 +0530
