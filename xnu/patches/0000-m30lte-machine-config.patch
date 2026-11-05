@@ -12,8 +12,8 @@ diff -ruN xnu-orig-clean/bsd/kern/subr_log.c xnu-final-patch/bsd/kern/subr_log.c
  #include <sys/ioctl.h>
 diff -ruN xnu-orig-clean/config/MASTER.arm64.m30lte xnu-final-patch/config/MASTER.arm64.m30lte
 --- xnu-orig-clean/config/MASTER.arm64.m30lte	1970-01-01 05:30:00.000000000 +0530
-+++ xnu-final-patch/config/MASTER.arm64.m30lte	2026-11-05 21:57:13.166959471 +0530
-@@ -0,0 +1,114 @@
++++ xnu-final-patch/config/MASTER.arm64.m30lte	2026-11-05 22:12:26.456990872 +0530
+@@ -0,0 +1,115 @@
 +#define nos_arm_asm 1
 +#define nos_arm_pmap 1
 +
@@ -128,6 +128,7 @@ diff -ruN xnu-orig-clean/config/MASTER.arm64.m30lte xnu-final-patch/config/MASTE
 +options   NOS_ARM_ASM			# <nos_arm_asm>
 +options   NOS_ARM_PMAP			# <nos_arm_pmap>
 +options   CONFIG_AMCC			# <config_amcc>
++options   M30LTE			# <m30lte>
 diff -ruN xnu-orig-clean/config/MASTER.arm64.MacOSX xnu-final-patch/config/MASTER.arm64.MacOSX
 --- xnu-orig-clean/config/MASTER.arm64.MacOSX	2026-11-05 21:35:46.522329433 +0530
 +++ xnu-final-patch/config/MASTER.arm64.MacOSX	2026-11-05 15:43:35.226413450 +0530
@@ -20437,7 +20438,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/start.s.orig xnu-final-patch/osfmk/arm64/st
 +/* vim: set ts=4: */
 diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-final-patch/osfmk/conf/files.arm64
 --- xnu-orig-clean/osfmk/conf/files.arm64	2026-11-05 21:35:46.661510887 +0530
-+++ xnu-final-patch/osfmk/conf/files.arm64	2026-11-05 15:44:06.977981576 +0530
++++ xnu-final-patch/osfmk/conf/files.arm64	2026-11-05 22:12:52.996766239 +0530
 @@ -7,12 +7,12 @@
  
  osfmk/arm64/hi_res_clock_map.c 	optional hi_res_clock
@@ -20448,12 +20449,12 @@ diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-final-patch/osfmk/conf/files
 -osfmk/arm/pmap/pmap_iommu.c		optional nos_arm_pmap
 -osfmk/arm/pmap/pmap_misc.c		optional nos_arm_pmap
 -osfmk/arm/pmap/pmap_ppl_interface.c	optional nos_arm_pmap
-+osfmk/arm/pmap/pmap.c			optional nos_arm_pmap config_amcc
-+osfmk/arm/pmap/pmap_cs.c		optional nos_arm_pmap config_amcc
-+osfmk/arm/pmap/pmap_data.c		optional nos_arm_pmap config_amcc
-+osfmk/arm/pmap/pmap_iommu.c		optional nos_arm_pmap config_amcc
-+osfmk/arm/pmap/pmap_misc.c		optional nos_arm_pmap config_amcc
-+osfmk/arm/pmap/pmap_ppl_interface.c	optional nos_arm_pmap config_amcc
++osfmk/arm/pmap/pmap.c			optional nos_arm_pmap config_amcc m30lte
++osfmk/arm/pmap/pmap_cs.c		optional nos_arm_pmap config_amcc m30lte
++osfmk/arm/pmap/pmap_data.c		optional nos_arm_pmap config_amcc m30lte
++osfmk/arm/pmap/pmap_iommu.c		optional nos_arm_pmap config_amcc m30lte
++osfmk/arm/pmap/pmap_misc.c		optional nos_arm_pmap config_amcc m30lte
++osfmk/arm/pmap/pmap_ppl_interface.c	optional nos_arm_pmap config_amcc m30lte
  
  
  osfmk/arm64/bsd_arm64.c		optional mach_bsd
@@ -20474,8 +20475,8 @@ diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-final-patch/osfmk/conf/files
  osfmk/arm/arm_timer.c		standard
 -osfmk/arm/arm_init.c	optional config_pmap_ppl
 -osfmk/arm64/arm_vm_init.c	optional config_pmap_ppl
-+osfmk/arm/arm_init.c	optional config_pmap_ppl config_amcc
-+osfmk/arm64/arm_vm_init.c	optional config_pmap_ppl config_amcc
++osfmk/arm/arm_init.c	optional config_pmap_ppl config_amcc m30lte
++osfmk/arm64/arm_vm_init.c	optional config_pmap_ppl config_amcc m30lte
  osfmk/arm64/arm64_hypercall.c	standard
  osfmk/arm/io_map.c		standard
  osfmk/arm64/loose_ends.c	standard
