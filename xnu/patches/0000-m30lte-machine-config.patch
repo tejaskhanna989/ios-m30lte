@@ -521,7 +521,8 @@ index c40d57b..newindex 100644
  osfmk/arm64/lz4_encode_arm64.s  standard
 -osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl
 +osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl config_amcc
- osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm
+-osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm
++osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm config_amcc
  osfmk/arm64/bcopy.s standard
  osfmk/arm64/bzero.s standard
  
