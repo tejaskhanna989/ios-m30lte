@@ -19467,42 +19467,13 @@ diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfm
  
 diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines.c xnu-final-patch/osfmk/arm64/machine_routines.c
 --- xnu-orig-clean/osfmk/arm64/machine_routines.c	2026-11-05 21:35:46.655332116 +0530
-+++ xnu-final-patch/osfmk/arm64/machine_routines.c	2026-11-05 23:24:40.987725469 +0530
-@@ -2790,3 +2790,34 @@
++++ xnu-final-patch/osfmk/arm64/machine_routines.c	2026-11-05 23:35:23.063152220 +0530
+@@ -2790,3 +2790,5 @@
  
  	return get_saved_state_pc(state);
  }
 +
-+#if defined(M30LTE)
 +
-+/* Kernel slide (ASLR) */
-+vm_offset_t vm_kernel_slide = 0;
-+
-+/* Kernel text start address */
-+vm_offset_t vm_kernel_stext = 0;
-+
-+/* Kernel top address */
-+vm_offset_t vm_kernel_top = 0;
-+
-+/* Kernel text end address */
-+vm_offset_t vm_kernel_etext = 0;
-+
-+/* Kext base address */
-+vm_offset_t vm_kext_base = 0;
-+
-+/* Slid kernel base */
-+vm_offset_t vm_kernel_slid_base = 0;
-+
-+/* Slid kernel top */
-+vm_offset_t vm_kernel_slid_top = 0;
-+
-+/* Last physical address */
-+pmap_paddr_t vm_last_phys = 0;
-+
-+/* Cross-call acknowledgment timeout */
-+uint64_t xcall_ack_timeout_abstime = 0;
-+
-+#endif /* M30LTE */
 diff -ruN xnu-orig-clean/osfmk/arm64/Makefile xnu-final-patch/osfmk/arm64/Makefile
 --- xnu-orig-clean/osfmk/arm64/Makefile	2026-11-05 21:35:46.648331975 +0530
 +++ xnu-final-patch/osfmk/arm64/Makefile	2026-11-05 23:08:01.647602228 +0530
@@ -20475,7 +20446,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/start.s.orig xnu-final-patch/osfmk/arm64/st
 +/* vim: set ts=4: */
 diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-final-patch/osfmk/conf/files.arm64
 --- xnu-orig-clean/osfmk/conf/files.arm64	2026-11-05 21:35:46.661510887 +0530
-+++ xnu-final-patch/osfmk/conf/files.arm64	2026-11-05 22:59:27.850621816 +0530
++++ xnu-final-patch/osfmk/conf/files.arm64	2026-11-05 23:35:02.939853135 +0530
 @@ -7,12 +7,12 @@
  
  osfmk/arm64/hi_res_clock_map.c 	optional hi_res_clock
@@ -20486,12 +20457,12 @@ diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-final-patch/osfmk/conf/files
 -osfmk/arm/pmap/pmap_iommu.c		optional nos_arm_pmap
 -osfmk/arm/pmap/pmap_misc.c		optional nos_arm_pmap
 -osfmk/arm/pmap/pmap_ppl_interface.c	optional nos_arm_pmap
-+osfmk/arm/pmap/pmap.c			optional nos_arm_pmap config_amcc m30lte
-+osfmk/arm/pmap/pmap_cs.c		optional nos_arm_pmap config_amcc m30lte
-+osfmk/arm/pmap/pmap_data.c		optional nos_arm_pmap config_amcc m30lte
-+osfmk/arm/pmap/pmap_iommu.c		optional nos_arm_pmap config_amcc m30lte
-+osfmk/arm/pmap/pmap_misc.c		optional nos_arm_pmap config_amcc m30lte
-+osfmk/arm/pmap/pmap_ppl_interface.c	optional nos_arm_pmap config_amcc m30lte
++osfmk/arm/pmap/pmap.c			standard
++osfmk/arm/pmap/pmap_cs.c		standard
++osfmk/arm/pmap/pmap_data.c		standard
++osfmk/arm/pmap/pmap_iommu.c		standard
++osfmk/arm/pmap/pmap_misc.c		standard
++osfmk/arm/pmap/pmap_ppl_interface.c	standard
  
  
  osfmk/arm64/bsd_arm64.c		optional mach_bsd
@@ -20512,8 +20483,8 @@ diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-final-patch/osfmk/conf/files
  osfmk/arm/arm_timer.c		standard
 -osfmk/arm/arm_init.c	optional config_pmap_ppl
 -osfmk/arm64/arm_vm_init.c	optional config_pmap_ppl
-+osfmk/arm/arm_init.c	optional config_pmap_ppl config_amcc m30lte
-+osfmk/arm64/arm_vm_init.c	optional config_pmap_ppl config_amcc m30lte
++osfmk/arm/arm_init.c	standard
++osfmk/arm64/arm_vm_init.c	standard
  osfmk/arm64/arm64_hypercall.c	standard
  osfmk/arm/io_map.c		standard
  osfmk/arm64/loose_ends.c	standard
@@ -20522,7 +20493,7 @@ diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-final-patch/osfmk/conf/files
  osfmk/arm64/lowmem_vectors.c	standard
  osfmk/arm64/sleh.c			standard
 -osfmk/arm64/start.s	optional nos_arm_asm config_pmap_ppl
-+osfmk/arm64/start.s	optional nos_arm_asm config_pmap_ppl config_amcc
++osfmk/arm64/start.s	standard
  osfmk/arm64/pinst.s	optional nos_arm_asm
  osfmk/arm64/cswitch.s	optional nos_arm_asm
  osfmk/arm/machine_cpuid.c	standard
