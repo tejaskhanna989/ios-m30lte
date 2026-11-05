@@ -19169,7 +19169,7 @@ diff -ruN xnu-orig-clean/makedefs/MakeInc.def xnu-final-patch/makedefs/MakeInc.d
  	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pmap.c
 --- xnu-orig-clean/osfmk/arm/pmap/pmap.c	2026-11-05 21:35:46.642331854 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap.c	2026-11-06 00:59:55.146958119 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap.c	2026-11-06 02:41:04.275561747 +0530
 @@ -84,8 +84,10 @@
  
  #include <arm64/proc_reg.h>
@@ -19192,7 +19192,44 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  #if __ARM_VMSA__ != 8
  #error Unknown __ARM_VMSA__
  #endif
-@@ -2183,6 +2189,7 @@
+@@ -333,9 +339,35 @@
+ extern void *pmap_stacks_start;
+ extern void *pmap_stacks_end;
+ 
+-#endif /* !XNU_MONITOR */
++#endif /* XNU_MONITOR */
+ 
++/* ========================================================================
++ * Non-PPL (M30LTE) PPL stub definitions
++ * ========================================================================
++ *
++ * On non-PPL systems, PPL-specific variables and segments are not present.
++ * Provide zero/NULL definitions to satisfy references from common code.
++ */
++
++#if !XNU_MONITOR
+ 
++/* PPL segment definitions (not present on non-PPL systems) */
++vm_offset_t   segPPLDATAB = 0;
++unsigned long segSizePPLDATA = 0;
++vm_offset_t   segPPLTEXTB = 0;
++unsigned long segSizePPLTEXT = 0;
++vm_offset_t   segPPLDATACONSTB = 0;
++unsigned long segSizePPLDATACONST = 0;
++
++/* PPL Global Variables */
++SECURITY_READ_ONLY_LATE(boolean_t) pmap_ppl_disable = FALSE;
++boolean_t pmap_ppl_locked_down MARK_AS_PMAP_DATA = FALSE;
++void *pmap_stacks_start = NULL;
++void *pmap_stacks_end = NULL;
++vm_offset_t pmap_stacks_start_pa = 0;
++vm_offset_t pmap_stacks_end_pa = 0;
++
++#endif /* !XNU_MONITOR */
+ 
+ /* Virtual memory region for early allocation */
+ #define VREGION1_HIGH_WINDOW    (PE_EARLY_BOOT_VA)
+@@ -2183,6 +2215,7 @@
  	/**
  	 * Bootstrap any necessary UAT data structures and values needed from the device tree.
  	 */
@@ -19200,7 +19237,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  	uat_bootstrap();
  
  
-@@ -2190,6 +2197,7 @@
+@@ -2190,6 +2223,7 @@
  	 * Bootstrap any necessary SART data structures and values needed from the device tree.
  	 */
  	sart_bootstrap();
@@ -19208,7 +19245,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  
  	/**
  	 * Don't make any assumptions about the alignment of avail_start before this
-@@ -11435,10 +11443,12 @@
+@@ -11435,10 +11469,12 @@
  			panic("%s(%p): attempt to pin static mapping for page 0x%llx", __func__, (void*)kva, (uint64_t)pa);
  		}
  		do {
