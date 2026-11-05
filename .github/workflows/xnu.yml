@@ -18,10 +18,6 @@ on:
       - "xnu/patches/**"
       - ".github/workflows/xnu.yml"
 
-concurrency:
-  group: xnu-${{ github.ref }}
-  cancel-in-progress: true
-
 env:
   MACOS_VERSION: ${{ inputs.macos_version || '13.5' }}
   KERNEL_CONFIG: ${{ inputs.kernel_config || 'DEVELOPMENT' }}
