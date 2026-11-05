@@ -19532,7 +19532,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfm
  
 diff -ruN xnu-orig-clean/osfmk/arm64/Makefile xnu-final-patch/osfmk/arm64/Makefile
 --- xnu-orig-clean/osfmk/arm64/Makefile	2026-11-05 21:35:46.648331975 +0530
-+++ xnu-final-patch/osfmk/arm64/Makefile	2026-11-05 22:24:41.579536363 +0530
++++ xnu-final-patch/osfmk/arm64/Makefile	2026-11-05 22:32:52.132376013 +0530
 @@ -21,7 +21,6 @@
  	machine_kpc.h \
  	machine_remote_time.h \
@@ -19551,17 +19551,6 @@ diff -ruN xnu-orig-clean/osfmk/arm64/Makefile xnu-final-patch/osfmk/arm64/Makefi
  	asm.h \
  	tlb.h \
  	pal_hibernate.h
-@@ -49,5 +49,10 @@
- 
- INSTALL_MD_DIR = arm64
- 
-+# M30LTE-specific sources
-+ifeq ($(CURRENT_MACHINE_CONFIG),M30LTE)
-+CFILES += m30lte_init.c
-+endif
-+
- include $(MakeInc_rule)
- include $(MakeInc_dir)
 diff -ruN xnu-orig-clean/osfmk/arm64/proc_reg.h xnu-final-patch/osfmk/arm64/proc_reg.h
 --- xnu-orig-clean/osfmk/arm64/proc_reg.h	2026-11-05 21:35:46.657332156 +0530
 +++ xnu-final-patch/osfmk/arm64/proc_reg.h	2026-11-05 15:43:35.229853581 +0530
@@ -20513,7 +20502,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/start.s.orig xnu-final-patch/osfmk/arm64/st
 +/* vim: set ts=4: */
 diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-final-patch/osfmk/conf/files.arm64
 --- xnu-orig-clean/osfmk/conf/files.arm64	2026-11-05 21:35:46.661510887 +0530
-+++ xnu-final-patch/osfmk/conf/files.arm64	2026-11-05 22:12:52.996766239 +0530
++++ xnu-final-patch/osfmk/conf/files.arm64	2026-11-05 22:32:37.376669924 +0530
 @@ -7,12 +7,12 @@
  
  osfmk/arm64/hi_res_clock_map.c 	optional hi_res_clock
@@ -20544,7 +20533,7 @@ diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-final-patch/osfmk/conf/files
  osfmk/arm64/bcopy.s standard
  osfmk/arm64/bzero.s standard
  osfmk/arm/caches.c		standard
-@@ -38,8 +38,8 @@
+@@ -38,8 +38,9 @@
  osfmk/arm/data.s	standard
  osfmk/arm64/dbgwrap.c		standard
  osfmk/arm/arm_timer.c		standard
@@ -20552,10 +20541,11 @@ diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-final-patch/osfmk/conf/files
 -osfmk/arm64/arm_vm_init.c	optional config_pmap_ppl
 +osfmk/arm/arm_init.c	optional config_pmap_ppl config_amcc m30lte
 +osfmk/arm64/arm_vm_init.c	optional config_pmap_ppl config_amcc m30lte
++osfmk/arm64/m30lte_init.c	standard
  osfmk/arm64/arm64_hypercall.c	standard
  osfmk/arm/io_map.c		standard
  osfmk/arm64/loose_ends.c	standard
-@@ -50,7 +50,7 @@
+@@ -50,7 +51,7 @@
  osfmk/arm64/gxf_exceptions.s	optional nos_arm_asm
  osfmk/arm64/lowmem_vectors.c	standard
  osfmk/arm64/sleh.c			standard
@@ -20564,7 +20554,7 @@ diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-final-patch/osfmk/conf/files
  osfmk/arm64/pinst.s	optional nos_arm_asm
  osfmk/arm64/cswitch.s	optional nos_arm_asm
  osfmk/arm/machine_cpuid.c	standard
-@@ -91,7 +91,7 @@
+@@ -91,7 +92,7 @@
  
  # Kernel performance monitoring
  osfmk/arm64/perfmon_arm64.c optional config_perfmon
