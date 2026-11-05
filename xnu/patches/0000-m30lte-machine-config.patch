@@ -591,3 +591,16 @@ index 1234567..abcdefg 100644
  	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF);
 +#endif
  }
+
+diff --git a/osfmk/conf/files.arm64 b/osfmk/conf/files.arm64
+index c40d57b..kpccfix 100644
+--- a/osfmk/conf/files.arm64
++++ b/osfmk/conf/files.arm64
+@@ -91,7 +91,7 @@ osfmk/OPTIONS/hi_res_clock	optional hi_res_clock
+ 
+ # Kernel performance monitoring
+ osfmk/arm64/perfmon_arm64.c optional config_perfmon
+-osfmk/arm64/kpc.c		optional kpc nos_arm_asm
++osfmk/arm64/kpc.c		optional kpc nos_arm_asm config_amcc
+ osfmk/arm64/monotonic_arm64.c optional monotonic
+
