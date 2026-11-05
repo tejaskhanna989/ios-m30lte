@@ -19467,7 +19467,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfm
  
 diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines.c xnu-final-patch/osfmk/arm64/machine_routines.c
 --- xnu-orig-clean/osfmk/arm64/machine_routines.c	2026-11-05 21:35:46.655332116 +0530
-+++ xnu-final-patch/osfmk/arm64/machine_routines.c	2026-11-05 23:15:46.622281212 +0530
++++ xnu-final-patch/osfmk/arm64/machine_routines.c	2026-11-05 23:24:40.987725469 +0530
 @@ -2790,3 +2790,34 @@
  
  	return get_saved_state_pc(state);
@@ -19476,7 +19476,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines.c xnu-final-patch/osfmk/ar
 +#if defined(M30LTE)
 +
 +/* Kernel slide (ASLR) */
-+uint64_t vm_kernel_slide = 0;
++vm_offset_t vm_kernel_slide = 0;
 +
 +/* Kernel text start address */
 +vm_offset_t vm_kernel_stext = 0;
