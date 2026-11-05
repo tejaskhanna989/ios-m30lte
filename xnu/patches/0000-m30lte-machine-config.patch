@@ -20689,8 +20689,8 @@ diff -ruN xnu-orig-clean/pexpert/pexpert/arm64/board_config.h xnu-final-patch/pe
  
 diff -ruN xnu-orig-clean/pexpert/pexpert/arm64/M30LTE.h xnu-final-patch/pexpert/pexpert/arm64/M30LTE.h
 --- xnu-orig-clean/pexpert/pexpert/arm64/M30LTE.h	1970-01-01 05:30:00.000000000 +0530
-+++ xnu-final-patch/pexpert/pexpert/arm64/M30LTE.h	2026-11-05 20:00:02.053900239 +0530
-@@ -0,0 +1,57 @@
++++ xnu-final-patch/pexpert/pexpert/arm64/M30LTE.h	2026-11-05 20:09:35.494466998 +0530
+@@ -0,0 +1,58 @@
 +#ifndef _PEXPERT_ARM64_M30LTE_H
 +#define _PEXPERT_ARM64_M30LTE_H
 +
@@ -20744,6 +20744,7 @@ diff -ruN xnu-orig-clean/pexpert/pexpert/arm64/M30LTE.h xnu-final-patch/pexpert/
 +
 +#define __ARM_PAN_AVAILABLE__     1
 +#define __ARM_16K_PG__            1
++#define __ARM_ARCH__              8
 +
 +#undef APPLE_ARM64_ARCH_FAMILY
 +
