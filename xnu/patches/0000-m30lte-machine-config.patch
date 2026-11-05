@@ -1,21 +1,6 @@
-diff --git a/SETUP/config/doconf b/SETUP/config/doconf
-index 222158a..cde0ba2 100755
---- a/SETUP/config/doconf
-+++ b/SETUP/config/doconf
-@@ -109,6 +109,9 @@ while ($#argv >= 1)
- 	    else
- 	        set DEF_AVP="-USOC_IS_VIRTUALIZED"
- 	    endif
-+	    if ("$SOC_CONFIG" == "m30lte") then
-+	        set DEF_AVP="$DEF_AVP -Dnos_arm_asm -Dnos_arm_pmap"
-+	    endif
- 	    shift
- 	    breaksw
- 	case "-platform":
-diff --git a/bsd/kern/subr_log.c b/bsd/kern/subr_log.c
-index 3ff7646..cb033aa 100644
---- a/bsd/kern/subr_log.c
-+++ b/bsd/kern/subr_log.c
+diff -ruN xnu-orig-clean/bsd/kern/subr_log.c xnu-patch-gen/bsd/kern/subr_log.c
+--- xnu-orig-clean/bsd/kern/subr_log.c	2026-11-05 13:00:35.589937034 +0530
++++ xnu-patch-gen/bsd/kern/subr_log.c	2026-11-05 12:59:38.953489309 +0530
 @@ -74,7 +74,7 @@
  #include <firehose/tracepoint_private.h>
  #include <firehose/chunk_private.h>
@@ -25,30 +10,9 @@ index 3ff7646..cb033aa 100644
  
  #include <os/log_private.h>
  #include <sys/ioctl.h>
-diff --git a/config/MASTER.arm64.MacOSX b/config/MASTER.arm64.MacOSX
-index d3751b8..97da168 100644
---- a/config/MASTER.arm64.MacOSX
-+++ b/config/MASTER.arm64.MacOSX
-@@ -16,7 +16,7 @@
- #  Standard Apple OS Configurations:
- #  -------- ----- -- ---------------
- #
--#  KERNEL_BASE =    [ arm64 config_pmap_ppl medium msgb_large config_requires_u32_munging config_delay_idle_sleep config_proc_udata_storage config_uexc config_darkboot ARM_EXTRAS_BASE ]
-+#  KERNEL_BASE =    [ arm64 config_pmap_ppl medium msgb_large config_requires_u32_munging config_delay_idle_sleep config_proc_udata_storage config_uexc config_darkboot ARM_EXTRAS_BASE nos_arm_asm nos_arm_pmap ]
- #  KERNEL_RELEASE = [ KERNEL_BASE ]
- #  KERNEL_DEV =     [ KERNEL_BASE development mach_assert config_xnupost proc_ref_debug config_proc_resource_limits ]
- #  KERNEL_DEBUG =   [ KERNEL_BASE debug mach_assert config_xnupost config_waitq_stats config_workloop_debug config_proc_resource_limits ]
-@@ -106,3 +106,5 @@ options CONFIG_HYPERVISOR_PUBLIC   # unrestricted entitlement for hypervisor
- 
- options   CONFIG_RESLIDE_SHARED_CACHE		# <reslide_shared_cache>
- options   CONFIG_KERNEL_TBI		# <kernel_tbi>
-+options   NOS_ARM_ASM			# <nos_arm_asm>
-+options   NOS_ARM_PMAP			# <nos_arm_pmap>
-diff --git a/config/MASTER.arm64.m30lte b/config/MASTER.arm64.m30lte
-new file mode 100644
-index 0000000..240e92c
---- /dev/null
-+++ b/config/MASTER.arm64.m30lte
+diff -ruN xnu-orig-clean/config/MASTER.arm64.m30lte xnu-patch-gen/config/MASTER.arm64.m30lte
+--- xnu-orig-clean/config/MASTER.arm64.m30lte	1970-01-01 05:30:00.000000000 +0530
++++ xnu-patch-gen/config/MASTER.arm64.m30lte	2026-11-05 12:59:38.958895007 +0530
 @@ -0,0 +1,113 @@
 +#define nos_arm_asm 1
 +#define nos_arm_pmap 1
@@ -163,24 +127,34 @@ index 0000000..240e92c
 +options   CONFIG_KERNEL_TBI		# <kernel_tbi>
 +options   NOS_ARM_ASM			# <nos_arm_asm>
 +options   NOS_ARM_PMAP			# <nos_arm_pmap>
-diff --git a/libkern/crypto/m30_bearssl/inc/bearssl.h b/libkern/crypto/m30_bearssl/inc/bearssl.h
-new file mode 100644
-index 0000000..b61d5b3
---- /dev/null
-+++ b/libkern/crypto/m30_bearssl/inc/bearssl.h
-@@ -0,0 +1,7 @@
-+#ifndef BEARSSL_H
-+#define BEARSSL_H
-+
-+#include <stddef.h>
-+#include <stdint.h>
-+
-+#endif /* BEARSSL_H */
-diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_block.h b/libkern/crypto/m30_bearssl/inc/bearssl_block.h
-new file mode 100644
-index 0000000..1092532
---- /dev/null
-+++ b/libkern/crypto/m30_bearssl/inc/bearssl_block.h
+diff -ruN xnu-orig-clean/config/MASTER.arm64.MacOSX xnu-patch-gen/config/MASTER.arm64.MacOSX
+--- xnu-orig-clean/config/MASTER.arm64.MacOSX	2026-11-05 13:00:36.969962224 +0530
++++ xnu-patch-gen/config/MASTER.arm64.MacOSX	2026-11-05 12:59:38.953630221 +0530
+@@ -16,7 +16,7 @@
+ #  Standard Apple OS Configurations:
+ #  -------- ----- -- ---------------
+ #
+-#  KERNEL_BASE =    [ arm64 config_pmap_ppl medium msgb_large config_requires_u32_munging config_delay_idle_sleep config_proc_udata_storage config_uexc config_darkboot ARM_EXTRAS_BASE ]
++#  KERNEL_BASE =    [ arm64 config_pmap_ppl medium msgb_large config_requires_u32_munging config_delay_idle_sleep config_proc_udata_storage config_uexc config_darkboot ARM_EXTRAS_BASE nos_arm_asm nos_arm_pmap ]
+ #  KERNEL_RELEASE = [ KERNEL_BASE ]
+ #  KERNEL_DEV =     [ KERNEL_BASE development mach_assert config_xnupost proc_ref_debug config_proc_resource_limits ]
+ #  KERNEL_DEBUG =   [ KERNEL_BASE debug mach_assert config_xnupost config_waitq_stats config_workloop_debug config_proc_resource_limits ]
+@@ -106,3 +106,5 @@
+ 
+ options   CONFIG_RESLIDE_SHARED_CACHE		# <reslide_shared_cache>
+ options   CONFIG_KERNEL_TBI		# <kernel_tbi>
++options   NOS_ARM_ASM			# <nos_arm_asm>
++options   NOS_ARM_PMAP			# <nos_arm_pmap>
+Binary files xnu-orig-clean/.git/index and xnu-patch-gen/.git/index differ
+diff -ruN xnu-orig-clean/.git/logs/HEAD xnu-patch-gen/.git/logs/HEAD
+--- xnu-orig-clean/.git/logs/HEAD	2026-11-05 13:00:35.143928892 +0530
++++ xnu-patch-gen/.git/logs/HEAD	2026-11-05 12:59:31.209452484 +0530
+@@ -1 +1 @@
+-0000000000000000000000000000000000000000 1b191cb58250d0705d8a51287127505aa4bc0789 tejaskhanna989 <khannatejas989@gmail.com> 1793863835 +0530	clone: from https://github.com/apple-oss-distributions/xnu.git
++0000000000000000000000000000000000000000 1b191cb58250d0705d8a51287127505aa4bc0789 tejaskhanna989 <khannatejas989@gmail.com> 1793863771 +0530	clone: from https://github.com/apple-oss-distributions/xnu.git
+diff -ruN xnu-orig-clean/libkern/crypto/m30_bearssl/inc/bearssl_block.h xnu-patch-gen/libkern/crypto/m30_bearssl/inc/bearssl_block.h
+--- xnu-orig-clean/libkern/crypto/m30_bearssl/inc/bearssl_block.h	1970-01-01 05:30:00.000000000 +0530
++++ xnu-patch-gen/libkern/crypto/m30_bearssl/inc/bearssl_block.h	2026-11-05 12:59:38.959928614 +0530
 @@ -0,0 +1,21 @@
 +#ifndef BEARSSL_BLOCK_H
 +#define BEARSSL_BLOCK_H
@@ -204,11 +178,20 @@ index 0000000..1092532
 +
 +#endif /* BEARSSL_BLOCK_H */
 \ No newline at end of file
-diff --git a/libkern/crypto/m30_bearssl/inc/bearssl_hash.h b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
-new file mode 100644
-index 0000000..6d79bdf
---- /dev/null
-+++ b/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
+diff -ruN xnu-orig-clean/libkern/crypto/m30_bearssl/inc/bearssl.h xnu-patch-gen/libkern/crypto/m30_bearssl/inc/bearssl.h
+--- xnu-orig-clean/libkern/crypto/m30_bearssl/inc/bearssl.h	1970-01-01 05:30:00.000000000 +0530
++++ xnu-patch-gen/libkern/crypto/m30_bearssl/inc/bearssl.h	2026-11-05 12:59:38.959852724 +0530
+@@ -0,0 +1,7 @@
++#ifndef BEARSSL_H
++#define BEARSSL_H
++
++#include <stddef.h>
++#include <stdint.h>
++
++#endif /* BEARSSL_H */
+diff -ruN xnu-orig-clean/libkern/crypto/m30_bearssl/inc/bearssl_hash.h xnu-patch-gen/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
+--- xnu-orig-clean/libkern/crypto/m30_bearssl/inc/bearssl_hash.h	1970-01-01 05:30:00.000000000 +0530
++++ xnu-patch-gen/libkern/crypto/m30_bearssl/inc/bearssl_hash.h	2026-11-05 12:59:38.960008772 +0530
 @@ -0,0 +1,81 @@
 +#ifndef BEARSSL_HASH_H
 +#define BEARSSL_HASH_H
@@ -292,10 +275,9 @@ index 0000000..6d79bdf
 +
 +#endif /* BEARSSL_HASH_H */
 \ No newline at end of file
-diff --git a/libkern/os/log.c b/libkern/os/log.c
-index 74d54c8..953d4f9 100644
---- a/libkern/os/log.c
-+++ b/libkern/os/log.c
+diff -ruN xnu-orig-clean/libkern/os/log.c xnu-patch-gen/libkern/os/log.c
+--- xnu-orig-clean/libkern/os/log.c	2026-11-05 13:00:37.327968757 +0530
++++ xnu-patch-gen/libkern/os/log.c	2026-11-05 12:59:38.960895044 +0530
 @@ -30,7 +30,7 @@
  
  #include <firehose/tracepoint_private.h>
@@ -305,11 +287,10 @@ index 74d54c8..953d4f9 100644
  #include <os/firehose.h>
  
  #include <os/log_private.h>
-diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
-index 5bd6f23..436fa00 100644
---- a/makedefs/MakeInc.def
-+++ b/makedefs/MakeInc.def
-@@ -29,7 +29,7 @@ SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
+diff -ruN xnu-orig-clean/makedefs/MakeInc.def xnu-patch-gen/makedefs/MakeInc.def
+--- xnu-orig-clean/makedefs/MakeInc.def	2026-11-05 13:00:37.491971749 +0530
++++ xnu-patch-gen/makedefs/MakeInc.def	2026-11-05 12:59:38.962076905 +0530
+@@ -29,7 +29,7 @@
  else ifneq ($(findstring _host,$(RC_ProjectName)),)
  SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
  else
@@ -318,7 +299,7 @@ index 5bd6f23..436fa00 100644
  
  endif
  
-@@ -61,6 +61,11 @@ MACHINE_FLAGS_ARM64_T8103 = -DARM64_BOARD_CONFIG_T8103                  -mcpu=ap
+@@ -61,6 +61,11 @@
  MACHINE_FLAGS_ARM64_T6000 = -DARM64_BOARD_CONFIG_T6000 		-mcpu=apple-a14
  MACHINE_FLAGS_ARM64_VMAPPLE = -DARM64_BOARD_CONFIG_VMAPPLE              -march=armv8.5a
  MACHINE_FLAGS_ARM64_BCM2837 = -DARM64_BOARD_CONFIG_BCM2837
@@ -330,33 +311,21 @@ index 5bd6f23..436fa00 100644
  
  
  #
-diff --git a/osfmk/arm64/Makefile b/osfmk/arm64/Makefile
-index f819fea..56a3f56 100644
---- a/osfmk/arm64/Makefile
-+++ b/osfmk/arm64/Makefile
-@@ -21,7 +21,6 @@ INSTALL_KF_MD_LCL_LIST = \
- 	machine_kpc.h \
- 	machine_remote_time.h \
- 	monotonic.h \
--	proc_reg.h \
- 	tlb.h \
- 	$(ARM_HEADER_FILES)
+diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-patch-gen/osfmk/arm/pmap/pmap.h
+--- xnu-orig-clean/osfmk/arm/pmap/pmap.h	2026-11-05 13:00:37.574973264 +0530
++++ xnu-patch-gen/osfmk/arm/pmap/pmap.h	2026-11-05 12:59:38.964877655 +0530
+@@ -442,7 +442,7 @@
+ #if HAS_APPLE_PAC
+ 	bool disable_jop;
+ #else
+-	bool reserved10;
++	bool reserved10_pac;
+ #endif /* HAS_APPLE_PAC */
  
-@@ -39,7 +38,8 @@ EXPORT_MD_LIST = \
- 	machine_remote_time.h \
- 	monotonic.h \
- 	perfmon_arm64_regs.h \
--	proc_reg.h \
-+		proc_reg.h \
-+		firehose_buffer_private.h \
- 	asm.h \
- 	tlb.h \
- 	pal_hibernate.h
-diff --git a/osfmk/arm64/firehose_buffer_private.h b/osfmk/arm64/firehose_buffer_private.h
-new file mode 100644
-index 0000000..f3071e9
---- /dev/null
-+++ b/osfmk/arm64/firehose_buffer_private.h
+ 	bool reserved11;
+diff -ruN xnu-orig-clean/osfmk/arm64/firehose_buffer_private.h xnu-patch-gen/osfmk/arm64/firehose_buffer_private.h
+--- xnu-orig-clean/osfmk/arm64/firehose_buffer_private.h	1970-01-01 05:30:00.000000000 +0530
++++ xnu-patch-gen/osfmk/arm64/firehose_buffer_private.h	2026-11-05 12:59:38.962370271 +0530
 @@ -0,0 +1,17 @@
 +#ifndef _OS_FIREHOSE_BUFFER_PRIVATE_H
 +#define _OS_FIREHOSE_BUFFER_PRIVATE_H
@@ -376,10 +345,30 @@ index 0000000..f3071e9
 +
 +#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
 \ No newline at end of file
-diff --git a/osfmk/arm64/proc_reg.h b/osfmk/arm64/proc_reg.h
-index 133b07f..34d31c8 100644
---- a/osfmk/arm64/proc_reg.h
-+++ b/osfmk/arm64/proc_reg.h
+diff -ruN xnu-orig-clean/osfmk/arm64/Makefile xnu-patch-gen/osfmk/arm64/Makefile
+--- xnu-orig-clean/osfmk/arm64/Makefile	2026-11-05 13:00:37.605973830 +0530
++++ xnu-patch-gen/osfmk/arm64/Makefile	2026-11-05 12:59:38.962236305 +0530
+@@ -21,7 +21,6 @@
+ 	machine_kpc.h \
+ 	machine_remote_time.h \
+ 	monotonic.h \
+-	proc_reg.h \
+ 	tlb.h \
+ 	$(ARM_HEADER_FILES)
+ 
+@@ -39,7 +38,8 @@
+ 	machine_remote_time.h \
+ 	monotonic.h \
+ 	perfmon_arm64_regs.h \
+-	proc_reg.h \
++		proc_reg.h \
++		firehose_buffer_private.h \
+ 	asm.h \
+ 	tlb.h \
+ 	pal_hibernate.h
+diff -ruN xnu-orig-clean/osfmk/arm64/proc_reg.h xnu-patch-gen/osfmk/arm64/proc_reg.h
+--- xnu-orig-clean/osfmk/arm64/proc_reg.h	2026-11-05 13:00:37.825977844 +0530
++++ xnu-patch-gen/osfmk/arm64/proc_reg.h	2026-11-05 12:59:38.963895100 +0530
 @@ -24,6 +24,10 @@
   * limitations under the License.
   *
@@ -391,16 +380,10 @@ index 133b07f..34d31c8 100644
   */
  /*
   * @OSF_COPYRIGHT@
-@@ -207,6 +211,26 @@
+@@ -213,6 +217,26 @@
+ /* D-Cache. */
+ #define MMU_CLINE   6
  
- #elif defined (BCM2837) /* Raspberry Pi 3 */
- 
-+/* I-Cache. We don't have detailed spec so we just follow the ARM technical reference. */
-+#define MMU_I_CLINE 6
-+
-+/* D-Cache. */
-+#define MMU_CLINE   6
-+
 +#elif defined (M30LTE) /* Samsung Exynos 7904: Cortex-A73 + Cortex-A53, ARMv8.0 */
 +
 +/* I-Cache. */
@@ -415,9 +398,15 @@ index 133b07f..34d31c8 100644
 +#define MAX_CPU_CLUSTERS                2
 +
 +
- /* I-Cache. We don't have detailed spec so we just follow the ARM technical reference. */
- #define MMU_I_CLINE 6
++/* I-Cache. We don't have detailed spec so we just follow the ARM technical reference. */
++#define MMU_I_CLINE 6
++
++/* D-Cache. */
++#define MMU_CLINE   6
++
+ #elif defined (VMAPPLE)
  
+ /* I-Cache. */
 @@ -222,7 +246,7 @@
  #define MMU_CLINE   6
  
@@ -427,11 +416,383 @@ index 133b07f..34d31c8 100644
  #endif
  
  #define MAX_L2_CLINE_BYTES (1 << MAX_L2_CLINE)
-diff --git a/pexpert/pexpert/arm64/M30LTE.h b/pexpert/pexpert/arm64/M30LTE.h
-new file mode 100644
-index 0000000..761d5e6
---- /dev/null
-+++ b/pexpert/pexpert/arm64/M30LTE.h
+diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-patch-gen/osfmk/conf/files.arm64
+--- xnu-orig-clean/osfmk/conf/files.arm64	2026-11-05 13:00:37.951980143 +0530
++++ xnu-patch-gen/osfmk/conf/files.arm64	2026-11-05 13:00:20.403659220 +0530
+@@ -7,12 +7,12 @@
+ 
+ osfmk/arm64/hi_res_clock_map.c 	optional hi_res_clock
+ 
+-osfmk/arm/pmap/pmap.c			optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_cs.c		optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_data.c		optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_iommu.c		optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_misc.c		optional nos_arm_pmap
+-osfmk/arm/pmap/pmap_ppl_interface.c	optional nos_arm_pmap
++osfmk/arm/pmap/pmap.c			optional nos_arm_pmap config_amcc
++osfmk/arm/pmap/pmap_cs.c		optional nos_arm_pmap config_amcc
++osfmk/arm/pmap/pmap_data.c		optional nos_arm_pmap config_amcc
++osfmk/arm/pmap/pmap_iommu.c		optional nos_arm_pmap config_amcc
++osfmk/arm/pmap/pmap_misc.c		optional nos_arm_pmap config_amcc
++osfmk/arm/pmap/pmap_ppl_interface.c	optional nos_arm_pmap config_amcc
+ 
+ 
+ osfmk/arm64/bsd_arm64.c		optional mach_bsd
+@@ -25,8 +25,8 @@
+ osfmk/arm64/WKdmData.s		standard
+ osfmk/arm64/lz4_decode_arm64.s  standard
+ osfmk/arm64/lz4_encode_arm64.s  standard
+-osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl
+-osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm
++osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl config_amcc
++osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm config_amcc
+ osfmk/arm64/bcopy.s standard
+ osfmk/arm64/bzero.s standard
+ osfmk/arm/caches.c		standard
+@@ -91,7 +91,7 @@
+ 
+ # Kernel performance monitoring
+ osfmk/arm64/perfmon_arm64.c optional config_perfmon
+-osfmk/arm64/kpc.c		optional kpc nos_arm_asm
++osfmk/arm64/kpc.c		optional kpc nos_arm_asm config_amcc
+ osfmk/arm64/monotonic_arm64.c optional monotonic
+ 
+ osfmk/arm64/platform_tests.c			optional config_xnupost
+diff -ruN xnu-orig-clean/osfmk/conf/files.arm64.orig xnu-patch-gen/osfmk/conf/files.arm64.orig
+--- xnu-orig-clean/osfmk/conf/files.arm64.orig	1970-01-01 05:30:00.000000000 +0530
++++ xnu-patch-gen/osfmk/conf/files.arm64.orig	2026-11-05 12:59:35.121972215 +0530
+@@ -0,0 +1,106 @@
++OPTIONS/fb			optional fb
++
++OPTIONS/debug			optional debug
++
++osfmk/vm/vm_apple_protect.c	 standard
++osfmk/vm/vm_fourk_pager.c	 standard
++
++osfmk/arm64/hi_res_clock_map.c 	optional hi_res_clock
++
++osfmk/arm/pmap/pmap.c			optional nos_arm_pmap
++osfmk/arm/pmap/pmap_cs.c		optional nos_arm_pmap
++osfmk/arm/pmap/pmap_data.c		optional nos_arm_pmap
++osfmk/arm/pmap/pmap_iommu.c		optional nos_arm_pmap
++osfmk/arm/pmap/pmap_misc.c		optional nos_arm_pmap
++osfmk/arm/pmap/pmap_ppl_interface.c	optional nos_arm_pmap
++
++
++osfmk/arm64/bsd_arm64.c		optional mach_bsd
++osfmk/arm/machdep_call.c	optional mach_bsd
++
++osfmk/arm64/WKdmDecompress_16k.s	standard
++osfmk/arm64/WKdmCompress_16k.s		standard
++osfmk/arm64/WKdmDecompress_4k.s	standard
++osfmk/arm64/WKdmCompress_4k.s	standard
++osfmk/arm64/WKdmData.s		standard
++osfmk/arm64/lz4_decode_arm64.s  standard
++osfmk/arm64/lz4_encode_arm64.s  standard
++osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl
++osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm
++osfmk/arm64/bcopy.s standard
++osfmk/arm64/bzero.s standard
++osfmk/arm/caches.c		standard
++osfmk/arm64/caches_asm.s		optional nos_arm_asm
++osfmk/arm64/copyio.c	standard
++osfmk/arm64/cpu.c		standard
++osfmk/arm/cpu_common.c		standard
++osfmk/arm/cpuid.c   standard
++osfmk/arm/data.s	standard
++osfmk/arm64/dbgwrap.c		standard
++osfmk/arm/arm_timer.c		standard
++osfmk/arm/arm_init.c	optional config_pmap_ppl
++osfmk/arm64/arm_vm_init.c	optional config_pmap_ppl
++osfmk/arm64/arm64_hypercall.c	standard
++osfmk/arm/io_map.c		standard
++osfmk/arm64/loose_ends.c	standard
++osfmk/arm/locks_arm.c	standard
++osfmk/arm64/locore.s	optional nos_arm_asm
++osfmk/arm64/iofilter_asm.s	optional nos_arm_asm
++osfmk/arm64/iofilter.c	optional nos_arm_asm
++osfmk/arm64/gxf_exceptions.s	optional nos_arm_asm
++osfmk/arm64/lowmem_vectors.c	standard
++osfmk/arm64/sleh.c			standard
++osfmk/arm64/start.s	optional nos_arm_asm config_pmap_ppl
++osfmk/arm64/pinst.s	optional nos_arm_asm
++osfmk/arm64/cswitch.s	optional nos_arm_asm
++osfmk/arm/machine_cpuid.c	standard
++osfmk/arm/machine_routines_common.c		standard
++osfmk/arm64/lock_ticket_pv.c		optional config_pv_ticket
++osfmk/arm64/machine_routines.c		standard
++osfmk/arm64/machine_routines_asm.s	optional nos_arm_asm
++osfmk/arm64/machine_task.c		standard
++osfmk/arm/machine_routines_apple.c	optional nos_arm_asm
++osfmk/arm/pal_routines.c		standard
++osfmk/arm64/mcount.s		optional profile
++osfmk/arm64/memcmp_zero.s	standard
++osfmk/arm64/strnlen.s   standard
++osfmk/arm64/strncmp.s   standard
++
++osfmk/arm/model_dep.c		standard
++osfmk/arm64/pcb.c		optional nos_arm_asm
++osfmk/arm/rtclock.c		standard
++osfmk/arm64/status.c		standard
++osfmk/arm/status_shared.c	standard
++
++osfmk/arm/commpage/commpage.c	standard
++osfmk/arm/commpage/commpage_asm.s	optional config_arm_pfz
++
++osfmk/kdp/ml/arm/kdp_machdep.c	optional	mach_kdp
++osfmk/kdp/ml/arm/kdp_vm.c	optional	mach_kdp
++
++osfmk/arm64/hibernate_arm64.c        optional hibernation
++osfmk/arm64/hibernate_restore.c      optional hibernation
++osfmk/arm64/hibernate_asm.s          optional hibernation
++
++# DUMMIES TO FORCE GENERATION OF .h FILES
++osfmk/OPTIONS/ln		optional ln
++osfmk/OPTIONS/eisa		optional eisa
++osfmk/OPTIONS/himem		optional himem
++osfmk/OPTIONS/ec		optional ec
++osfmk/OPTIONS/hi_res_clock	optional hi_res_clock
++
++# Kernel performance monitoring
++osfmk/arm64/perfmon_arm64.c optional config_perfmon
++osfmk/arm64/kpc.c		optional kpc nos_arm_asm
++osfmk/arm64/monotonic_arm64.c optional monotonic
++
++osfmk/arm64/platform_tests.c			optional config_xnupost
++osfmk/arm64/platform_tests_asm.s		optional config_xnupost
++
++osfmk/arm64/alternate_debugger.c		optional alternate_debugger
++osfmk/arm64/alternate_debugger_asm.s		optional alternate_debugger
++
++osfmk/arm64/machine_remote_time.c optional config_mach_bridge_recv_time
++osfmk/arm64/corecrypto/sha256_compress_arm64.s	standard
++
++osfmk/arm/counter.c	standard
+diff -ruN xnu-orig-clean/pexpert/arm/pe_fiq.c xnu-patch-gen/pexpert/arm/pe_fiq.c
+--- xnu-orig-clean/pexpert/arm/pe_fiq.c	2026-11-05 13:00:39.012362938 +0530
++++ xnu-patch-gen/pexpert/arm/pe_fiq.c	2026-11-05 12:59:38.965013772 +0530
+@@ -142,6 +142,7 @@
+ 	}
+ 
+ 	// Configure timers and legacy FIQ to be group 0
++#ifdef GICR_IGROUPR0
+ 	gicr_write32(GICR_IGROUPR0, 0x81FFFFFF);
+ 
+ 	// Enable PPI 27
+@@ -156,6 +157,9 @@
+ 	// Set priority masks and binary point for group 0
+ 	__builtin_arm_wsr64("ICC_BPR0_EL1", 0);
+ 	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF);
++#else
++	// TODO: Implement GICv2 FIQ handling for M30LTE
++#endif
+ 
+ 	// Set EOI mode of this processor
+ 	uint64_t icc_ctlr = __builtin_arm_rsr64("ICC_CTLR_EL1");
+diff -ruN xnu-orig-clean/pexpert/arm/pe_fiq.c.orig xnu-patch-gen/pexpert/arm/pe_fiq.c.orig
+--- xnu-orig-clean/pexpert/arm/pe_fiq.c.orig	1970-01-01 05:30:00.000000000 +0530
++++ xnu-patch-gen/pexpert/arm/pe_fiq.c.orig	2026-11-05 12:59:36.521843505 +0530
+@@ -0,0 +1,177 @@
++/*
++ * Copyright (c) 2021 Apple Inc. All rights reserved.
++ */
++
++#include <stdint.h>
++#include <arm64/proc_reg.h>
++#include <kern/clock.h>
++#include <mach/mach_time.h>
++#include <machine/atomic.h>
++#include <machine/machine_routines.h>
++#include <pexpert/device_tree.h>
++#include <pexpert/arm64/board_config.h>
++
++
++#if HAS_GIC_V3
++#define GICR_WAKE_TIMEOUT_NS (1000000000ULL) // timeout for redistributor wakeup (default 1s)
++MACHINE_TIMEOUT(gicr_wake_timeout_ns, "gicr-wake-timeout", GICR_WAKE_TIMEOUT_NS, MACHINE_TIMEOUT_UNIT_NSEC, NULL);
++
++static vm_offset_t gicd_base;
++static vm_offset_t gicr_base;
++static vm_offset_t gicr_size;
++
++static uint32_t
++_gic_read32(vm_offset_t addr)
++{
++	return *((volatile uint32_t *) addr);
++}
++
++static uint64_t
++_gic_read64(vm_offset_t addr)
++{
++	return *((volatile uint64_t *) addr);
++}
++
++static void
++_gic_write32(vm_offset_t addr, uint32_t value)
++{
++	*((volatile uint32_t *) addr) = value;
++}
++
++#define gicd_read32(offset) (_gic_read32(gicd_base + (offset)))
++#define gicd_write32(offset, data) (_gic_write32(gicd_base + (offset), (data)))
++#define gicr_read32(offset) (_gic_read32(gicr_pe_base + (offset)))
++#define gicr_write32(offset, data) (_gic_write32(gicr_pe_base + (offset), (data)))
++#define gicr_read64(offset) (_gic_read64(gicr_pe_base + (offset)))
++
++static vm_offset_t
++find_gicr_pe_base()
++{
++	// We only care about aff1 and aff0
++	uint32_t phys_id = __builtin_arm_rsr64("MPIDR_EL1") & (MPIDR_AFF1_MASK | MPIDR_AFF0_MASK);
++
++	for (vm_offset_t offset = 0; offset < gicr_size; offset += GICR_PE_SIZE) {
++		vm_offset_t gicr_pe_base = gicr_base + offset;
++		uint64_t gicr_typer = gicr_read64(GICR_TYPER);
++		uint32_t aff_value = (uint32_t) (gicr_typer >> GICR_TYPER_AFFINITY_VALUE_SHIFT) & (MPIDR_AFF1_MASK | MPIDR_AFF0_MASK);
++
++		if (phys_id == aff_value) {
++			return gicr_pe_base;
++		}
++
++		if (gicr_typer & GICR_TYPER_LAST) {
++			break;
++		}
++	}
++
++	panic("%s: cannot find GICR base for core %u", __func__, ml_get_cpu_number(phys_id));
++}
++
++void
++pe_init_fiq()
++{
++	int error;
++	DTEntry entry;
++
++	// gicd_base is 0x0 only before it's initialized by the boot processor.
++	// Avoid calling SecureDT* routines on secondary processors to avoid
++	// race conditions because they are not thread-safe.
++	if (!gicd_base) {
++		// Find GIC DT node
++		error = SecureDTLookupEntry(NULL, "/arm-io/gic", &entry);
++		if (error != kSuccess) {
++			panic("%s: cannot find GIC node in DT", __func__);
++		}
++
++		// Find "reg" property
++		void const *prop;
++		unsigned int prop_size;
++		error = SecureDTGetProperty(entry, "reg", &prop, &prop_size);
++		if (error != kSuccess) {
++			panic("%s: cannot find GIC MMIO regions in DT", __func__);
++		}
++
++		// Need at least GICD base, GICD size, GICR base and GICR size
++		if (prop_size < 4 * sizeof(uint64_t)) {
++			panic("%s: incorrect reg property size in GIC DT node; expecting 32 bytes but got %u bytes", __func__, prop_size);
++		}
++
++		vm_offset_t soc_base_phys = pe_arm_get_soc_base_phys();
++
++		uint64_t const gicd_base_prop = ((uint64_t const *) prop)[0];
++		uint64_t const gicd_size_prop = ((uint64_t const *) prop)[1];
++		uint64_t const gicr_base_prop = ((uint64_t const *) prop)[2];
++		uint64_t const gicr_size_prop = ((uint64_t const *) prop)[3];
++
++		// Find GICD base address
++		gicd_base = ml_io_map(soc_base_phys + gicd_base_prop, gicd_size_prop);
++
++		if (!gicd_base) {
++			panic("%s: cannot map GICD region", __func__);
++		}
++
++		// Find GICR base address
++		gicr_base = ml_io_map(soc_base_phys + gicr_base_prop, gicr_size_prop);
++
++		if (!gicr_base) {
++			panic("%s: cannot map GICR region", __func__);
++		}
++
++		gicr_size = gicr_size_prop;
++	}
++
++	// Find the redistributor for this processor
++	vm_offset_t gicr_pe_base = find_gicr_pe_base();
++
++	// Mark this PE to be awake
++	uint32_t gicr_waker = gicr_read32(GICR_WAKER);
++	if (gicr_waker & GICR_WAKER_CHILDRENASLEEP) {
++		gicr_waker &= ~GICR_WAKER_PROCESSORSLEEP;
++
++		gicr_write32(GICR_WAKER, gicr_waker);
++
++		uint64_t gicr_wake_deadline;
++		nanoseconds_to_deadline(os_atomic_load(&gicr_wake_timeout_ns, relaxed), &gicr_wake_deadline);
++		while (gicr_read32(GICR_WAKER) & GICR_WAKER_CHILDRENASLEEP) {
++			// Spin
++			if (gicr_wake_timeout_ns > 0 && mach_absolute_time() > gicr_wake_deadline) {
++				panic("%s: core %u timed out waiting for redistributor to wake up",
++				    __func__, ml_get_cpu_number_local());
++			}
++		}
++	}
++
++	// Configure timers and legacy FIQ to be group 0
++	gicr_write32(GICR_IGROUPR0, 0x81FFFFFF);
++
++	// Enable PPI 27
++	gicr_write32(GICR_ISENABLER0, (1 << 27));
++
++	// Enable system register access
++	uint64_t icc_sre = __builtin_arm_rsr64("ICC_SRE_EL1");
++	icc_sre |= ICC_SRE_SRE;
++	__builtin_arm_wsr64("ICC_SRE_EL1", icc_sre);
++	__builtin_arm_isb(ISB_SY);
++
++	// Set priority masks and binary point for group 0
++	__builtin_arm_wsr64("ICC_BPR0_EL1", 0);
++	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF);
++
++	// Set EOI mode of this processor
++	uint64_t icc_ctlr = __builtin_arm_rsr64("ICC_CTLR_EL1");
++	icc_ctlr &= ~ICC_CTLR_EOIMODE;
++	__builtin_arm_wsr64("ICC_CTLR_EL1", icc_ctlr);
++
++	// Enable the forwarding of the vtimer interrupt
++	uint32_t gicd_ctlr = gicd_read32(GICD_CTLR);
++	gicd_ctlr |= GICD_CTLR_ENABLEGRP0;
++	gicd_write32(GICD_CTLR, gicd_ctlr);
++	__builtin_arm_wsr64("ICC_IGRPEN0_EL1", 1);
++	__builtin_arm_isb(ISB_SY);
++}
++#else
++void
++pe_init_fiq()
++{
++}
++#endif
+diff -ruN xnu-orig-clean/pexpert/pexpert/arm64/board_config.h xnu-patch-gen/pexpert/pexpert/arm64/board_config.h
+--- xnu-orig-clean/pexpert/pexpert/arm64/board_config.h	2026-11-05 13:00:39.016999571 +0530
++++ xnu-patch-gen/pexpert/pexpert/arm64/board_config.h	2026-11-05 12:59:38.964612044 +0530
+@@ -97,6 +97,16 @@
+ #define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
+ #endif  /* ARM64_BOARD_CONFIG_BCM2837 */
+ 
++#ifdef ARM64_BOARD_CONFIG_M30LTE
++#include <pexpert/arm64/M30LTE.h>
++
++#define MAX_L2_CLINE                   6
++#define MAX_CPUS                       8
++#define MAX_CPU_CLUSTERS               2
++
++#define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
++#endif  /* ARM64_BOARD_CONFIG_M30LTE */
++
+ #ifdef ARM64_BOARD_CONFIG_VMAPPLE
+ #include <pexpert/arm64/VMAPPLE.h>
+ 
+diff -ruN xnu-orig-clean/pexpert/pexpert/arm64/M30LTE.h xnu-patch-gen/pexpert/pexpert/arm64/M30LTE.h
+--- xnu-orig-clean/pexpert/pexpert/arm64/M30LTE.h	1970-01-01 05:30:00.000000000 +0530
++++ xnu-patch-gen/pexpert/pexpert/arm64/M30LTE.h	2026-11-05 12:59:38.964511801 +0530
 @@ -0,0 +1,57 @@
 +#ifndef _PEXPERT_ARM64_M30LTE_H
 +#define _PEXPERT_ARM64_M30LTE_H
@@ -490,47 +851,10 @@ index 0000000..761d5e6
 +#include <pexpert/arm64/apple_arm64_common.h>
 +
 +#endif /* _PEXPERT_ARM64_M30LTE_H */
-diff --git a/pexpert/pexpert/arm64/board_config.h b/pexpert/pexpert/arm64/board_config.h
-index 9454534..97dd8a5 100644
---- a/pexpert/pexpert/arm64/board_config.h
-+++ b/pexpert/pexpert/arm64/board_config.h
-@@ -97,6 +97,16 @@
- #define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
- #endif  /* ARM64_BOARD_CONFIG_BCM2837 */
- 
-+#ifdef ARM64_BOARD_CONFIG_M30LTE
-+#include <pexpert/arm64/M30LTE.h>
-+
-+#define MAX_L2_CLINE                   6
-+#define MAX_CPUS                       8
-+#define MAX_CPU_CLUSTERS               2
-+
-+#define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
-+#endif  /* ARM64_BOARD_CONFIG_M30LTE */
-+
- #ifdef ARM64_BOARD_CONFIG_VMAPPLE
- #include <pexpert/arm64/VMAPPLE.h>
- 
-diff --git a/osfmk/conf/files.arm64 b/osfmk/conf/files.arm64
-index c40d57b..newindex 100644
---- a/osfmk/conf/files.arm64
-+++ b/osfmk/conf/files.arm64
-@@ -25,7 +25,7 @@ osfmk/arm64/WKdmCompress_4k.s	standard
- osfmk/arm64/WKdmData.s		standard
- osfmk/arm64/lz4_decode_arm64.s  standard
- osfmk/arm64/lz4_encode_arm64.s  standard
--osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl
-+osfmk/arm64/amcc_rorgn_ppl.c optional nos_arm_asm config_pmap_ppl config_amcc
--osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm
-+osfmk/arm64/amcc_rorgn_common.c optional nos_arm_asm config_amcc
- osfmk/arm64/bcopy.s standard
- osfmk/arm64/bzero.s standard
- 
-diff --git a/pexpert/pexpert/arm64/Makefile b/pexpert/pexpert/arm64/Makefile
-index 8226b8c..2ddbb0c 100644
---- a/pexpert/pexpert/arm64/Makefile
-+++ b/pexpert/pexpert/arm64/Makefile
-@@ -17,7 +17,8 @@ PRIVATE_KERNELFILES = \
+diff -ruN xnu-orig-clean/pexpert/pexpert/arm64/Makefile xnu-patch-gen/pexpert/pexpert/arm64/Makefile
+--- xnu-orig-clean/pexpert/pexpert/arm64/Makefile	2026-11-05 13:00:39.016266657 +0530
++++ xnu-patch-gen/pexpert/pexpert/arm64/Makefile	2026-11-05 12:59:38.964760781 +0530
+@@ -17,7 +17,8 @@
  	boot.h \
  	H13.h \
  	VMAPPLE.h \
@@ -540,67 +864,16 @@ index 8226b8c..2ddbb0c 100644
  
  
  # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
-
-diff --git a/osfmk/arm/pmap/pmap.h b/osfmk/arm/pmap/pmap.h
-index 1234567..abcdefg 100644
---- a/osfmk/arm/pmap/pmap.h
-+++ b/osfmk/arm/pmap/pmap.h
-@@ -442,7 +442,7 @@ struct pmap {
- #if HAS_APPLE_PAC
- 	bool disable_jop;
- #else
--	bool reserved10;
-+	bool reserved10_pac;
- #endif /* HAS_APPLE_PAC */
- 
- 	bool reserved11;
-
-diff --git a/pexpert/arm/pe_fiq.c b/pexpert/arm/pe_fiq.c
-index 1234567..abcdefg 100644
---- a/pexpert/arm/pe_fiq.c
-+++ b/pexpert/arm/pe_fiq.c
-@@ -142,18 +142,22 @@ void
- pe_fiq_init(void)
- {
- 	// Configure timers and legacy FIQ to be group 0
-+#ifdef GICR_IGROUPR0
- 	gicr_write32(GICR_IGROUPR0, 0x81FFFFFF);
- 
- 	// Enable PPI 27
- 	gicr_write32(GICR_ISENABLER0, (1 << 27));
- 
- 	// Enable system register access
- 	uint64_t icc_sre = __builtin_arm_rsr64("ICC_SRE_EL1");
- 	icc_sre |= ICC_SRE_SRE;
- 	__builtin_arm_wsr64("ICC_SRE_EL1", icc_sre);
- 	__builtin_arm_isb(ISB_SY);
- 
- 	// Set priority masks and binary point for group 0
- 	__builtin_arm_wsr64("ICC_BPR0_EL1", 0);
- 	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF);
-+#else
-+	// TODO: Implement GICv2 FIQ handling for M30LTE
-+#endif
- 
- 	// Set EOI mode of this processor
- 	__builtin_arm_wsr64("ICC_EOIR0_EL1", 0);
- 
-+#ifdef GICR_IGROUPR0
- 	// Set priority masks and binary point for group 1
- 	__builtin_arm_wsr64("ICC_BPR1_EL1", 0);
- 	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF);
-+#endif
- }
-
-diff --git a/osfmk/conf/files.arm64 b/osfmk/conf/files.arm64
-index c40d57b..kpccfix 100644
---- a/osfmk/conf/files.arm64
-+++ b/osfmk/conf/files.arm64
-@@ -91,7 +91,7 @@ osfmk/OPTIONS/hi_res_clock	optional hi_res_clock
- 
- # Kernel performance monitoring
- osfmk/arm64/perfmon_arm64.c optional config_perfmon
--osfmk/arm64/kpc.c		optional kpc nos_arm_asm
-+osfmk/arm64/kpc.c		optional kpc nos_arm_asm config_amcc
- osfmk/arm64/monotonic_arm64.c optional monotonic
-
+diff -ruN xnu-orig-clean/SETUP/config/doconf xnu-patch-gen/SETUP/config/doconf
+--- xnu-orig-clean/SETUP/config/doconf	2026-11-05 13:00:35.238162903 +0530
++++ xnu-patch-gen/SETUP/config/doconf	2026-11-05 12:59:38.953289550 +0530
+@@ -109,6 +109,9 @@
+ 	    else
+ 	        set DEF_AVP="-USOC_IS_VIRTUALIZED"
+ 	    endif
++	    if ("$SOC_CONFIG" == "m30lte") then
++	        set DEF_AVP="$DEF_AVP -Dnos_arm_asm -Dnos_arm_pmap"
++	    endif
+ 	    shift
+ 	    breaksw
+ 	case "-platform":
