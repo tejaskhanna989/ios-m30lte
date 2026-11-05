@@ -19200,7 +19200,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/firehose_buffer_private.h xnu-final-patch/o
 +#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
 diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfmk/arm64/machine_routines_asm.s
 --- xnu-orig-clean/osfmk/arm64/machine_routines_asm.s	2026-11-05 16:57:41.233089568 +0530
-+++ xnu-final-patch/osfmk/arm64/machine_routines_asm.s	2026-11-05 19:33:36.264383341 +0530
++++ xnu-final-patch/osfmk/arm64/machine_routines_asm.s	2026-11-05 19:47:53.636152938 +0530
 @@ -868,7 +868,6 @@
  #if HAS_CLUSTER
  	cbnz		x0, is_deep_sleep                           // Skip if deep_sleep == true
