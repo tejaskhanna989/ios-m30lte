@@ -12,7 +12,7 @@ diff -ruN xnu-orig-clean/bsd/kern/subr_log.c xnu-final-patch/bsd/kern/subr_log.c
  #include <sys/ioctl.h>
 diff -ruN xnu-orig-clean/config/MASTER.arm64.m30lte xnu-final-patch/config/MASTER.arm64.m30lte
 --- xnu-orig-clean/config/MASTER.arm64.m30lte	1970-01-01 05:30:00.000000000 +0530
-+++ xnu-final-patch/config/MASTER.arm64.m30lte	2026-11-05 21:47:40.913340936 +0530
++++ xnu-final-patch/config/MASTER.arm64.m30lte	2026-11-05 21:57:13.166959471 +0530
 @@ -0,0 +1,114 @@
 +#define nos_arm_asm 1
 +#define nos_arm_pmap 1
@@ -127,7 +127,7 @@ diff -ruN xnu-orig-clean/config/MASTER.arm64.m30lte xnu-final-patch/config/MASTE
 +options   CONFIG_KERNEL_TBI		# <kernel_tbi>
 +options   NOS_ARM_ASM			# <nos_arm_asm>
 +options   NOS_ARM_PMAP			# <nos_arm_pmap>
-+options   !CONFIG_AMCC			# <config_amcc>
++options   CONFIG_AMCC			# <config_amcc>
 diff -ruN xnu-orig-clean/config/MASTER.arm64.MacOSX xnu-final-patch/config/MASTER.arm64.MacOSX
 --- xnu-orig-clean/config/MASTER.arm64.MacOSX	2026-11-05 21:35:46.522329433 +0530
 +++ xnu-final-patch/config/MASTER.arm64.MacOSX	2026-11-05 15:43:35.226413450 +0530
