@@ -19200,7 +19200,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/firehose_buffer_private.h xnu-final-patch/o
 +#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
 diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfmk/arm64/machine_routines_asm.s
 --- xnu-orig-clean/osfmk/arm64/machine_routines_asm.s	2026-11-05 16:57:41.233089568 +0530
-+++ xnu-final-patch/osfmk/arm64/machine_routines_asm.s	2026-11-05 18:49:14.956673864 +0530
++++ xnu-final-patch/osfmk/arm64/machine_routines_asm.s	2026-11-05 19:02:28.892847521 +0530
 @@ -868,7 +868,6 @@
  #if HAS_CLUSTER
  	cbnz		x0, is_deep_sleep                           // Skip if deep_sleep == true
@@ -19209,15 +19209,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfm
  	// Mask FIQ and IRQ to avoid spurious wakeups
  	mrs		x9, CPU_OVRD
  	and		x9, x9, #(~(ARM64_REG_CYC_OVRD_irq_mask | ARM64_REG_CYC_OVRD_fiq_mask))
-@@ -881,6 +880,7 @@
- 
- 	cbz		x0, not_deep_sleep                              // Skip if deep_sleep == false
- #if   __ARM_GLOBAL_SLEEP_BIT__
-+#if defined(APPLE_ARM64_ARCH_FAMILY)
- 	// Enable deep sleep
- 	mrs		x1, ACC_OVRD
- 	orr		x1, x1, #(ARM64_REG_ACC_OVRD_enDeepSleep)
-@@ -911,7 +911,7 @@
+@@ -911,7 +910,7 @@
  	orr		x1, x1, #(  ARM64_REG_ACC_OVRD_ok2PwrDnCPM_deepsleep)
  	msr		EBLK_OVRD, x1
  
@@ -19226,7 +19218,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfm
  
  #else
  #if defined(APPLETYPHOON) || defined(APPLETWISTER)
-@@ -919,9 +919,10 @@
+@@ -919,7 +918,7 @@
  	mov		x1, ARM64_REG_CYC_CFG_deepSleep
  	msr		CPU_CFG, x1
  #endif
@@ -19234,20 +19226,16 @@ diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfm
 +#endif /* __ARM_GLOBAL_SLEEP_BIT__ */
  
  not_deep_sleep:
-+#if defined(APPLE_ARM64_ARCH_FAMILY)
  	// Set "OK to power down" (<rdar://problem/12390433>)
- 	mrs		x9, CPU_OVRD
- 	orr		x9, x9, #(ARM64_REG_CYC_OVRD_ok2pwrdn_force_down)
-@@ -955,7 +956,7 @@
- 	
+@@ -956,7 +955,6 @@
  	POP_FRAME
  	ARM64_STACK_EPILOG
--
-+#endif /* defined(APPLE_ARM64_ARCH_FAMILY) */
  
+-
  #if HAS_RETENTION_STATE
  	.text
-@@ -981,16 +982,11 @@
+ 	.align 2
+@@ -981,16 +979,11 @@
  	.globl EXT(arm64_prepare_for_sleep)
  LEXT(arm64_prepare_for_sleep)
  	PUSH_FRAME
@@ -19268,7 +19256,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfm
  	.text
  	.align 2
  	.globl EXT(arm64_force_wfi_clock_gate)
-@@ -998,6 +994,8 @@
+@@ -998,6 +991,8 @@
  	PUSH_FRAME
  	nop
  	POP_FRAME
@@ -19277,7 +19265,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfm
  
  #endif /* defined(APPLE_ARM64_ARCH_FAMILY) */
  
-@@ -1311,6 +1309,8 @@
+@@ -1311,6 +1306,8 @@
  
  #endif // defined(HAS_APPLE_PAC)
  
