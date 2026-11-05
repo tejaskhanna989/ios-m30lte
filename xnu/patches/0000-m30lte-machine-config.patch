@@ -1,5 +1,5 @@
 diff -ruN xnu-orig-clean/bsd/kern/subr_log.c xnu-final-patch/bsd/kern/subr_log.c
---- xnu-orig-clean/bsd/kern/subr_log.c	2026-11-05 16:57:40.888086967 +0530
+--- xnu-orig-clean/bsd/kern/subr_log.c	2026-11-05 21:35:46.266324268 +0530
 +++ xnu-final-patch/bsd/kern/subr_log.c	2026-11-05 15:43:35.225727432 +0530
 @@ -74,7 +74,7 @@
  #include <firehose/tracepoint_private.h>
@@ -12,8 +12,8 @@ diff -ruN xnu-orig-clean/bsd/kern/subr_log.c xnu-final-patch/bsd/kern/subr_log.c
  #include <sys/ioctl.h>
 diff -ruN xnu-orig-clean/config/MASTER.arm64.m30lte xnu-final-patch/config/MASTER.arm64.m30lte
 --- xnu-orig-clean/config/MASTER.arm64.m30lte	1970-01-01 05:30:00.000000000 +0530
-+++ xnu-final-patch/config/MASTER.arm64.m30lte	2026-11-05 15:43:35.226181636 +0530
-@@ -0,0 +1,113 @@
++++ xnu-final-patch/config/MASTER.arm64.m30lte	2026-11-05 21:47:40.913340936 +0530
+@@ -0,0 +1,114 @@
 +#define nos_arm_asm 1
 +#define nos_arm_pmap 1
 +
@@ -127,8 +127,9 @@ diff -ruN xnu-orig-clean/config/MASTER.arm64.m30lte xnu-final-patch/config/MASTE
 +options   CONFIG_KERNEL_TBI		# <kernel_tbi>
 +options   NOS_ARM_ASM			# <nos_arm_asm>
 +options   NOS_ARM_PMAP			# <nos_arm_pmap>
++options   !CONFIG_AMCC			# <config_amcc>
 diff -ruN xnu-orig-clean/config/MASTER.arm64.MacOSX xnu-final-patch/config/MASTER.arm64.MacOSX
---- xnu-orig-clean/config/MASTER.arm64.MacOSX	2026-11-05 16:57:41.104088595 +0530
+--- xnu-orig-clean/config/MASTER.arm64.MacOSX	2026-11-05 21:35:46.522329433 +0530
 +++ xnu-final-patch/config/MASTER.arm64.MacOSX	2026-11-05 15:43:35.226413450 +0530
 @@ -16,7 +16,7 @@
  #  Standard Apple OS Configurations:
@@ -146,7 +147,7 @@ diff -ruN xnu-orig-clean/config/MASTER.arm64.MacOSX xnu-final-patch/config/MASTE
 +options   NOS_ARM_ASM			# <nos_arm_asm>
 +options   NOS_ARM_PMAP			# <nos_arm_pmap>
 diff -ruN xnu-orig-clean/.git/config xnu-final-patch/.git/config
---- xnu-orig-clean/.git/config	2026-11-05 16:57:36.548054437 +0530
+--- xnu-orig-clean/.git/config	2026-11-05 21:35:41.456227192 +0530
 +++ xnu-final-patch/.git/config	1970-01-01 05:30:00.000000000 +0530
 @@ -1,8 +0,0 @@
 -[core]
@@ -158,17 +159,17 @@ diff -ruN xnu-orig-clean/.git/config xnu-final-patch/.git/config
 -	url = https://github.com/apple-oss-distributions/xnu.git
 -	fetch = +refs/tags/xnu-8796.141.3:refs/tags/xnu-8796.141.3
 diff -ruN xnu-orig-clean/.git/description xnu-final-patch/.git/description
---- xnu-orig-clean/.git/description	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/description	2026-11-05 21:35:40.693211788 +0530
 +++ xnu-final-patch/.git/description	1970-01-01 05:30:00.000000000 +0530
 @@ -1 +0,0 @@
 -Unnamed repository; edit this file 'description' to name the repository.
 diff -ruN xnu-orig-clean/.git/HEAD xnu-final-patch/.git/HEAD
---- xnu-orig-clean/.git/HEAD	2026-11-05 16:57:40.810086379 +0530
+--- xnu-orig-clean/.git/HEAD	2026-11-05 21:35:46.168901214 +0530
 +++ xnu-final-patch/.git/HEAD	1970-01-01 05:30:00.000000000 +0530
 @@ -1 +0,0 @@
 -1b191cb58250d0705d8a51287127505aa4bc0789
 diff -ruN xnu-orig-clean/.git/hooks/applypatch-msg.sample xnu-final-patch/.git/hooks/applypatch-msg.sample
---- xnu-orig-clean/.git/hooks/applypatch-msg.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/applypatch-msg.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/applypatch-msg.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,15 +0,0 @@
 -#!/bin/sh
@@ -187,7 +188,7 @@ diff -ruN xnu-orig-clean/.git/hooks/applypatch-msg.sample xnu-final-patch/.git/h
 -test -x "$commitmsg" && exec "$commitmsg" ${1+"$@"}
 -:
 diff -ruN xnu-orig-clean/.git/hooks/commit-msg.sample xnu-final-patch/.git/hooks/commit-msg.sample
---- xnu-orig-clean/.git/hooks/commit-msg.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/commit-msg.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/commit-msg.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,74 +0,0 @@
 -#!/bin/sh
@@ -265,7 +266,7 @@ diff -ruN xnu-orig-clean/.git/hooks/commit-msg.sample xnu-final-patch/.git/hooks
 -
 -exit $ret
 diff -ruN xnu-orig-clean/.git/hooks/fsmonitor-watchman.sample xnu-final-patch/.git/hooks/fsmonitor-watchman.sample
---- xnu-orig-clean/.git/hooks/fsmonitor-watchman.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/fsmonitor-watchman.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/fsmonitor-watchman.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,168 +0,0 @@
 -#!/usr/bin/perl
@@ -437,7 +438,7 @@ diff -ruN xnu-orig-clean/.git/hooks/fsmonitor-watchman.sample xnu-final-patch/.g
 -	return $working_dir;
 -}
 diff -ruN xnu-orig-clean/.git/hooks/post-update.sample xnu-final-patch/.git/hooks/post-update.sample
---- xnu-orig-clean/.git/hooks/post-update.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/post-update.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/post-update.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,8 +0,0 @@
 -#!/bin/sh
@@ -449,7 +450,7 @@ diff -ruN xnu-orig-clean/.git/hooks/post-update.sample xnu-final-patch/.git/hook
 -
 -exec git update-server-info
 diff -ruN xnu-orig-clean/.git/hooks/pre-applypatch.sample xnu-final-patch/.git/hooks/pre-applypatch.sample
---- xnu-orig-clean/.git/hooks/pre-applypatch.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/pre-applypatch.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/pre-applypatch.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,14 +0,0 @@
 -#!/bin/sh
@@ -467,7 +468,7 @@ diff -ruN xnu-orig-clean/.git/hooks/pre-applypatch.sample xnu-final-patch/.git/h
 -test -x "$precommit" && exec "$precommit" ${1+"$@"}
 -:
 diff -ruN xnu-orig-clean/.git/hooks/pre-commit.sample xnu-final-patch/.git/hooks/pre-commit.sample
---- xnu-orig-clean/.git/hooks/pre-commit.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/pre-commit.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/pre-commit.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,49 +0,0 @@
 -#!/bin/sh
@@ -520,7 +521,7 @@ diff -ruN xnu-orig-clean/.git/hooks/pre-commit.sample xnu-final-patch/.git/hooks
 -# If there are whitespace errors, print the offending file names and fail.
 -exec git diff-index --check --cached $against --
 diff -ruN xnu-orig-clean/.git/hooks/pre-merge-commit.sample xnu-final-patch/.git/hooks/pre-merge-commit.sample
---- xnu-orig-clean/.git/hooks/pre-merge-commit.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/pre-merge-commit.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/pre-merge-commit.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,13 +0,0 @@
 -#!/bin/sh
@@ -537,7 +538,7 @@ diff -ruN xnu-orig-clean/.git/hooks/pre-merge-commit.sample xnu-final-patch/.git
 -        exec "$GIT_DIR/hooks/pre-commit"
 -:
 diff -ruN xnu-orig-clean/.git/hooks/prepare-commit-msg.sample xnu-final-patch/.git/hooks/prepare-commit-msg.sample
---- xnu-orig-clean/.git/hooks/prepare-commit-msg.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/prepare-commit-msg.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/prepare-commit-msg.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,42 +0,0 @@
 -#!/bin/sh
@@ -583,7 +584,7 @@ diff -ruN xnu-orig-clean/.git/hooks/prepare-commit-msg.sample xnu-final-patch/.g
 -#   /usr/bin/perl -i.bak -pe 'print "\n" if !$first_line++' "$COMMIT_MSG_FILE"
 -# fi
 diff -ruN xnu-orig-clean/.git/hooks/pre-push.sample xnu-final-patch/.git/hooks/pre-push.sample
---- xnu-orig-clean/.git/hooks/pre-push.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/pre-push.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/pre-push.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,53 +0,0 @@
 -#!/bin/sh
@@ -640,7 +641,7 @@ diff -ruN xnu-orig-clean/.git/hooks/pre-push.sample xnu-final-patch/.git/hooks/p
 -
 -exit 0
 diff -ruN xnu-orig-clean/.git/hooks/pre-rebase.sample xnu-final-patch/.git/hooks/pre-rebase.sample
---- xnu-orig-clean/.git/hooks/pre-rebase.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/pre-rebase.sample	2026-11-05 21:35:40.693211788 +0530
 +++ xnu-final-patch/.git/hooks/pre-rebase.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,169 +0,0 @@
 -#!/bin/sh
@@ -813,7 +814,7 @@ diff -ruN xnu-orig-clean/.git/hooks/pre-rebase.sample xnu-final-patch/.git/hooks
 -
 -DOC_END
 diff -ruN xnu-orig-clean/.git/hooks/pre-receive.sample xnu-final-patch/.git/hooks/pre-receive.sample
---- xnu-orig-clean/.git/hooks/pre-receive.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/pre-receive.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/pre-receive.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,24 +0,0 @@
 -#!/bin/sh
@@ -841,7 +842,7 @@ diff -ruN xnu-orig-clean/.git/hooks/pre-receive.sample xnu-final-patch/.git/hook
 -	done
 -fi
 diff -ruN xnu-orig-clean/.git/hooks/push-to-checkout.sample xnu-final-patch/.git/hooks/push-to-checkout.sample
---- xnu-orig-clean/.git/hooks/push-to-checkout.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/push-to-checkout.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/push-to-checkout.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,78 +0,0 @@
 -#!/bin/sh
@@ -923,7 +924,7 @@ diff -ruN xnu-orig-clean/.git/hooks/push-to-checkout.sample xnu-final-patch/.git
 -	die "Could not update working tree to new HEAD"
 -fi
 diff -ruN xnu-orig-clean/.git/hooks/sendemail-validate.sample xnu-final-patch/.git/hooks/sendemail-validate.sample
---- xnu-orig-clean/.git/hooks/sendemail-validate.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/sendemail-validate.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/sendemail-validate.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,77 +0,0 @@
 -#!/bin/sh
@@ -1004,7 +1005,7 @@ diff -ruN xnu-orig-clean/.git/hooks/sendemail-validate.sample xnu-final-patch/.g
 -	validate_series
 -fi
 diff -ruN xnu-orig-clean/.git/hooks/update.sample xnu-final-patch/.git/hooks/update.sample
---- xnu-orig-clean/.git/hooks/update.sample	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/hooks/update.sample	2026-11-05 21:35:40.692211768 +0530
 +++ xnu-final-patch/.git/hooks/update.sample	1970-01-01 05:30:00.000000000 +0530
 @@ -1,128 +0,0 @@
 -#!/bin/sh
@@ -1137,7 +1138,7 @@ diff -ruN xnu-orig-clean/.git/hooks/update.sample xnu-final-patch/.git/hooks/upd
 -exit 0
 Binary files xnu-orig-clean/.git/index and xnu-final-patch/.git/index differ
 diff -ruN xnu-orig-clean/.git/info/exclude xnu-final-patch/.git/info/exclude
---- xnu-orig-clean/.git/info/exclude	2026-11-05 16:57:35.593047325 +0530
+--- xnu-orig-clean/.git/info/exclude	2026-11-05 21:35:40.693211788 +0530
 +++ xnu-final-patch/.git/info/exclude	1970-01-01 05:30:00.000000000 +0530
 @@ -1,6 +0,0 @@
 -# git ls-files --others --exclude-from=.git/info/exclude
@@ -1147,10 +1148,10 @@ diff -ruN xnu-orig-clean/.git/info/exclude xnu-final-patch/.git/info/exclude
 -# *.[oa]
 -# *~
 diff -ruN xnu-orig-clean/.git/logs/HEAD xnu-final-patch/.git/logs/HEAD
---- xnu-orig-clean/.git/logs/HEAD	2026-11-05 16:57:40.810762052 +0530
+--- xnu-orig-clean/.git/logs/HEAD	2026-11-05 21:35:46.168965486 +0530
 +++ xnu-final-patch/.git/logs/HEAD	1970-01-01 05:30:00.000000000 +0530
 @@ -1 +0,0 @@
--0000000000000000000000000000000000000000 1b191cb58250d0705d8a51287127505aa4bc0789 tejaskhanna989 <khannatejas989@gmail.com> 1793878060 +0530	clone: from https://github.com/apple-oss-distributions/xnu.git
+-0000000000000000000000000000000000000000 1b191cb58250d0705d8a51287127505aa4bc0789 tejaskhanna989 <khannatejas989@gmail.com> 1793894746 +0530	clone: from https://github.com/apple-oss-distributions/xnu.git
 diff -ruN xnu-orig-clean/.git/logs/HEAD.orig xnu-final-patch/.git/logs/HEAD.orig
 --- xnu-orig-clean/.git/logs/HEAD.orig	1970-01-01 05:30:00.000000000 +0530
 +++ xnu-final-patch/.git/logs/HEAD.orig	2026-11-05 15:43:35.226774965 +0530
@@ -1169,19 +1170,19 @@ Binary files xnu-orig-clean/.git/objects/pack/pack-557d8c3ca90f9c8a39b05cd884877
 Binary files xnu-orig-clean/.git/objects/pack/pack-557d8c3ca90f9c8a39b05cd8848775d06ed20076.pack and xnu-final-patch/.git/objects/pack/pack-557d8c3ca90f9c8a39b05cd8848775d06ed20076.pack differ
 Binary files xnu-orig-clean/.git/objects/pack/pack-557d8c3ca90f9c8a39b05cd8848775d06ed20076.rev and xnu-final-patch/.git/objects/pack/pack-557d8c3ca90f9c8a39b05cd8848775d06ed20076.rev differ
 diff -ruN xnu-orig-clean/.git/packed-refs xnu-final-patch/.git/packed-refs
---- xnu-orig-clean/.git/packed-refs	2026-11-05 16:57:40.809487093 +0530
+--- xnu-orig-clean/.git/packed-refs	2026-11-05 21:35:46.167881827 +0530
 +++ xnu-final-patch/.git/packed-refs	1970-01-01 05:30:00.000000000 +0530
 @@ -1,3 +0,0 @@
 -# pack-refs with: peeled fully-peeled sorted 
 -f625db25f47631424dc62ac1c3414b6e530f7e8a refs/tags/xnu-8796.141.3
 -^1b191cb58250d0705d8a51287127505aa4bc0789
 diff -ruN xnu-orig-clean/.git/shallow xnu-final-patch/.git/shallow
---- xnu-orig-clean/.git/shallow	2026-11-05 16:57:37.516061662 +0530
+--- xnu-orig-clean/.git/shallow	2026-11-05 21:35:42.387245986 +0530
 +++ xnu-final-patch/.git/shallow	1970-01-01 05:30:00.000000000 +0530
 @@ -1 +0,0 @@
 -1b191cb58250d0705d8a51287127505aa4bc0789
 diff -ruN xnu-orig-clean/libkern/c++/OSKext.cpp xnu-final-patch/libkern/c++/OSKext.cpp
---- xnu-orig-clean/libkern/c++/OSKext.cpp	2026-11-05 16:57:41.158089002 +0530
+--- xnu-orig-clean/libkern/c++/OSKext.cpp	2026-11-05 21:35:46.576330522 +0530
 +++ xnu-final-patch/libkern/c++/OSKext.cpp	2026-11-05 18:38:54.460620782 +0530
 @@ -35,7 +35,7 @@
  #include <kern/kext_alloc.h>
@@ -18069,7 +18070,7 @@ diff -ruN xnu-orig-clean/libkern/crypto/m30_bearssl/inc/bearssl_hash.h xnu-final
 +#endif /* BEARSSL_HASH_H */
 \ No newline at end of file
 diff -ruN xnu-orig-clean/libkern/os/log.c xnu-final-patch/libkern/os/log.c
---- xnu-orig-clean/libkern/os/log.c	2026-11-05 16:57:41.182089183 +0530
+--- xnu-orig-clean/libkern/os/log.c	2026-11-05 21:35:46.601331027 +0530
 +++ xnu-final-patch/libkern/os/log.c	2026-11-05 17:21:15.374156799 +0530
 @@ -30,8 +30,8 @@
  
@@ -19134,7 +19135,7 @@ diff -ruN xnu-orig-clean/libkern/os/log.c.rej xnu-final-patch/libkern/os/log.c.r
 + #include <os/log_private.h>
 + #include <sys/ioctl.h>
 diff -ruN xnu-orig-clean/makedefs/MakeInc.def xnu-final-patch/makedefs/MakeInc.def
---- xnu-orig-clean/makedefs/MakeInc.def	2026-11-05 16:57:41.210736326 +0530
+--- xnu-orig-clean/makedefs/MakeInc.def	2026-11-05 21:35:46.631806323 +0530
 +++ xnu-final-patch/makedefs/MakeInc.def	2026-11-05 20:27:05.023502038 +0530
 @@ -29,7 +29,7 @@
  else ifneq ($(findstring _host,$(RC_ProjectName)),)
@@ -19167,7 +19168,7 @@ diff -ruN xnu-orig-clean/makedefs/MakeInc.def xnu-final-patch/makedefs/MakeInc.d
  ifneq ($(filter T6000 T8101 VMAPPLE T6000 T8101 VMAPPLE,$(CURRENT_MACHINE_CONFIG)),)
  	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pmap.h
---- xnu-orig-clean/osfmk/arm/pmap/pmap.h	2026-11-05 16:57:41.222089485 +0530
+--- xnu-orig-clean/osfmk/arm/pmap/pmap.h	2026-11-05 21:35:46.644078078 +0530
 +++ xnu-final-patch/osfmk/arm/pmap/pmap.h	2026-11-05 15:43:35.229109527 +0530
 @@ -442,7 +442,7 @@
  #if HAS_APPLE_PAC
@@ -19178,6 +19179,56 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pm
  #endif /* HAS_APPLE_PAC */
  
  	bool reserved11;
+diff -ruN xnu-orig-clean/osfmk/arm64/amcc_rorgn_common.c xnu-final-patch/osfmk/arm64/amcc_rorgn_common.c
+--- xnu-orig-clean/osfmk/arm64/amcc_rorgn_common.c	1970-01-01 05:30:00.000000000 +0530
++++ xnu-final-patch/osfmk/arm64/amcc_rorgn_common.c	2026-11-05 21:41:30.587156934 +0530
+@@ -0,0 +1,21 @@
++/*
++ * AMCC RORGN (Region Register) common stubs for non-Apple ARM64 platforms.
++ * These are minimal stubs to allow building with config_amcc.
++ */
++
++#include <kern/kern_types.h>
++#include <arm/pmap.h>
++
++/* Stub for AMCC region register initialization */
++void
++amcc_rorgn_init(void)
++{
++	/* No-op for non-AMCC platforms */
++}
++
++/* Stub for AMCC region register teardown */
++void
++amcc_rorgn_teardown(void)
++{
++	/* No-op for non-AMCC platforms */
++}
+diff -ruN xnu-orig-clean/osfmk/arm64/amcc_rorgn_ppl.c xnu-final-patch/osfmk/arm64/amcc_rorgn_ppl.c
+--- xnu-orig-clean/osfmk/arm64/amcc_rorgn_ppl.c	1970-01-01 05:30:00.000000000 +0530
++++ xnu-final-patch/osfmk/arm64/amcc_rorgn_ppl.c	2026-11-05 21:41:37.426290806 +0530
+@@ -0,0 +1,21 @@
++/*
++ * AMCC RORGN (Region Register) PPL (Pointer Protection Layer) stubs for non-Apple ARM64 platforms.
++ * These are minimal stubs to allow building with config_amcc.
++ */
++
++#include <kern/kern_types.h>
++#include <arm/pmap.h>
++
++/* Stub for AMCC PPL region register initialization */
++void
++amcc_rorgn_ppl_init(void)
++{
++	/* No-op for non-AMCC platforms */
++}
++
++/* Stub for AMCC PPL region register teardown */
++void
++amcc_rorgn_ppl_teardown(void)
++{
++	/* No-op for non-AMCC platforms */
++}
 diff -ruN xnu-orig-clean/osfmk/arm64/firehose_buffer_private.h xnu-final-patch/osfmk/arm64/firehose_buffer_private.h
 --- xnu-orig-clean/osfmk/arm64/firehose_buffer_private.h	1970-01-01 05:30:00.000000000 +0530
 +++ xnu-final-patch/osfmk/arm64/firehose_buffer_private.h	2026-11-05 18:25:38.946896340 +0530
@@ -19207,8 +19258,92 @@ diff -ruN xnu-orig-clean/osfmk/arm64/firehose_buffer_private.h xnu-final-patch/o
 +void __firehose_buffer_tracepoint_commit(firehose_tracepoint_t tp);
 +
 +#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
+diff -ruN xnu-orig-clean/osfmk/arm64/kpc.c xnu-final-patch/osfmk/arm64/kpc.c
+--- xnu-orig-clean/osfmk/arm64/kpc.c	1970-01-01 05:30:00.000000000 +0530
++++ xnu-final-patch/osfmk/arm64/kpc.c	2026-11-05 21:46:37.247113601 +0530
+@@ -0,0 +1,80 @@
++/*
++ * Kernel Performance Counters (KPC) stub for non-Apple ARM64 platforms.
++ * Minimal implementation to allow building with kpc option enabled.
++ */
++
++#include <kern/kern_types.h>
++#include <machine/kpc.h>
++
++/* Stub functions for KPC */
++kern_return_t
++kpc_cpu_string(char *buf, unsigned int *buf_size)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_get_period(uint32_t *period)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_get_counting(uint32_t *counting)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_set_counting(uint32_t counting)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_get_config(uint32_t *config)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_set_config(uint32_t config)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_get_thread_config(uint32_t *config)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_set_thread_config(uint32_t config)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_get_cpu_counters(uint32_t config, uint64_t *buf, uint32_t *buf_size)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_get_thread_counters(uint32_t config, uint64_t *buf, uint32_t *buf_size)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_get_raw_pmc(uint32_t pmc, uint64_t *value)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_set_raw_pmc(uint32_t pmc, uint64_t value)
++{
++	return KERN_FAILURE;
++}
 diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfmk/arm64/machine_routines_asm.s
---- xnu-orig-clean/osfmk/arm64/machine_routines_asm.s	2026-11-05 16:57:41.233089568 +0530
+--- xnu-orig-clean/osfmk/arm64/machine_routines_asm.s	2026-11-05 21:35:46.655332116 +0530
 +++ xnu-final-patch/osfmk/arm64/machine_routines_asm.s	2026-11-05 20:18:09.637605259 +0530
 @@ -868,7 +868,6 @@
  #if HAS_CLUSTER
@@ -19331,7 +19466,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfm
  #endif /* defined(APPLE_ARM64_ARCH_FAMILY) */
  
 diff -ruN xnu-orig-clean/osfmk/arm64/Makefile xnu-final-patch/osfmk/arm64/Makefile
---- xnu-orig-clean/osfmk/arm64/Makefile	2026-11-05 16:57:41.225089508 +0530
+--- xnu-orig-clean/osfmk/arm64/Makefile	2026-11-05 21:35:46.648331975 +0530
 +++ xnu-final-patch/osfmk/arm64/Makefile	2026-11-05 15:43:35.229476315 +0530
 @@ -21,7 +21,6 @@
  	machine_kpc.h \
@@ -19352,7 +19487,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/Makefile xnu-final-patch/osfmk/arm64/Makefi
  	tlb.h \
  	pal_hibernate.h
 diff -ruN xnu-orig-clean/osfmk/arm64/proc_reg.h xnu-final-patch/osfmk/arm64/proc_reg.h
---- xnu-orig-clean/osfmk/arm64/proc_reg.h	2026-11-05 16:57:41.235089583 +0530
+--- xnu-orig-clean/osfmk/arm64/proc_reg.h	2026-11-05 21:35:46.657332156 +0530
 +++ xnu-final-patch/osfmk/arm64/proc_reg.h	2026-11-05 15:43:35.229853581 +0530
 @@ -24,6 +24,10 @@
   * limitations under the License.
@@ -19402,7 +19537,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/proc_reg.h xnu-final-patch/osfmk/arm64/proc
  
  #define MAX_L2_CLINE_BYTES (1 << MAX_L2_CLINE)
 diff -ruN xnu-orig-clean/osfmk/arm64/start.s xnu-final-patch/osfmk/arm64/start.s
---- xnu-orig-clean/osfmk/arm64/start.s	2026-11-05 16:57:41.235089583 +0530
+--- xnu-orig-clean/osfmk/arm64/start.s	2026-11-05 21:35:46.658332177 +0530
 +++ xnu-final-patch/osfmk/arm64/start.s	2026-11-05 16:47:16.320982449 +0530
 @@ -33,7 +33,9 @@
  #include <mach_assert.h>
@@ -20301,7 +20436,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/start.s.orig xnu-final-patch/osfmk/arm64/st
 +
 +/* vim: set ts=4: */
 diff -ruN xnu-orig-clean/osfmk/conf/files.arm64 xnu-final-patch/osfmk/conf/files.arm64
---- xnu-orig-clean/osfmk/conf/files.arm64	2026-11-05 16:57:41.237782682 +0530
+--- xnu-orig-clean/osfmk/conf/files.arm64	2026-11-05 21:35:46.661510887 +0530
 +++ xnu-final-patch/osfmk/conf/files.arm64	2026-11-05 15:44:06.977981576 +0530
 @@ -7,12 +7,12 @@
  
@@ -20473,7 +20608,7 @@ diff -ruN xnu-orig-clean/osfmk/conf/files.arm64.orig xnu-final-patch/osfmk/conf/
 +
 +osfmk/arm/counter.c	standard
 diff -ruN xnu-orig-clean/pexpert/arm/pe_fiq.c xnu-final-patch/pexpert/arm/pe_fiq.c
---- xnu-orig-clean/pexpert/arm/pe_fiq.c	2026-11-05 16:57:41.375938814 +0530
+--- xnu-orig-clean/pexpert/arm/pe_fiq.c	2026-11-05 21:35:46.817593061 +0530
 +++ xnu-final-patch/pexpert/arm/pe_fiq.c	2026-11-05 15:43:35.235092707 +0530
 @@ -142,6 +142,7 @@
  	}
@@ -20675,7 +20810,7 @@ diff -ruN xnu-orig-clean/pexpert/arm/pe_fiq.c.orig xnu-final-patch/pexpert/arm/p
 +}
 +#endif
 diff -ruN xnu-orig-clean/pexpert/pexpert/arm64/board_config.h xnu-final-patch/pexpert/pexpert/arm64/board_config.h
---- xnu-orig-clean/pexpert/pexpert/arm64/board_config.h	2026-11-05 16:57:41.380090678 +0530
+--- xnu-orig-clean/pexpert/pexpert/arm64/board_config.h	2026-11-05 21:35:46.821465965 +0530
 +++ xnu-final-patch/pexpert/pexpert/arm64/board_config.h	2026-11-05 15:43:35.239482353 +0530
 @@ -97,6 +97,16 @@
  #define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
@@ -20757,7 +20892,7 @@ diff -ruN xnu-orig-clean/pexpert/pexpert/arm64/M30LTE.h xnu-final-patch/pexpert/
 +
 +#endif /* _PEXPERT_ARM64_M30LTE_H */
 diff -ruN xnu-orig-clean/pexpert/pexpert/arm64/Makefile xnu-final-patch/pexpert/pexpert/arm64/Makefile
---- xnu-orig-clean/pexpert/pexpert/arm64/Makefile	2026-11-05 16:57:41.379861748 +0530
+--- xnu-orig-clean/pexpert/pexpert/arm64/Makefile	2026-11-05 21:35:46.821465965 +0530
 +++ xnu-final-patch/pexpert/pexpert/arm64/Makefile	2026-11-05 15:43:35.240706410 +0530
 @@ -17,7 +17,8 @@
  	boot.h \
@@ -20770,7 +20905,7 @@ diff -ruN xnu-orig-clean/pexpert/pexpert/arm64/Makefile xnu-final-patch/pexpert/
  
  # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
 diff -ruN xnu-orig-clean/SETUP/config/doconf xnu-final-patch/SETUP/config/doconf
---- xnu-orig-clean/SETUP/config/doconf	2026-11-05 16:57:40.836174386 +0530
+--- xnu-orig-clean/SETUP/config/doconf	2026-11-05 21:35:46.202723585 +0530
 +++ xnu-final-patch/SETUP/config/doconf	2026-11-05 15:43:35.241124699 +0530
 @@ -109,6 +109,9 @@
  	    else
@@ -20783,7 +20918,7 @@ diff -ruN xnu-orig-clean/SETUP/config/doconf xnu-final-patch/SETUP/config/doconf
  	    breaksw
  	case "-platform":
 diff -ruN xnu-orig-clean/.upstream_base_commits xnu-final-patch/.upstream_base_commits
---- xnu-orig-clean/.upstream_base_commits	2026-11-05 16:57:40.817086432 +0530
+--- xnu-orig-clean/.upstream_base_commits	2026-11-05 21:35:46.175322432 +0530
 +++ xnu-final-patch/.upstream_base_commits	1970-01-01 05:30:00.000000000 +0530
 @@ -1,5 +0,0 @@
 -#freebsd = https://github.com/freebsd/freebsd.git
