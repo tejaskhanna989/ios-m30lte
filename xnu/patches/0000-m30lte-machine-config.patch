@@ -19200,7 +19200,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/firehose_buffer_private.h xnu-final-patch/o
 +#endif /* _OS_FIREHOSE_BUFFER_PRIVATE_H */
 diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfmk/arm64/machine_routines_asm.s
 --- xnu-orig-clean/osfmk/arm64/machine_routines_asm.s	2026-11-05 16:57:41.233089568 +0530
-+++ xnu-final-patch/osfmk/arm64/machine_routines_asm.s	2026-11-05 19:19:18.841086277 +0530
++++ xnu-final-patch/osfmk/arm64/machine_routines_asm.s	2026-11-05 19:33:36.264383341 +0530
 @@ -868,7 +868,6 @@
  #if HAS_CLUSTER
  	cbnz		x0, is_deep_sleep                           // Skip if deep_sleep == true
@@ -19235,16 +19235,14 @@ diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfm
  #if HAS_RETENTION_STATE
  	.text
  	.align 2
-@@ -973,7 +971,7 @@
- 	b		.			// cpu_idle_exit() should never return
+@@ -974,23 +972,17 @@
  #endif
  
--
-+#endif /* defined(APPLE_ARM64_ARCH_FAMILY) */
  
+-
  #else /* !defined(APPLE_ARM64_ARCH_FAMILY) */
  	.text
-@@ -981,16 +979,11 @@
+ 	.align 2
  	.globl EXT(arm64_prepare_for_sleep)
  LEXT(arm64_prepare_for_sleep)
  	PUSH_FRAME
@@ -19265,7 +19263,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfm
  	.text
  	.align 2
  	.globl EXT(arm64_force_wfi_clock_gate)
-@@ -998,6 +991,8 @@
+@@ -998,6 +990,8 @@
  	PUSH_FRAME
  	nop
  	POP_FRAME
