@@ -525,3 +525,17 @@ index 8226b8c..2ddbb0c 100644
  
  
  # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
+
+diff --git a/osfmk/arm/pmap/pmap.h b/osfmk/arm/pmap/pmap.h
+index 1234567..abcdefg 100644
+--- a/osfmk/arm/pmap/pmap.h
++++ b/osfmk/arm/pmap/pmap.h
+@@ -442,7 +442,7 @@ struct pmap {
+ #if HAS_APPLE_PAC
+ 	bool disable_jop;
+ #else
+-	bool reserved10;
++	bool reserved10_pac;
+ #endif /* HAS_APPLE_PAC */
+ 
+ 	bool reserved11;
