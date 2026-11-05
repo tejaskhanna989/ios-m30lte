@@ -19135,7 +19135,7 @@ diff -ruN xnu-orig-clean/libkern/os/log.c.rej xnu-final-patch/libkern/os/log.c.r
 + #include <sys/ioctl.h>
 diff -ruN xnu-orig-clean/makedefs/MakeInc.def xnu-final-patch/makedefs/MakeInc.def
 --- xnu-orig-clean/makedefs/MakeInc.def	2026-11-05 16:57:41.210736326 +0530
-+++ xnu-final-patch/makedefs/MakeInc.def	2026-11-05 15:43:35.228772797 +0530
++++ xnu-final-patch/makedefs/MakeInc.def	2026-11-05 20:27:05.023502038 +0530
 @@ -29,7 +29,7 @@
  else ifneq ($(findstring _host,$(RC_ProjectName)),)
  SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
@@ -19157,6 +19157,15 @@ diff -ruN xnu-orig-clean/makedefs/MakeInc.def xnu-final-patch/makedefs/MakeInc.d
  
  
  #
+@@ -857,7 +862,7 @@
+ # Default runtime libraries to be linked with the kernel
+ #
+ LD_KERNEL_LIBS	   = -lcc_kext
+-LD_KERNEL_ARCHIVES = $(LDFLAGS_KERNEL_SDK) -lfirehose_kernel
++LD_KERNEL_ARCHIVES = $(LDFLAGS_KERNEL_SDK)
+ # Link opensource binary library
+ ifneq ($(filter T6000 T8101 VMAPPLE T6000 T8101 VMAPPLE,$(CURRENT_MACHINE_CONFIG)),)
+ 	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pmap.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap.h	2026-11-05 16:57:41.222089485 +0530
 +++ xnu-final-patch/osfmk/arm/pmap/pmap.h	2026-11-05 15:43:35.229109527 +0530
