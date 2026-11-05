@@ -554,3 +554,40 @@ index 1234567..abcdefg 100644
  #endif /* HAS_APPLE_PAC */
  
  	bool reserved11;
+
+diff --git a/pexpert/arm/pe_fiq.c b/pexpert/arm/pe_fiq.c
+index 1234567..abcdefg 100644
+--- a/pexpert/arm/pe_fiq.c
++++ b/pexpert/arm/pe_fiq.c
+@@ -142,18 +142,22 @@ void
+ pe_fiq_init(void)
+ {
+ 	// Configure timers and legacy FIQ to be group 0
++#ifdef GICR_IGROUPR0
+ 	gicr_write32(GICR_IGROUPR0, 0x81FFFFFF);
+ 
+ 	// Enable PPI 27
+ 	gicr_write32(GICR_ISENABLER0, (1 << 27));
+ 
+ 	// Enable system register access
+ 	uint64_t icc_sre = __builtin_arm_rsr64("ICC_SRE_EL1");
+ 	icc_sre |= ICC_SRE_SRE;
+ 	__builtin_arm_wsr64("ICC_SRE_EL1", icc_sre);
+ 	__builtin_arm_isb(ISB_SY);
+ 
+ 	// Set priority masks and binary point for group 0
+ 	__builtin_arm_wsr64("ICC_BPR0_EL1", 0);
+ 	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF);
++#else
++	// TODO: Implement GICv2 FIQ handling for M30LTE
++#endif
+ 
+ 	// Set EOI mode of this processor
+ 	__builtin_arm_wsr64("ICC_EOIR0_EL1", 0);
+ 
++#ifdef GICR_IGROUPR0
+ 	// Set priority masks and binary point for group 1
+ 	__builtin_arm_wsr64("ICC_BPR1_EL1", 0);
+ 	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF);
++#endif
+ }
