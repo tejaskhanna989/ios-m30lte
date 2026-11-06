@@ -108,6 +108,19 @@ jobs:
           # DXB fix: availability.pl path in make_symbol_aliasing.sh
           sed -i '' 's|^AVAILABILITY_PL="${SDKROOT}/${DRIVERKITROOT}|AVAILABILITY_PL="${FAKEROOT_DIR}|g' bsd/sys/make_symbol_aliasing.sh 2>/dev/null || true
 
+      - name: Fix clang flag incompatibility with Xcode 26
+        run: |
+          cd xnu-source
+          # Remove clang flag '-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang'
+          # which was removed in newer clang versions (Xcode 26+)
+          echo "=== Patching out incompatible clang flags ==="
+          find . -name "*.def" -o -name "Makefile*" -o -name "*.mk" -o -name "*.inc" | xargs grep -l "enable-trivial-auto-var-init-zero-knowing" 2>/dev/null | while read file; do
+            echo "Patching: $file"
+            sed -i '' 's/-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang//g' "$file"
+          done
+          # Also check in config files
+          grep -r "enable-trivial-auto-var-init-zero-knowing" . 2>/dev/null | head -5 || echo "Flag not found in source (may be added at build time)"
+
       - name: Build bootstrap_cmds (mig)
         run: |
           cd xnu-source
