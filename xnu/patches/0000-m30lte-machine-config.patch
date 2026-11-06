@@ -21139,6 +21139,18 @@ diff -ruN xnu-orig-clean/osfmk/conf/files.arm64.orig xnu-final-patch/osfmk/conf/
 +osfmk/arm64/corecrypto/sha256_compress_arm64.s	standard
 +
 +osfmk/arm/counter.c	standard
+diff -ruN xnu-orig-clean/osfmk/kperf/kperf_kpc.h xnu-final-patch/osfmk/kperf/kperf_kpc.h
+--- xnu-orig-clean/osfmk/kperf/kperf_kpc.h	2026-11-05 21:35:46.753923960 +0530
++++ xnu-final-patch/osfmk/kperf/kperf_kpc.h	2026-11-06 15:17:41.743392959 +0530
+@@ -31,6 +31,8 @@
+ 
+ #if KPC
+ #include <kern/kpc.h> /* KPC_MAX_COUNTERS */
++#else
++#define KPC_MAX_COUNTERS 32
+ #endif
+ 
+ void kperf_kpc_thread_ast(thread_t thread);
 diff -ruN xnu-orig-clean/pexpert/arm/pe_fiq.c xnu-final-patch/pexpert/arm/pe_fiq.c
 --- xnu-orig-clean/pexpert/arm/pe_fiq.c	2026-11-05 21:35:46.817593061 +0530
 +++ xnu-final-patch/pexpert/arm/pe_fiq.c	2026-11-05 15:43:35.235092707 +0530
