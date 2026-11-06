@@ -39,6 +39,8 @@ jobs:
           printf '#!/bin/sh\nexit 0\n' | sudo tee /usr/local/bin/xcodes >/dev/null
           sudo chmod +x /usr/local/bin/xcodes
           # Install Xcode 15.0.1 for XNU 8796 compatibility
+          # First uninstall any existing xcodes from homebrew/core to avoid tap conflicts
+          brew uninstall xcodes 2>/dev/null || true
           brew install xcodesorg/made/xcodes
           xcodes install --latest 15.0.1
           XC=$(ls -d /Applications/Xcode_15.0.1.app 2>/dev/null || ls -d /Applications/Xcode_15.*.app 2>/dev/null | head -1)
