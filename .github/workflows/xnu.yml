@@ -127,6 +127,9 @@ jobs:
             echo "firehose_buffer_private.h already exists"
           fi
           ls -la osfmk/arm64/firehose_buffer_private.h
+          # Also copy to export headers directory for build system
+          mkdir -p BUILD/obj/EXPORT_HDRS/osfmk/arm64
+          cp osfmk/arm64/firehose_buffer_private.h BUILD/obj/EXPORT_HDRS/osfmk/arm64/
 
       - name: Fix clang flag incompatibility with Xcode 26
         run: |
