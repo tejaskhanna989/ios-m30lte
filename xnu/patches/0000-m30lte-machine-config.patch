@@ -19397,7 +19397,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pm
  	bool reserved11;
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/arm/pmap/pmap_internal.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h	2026-11-05 21:35:46.645331914 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 17:04:39.248531797 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 17:21:15.544352018 +0530
 @@ -56,6 +56,9 @@
  #include <arm/pmap/pmap_data.h>
  #include <arm/pmap/pmap_pt_geometry.h>
@@ -19560,7 +19560,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 + * These provide minimal stub implementations for non-PPL builds.
 + */
 +
-+static inline int
++int
 +ptep_get_iommu(pt_entry_t *pte_p __unused)
 +{
 +	return 0;
@@ -19571,63 +19571,63 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +/* ARM cache maintenance stubs - declared in pmap.h */
 +
 +/* KPC stubs for non-PPL builds */
-+static inline void
++void
 +kpc_get_config(uint32_t classes __unused, kpc_config_t *config __unused)
 +{
 +}
 +
-+static inline uint32_t
++uint32_t
 +kpc_get_config_count(uint32_t classes __unused)
 +{
 +	return 0;
 +}
 +
-+static inline uint32_t
++uint32_t
 +kpc_get_counter_count(uint32_t classes __unused)
 +{
 +	return 0;
 +}
 +
-+static inline int
++int
 +kpc_get_cpu_counters(boolean_t all_cpus __unused, uint32_t classes __unused, uint64_t *buf __unused, uint32_t *buf_size __unused)
 +{
 +	return 0;
 +}
 +
-+static inline int
++int
 +kpc_get_curthread_counters(uint32_t *inoutcount __unused, uint64_t *buf __unused)
 +{
 +	return 0;
 +}
 +
-+static inline uint32_t
++uint32_t
 +kpc_get_running(void)
 +{
 +	return 0;
 +}
 +
-+static inline void
++void
 +kpc_idle(void)
 +{
 +}
 +
-+static inline void
++void
 +kpc_idle_exit(void)
 +{
 +}
 +
-+static inline boolean_t
++boolean_t
 +kpc_off_cpu_active(void)
 +{
 +	return FALSE;
 +}
 +
-+static inline void
++void
 +kpc_off_cpu_internal(thread_t thread __unused)
 +{
 +}
 +
-+static inline void
++void
 +kpc_thread_ast_handler(thread_t thread __unused)
 +{
 +}
@@ -19637,47 +19637,47 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +/* Pmap preemption stub - declared in pmap.h */
 +
 +/* Firehose stubs */
-+static inline vm_offset_t
++vm_offset_t
 +__firehose_buffer_create(size_t *size __unused)
 +{
 +	return 0;
 +}
 +
-+static inline boolean_t
++boolean_t
 +__firehose_kernel_configuration_valid(uint32_t chunk_count __unused, uint32_t io_pages __unused)
 +{
 +	return TRUE;
 +}
 +
-+static inline boolean_t
++boolean_t
 +__firehose_merge_updates(void *reply __unused)
 +{
 +	return FALSE;
 +}
 +
-+static inline void
++void
 +__firehose_buffer_tracepoint_flush(void *ft __unused, uint64_t ftid __unused)
 +{
 +}
 +
-+static inline void *
++void *
 +__firehose_buffer_tracepoint_reserve(uint64_t stamp __unused, uint64_t stream __unused, uint16_t datalen __unused, uint32_t flags __unused, void *context __unused)
 +{
 +	return NULL;
 +}
 +
-+static inline void
++void
 +__firehose_buffer_tracepoint_commit(void *tp __unused)
 +{
 +}
 +
-+static inline boolean_t
++boolean_t
 +__firehose_buffer_tracepoint_try_reserve(uint64_t stamp __unused, uint64_t stream __unused, uint16_t datalen __unused, uint32_t flags __unused, void *context __unused, void **tp_out __unused)
 +{
 +	return FALSE;
 +}
 +
-+static inline void
++void
 +oslogwakeup(void)
 +{
 +}
