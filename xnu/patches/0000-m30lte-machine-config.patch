@@ -19397,7 +19397,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pm
  	bool reserved11;
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/arm/pmap/pmap_internal.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h	2026-11-05 21:35:46.645331914 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 16:53:35.821140887 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 17:04:39.248531797 +0530
 @@ -56,6 +56,9 @@
  #include <arm/pmap/pmap_data.h>
  #include <arm/pmap/pmap_pt_geometry.h>
@@ -19408,7 +19408,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
  #if XNU_MONITOR
  /**
   * Temporary macros and prototypes needed to implement the ppl_handler_table.
-@@ -110,6 +113,290 @@
+@@ -110,6 +113,278 @@
  	extern __return_type __function_name##_internal __function_args
  #endif /* XNU_MONITOR */
  
@@ -19566,21 +19566,9 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +	return 0;
 +}
 +
-+static inline void
-+pmap_phys_write_disable(vm_address_t va __unused)
-+{
-+}
++/* pmap_phys_write_disable/enable - defined in pmap.c */
 +
-+static inline void
-+pmap_phys_write_enable(vm_address_t va __unused)
-+{
-+}
-+
-+/* ARM cache maintenance stubs */
-+static inline void
-+CleanPoC_DcacheRegion_Force_nopreempt_nohid(void *addr __unused, size_t size __unused)
-+{
-+}
++/* ARM cache maintenance stubs - declared in pmap.h */
 +
 +/* KPC stubs for non-PPL builds */
 +static inline void
