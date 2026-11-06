@@ -1,0 +1,38 @@
+diff --git a/pexpert/pexpert/arm64/board_config.h b/pexpert/pexpert/arm64/board_config.h
+index xxxxxxx..yyyyyyy 100644
+--- a/pexpert/pexpert/arm64/board_config.h
++++ b/pexpert/pexpert/arm64/board_config.h
+@@ -100,6 +100,25 @@
+ 
+ #elif defined(M30LTE)
+ 
++#define ARM_BOOT_CONFIG_M30LTE 1
++
++#define M30LTE 1
++
++#define M30LTE_SMP_MAX_CPUS 8
++#define M30LTE_MAX_CPUS 8
++#define M30LTE_MAX_L2_CLINE 6
++#define M30LTE_MAX_CPU_CLUSTERS 2
++
++#define M30LTE_RAM_BASE 0x880000000
++#define M30LTE_RAM_SIZE 0xF0000000
++
++#define M30LTE_KERNEL_BASE 0xfffffe0007004000
++#define M30LTE_KERNEL_TEXT 0xfffffe0007004000
++
++#define M30LTE_UFS_BASE 0x13500000
++#define M30LTE_UFS_IRQ 30
++
++#define M30LTE_GIC_BASE 0x123001000
++#define M30LTE_GIC_IRQ 27
++
++#define M30LTE_UART_BASE 0x13800000
++#define M30LTE_UART_IRQ 30
++
++#define M30LTE_TIMER_BASE 0x10040000
++#define M30LTE_TIMER_IRQ 27
++
+ #else
+ 
+ #error "Unknown machine type"
