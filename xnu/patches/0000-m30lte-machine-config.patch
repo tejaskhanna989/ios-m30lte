@@ -19181,7 +19181,7 @@ diff -ruN xnu-orig-clean/makedefs/MakeInc.def xnu-final-patch/makedefs/MakeInc.d
  	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pmap.c
 --- xnu-orig-clean/osfmk/arm/pmap/pmap.c	2026-11-05 21:35:46.642331854 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap.c	2026-11-06 14:55:33.167543267 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap.c	2026-11-06 18:49:47.390206036 +0530
 @@ -51,6 +51,9 @@
  
  #include <os/overflow.h>
@@ -19214,7 +19214,25 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  #if __ARM_VMSA__ != 8
  #error Unknown __ARM_VMSA__
  #endif
-@@ -333,9 +342,56 @@
+@@ -286,6 +295,17 @@
+ #define PMAP_FOOTPRINT_SUSPENDED(pmap) (FALSE)
+ #endif /* DEVELOPMENT || DEBUG */
+ 
++/*
++ * pmap_pending_preemption - check if preemption is pending
++ * This is called from various places in the pmap to check if
++ * a preemption is pending and the current operation should yield.
++ */
++boolean_t
++pmap_pending_preemption(void)
++{
++	return _pmap_pending_preemption_real();
++}
++
+ 
+ /*
+  * Represents a tlb range that will be flushed before exiting
+@@ -333,9 +353,56 @@
  extern void *pmap_stacks_start;
  extern void *pmap_stacks_end;
  
@@ -19255,7 +19273,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
 + * Additional PPL variables referenced by common code paths that need
 + * definitions on non-PPL systems to avoid linker errors.
 + */
-+
+ 
 +#if !XNU_MONITOR
 +
 +/* PPL CPU save area */
@@ -19266,12 +19284,84 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
 +SECURITY_READ_ONLY_LATE(TrustCacheRuntime_t) ppl_trust_cache_rt = { 0 };
 +MARK_AS_PMAP_DATA TrustCacheMutableRuntime_t ppl_trust_cache_mut_rt = { 0 };
 +MARK_AS_PMAP_DATA decl_lck_rw_data(, ppl_trust_cache_rt_lock);
- 
++
 +#endif /* !XNU_MONITOR */
  
  /* Virtual memory region for early allocation */
  #define VREGION1_HIGH_WINDOW    (PE_EARLY_BOOT_VA)
-@@ -2183,6 +2239,7 @@
+@@ -429,6 +496,17 @@
+ const int allow_stack_exec = 0;                         /* No apps may execute from the stack */
+ #endif /* DEVELOPMENT || DEBUG */
+ 
++/*
++ * pmap_pending_preemption - check if preemption is pending
++ * This is called from various places in the pmap to check if
++ * a preemption is pending and the current operation should yield.
++ */
++boolean_t
++pmap_pending_preemption(void)
++{
++	return _pmap_pending_preemption_real();
++}
++
+ /**
+  * This variable is set true during hibernation entry to protect pmap data structures
+  * during image copying, and reset false on hibernation exit.
+@@ -749,6 +827,17 @@
+ 
+ #endif /* DEVELOPMENT || DEBUG */
+ 
++/*
++ * pmap_pending_preemption - check if preemption is pending
++ * This is called from various places in the pmap to check if
++ * a preemption is pending and the current operation should yield.
++ */
++boolean_t
++pmap_pending_preemption(void)
++{
++	return _pmap_pending_preemption_real();
++}
++
+ 
+ /*
+  * Internal function prototypes (forward declarations).
+@@ -1263,6 +1352,17 @@
+ #endif /* DEVELOPMENT || DEBUG */
+ 
+ /*
++ * pmap_pending_preemption - check if preemption is pending
++ * This is called from various places in the pmap to check if
++ * a preemption is pending and the current operation should yield.
++ */
++boolean_t
++pmap_pending_preemption(void)
++{
++	return _pmap_pending_preemption_real();
++}
++
++/*
+  * The low global vector page is mapped at a fixed alias.
+  * Since the page size is 16k for H8 and newer we map the globals to a 16k
+  * aligned address. Readers of the globals (e.g. lldb, panic server) need
+@@ -1370,6 +1470,17 @@
+ 	[PMAP_TEST_TEXT_CORRUPTION_INDEX] = pmap_test_text_corruption_internal,
+ #endif /* DEVELOPMENT || DEBUG */
+ 
++/*
++ * pmap_pending_preemption - check if preemption is pending
++ * This is called from various places in the pmap to check if
++ * a preemption is pending and the current operation should yield.
++ */
++boolean_t
++pmap_pending_preemption(void)
++{
++	return _pmap_pending_preemption_real();
++}
++
+ };
+ #endif
+ 
+@@ -2183,6 +2294,7 @@
  	/**
  	 * Bootstrap any necessary UAT data structures and values needed from the device tree.
  	 */
@@ -19279,7 +19369,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  	uat_bootstrap();
  
  
-@@ -2190,6 +2247,7 @@
+@@ -2190,6 +2302,7 @@
  	 * Bootstrap any necessary SART data structures and values needed from the device tree.
  	 */
  	sart_bootstrap();
@@ -19287,7 +19377,25 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  
  	/**
  	 * Don't make any assumptions about the alignment of avail_start before this
-@@ -11435,10 +11493,12 @@
+@@ -2975,6 +3088,17 @@
+ 	p->footprint_was_suspended = FALSE;
+ #endif /* DEVELOPMENT || DEBUG */
+ 
++/*
++ * pmap_pending_preemption - check if preemption is pending
++ * This is called from various places in the pmap to check if
++ * a preemption is pending and the current operation should yield.
++ */
++boolean_t
++pmap_pending_preemption(void)
++{
++	return _pmap_pending_preemption_real();
++}
++
+ #if XNU_MONITOR
+ 	os_atomic_init(&p->nested_count, 0);
+ 	assert(os_atomic_load(&p->ref_count, relaxed) == 0);
+@@ -11435,10 +11559,12 @@
  			panic("%s(%p): attempt to pin static mapping for page 0x%llx", __func__, (void*)kva, (uint64_t)pa);
  		}
  		do {
@@ -19300,6 +19408,39 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  		} while (!OSCompareAndSwap16(attr, attr | PP_ATTR_NO_MONITOR, &pp_attr_table[pai]));
  	}
  }
+@@ -13668,6 +13794,17 @@
+ 	(void) map;
+ 	(void) suspend;
+ #endif /* DEVELOPMENT || DEBUG */
++
++/*
++ * pmap_pending_preemption - check if preemption is pending
++ * This is called from various places in the pmap to check if
++ * a preemption is pending and the current operation should yield.
++ */
++boolean_t
++pmap_pending_preemption(void)
++{
++	return _pmap_pending_preemption_real();
++}
+ }
+ 
+ void
+@@ -14294,3 +14431,14 @@
+ }
+ 
+ #endif /* DEVELOPMENT || DEBUG */
++
++/*
++ * pmap_pending_preemption - check if preemption is pending
++ * This is called from various places in the pmap to check if
++ * a preemption is pending and the current operation should yield.
++ */
++boolean_t
++pmap_pending_preemption(void)
++{
++	return _pmap_pending_preemption_real();
++}
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_data.c xnu-final-patch/osfmk/arm/pmap/pmap_data.c
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_data.c	2026-11-05 21:35:46.644331894 +0530
 +++ xnu-final-patch/osfmk/arm/pmap/pmap_data.c	2026-11-06 14:35:09.328364556 +0530
