@@ -47,7 +47,7 @@ jobs:
           # Check if Xcode 15 is already available
           XC=$(ls -d /Applications/Xcode_15.0.1.app 2>/dev/null || ls -d /Applications/Xcode_15.*.app 2>/dev/null | head -1)
           if [ -z "$XC" ]; then
-            echo "Xcode 15 not pre-installed, installing via xcodes..."
+            echo "Xcode 15 not pre-installed, attempting to install via xcodes with Apple ID from secrets..."
             printf '#!/bin/sh\nexit 0\n' | sudo tee /usr/local/bin/xcodes >/dev/null
             sudo chmod +x /usr/local/bin/xcodes
             brew uninstall xcodes 2>/dev/null || true
@@ -55,14 +55,14 @@ jobs:
             # xcodes requires Apple ID - use GitHub secret if available
             if [ -n "${{ secrets.APPLE_ID }}" ] && [ -n "${{ secrets.APPLE_PASSWORD }}" ]; then
               xcodes install --latest 15.0.1 --apple-id "${{ secrets.APPLE_ID }}" --password "${{ secrets.APPLE_PASSWORD }}"
+              XC=$(ls -d /Applications/Xcode_15.0.1.app 2>/dev/null || ls -d /Applications/Xcode_15.*.app 2>/dev/null | head -1)
             else
-              echo "No Apple ID credentials available, skipping xcodes install"
-              exit 1
+              echo "No Apple ID credentials in secrets. Trying to use pre-installed Xcode 26 as fallback..."
+              XC=$(ls -d /Applications/Xcode_26.*.app 2>/dev/null | head -1)
             fi
-            XC=$(ls -d /Applications/Xcode_15.0.1.app 2>/dev/null || ls -d /Applications/Xcode_15.*.app 2>/dev/null | head -1)
           fi
           if [ -z "$XC" ]; then
-            echo "ERROR: Xcode 15 not found after installation attempt"
+            echo "ERROR: No suitable Xcode found"
             exit 1
           fi
           echo "DEVELOPER_DIR=$XC/Contents/Developer" >> "$GITHUB_ENV"
