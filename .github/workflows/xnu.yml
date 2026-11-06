@@ -181,7 +181,9 @@ jobs:
           SYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
-          make -j1 install VERBOSE=YES \
+          # Build XNU kernel via install target (triggers kernel link via MakeInc.top)
+          # Disable DriverKit (DRIVERKIT=0) to avoid Xcode 26 compatibility issues with IORPC
+          DRIVERKIT=0 make -j1 install VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
             SRCROOT="$PWD" \
