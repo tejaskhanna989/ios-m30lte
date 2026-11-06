@@ -196,6 +196,29 @@ jobs:
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           make installhdrs -j8 SDKROOT=macosx ARCH_CONFIGS="X86_64 ARM64" OBJROOT="$PWD/BUILD/xnu-hdrs.obj" SYMROOT="$PWD/BUILD/xnu-hdrs.sym" DSTROOT="$PWD/fakeroot" FAKEROOT_DIR="$PWD/fakeroot" KDKROOT="/Library/Developer/KDKs" TIGHTBEAMC="" RC_DARWIN_KERNEL_VERSION="22.6.0" MEMORY_SIZE="${MEMORY_SIZE}" SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" KERNEL_BUILDS_IN_PARALLEL=1 2>&1 | tail -20 || true
 
+      - name: Patch generated OSObject.iig.cpp to fix IORPC
+        run: |
+          cd xnu-source
+          echo "=== Patching generated OSObject.iig.cpp for IORPC kernelContent ==="
+          # The generated OSObject.iig.cpp may not exist yet, but we can patch it after generation
+          # by using a find command that runs during the build
+          find . -name "OSObject.iig.cpp" -type f 2>/dev/null | while read file; do
+            echo "Patching $file"
+            sed -i '' 's/rpc\.kernelContent/nullptr \/\* kernelContent \*\//g' "$file"
+            sed -i '' 's/\.kernelContent = /\.kernelContent = \/\* removed \*\//g' "$file"
+            sed -i '' 's/\.kernelContent = /\/\* .kernelContent = \*\//g' "$file"
+          done
+          # Also patch IORPC.h in all locations
+          find . -name "IORPC.h" -type f 2>/dev/null | while read file; do
+            if grep -q "struct IORPC" "$file" && ! grep -q "kernelContent" "$file"; then
+              echo "Patching $file"
+              sed -i '' '/struct IORPC {/,/};/{
+                /uint32_t           replySize;/a\
+  void *             kernelContent;  // Added for Xcode 26 compatibility
+              }' "$file"
+            fi
+          done
+
       - name: Build XNU kernel
         run: |
           cd xnu-source
