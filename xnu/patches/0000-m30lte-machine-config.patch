@@ -21139,6 +21139,19 @@ diff -ruN xnu-orig-clean/osfmk/conf/files.arm64.orig xnu-final-patch/osfmk/conf/
 +osfmk/arm64/corecrypto/sha256_compress_arm64.s	standard
 +
 +osfmk/arm/counter.c	standard
+diff -ruN xnu-orig-clean/osfmk/kern/task.c xnu-final-patch/osfmk/kern/task.c
+--- xnu-orig-clean/osfmk/kern/task.c	2026-11-05 21:35:46.743333892 +0530
++++ xnu-final-patch/osfmk/kern/task.c	2026-11-06 15:26:03.757982670 +0530
+@@ -1510,7 +1510,9 @@
+ 
+ 	new_task->affinity_space = NULL;
+ 
++#if KPC
+ 	new_task->t_kpc = 0;
++#endif
+ 
+ 	new_task->pidsuspended = FALSE;
+ 	new_task->frozen = FALSE;
 diff -ruN xnu-orig-clean/osfmk/kperf/kperf_kpc.h xnu-final-patch/osfmk/kperf/kperf_kpc.h
 --- xnu-orig-clean/osfmk/kperf/kperf_kpc.h	2026-11-05 21:35:46.753923960 +0530
 +++ xnu-final-patch/osfmk/kperf/kperf_kpc.h	2026-11-06 15:17:41.743392959 +0530
