@@ -19305,7 +19305,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pm
  	bool reserved11;
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/arm/pmap/pmap_internal.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h	2026-11-05 21:35:46.645331914 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 18:39:32.896922763 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 20:33:11.746449619 +0530
 @@ -56,6 +56,9 @@
  #include <arm/pmap/pmap_data.h>
  #include <arm/pmap/pmap_pt_geometry.h>
@@ -19595,10 +19595,11 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
  /**
   * Global variables exported to the rest of the internal pmap implementation.
   */
-@@ -474,6 +749,22 @@
- {
- 	return (__builtin_arm_rsr64("DAIF") & DAIF_STANDARD_DISABLE) != DAIF_STANDARD_DISABLE;
+@@ -476,4 +751,28 @@
  }
+ #endif /* __arm64__ */
+ 
+-#endif /* _ARM_PMAP_PMAP_INTERNAL_H_ */
 +/*
 + * Non-PPL stub implementations for functions that are called from
 + * non-XNU_MONITOR code paths but are only implemented in PPL builds.
@@ -19606,7 +19607,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 + */
 +
 +void
-+CleanPoC_DcacheRegion_Force_nopreempt_nohid(vm_offset_t va __unused, size_t length __unused)
++CleanPoC_DcacheRegion_Force_nopreempt_nohid(void *addr __unused, size_t size __unused)
 +{
 +}
 +
@@ -19615,9 +19616,15 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +{
 +}
 +
- #endif /* __arm64__ */
- 
- #endif /* _ARM_PMAP_PMAP_INTERNAL_H_ */
++void
++pmap_pending_preemption(void)
++{
++	return FALSE;
++}
++
++#endif /* __arm64__ */
++
++#endif /* _ARM_PMAP_INTERNAL_H_ */
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_ppl_interface.c xnu-final-patch/osfmk/arm/pmap/pmap_ppl_interface.c
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_ppl_interface.c	2026-11-05 21:35:46.646331934 +0530
 +++ xnu-final-patch/osfmk/arm/pmap/pmap_ppl_interface.c	2026-11-06 02:34:07.102590129 +0530
