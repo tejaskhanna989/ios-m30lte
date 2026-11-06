@@ -20104,7 +20104,7 @@ diff -ruN xnu-orig-clean/osfmk/arm64/Makefile xnu-final-patch/osfmk/arm64/Makefi
 diff -ruN xnu-orig-clean/osfmk/arm64/proc_reg.h xnu-final-patch/osfmk/arm64/proc_reg.h
 --- xnu-orig-clean/osfmk/arm64/proc_reg.h	2026-11-05 21:35:46.657332156 +0530
 +++ xnu-final-patch/osfmk/arm64/proc_reg.h	2026-11-05 15:43:35.229853581 +0530
-@@ -25,6 +25,8 @@
+@@ -24,7 +24,9 @@
   * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
   */
 +#define M30LTE 1
