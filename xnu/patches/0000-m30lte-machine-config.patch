@@ -21152,6 +21152,42 @@ diff -ruN xnu-orig-clean/osfmk/kern/task.c xnu-final-patch/osfmk/kern/task.c
  
  	new_task->pidsuspended = FALSE;
  	new_task->frozen = FALSE;
+diff -ruN xnu-orig-clean/osfmk/kperf/action.c xnu-final-patch/osfmk/kperf/action.c
+--- xnu-orig-clean/osfmk/kperf/action.c	2026-11-05 21:35:46.753923960 +0530
++++ xnu-final-patch/osfmk/kperf/action.c	2026-11-06 15:39:00.962036348 +0530
+@@ -290,11 +290,13 @@
+ 		}
+ 	}
+ 
++#if KPC
+ 	if (sample_what & SAMPLER_PMC_THREAD) {
+ 		kperf_kpc_thread_sample(&(sbuf->kpcdata), sample_what);
+ 	} else if (sample_what & SAMPLER_PMC_CPU) {
+ 		kperf_kpc_cpu_sample(&(sbuf->kpcdata), sample_what);
+ 	}
++#endif
+ 
+ log_sample:
+ 	/* lookup the user tag, if any */
+@@ -365,14 +367,18 @@
+ 		}
+ 	}
+ 
++#if KPC
+ 	if (sample_what & SAMPLER_PMC_CONFIG) {
+ 		kperf_kpc_config_log(&(sbuf->kpcdata));
+ 	}
++#endif
++#if KPC
+ 	if (sample_what & SAMPLER_PMC_THREAD) {
+ 		kperf_kpc_thread_log(&(sbuf->kpcdata));
+ 	} else if (sample_what & SAMPLER_PMC_CPU) {
+ 		kperf_kpc_cpu_log(&(sbuf->kpcdata));
+ 	}
++#endif
+ 
+ log_sample_end:
+ 	BUF_DATA(PERF_GEN_EVENT | DBG_FUNC_END, sample_what, on_idle_thread ? 1 : 0);
 diff -ruN xnu-orig-clean/osfmk/kperf/kperf_kpc.h xnu-final-patch/osfmk/kperf/kperf_kpc.h
 --- xnu-orig-clean/osfmk/kperf/kperf_kpc.h	2026-11-05 21:35:46.753923960 +0530
 +++ xnu-final-patch/osfmk/kperf/kperf_kpc.h	2026-11-06 15:17:41.743392959 +0530
