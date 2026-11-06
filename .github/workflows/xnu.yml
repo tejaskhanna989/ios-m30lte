@@ -98,7 +98,7 @@ jobs:
           for patch in ../xnu/patches/00*.patch; do
             name=$(basename "$patch")
             echo "Applying: $name"
-            patch -p1 --no-backup-if-mismatch --forward < "$patch" 2>&1 || true
+            patch -p1 --no-backup-if-mismatch < "$patch" 2>&1 || true
           done
           ls -la pexpert/pexpert/arm64/M30LTE.h 2>&1 || echo "M30LTE.h NOT FOUND - creating from patch"
           cat ../xnu/patches/0000-m30lte-machine-config.patch | grep -A 50 "M30LTE.h" | head -60 || true
