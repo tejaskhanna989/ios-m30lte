@@ -19181,7 +19181,7 @@ diff -ruN xnu-orig-clean/makedefs/MakeInc.def xnu-final-patch/makedefs/MakeInc.d
  	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pmap.c
 --- xnu-orig-clean/osfmk/arm/pmap/pmap.c	2026-11-05 21:35:46.642331854 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap.c	2026-11-06 19:08:57.727873462 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap.c	2026-11-06 19:13:35.825746306 +0530
 @@ -14294,3 +14294,14 @@
  }
  
