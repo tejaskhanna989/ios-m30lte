@@ -76,10 +76,10 @@ diff -ruN xnu-orig-clean/config/MASTER.arm64.m30lte xnu-final-patch/config/MASTE
 +#else /*!(SOC_CONFIG_t8020 || SOC_IS_VIRTUALIZED)*/
 +#  HIBERNATION =    [ ]
 +#endif /*SOC_CONFIG_t8020 || SOC_IS_VIRTUALIZED*/
-+#  IOKIT_BASE =     [ iokit iokitcpp no_kernel_hid config_sleep iokitstats HIBERNATION ]
-+#  IOKIT_RELEASE =  [ IOKIT_BASE ]
-+#  IOKIT_DEV =      [ IOKIT_BASE iotracking ]
-+#  IOKIT_DEBUG =    [ IOKIT_BASE iotracking ]
++  IOKIT_BASE =     [ iokit iokitcpp no_kernel_hid config_sleep iokitstats HIBERNATION ]
++  IOKIT_RELEASE =  [ IOKIT_BASE ]
++  IOKIT_DEV =      [ IOKIT_BASE iotracking ]
++  IOKIT_DEBUG =    [ IOKIT_BASE iotracking ]
 +#  LIBKERN_BASE =   [ libkerncpp config_blocks config_kec_fips crypto_sha2 config_img4 ]
 +#  LIBKERN_RELEASE =[ LIBKERN_BASE zlib ]
 +#  LIBKERN_DEV =    [ LIBKERN_BASE zlib iotracking ]
