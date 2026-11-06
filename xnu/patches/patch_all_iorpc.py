@@ -3,6 +3,10 @@ import sys
 
 def patch_file(filepath):
     """Patch a single file to add kernelContent to IORPC and fix OSObject.iig.cpp"""
+    # Skip fakeroot and build directories
+    if 'fakeroot' in filepath or 'BUILD/obj' in filepath or 'buildtree' in filepath:
+        return False
+    
     try:
         with open(filepath, 'r') as f:
             content = f.read()
@@ -40,14 +44,19 @@ def patch_file(filepath):
         modified = True
     
     if modified:
-        with open(filepath, 'w') as f:
-            f.write(content)
-        return True
+        try:
+            with open(filepath, 'w') as f:
+                f.write(content)
+            return True
+        except PermissionError:
+            return False
     return False
 
 def main():
     patched = 0
     for root, dirs, files in os.walk('.'):
+        # Skip certain directories
+        dirs[:] = [d for d in dirs if d not in ('fakeroot', 'BUILD', 'buildtree', '.git')]
         for f in files:
             if f.endswith('.h') or f.endswith('.cpp') or f.endswith('.c'):
                 filepath = os.path.join(root, f)
