@@ -1,0 +1,54 @@
+name: macOS-15 Smoke Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke-test:
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - name: System Information
+        run: |
+          echo "=== System Version ==="
+          sw_vers
+          echo ""
+          echo "=== Kernel/Architecture ==="
+          uname -a
+          echo ""
+          echo "=== Xcode Version ==="
+          xcodebuild -version
+          echo ""
+          echo "=== Xcode Path ==="
+          xcode-select -p
+          echo ""
+          echo "=== Available SDKs ==="
+          xcodebuild -showsdks
+          echo ""
+          echo "=== Clang Version ==="
+          clang --version
+          echo ""
+          echo "=== Available Xcode Versions ==="
+          ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V
+          echo ""
+          echo "=== macOS 13.5 SDK Check ==="
+          if [ -d "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.5.sdk" ]; then
+            echo "MacOSX13.5.sdk: FOUND"
+          else
+            echo "MacOSX13.5.sdk: NOT FOUND - checking alternatives..."
+            find /Applications -name "MacOSX*.sdk" -type d 2>/dev/null | head -10
+          fi
+          echo ""
+          echo "=== KDK Path Check ==="
+          if [ -d "/Library/Developer/KDKs" ]; then
+            ls -la /Library/Developer/KDKs/
+          else
+            echo "/Library/Developer/KDKs: NOT FOUND"
+          fi
+          echo ""
+          echo "=== Homebrew Info ==="
+          brew --version
+          echo ""
+          echo "=== Environment ==="
+          echo "DEVELOPER_DIR: ${DEVELOPER_DIR:-unset}"
+          echo "SDKROOT: ${SDKROOT:-unset}"
