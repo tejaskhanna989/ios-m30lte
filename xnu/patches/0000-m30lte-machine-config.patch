@@ -19305,7 +19305,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pm
  	bool reserved11;
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/arm/pmap/pmap_internal.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h	2026-11-05 21:35:46.645331914 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 21:38:43.482073524 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 21:46:55.273132347 +0530
 @@ -56,6 +56,9 @@
  #include <arm/pmap/pmap_data.h>
  #include <arm/pmap/pmap_pt_geometry.h>
@@ -19595,7 +19595,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
  /**
   * Global variables exported to the rest of the internal pmap implementation.
   */
-@@ -476,4 +751,28 @@
+@@ -476,4 +751,42 @@
  }
  #endif /* __arm64__ */
  
@@ -19616,10 +19616,24 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +{
 +}
 +
-+boolean_t
-+pmap_pending_preemption(void)
++void
++uat_bootstrap(void)
 +{
-+	return FALSE;
++}
++
++void
++sart_bootstrap(void)
++{
++}
++
++void
++pmap_phys_write_disable(vm_address_t va __unused)
++{
++}
++
++void
++pmap_phys_write_enable(vm_address_t va __unused)
++{
 +}
 +
 +#endif /* __arm64__ */
