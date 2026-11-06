@@ -19397,8 +19397,20 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pm
  	bool reserved11;
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/arm/pmap/pmap_internal.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h	2026-11-05 21:35:46.645331914 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 15:54:43.733154121 +0530
-@@ -110,6 +110,306 @@
++++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 16:14:55.443350226 +0530
+@@ -56,6 +56,11 @@
+ #include <arm/pmap/pmap_data.h>
+ #include <arm/pmap/pmap_pt_geometry.h>
+ 
++/* KPC config type for non-PPL builds */
++#ifndef XNU_MONITOR
++typedef uint64_t kpc_config_t;
++#endif
++
+ #if XNU_MONITOR
+ /**
+  * Temporary macros and prototypes needed to implement the ppl_handler_table.
+@@ -110,6 +115,222 @@
  	extern __return_type __function_name##_internal __function_args
  #endif /* XNU_MONITOR */
  
@@ -19548,28 +19560,6 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +	return 0;
 +}
 +
-+static inline int
-+ptep_get_iommu(pt_entry_t *pte_p __unused)
-+{
-+	return 0;
-+}
-+
-+static inline void
-+pmap_phys_write_disable(vm_address_t va __unused)
-+{
-+}
-+
-+static inline void
-+pmap_phys_write_enable(vm_address_t va __unused)
-+{
-+}
-+
-+/* ARM cache maintenance stubs */
-+static inline void
-+CleanPoC_DcacheRegion_Force_nopreempt_nohid(void *addr __unused, size_t size __unused)
-+{
-+}
-+
 +/* KPC stubs for non-PPL builds */
 +static inline void
 +kpc_get_config(uint32_t classes __unused, kpc_config_t *config __unused)
@@ -19617,11 +19607,6 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +}
 +
 +static inline void
-+kpc_thread_ast_handler(thread_t thread __unused)
-+{
-+}
-+
-+static inline boolean_t
 +kpc_off_cpu_active(void)
 +{
 +	return FALSE;
@@ -19638,63 +19623,6 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +}
 +
 +/* Monitor stub */
-+static inline void
-+ml_enable_monitor(void)
-+{
-+}
-+
-+/* Pmap preemption stub */
-+static inline void
-+pmap_pending_preemption(void)
-+{
-+}
-+
-+/* Firehose stubs */
-+static inline vm_offset_t
-+__firehose_buffer_create(size_t *size __unused)
-+{
-+	return 0;
-+}
-+
-+static inline boolean_t
-+__firehose_kernel_configuration_valid(uint32_t chunk_count __unused, uint32_t io_pages __unused)
-+{
-+	return TRUE;
-+}
-+
-+static inline boolean_t
-+__firehose_merge_updates(void *reply __unused)
-+{
-+	return FALSE;
-+}
-+
-+static inline void
-+__firehose_buffer_tracepoint_flush(void *ft __unused, uint64_t ftid __unused)
-+{
-+}
-+
-+static inline void *
-+__firehose_buffer_tracepoint_reserve(uint64_t stamp __unused, uint64_t stream __unused, uint16_t datalen __unused, uint32_t flags __unused, void *context __unused)
-+{
-+	return NULL;
-+}
-+
-+static inline void
-+__firehose_buffer_tracepoint_commit(void *tp __unused)
-+{
-+}
-+
-+static inline boolean_t
-+__firehose_buffer_tracepoint_try_reserve(uint64_t stamp __unused, uint64_t stream __unused, uint16_t datalen __unused, uint32_t flags __unused, void *context __unused, void **tp_out __unused)
-+{
-+	return FALSE;
-+}
-+
-+static inline void
-+oslogwakeup(void)
-+{
-+}
-+
 +/* Pmap preemption stub */
 +static inline void
 +pmap_pending_preemption(void)
