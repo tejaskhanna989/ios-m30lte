@@ -145,20 +145,28 @@ jobs:
         run: |
           cd xnu-source
           echo "=== Patching DriverKit IORPC for Xcode 26 compatibility ==="
-          # The IORPC structure in Xcode 26 no longer has kernelContent member
-          # Patch OSObject.iig.cpp to replace kernelContent references
+          # The IORPC structure in Xcode 26 expects a kernelContent field
+          # that doesn't exist in XNU 8796. Add it to the IORPC struct.
+          if [ -f iokit/DriverKit/IORPC.h ]; then
+            echo "Patching IORPC.h to add kernelContent field..."
+            sed -i '' '/struct IORPC {/,/};/{
+              /uint32_t           replySize;/a\
+  void *             kernelContent;  // Added for Xcode 26 compatibility
+            }' iokit/DriverKit/IORPC.h
+            echo "Patched IORPC.h successfully"
+          else
+            echo "IORPC.h not found, skipping"
+          fi
+          # Also patch OSObject.iig.cpp if it exists (fallback)
           if [ -f iokit/Kernel/OSObject.iig.cpp ]; then
-            echo "Patching OSObject.iig.cpp..."
+            echo "Patching OSObject.iig.cpp as fallback..."
             sed -i '' 's/rpc\.kernelContent/nullptr \/\* kernelContent \*\//g' iokit/Kernel/OSObject.iig.cpp
             sed -i '' 's/\.kernelContent = /\.kernelContent = \/\* removed \*\//g' iokit/Kernel/OSObject.iig.cpp
-            # Also handle field designator syntax
             sed -i '' 's/\.kernelContent = /\/\* .kernelContent = \*\//g' iokit/Kernel/OSObject.iig.cpp
-            echo "Patched OSObject.iig.cpp"
-          else
-            echo "OSObject.iig.cpp not found, skipping"
+            echo "Patched OSObject.iig.cpp as fallback"
           fi
           # Verify patches
-          grep -n "kernelContent" iokit/Kernel/OSObject.iig.cpp 2>/dev/null | head -5 || echo "No kernelContent references remaining"
+          grep -n "kernelContent" iokit/DriverKit/IORPC.h 2>/dev/null | head -5 || echo "kernelContent not found in IORPC.h"
 
       - name: Build bootstrap_cmds (mig)
         run: |
