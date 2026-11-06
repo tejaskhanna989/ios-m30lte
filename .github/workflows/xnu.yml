@@ -116,6 +116,18 @@ jobs:
           fi
           grep -n "M30LTE" osfmk/arm64/proc_reg.h | head -5
 
+      - name: Create firehose_buffer_private.h for M30LTE
+        run: |
+          cd xnu-source
+          echo "=== Creating firehose_buffer_private.h for M30LTE ==="
+          if [ ! -f osfmk/arm64/firehose_buffer_private.h ]; then
+            echo "firehose_buffer_private.h not found, creating..."
+            python3 ../xnu/patches/create_firehose_buffer_private.py
+          else
+            echo "firehose_buffer_private.h already exists"
+          fi
+          ls -la osfmk/arm64/firehose_buffer_private.h
+
       - name: Fix clang flag incompatibility with Xcode 26
         run: |
           cd xnu-source
