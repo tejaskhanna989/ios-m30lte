@@ -1,5 +1,7 @@
 import sys
+import os
 
+# Patch IORPC.h
 file_path = 'iokit/DriverKit/IORPC.h'
 
 try:
@@ -33,3 +35,23 @@ if old_struct in content:
 else:
     print("Could not find IORPC struct to patch")
     sys.exit(1)
+
+# Also patch OSObject.iig.cpp if it exists (fallback for generated code)
+osobject_path = 'iokit/Kernel/OSObject.iig.cpp'
+if os.path.exists(osobject_path):
+    print("Patching OSObject.iig.cpp as fallback...")
+    with open(osobject_path, 'r') as f:
+        osobject_content = f.read()
+    
+    # Replace kernelContent references
+    osobject_content = osobject_content.replace('rpc.kernelContent', 'nullptr /* kernelContent */')
+    osobject_content = osobject_content.replace('.kernelContent = ', '/* .kernelContent = */ ')
+    osobject_content = osobject_content.replace('.kernelContent = ', '/* .kernelContent = */ ')
+    
+    with open(osobject_path, 'w') as f:
+        f.write(osobject_content)
+    print("Patched OSObject.iig.cpp as fallback")
+else:
+    print("OSObject.iig.cpp not found (will be generated later)")
+
+print("All patches applied")
