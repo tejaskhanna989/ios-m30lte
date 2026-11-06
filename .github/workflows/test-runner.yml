@@ -1,0 +1,16 @@
+name: macOS Runner Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: macos-14
+    timeout-minutes: 10
+    steps:
+      - name: Test runner
+        run: |
+          echo "Runner OS: $(uname -s)"
+          echo "Runner Arch: $(uname -m)"
+          xcodebuild -version
+          echo "Runner test complete"
