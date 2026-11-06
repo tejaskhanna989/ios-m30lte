@@ -24,7 +24,7 @@ diff -ruN xnu-orig-clean/bsd/sys/uio_internal.h xnu-final-patch/bsd/sys/uio_inte
  	( (a_uio_t)->uio_segflg == UIO_USERSPACE32 || (a_uio_t)->uio_segflg == UIO_PHYS_USERSPACE32 || \
 diff -ruN xnu-orig-clean/config/MASTER.arm64.m30lte xnu-final-patch/config/MASTER.arm64.m30lte
 --- xnu-orig-clean/config/MASTER.arm64.m30lte	1970-01-01 05:30:00.000000000 +0530
-+++ xnu-final-patch/config/MASTER.arm64.m30lte	2026-11-05 22:59:31.954161457 +0530
++++ xnu-final-patch/config/MASTER.arm64.m30lte	2026-11-06 15:06:17.542812105 +0530
 @@ -0,0 +1,114 @@
 +#define nos_arm_asm 1
 +#define nos_arm_pmap 1
@@ -84,7 +84,7 @@ diff -ruN xnu-orig-clean/config/MASTER.arm64.m30lte xnu-final-patch/config/MASTE
 +#  LIBKERN_RELEASE =[ LIBKERN_BASE zlib ]
 +#  LIBKERN_DEV =    [ LIBKERN_BASE zlib iotracking ]
 +#  LIBKERN_DEBUG =  [ LIBKERN_BASE zlib iotracking ]
-+#  PERF_DBG_BASE =  [ config_dtrace mach_kdp config_serial_kdp kdp_interactive_debugging config_kdp_coredump_encryption config_pervasive_energy PERFMON_BASE kperf kpc ]
++#  PERF_DBG_BASE =  [ config_dtrace mach_kdp config_serial_kdp kdp_interactive_debugging config_kdp_coredump_encryption config_pervasive_energy PERFMON_BASE kperf ]
 +#  PERF_DBG_RELEASE=[ PERF_DBG_BASE ist_kdebug ]
 +#  PERF_DBG_DEV =   [ PERF_DBG_BASE lock_stats zleaks alternate_debugger sched_hygiene_debug config_debug_syscall_rejection config_iotrace ]
 +#  PERF_DBG_DEBUG = [ PERF_DBG_BASE lock_stats zleaks alternate_debugger sched_hygiene_debug config_debug_syscall_rejection config_iotrace ]
