@@ -10,6 +10,18 @@ diff -ruN xnu-orig-clean/bsd/kern/subr_log.c xnu-final-patch/bsd/kern/subr_log.c
  
  #include <os/log_private.h>
  #include <sys/ioctl.h>
+diff -ruN xnu-orig-clean/bsd/sys/uio_internal.h xnu-final-patch/bsd/sys/uio_internal.h
+--- xnu-orig-clean/bsd/sys/uio_internal.h	2026-11-05 21:35:46.501329009 +0530
++++ xnu-final-patch/bsd/sys/uio_internal.h	2026-11-06 13:12:20.472665543 +0530
+@@ -170,7 +170,7 @@
+ #define UIO_SIZEOF( a_iovcount ) \
+ 	( sizeof(struct uio) + UIO_SIZEOF_IOVS(a_iovcount) )
+ 
+-typedef char __attribute__((aligned(_Alignof(union iovecs)))) uio_stackbuf_t;
++typedef uint64_t __attribute__((aligned(_Alignof(union iovecs)))) uio_stackbuf_t;
+ 
+ #define UIO_IS_USER_SPACE32( a_uio_t )  \
+ 	( (a_uio_t)->uio_segflg == UIO_USERSPACE32 || (a_uio_t)->uio_segflg == UIO_PHYS_USERSPACE32 || \
 diff -ruN xnu-orig-clean/config/MASTER.arm64.m30lte xnu-final-patch/config/MASTER.arm64.m30lte
 --- xnu-orig-clean/config/MASTER.arm64.m30lte	1970-01-01 05:30:00.000000000 +0530
 +++ xnu-final-patch/config/MASTER.arm64.m30lte	2026-11-05 22:59:31.954161457 +0530
