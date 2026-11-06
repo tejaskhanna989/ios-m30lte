@@ -140,6 +140,7 @@ diff -ruN xnu-orig-clean/config/MASTER.arm64.m30lte xnu-final-patch/config/MASTE
 +options   NOS_ARM_ASM			# <nos_arm_asm>
 +options   NOS_ARM_PMAP			# <nos_arm_pmap>
 +options   CONFIG_AMCC			# <config_amcc>
++options   NOS_DRIVERKIT		# <nos_driverkit>
 diff -ruN xnu-orig-clean/config/MASTER.arm64.MacOSX xnu-final-patch/config/MASTER.arm64.MacOSX
 --- xnu-orig-clean/config/MASTER.arm64.MacOSX	2026-11-05 21:35:46.522329433 +0530
 +++ xnu-final-patch/config/MASTER.arm64.MacOSX	2026-11-05 15:43:35.226413450 +0530

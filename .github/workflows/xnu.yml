@@ -202,7 +202,9 @@ jobs:
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
           # Build XNU kernel via install target (triggers kernel link via MakeInc.top)
           # Disable DriverKit (DRIVERKIT=0) to avoid Xcode 26 compatibility issues with IORPC
-          DRIVERKIT=0 make -j1 install VERBOSE=YES \
+          # Set as environment variable to ensure it's inherited by all sub-makes
+          export DRIVERKIT=0
+          make -j1 install VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
             SRCROOT="$PWD" \
