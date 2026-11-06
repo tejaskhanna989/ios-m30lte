@@ -19390,8 +19390,8 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pm
  	bool reserved11;
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/arm/pmap/pmap_internal.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h	2026-11-05 21:35:46.645331914 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 14:11:17.296888859 +0530
-@@ -110,6 +110,163 @@
++++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 14:24:25.152421941 +0530
+@@ -110,6 +110,155 @@
  	extern __return_type __function_name##_internal __function_args
  #endif /* XNU_MONITOR */
  
@@ -19541,15 +19541,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +	return 0;
 +}
 +
-+static inline void
-+pmap_phys_write_disable(vm_address_t va __unused)
-+{
-+}
 +
-+static inline void
-+pmap_phys_write_enable(vm_address_t va __unused)
-+{
-+}
 +#endif /* !XNU_MONITOR */
 +
  /**
