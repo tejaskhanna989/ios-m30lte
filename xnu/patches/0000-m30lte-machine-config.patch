@@ -19169,7 +19169,7 @@ diff -ruN xnu-orig-clean/makedefs/MakeInc.def xnu-final-patch/makedefs/MakeInc.d
  	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pmap.c
 --- xnu-orig-clean/osfmk/arm/pmap/pmap.c	2026-11-05 21:35:46.642331854 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap.c	2026-11-06 02:41:04.275561747 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap.c	2026-11-06 10:18:19.903801427 +0530
 @@ -84,8 +84,10 @@
  
  #include <arm64/proc_reg.h>
@@ -19192,13 +19192,12 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  #if __ARM_VMSA__ != 8
  #error Unknown __ARM_VMSA__
  #endif
-@@ -333,9 +339,35 @@
+@@ -333,9 +339,56 @@
  extern void *pmap_stacks_start;
  extern void *pmap_stacks_end;
  
--#endif /* !XNU_MONITOR */
 +#endif /* XNU_MONITOR */
- 
++
 +/* ========================================================================
 + * Non-PPL (M30LTE) PPL stub definitions
 + * ========================================================================
@@ -19208,7 +19207,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
 + */
 +
 +#if !XNU_MONITOR
- 
++
 +/* PPL segment definitions (not present on non-PPL systems) */
 +vm_offset_t   segPPLDATAB = 0;
 +unsigned long segSizePPLDATA = 0;
@@ -19225,11 +19224,32 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
 +vm_offset_t pmap_stacks_start_pa = 0;
 +vm_offset_t pmap_stacks_end_pa = 0;
 +
+ #endif /* !XNU_MONITOR */
+ 
++/* ========================================================================
++ * Non-PPL (M30LTE) PPL stub definitions (continued)
++ * ========================================================================
++ *
++ * Additional PPL variables referenced by common code paths that need
++ * definitions on non-PPL systems to avoid linker errors.
++ */
++
++#if !XNU_MONITOR
+ 
++/* PPL CPU save area */
++vm_offset_t ppl_cpu_save_area_start = 0;
++vm_offset_t ppl_cpu_save_area_end = 0;
++
++/* PPL trust cache runtime */
++SECURITY_READ_ONLY_LATE(TrustCacheRuntime_t) ppl_trust_cache_rt = { 0 };
++MARK_AS_PMAP_DATA TrustCacheMutableRuntime_t ppl_trust_cache_mut_rt = { 0 };
++MARK_AS_PMAP_DATA decl_lck_rw_data(, ppl_trust_cache_rt_lock);
++
 +#endif /* !XNU_MONITOR */
  
  /* Virtual memory region for early allocation */
  #define VREGION1_HIGH_WINDOW    (PE_EARLY_BOOT_VA)
-@@ -2183,6 +2215,7 @@
+@@ -2183,6 +2236,7 @@
  	/**
  	 * Bootstrap any necessary UAT data structures and values needed from the device tree.
  	 */
@@ -19237,7 +19257,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  	uat_bootstrap();
  
  
-@@ -2190,6 +2223,7 @@
+@@ -2190,6 +2244,7 @@
  	 * Bootstrap any necessary SART data structures and values needed from the device tree.
  	 */
  	sart_bootstrap();
@@ -19245,7 +19265,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  
  	/**
  	 * Don't make any assumptions about the alignment of avail_start before this
-@@ -11435,10 +11469,12 @@
+@@ -11435,10 +11490,12 @@
  			panic("%s(%p): attempt to pin static mapping for page 0x%llx", __func__, (void*)kva, (uint64_t)pa);
  		}
  		do {
@@ -19260,8 +19280,8 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  }
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_data.c xnu-final-patch/osfmk/arm/pmap/pmap_data.c
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_data.c	2026-11-05 21:35:46.644331894 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap_data.c	2026-11-06 02:34:41.874316522 +0530
-@@ -3210,22 +3210,102 @@
++++ xnu-final-patch/osfmk/arm/pmap/pmap_data.c	2026-11-06 10:17:05.259860910 +0530
+@@ -3210,22 +3210,68 @@
  
  #endif /* XNU_MONITOR */
  
@@ -19302,46 +19322,12 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_data.c xnu-final-patch/osfmk/arm/pm
 +}
 +
 +/**
-+ * Verify the ledger size on non-PPL systems.
-+ * On non-PPL systems, ledger sizes are managed by the zone allocator.
-+ * This function is a no-op.
-  */
--kern_return_t
--pmap_ledger_credit(pmap_t pmap, int entry, ledger_amount_t amount)
-+void
-+pmap_ledger_verify_size_internal(size_t size)
-+{
-+	(void)size;
-+}
-+
-+/**
-+ * Allocate a ledger object on non-PPL systems.
-+ * On non-PPL systems, ledgers are allocated from template zones via
-+ * ledger_instantiate(). This function should not be called on properly
-+ * configured non-PPL systems. We return NULL to indicate failure.
-+ */
-+ledger_t
-+pmap_ledger_alloc_internal(void)
-+{
-+	return LEDGER_NULL;
-+}
-+
-+/**
-+ * Free a ledger object on non-PPL systems.
-+ * On non-PPL systems, ledgers are freed by the zone allocator when
-+ * the task is destroyed. This function is a no-op.
-+ */
-+void
-+pmap_ledger_free_internal(ledger_t ledger)
-+{
-+	(void)ledger;
-+}
-+
-+/**
 + * Bump the reference count on a ledger object on non-PPL systems.
 + * On non-PPL systems, ledger reference counting is handled by the
 + * standard ledger API. This function is a no-op.
-+ */
+  */
+-kern_return_t
+-pmap_ledger_credit(pmap_t pmap, int entry, ledger_amount_t amount)
 +void
 +pmap_ledger_retain(ledger_t ledger)
 +{
