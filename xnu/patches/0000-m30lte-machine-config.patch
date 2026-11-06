@@ -19181,8 +19181,18 @@ diff -ruN xnu-orig-clean/makedefs/MakeInc.def xnu-final-patch/makedefs/MakeInc.d
  	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pmap.c
 --- xnu-orig-clean/osfmk/arm/pmap/pmap.c	2026-11-05 21:35:46.642331854 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap.c	2026-11-06 10:18:19.903801427 +0530
-@@ -84,8 +84,10 @@
++++ xnu-final-patch/osfmk/arm/pmap/pmap.c	2026-11-06 14:55:33.167543267 +0530
+@@ -51,6 +51,9 @@
+ 
+ #include <os/overflow.h>
+ 
++/* Forward declaration for static function used before its definition */
++MARK_AS_PMAP_TEXT static void pmap_phys_write_disable(vm_address_t va);
++
+ #include <vm/pmap.h>
+ #include <vm/pmap_cs.h>
+ #include <vm/vm_map.h>
+@@ -84,8 +87,10 @@
  
  #include <arm64/proc_reg.h>
  #include <pexpert/arm64/boot.h>
@@ -19193,7 +19203,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  
  #if defined(KERNEL_INTEGRITY_KTRR) || defined(KERNEL_INTEGRITY_CTRR)
  #include <arm64/amcc_rorgn.h>
-@@ -115,6 +117,10 @@
+@@ -115,6 +120,10 @@
  #define PMAP_ROOT_ALLOC_SIZE (ARM_PGBYTES)
  #endif
  
@@ -19204,7 +19214,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  #if __ARM_VMSA__ != 8
  #error Unknown __ARM_VMSA__
  #endif
-@@ -333,9 +339,56 @@
+@@ -333,9 +342,56 @@
  extern void *pmap_stacks_start;
  extern void *pmap_stacks_end;
  
@@ -19247,7 +19257,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
 + */
 +
 +#if !XNU_MONITOR
- 
++
 +/* PPL CPU save area */
 +vm_offset_t ppl_cpu_save_area_start = 0;
 +vm_offset_t ppl_cpu_save_area_end = 0;
@@ -19256,12 +19266,12 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
 +SECURITY_READ_ONLY_LATE(TrustCacheRuntime_t) ppl_trust_cache_rt = { 0 };
 +MARK_AS_PMAP_DATA TrustCacheMutableRuntime_t ppl_trust_cache_mut_rt = { 0 };
 +MARK_AS_PMAP_DATA decl_lck_rw_data(, ppl_trust_cache_rt_lock);
-+
+ 
 +#endif /* !XNU_MONITOR */
  
  /* Virtual memory region for early allocation */
  #define VREGION1_HIGH_WINDOW    (PE_EARLY_BOOT_VA)
-@@ -2183,6 +2236,7 @@
+@@ -2183,6 +2239,7 @@
  	/**
  	 * Bootstrap any necessary UAT data structures and values needed from the device tree.
  	 */
@@ -19269,7 +19279,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  	uat_bootstrap();
  
  
-@@ -2190,6 +2244,7 @@
+@@ -2190,6 +2247,7 @@
  	 * Bootstrap any necessary SART data structures and values needed from the device tree.
  	 */
  	sart_bootstrap();
@@ -19277,7 +19287,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pm
  
  	/**
  	 * Don't make any assumptions about the alignment of avail_start before this
-@@ -11435,10 +11490,12 @@
+@@ -11435,10 +11493,12 @@
  			panic("%s(%p): attempt to pin static mapping for page 0x%llx", __func__, (void*)kva, (uint64_t)pa);
  		}
  		do {
@@ -19387,8 +19397,8 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pm
  	bool reserved11;
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/arm/pmap/pmap_internal.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h	2026-11-05 21:35:46.645331914 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 14:43:58.063788576 +0530
-@@ -110,6 +110,158 @@
++++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 14:55:42.425052362 +0530
+@@ -110,6 +110,155 @@
  	extern __return_type __function_name##_internal __function_args
  #endif /* XNU_MONITOR */
  
@@ -19501,9 +19511,6 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +	(void)pn;
 +	return FALSE;
 +}
-+
-+/* Forward declaration for pmap_phys_write_disable which is defined in pmap.c but used before its definition */
-+MARK_AS_PMAP_TEXT extern void pmap_phys_write_disable(vm_address_t va);
 +
 +/*
 + * Non-PPL stub implementations for PPL-specific functions.
