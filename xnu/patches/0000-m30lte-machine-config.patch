@@ -19390,7 +19390,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pm
  	bool reserved11;
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/arm/pmap/pmap_internal.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h	2026-11-05 21:35:46.645331914 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 13:22:45.531186307 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 13:32:28.889579412 +0530
 @@ -1,5 +1,5 @@
  /*
 - * Copyright (c) 2020 Apple Inc. All rights reserved.
@@ -19398,7 +19398,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
   *
   * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
   *
-@@ -25,455 +25,185 @@
+@@ -25,455 +25,193 @@
   *
   * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
   */
@@ -19412,19 +19412,19 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 - */
 -#ifndef _ARM_PMAP_PMAP_INTERNAL_H_
 -#define _ARM_PMAP_PMAP_INTERNAL_H_
- 
+-
 -#include <stdint.h>
-+#ifndef _ARM_PMAP_INTERNAL_H
-+#define _ARM_PMAP_INTERNAL_H
- 
+-
 -#include <kern/debug.h>
 -#include <kern/locks.h>
 -#include <mach/vm_types.h>
 -#include <mach_assert.h>
--
+ 
 -#include <arm/cpu_data.h>
 -#include <arm64/proc_reg.h>
--
++#ifndef _ARM_PMAP_INTERNAL_H
++#define _ARM_PMAP_INTERNAL_H
+ 
 -/**
 - * arm/pmap.h and the other /arm/pmap/ internal header files are safe to be
 - * included in this file since they shouldn't rely on any of the internal pmap
@@ -19436,7 +19436,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +#include <vm/pmap_cs.h>
  #include <arm/pmap/pmap_data.h>
 -#include <arm/pmap/pmap_pt_geometry.h>
- 
+-
 -#if XNU_MONITOR
 -/**
 - * Temporary macros and prototypes needed to implement the ppl_handler_table.
@@ -19455,15 +19455,15 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 -
 -extern pmap_paddr_t pmap_release_ppl_pages_to_kernel_internal(void);
 -extern kern_return_t mapping_free_prime_internal(void);
+ 
+-extern void pmap_ledger_verify_size_internal(size_t);
+-extern ledger_t pmap_ledger_alloc_internal(void);
+-extern void pmap_ledger_free_internal(ledger_t);
 +/* forward declarations */
 +struct pmap;
 +struct pv_entry;
 +typedef struct pv_entry pv_entry_t;
  
--extern void pmap_ledger_verify_size_internal(size_t);
--extern ledger_t pmap_ledger_alloc_internal(void);
--extern void pmap_ledger_free_internal(ledger_t);
--
 -/**
 - * This macro generates prototypes for the *_internal functions, which represent
 - * the PPL interface. When the PPL is enabled, this will also generate
@@ -19507,14 +19507,18 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
  
 -/**
 - * Global variables exported to the rest of the internal pmap implementation.
-+/*
-+ * PV entry structure
-  */
+- */
 -extern lck_grp_t pmap_lck_grp;
 -extern bool hib_entry_pmap_lockdown;
 -extern pmap_paddr_t avail_start;
 -extern pmap_paddr_t avail_end;
 -extern uint32_t pmap_max_asids;
+-
+-/**
+- * Functions exported to the rest of the internal pmap implementation.
++/*
++ * PV entry structure
+  */
 +typedef struct pv_entry {
 +	/* Linked list to the next mapping of the physical page. */
 +	struct pv_entry *pve_next;
@@ -19522,15 +19526,6 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +	/* Pointer to the page table entry for this mapping. */
 +	pt_entry_t *pve_ptep[PTE_PER_PVE];
 +} pv_entry_t;
- 
--/**
-- * Functions exported to the rest of the internal pmap implementation.
-+/*
-+ * Page table attribute structure
-  */
-+typedef struct page_table_attr {
-+	uint64_t pta_index;
-+} page_table_attr_t;
  
 -#if XNU_MONITOR
 -extern void pmap_set_xprr_perm(unsigned int, unsigned int, unsigned int);
@@ -19547,8 +19542,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 -extern void pmap_set_ptov_ap(unsigned int, unsigned int, boolean_t);
 -#endif /* defined(PVH_FLAG_EXEC) */
 -
-+#define PMAP_MAX_TT_LEVEL 4
- 
+-
 -extern pmap_t current_pmap(void);
 -extern void pmap_tt_ledger_credit(pmap_t, vm_size_t);
 -extern void pmap_tt_ledger_debit(pmap_t, vm_size_t);
@@ -19565,10 +19559,15 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 - * return < 0 for a < b
 - *          0 for a == b
 - *        > 0 for a > b
-- */
++/*
++ * Page table attribute structure
+  */
 -typedef int (*cmpfunc_t)(const void *a, const void *b);
 -extern void qsort(void *a, size_t n, size_t es, cmpfunc_t cmp);
--
++typedef struct page_table_attr {
++	uint64_t pta_index;
++} page_table_attr_t;
+ 
 -/**
 - * Inline and macro functions exported for usage by other pmap modules.
 - *
@@ -19580,7 +19579,8 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 - *
 - * TODO: rdar://70538514 (PMAP Cleanup: re-evaluate whether inline functions should actually be inline)
 - */
--
++#define PMAP_MAX_TT_LEVEL 4
+ 
 -/**
 - * Macro used to ensure that pmap data structures aren't modified during
 - * hibernation image copying.
@@ -19701,12 +19701,16 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 - */
 -__unused static inline void
 -pmap_assert_locked_any(__unused pmap_t pmap)
--{
++static inline void
++pa_set_range_xprr_perm(pmap_paddr_t start, pmap_paddr_t end, uint64_t old_perm, uint64_t new_perm)
+ {
 -#if MACH_ASSERT
 -	lck_rw_assert(&pmap->rwlock, LCK_RW_ASSERT_HELD);
 -#endif
--}
--
++	/* No-op for non-PPL platforms */
++	(void)start; (void)end; (void)old_perm; (void)new_perm;
+ }
+ 
 -/**
 - * Acquire a pmap object's reader/writer lock as either shared (read-only) or
 - * exclusive (read/write).
@@ -19719,7 +19723,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 - */
  static inline void
 -pmap_lock(pmap_t pmap, pmap_lock_mode_t mode)
-+pa_set_range_xprr_perm(pmap_paddr_t start, pmap_paddr_t end, uint64_t old_perm, uint64_t new_perm)
++pmap_set_range_xprr_perm(vm_offset_t start, vm_offset_t end, uint64_t old_perm, uint64_t new_perm)
  {
 -#if !XNU_MONITOR
 -	mp_disable_preemption();
@@ -19738,6 +19742,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +	/* No-op for non-PPL platforms */
 +	(void)start; (void)end; (void)old_perm; (void)new_perm;
  }
++#endif /* !XNU_MONITOR */
  
 -/**
 - * Attempt to acquire the pmap lock in the specified mode. If the lock couldn't
@@ -19748,11 +19753,18 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 - *
 - * @return true if the lock was acquired, false if it was not and the caller should
 - *         abort to some preemptible state to allow the preemption.
-- */
++/*
++ * Hibernation support for PPL (no-op for non-PPL)
+  */
 -static inline bool
 -pmap_lock_preempt(pmap_t pmap, pmap_lock_mode_t mode)
++#if XNU_MONITOR
++extern void pmap_set_ppl_hashed_flag(const pmap_paddr_t addr);
++extern void pmap_clear_ppl_hashed_flag_all(void);
++extern void pmap_check_ppl_hashed_flag_all(void);
++#else
 +static inline void
-+pmap_set_range_xprr_perm(vm_offset_t start, vm_offset_t end, uint64_t old_perm, uint64_t new_perm)
++pmap_set_ppl_hashed_flag(const pmap_paddr_t addr)
  {
 -	bool ret = false;
 -
@@ -19792,10 +19804,8 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 -	} while (!ret && (preemption_enabled() || (startup_phase < STARTUP_SUB_EARLY_BOOT)));
 -
 -	return ret;
-+	/* No-op for non-PPL platforms */
-+	(void)start; (void)end; (void)old_perm; (void)new_perm;
++	(void)addr;
  }
-+#endif /* !XNU_MONITOR */
  
 -/**
 - * Attempt to acquire the pmap lock in the specified mode. If the lock couldn't
@@ -19805,18 +19815,11 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 - * @param mode Whether to grab the lock as shared (read-only) or exclusive (read/write).
 - *
 - * @return True if the lock was acquired, false otherwise.
-+/*
-+ * Hibernation support for PPL (no-op for non-PPL)
-  */
+- */
 -static inline bool
 -pmap_try_lock(pmap_t pmap, pmap_lock_mode_t mode)
-+#if XNU_MONITOR
-+extern void pmap_set_ppl_hashed_flag(const pmap_paddr_t addr);
-+extern void pmap_clear_ppl_hashed_flag_all(void);
-+extern void pmap_check_ppl_hashed_flag_all(void);
-+#else
 +static inline void
-+pmap_set_ppl_hashed_flag(const pmap_paddr_t addr)
++pmap_clear_ppl_hashed_flag_all(void)
  {
 -	bool ret = false;
 -
@@ -19842,7 +19845,6 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 -	}
 -
 -	return ret;
-+	(void)addr;
  }
  
 -/**
@@ -19856,7 +19858,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 -static inline bool
 -pmap_lock_shared_to_exclusive(pmap_t pmap)
 +static inline void
-+pmap_clear_ppl_hashed_flag_all(void)
++pmap_check_ppl_hashed_flag_all(void)
  {
 -	pmap_assert_locked(pmap, PMAP_LOCK_SHARED);
 -
@@ -19870,6 +19872,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 -
 -	return locked;
  }
++#endif /* XNU_MONITOR */
  
 -/**
 - * Release a pmap object's reader/writer lock.
@@ -19877,9 +19880,10 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 - * @param pmap The pmap whose lock to release.
 - * @param mode Which mode the lock should be in at time of release.
 - */
- static inline void
+-static inline void
 -pmap_unlock(pmap_t pmap, pmap_lock_mode_t mode)
-+pmap_check_ppl_hashed_flag_all(void)
++static inline boolean_t
++pmap_is_monitor(ppnum_t pn)
  {
 -	switch (mode) {
 -	case PMAP_LOCK_SHARED:
@@ -19895,8 +19899,9 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 -#if !XNU_MONITOR
 -	mp_enable_preemption();
 -#endif
++	(void)pn;
++	return FALSE;
  }
-+#endif /* XNU_MONITOR */
  
 -#if __arm64__
 -/*
@@ -19906,46 +19911,27 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 - * ml_set_interrupts_enable(), since that function is not part of the
 - * PPL, and so doing things like manipulating untrusted data and
 - * taking ASTs.
-- *
++#if XNU_MONITOR
++/**
++ * This macro generates prototypes for the *_internal functions, which represent
++ * the PPL interface. When the PPL is enabled, this will also generate
++ * prototypes for the PPL entrypoints (*_ppl), as well as generating the
++ * entrypoints themselves.
+  *
 - * @return The previous interrupt state, to be restored with
 - *         pmap_interrupts_restore().
-- */
++ * Since these macros generate code, they should only be called from a single
++ * implementation file for each PPL entry point.
+  */
 -static inline uint64_t __attribute__((warn_unused_result)) __used
 -pmap_interrupts_disable(void)
-+static inline boolean_t
-+pmap_is_monitor(ppnum_t pn)
- {
+-{
 -	uint64_t state = __builtin_arm_rsr64("DAIF");
--
++#define GEN_ASM_NAME(__function_name) _##__function_name##_ppl
+ 
 -	if ((state & DAIF_STANDARD_DISABLE) != DAIF_STANDARD_DISABLE) {
 -		__builtin_arm_wsr64("DAIFSet", DAIFSC_STANDARD_DISABLE);
 -	}
--
--	return state;
-+	(void)pn;
-+	return FALSE;
- }
- 
- /*
-- * Restore previous interrupt state.
-- *
-- * @param state The previous interrupt state to restore.
-+ * PMAP_SUPPORT_PROTOTYPES() macro creates these prototypes automatically).
-+ * This macro is used to generate both internal and PPL-entry versions of
-+ * functions, and handles the assembly trampoline for PPL entry points.
-+ * On non-PPL systems, it just declares the internal function.
-  */
--static inline void __used
--pmap_interrupts_restore(uint64_t state)
--{
--	// no unknown bits?
--	assert((state & ~DAIF_ALL) == 0);
-+#define GEN_ASM_NAME(__function_name) _##__function_name##_ppl
- 
--	if (state != DAIF_STANDARD_DISABLE) {
--		__builtin_arm_wsr64("DAIF", state);
--	}
--}
 +#define PMAP_SUPPORT_PROTOTYPES_WITH_ASM_INTERNAL(__return_type, __function_name, __function_args, __function_index, __assembly_function_name) 	extern __return_type __function_name##_internal __function_args; 	extern __return_type __function_name##_ppl __function_args; 	__asm__ (".text 
 +" 	         ".align 2 
 +" 	         ".globl " #__assembly_function_name "
@@ -19953,6 +19939,30 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +" 	         "mov x15, " #__function_index "
 +" 	         "b _aprr_ppl_enter
 +")
+ 
+-	return state;
+-}
+-
+-/*
+- * Restore previous interrupt state.
+- *
+- * @param state The previous interrupt state to restore.
+- */
+-static inline void __used
+-pmap_interrupts_restore(uint64_t state)
+-{
+-	// no unknown bits?
+-	assert((state & ~DAIF_ALL) == 0);
++#define PMAP_SUPPORT_PROTOTYPES_WITH_ASM(__return_type, __function_name, __function_args, __function_index, __assembly_function_name) 	PMAP_SUPPORT_PROTOTYPES_WITH_ASM_INTERNAL(__return_type, __function_name, __function_args, __function_index, __assembly_function_name)
+ 
+-	if (state != DAIF_STANDARD_DISABLE) {
+-		__builtin_arm_wsr64("DAIF", state);
+-	}
+-}
++#define PMAP_SUPPORT_PROTOTYPES(__return_type, __function_name, __function_args, __function_index) 	PMAP_SUPPORT_PROTOTYPES_WITH_ASM(__return_type, __function_name, __function_args, __function_index, GEN_ASM_NAME(__function_name))
++#else /* XNU_MONITOR */
++#define PMAP_SUPPORT_PROTOTYPES(__return_type, __function_name, __function_args, __function_index) 	extern __return_type __function_name##_internal __function_args
++#endif /* XNU_MONITOR */
  
 -/*
 - * Query interrupt state.
@@ -19963,8 +19973,9 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 - * DAIF_IRQ, we have our own version.
 - *
 - * @return true if interrupts are enable (not fully disabled).
-- */
-+#define PMAP_SUPPORT_PROTOTYPES_WITH_ASM(__return_type, __function_name, __function_args, __function_index, __assembly_function_name) 	PMAP_SUPPORT_PROTOTYPES_WITH_ASM_INTERNAL(__return_type, __function_name, __function_args, __function_index, __assembly_function_name)
++/**
++ * Global variables exported to the rest of the internal pmap implementation.
+  */
  
 -static inline bool __attribute__((warn_unused_result)) __used
 -pmap_interrupts_enabled(void)
@@ -19972,11 +19983,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 -	return (__builtin_arm_rsr64("DAIF") & DAIF_STANDARD_DISABLE) != DAIF_STANDARD_DISABLE;
 -}
 -#endif /* __arm64__ */
-+#define PMAP_SUPPORT_PROTOTYPES(__return_type, __function_name, __function_args, __function_index) 	PMAP_SUPPORT_PROTOTYPES_WITH_ASM(__return_type, __function_name, __function_args, __function_index, GEN_ASM_NAME(__function_name))
-+#else /* XNU_MONITOR */
-+#define PMAP_SUPPORT_PROTOTYPES(__return_type, __function_name, __function_args, __function_index) 	extern __return_type __function_name##_internal __function_args
-+#endif /* XNU_MONITOR */
- 
+-
 -#endif /* _ARM_PMAP_PMAP_INTERNAL_H_ */
 +#endif /* _ARM_PMAP_INTERNAL_H */
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_ppl_interface.c xnu-final-patch/osfmk/arm/pmap/pmap_ppl_interface.c
