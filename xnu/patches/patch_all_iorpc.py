@@ -35,9 +35,9 @@ def patch_file(filepath):
         content = content.replace(old_struct, new_struct)
         modified = True
     
-    # Patch OSObject.iig.cpp references
+    # Patch OSObject.iig.cpp references - use proper cast for IORPCMessage*
     if 'rpc.kernelContent' in content:
-        content = content.replace('rpc.kernelContent', 'nullptr /* kernelContent */')
+        content = content.replace('rpc.kernelContent', '(IORPCMessage*)nullptr')
         modified = True
     if '.kernelContent = ' in content:
         content = content.replace('.kernelContent = ', '/* .kernelContent = */ ')
