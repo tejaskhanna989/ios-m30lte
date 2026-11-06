@@ -1,0 +1,44 @@
+name: Xcode 15 Availability Check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check-xcode:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - name: Check available Xcode versions
+        run: |
+          echo "=== All Xcode Versions ==="
+          ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V
+          echo ""
+          echo "=== Check for Xcode 15 ==="
+          if [ -d "/Applications/Xcode_15.app" ]; then
+            echo "Xcode_15.app: FOUND"
+            /Applications/Xcode_15.app/Contents/Developer/usr/bin/xcodebuild -version
+          else
+            echo "Xcode_15.app: NOT FOUND"
+          fi
+          echo ""
+          echo "=== Check for Xcode 15.0.1 specifically ==="
+          for v in 15.0 15.0.1 15.1 15.2 15.3 15.4; do
+            if [ -d "/Applications/Xcode_${v}.app" ]; then
+              echo "Xcode_${v}.app: FOUND"
+              /Applications/Xcode_${v}.app/Contents/Developer/usr/bin/xcodebuild -version
+            fi
+          done
+          echo ""
+          echo "=== Check xcodebuild -version for all ==="
+          for x in /Applications/Xcode_*.app; do
+            echo "Found: $x"
+            "$x/Contents/Developer/usr/bin/xcodebuild" -version 2>/dev/null || true
+          done
+          echo ""
+          echo "=== Check if we can install Xcode 15 ==="
+          echo "xcode-install gem check:"
+          gem list xcode-install 2>/dev/null || echo "xcode-install not installed"
+          echo ""
+          echo "=== Check xcodes tool ==="
+          which xcodes 2>/dev/null || echo "xcodes not in PATH"
+          xcodes list 2>/dev/null | head -20 || true
