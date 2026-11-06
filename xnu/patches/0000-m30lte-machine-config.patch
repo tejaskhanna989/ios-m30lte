@@ -19397,7 +19397,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pm
  	bool reserved11;
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/arm/pmap/pmap_internal.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h	2026-11-05 21:35:46.645331914 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 16:14:55.443350226 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 16:23:55.948187007 +0530
 @@ -56,6 +56,11 @@
  #include <arm/pmap/pmap_data.h>
  #include <arm/pmap/pmap_pt_geometry.h>
@@ -19410,7 +19410,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
  #if XNU_MONITOR
  /**
   * Temporary macros and prototypes needed to implement the ppl_handler_table.
-@@ -110,6 +115,222 @@
+@@ -110,6 +115,218 @@
  	extern __return_type __function_name##_internal __function_args
  #endif /* XNU_MONITOR */
  
@@ -19606,7 +19606,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +{
 +}
 +
-+static inline void
++static inline boolean_t
 +kpc_off_cpu_active(void)
 +{
 +	return FALSE;
@@ -19623,11 +19623,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +}
 +
 +/* Monitor stub */
-+/* Pmap preemption stub */
-+static inline void
-+pmap_pending_preemption(void)
-+{
-+}
++/* Pmap preemption stub - declared in pmap.h */
 +#endif /* !XNU_MONITOR */
 +
  /**
