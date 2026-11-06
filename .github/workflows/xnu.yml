@@ -25,8 +25,8 @@ env:
 
 jobs:
   build:
-    runs-on: macos-14
-    timeout-minutes: 120
+    runs-on: macos-15
+    timeout-minutes: 180
     permissions:
       contents: read
       actions: read
@@ -38,7 +38,15 @@ jobs:
           brew install jq gum bash cmake ninja
           printf '#!/bin/sh\nexit 0\n' | sudo tee /usr/local/bin/xcodes >/dev/null
           sudo chmod +x /usr/local/bin/xcodes
-          XC=$(ls -d /Applications/Xcode_*.app | sort -V | head -1)
+          # Install Xcode 15.0.1 for XNU 8796 compatibility
+          brew install xcodesorg/made/xcodes
+          xcodes install --latest 15.0.1
+          XC=$(ls -d /Applications/Xcode_15.0.1.app 2>/dev/null || ls -d /Applications/Xcode_15.*.app 2>/dev/null | head -1)
+          if [ -z "$XC" ]; then
+            echo "Xcode 15 not found, trying to install via xcodes..."
+            xcodes install 15.0.1
+            XC=$(ls -d /Applications/Xcode_15.0.1.app 2>/dev/null || ls -d /Applications/Xcode_15.*.app 2>/dev/null | head -1)
+          fi
           echo "DEVELOPER_DIR=$XC/Contents/Developer" >> "$GITHUB_ENV"
           sudo xcode-select -s "$XC"
           xcodebuild -version
