@@ -19397,7 +19397,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pm
  	bool reserved11;
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/arm/pmap/pmap_internal.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h	2026-11-05 21:35:46.645331914 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 18:03:28.773973718 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 18:11:45.159818823 +0530
 @@ -56,6 +56,9 @@
  #include <arm/pmap/pmap_data.h>
  #include <arm/pmap/pmap_pt_geometry.h>
@@ -19687,7 +19687,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
  /**
   * Global variables exported to the rest of the internal pmap implementation.
   */
-@@ -474,6 +749,28 @@
+@@ -474,6 +749,22 @@
  {
  	return (__builtin_arm_rsr64("DAIF") & DAIF_STANDARD_DISABLE) != DAIF_STANDARD_DISABLE;
  }
@@ -19705,12 +19705,6 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +void
 +ml_enable_monitor(void)
 +{
-+}
-+
-+boolean_t
-+pmap_pending_preemption(void)
-+{
-+	return FALSE;
 +}
 +
  #endif /* __arm64__ */
