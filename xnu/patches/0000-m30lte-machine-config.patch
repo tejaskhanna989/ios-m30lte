@@ -19397,7 +19397,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pm
  	bool reserved11;
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/arm/pmap/pmap_internal.h
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h	2026-11-05 21:35:46.645331914 +0530
-+++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 16:38:04.513247275 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 16:53:35.821140887 +0530
 @@ -56,6 +56,9 @@
  #include <arm/pmap/pmap_data.h>
  #include <arm/pmap/pmap_pt_geometry.h>
@@ -19408,7 +19408,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
  #if XNU_MONITOR
  /**
   * Temporary macros and prototypes needed to implement the ppl_handler_table.
-@@ -110,6 +113,377 @@
+@@ -110,6 +113,290 @@
  	extern __return_type __function_name##_internal __function_args
  #endif /* XNU_MONITOR */
  
@@ -19552,76 +19552,6 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +{
 +}
 +
-+static inline int
-+ptep_get_iommu(pt_entry_t *pte_p __unused)
-+{
-+	return 0;
-+}
-+
-+/* KPC stubs for non-PPL builds */
-+static inline void
-+kpc_get_config(uint32_t classes __unused, kpc_config_t *config __unused)
-+{
-+}
-+
-+static inline uint32_t
-+kpc_get_config_count(uint32_t classes __unused)
-+{
-+	return 0;
-+}
-+
-+static inline uint32_t
-+kpc_get_counter_count(uint32_t classes __unused)
-+{
-+	return 0;
-+}
-+
-+static inline int
-+kpc_get_cpu_counters(boolean_t all_cpus __unused, uint32_t classes __unused, uint64_t *buf __unused, uint32_t *buf_size __unused)
-+{
-+	return 0;
-+}
-+
-+static inline int
-+kpc_get_curthread_counters(uint32_t *inoutcount __unused, uint64_t *buf __unused)
-+{
-+	return 0;
-+}
-+
-+static inline uint32_t
-+kpc_get_running(void)
-+{
-+	return 0;
-+}
-+
-+static inline void
-+kpc_idle(void)
-+{
-+}
-+
-+static inline void
-+kpc_idle_exit(void)
-+{
-+}
-+
-+static inline boolean_t
-+kpc_off_cpu_active(void)
-+{
-+	return FALSE;
-+}
-+
-+static inline void
-+kpc_off_cpu_internal(thread_t thread __unused)
-+{
-+}
-+
-+static inline void
-+kpc_thread_ast_handler(thread_t thread __unused)
-+{
-+}
-+
-+/* Monitor stub */
-+/* Pmap preemption stub - declared in pmap.h */
 +#endif /* !XNU_MONITOR */
 +
 +/*
@@ -19698,11 +19628,6 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +{
 +}
 +
-+static inline void
-+kpc_thread_ast_handler(thread_t thread __unused)
-+{
-+}
-+
 +static inline boolean_t
 +kpc_off_cpu_active(void)
 +{
@@ -19719,17 +19644,9 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +{
 +}
 +
-+/* Monitor stub */
-+static inline void
-+ml_enable_monitor(void)
-+{
-+}
++/* Monitor stub - declared in machine_routines.h */
 +
-+/* Pmap preemption stub */
-+static inline void
-+pmap_pending_preemption(void)
-+{
-+}
++/* Pmap preemption stub - declared in pmap.h */
 +
 +/* Firehose stubs */
 +static inline vm_offset_t
@@ -19777,11 +19694,7 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +{
 +}
 +
-+/* Pmap preemption stub */
-+static inline void
-+pmap_pending_preemption(void)
-+{
-+}
++/* Pmap preemption stub - declared in pmap.h */
 +
  /**
   * Global variables exported to the rest of the internal pmap implementation.
