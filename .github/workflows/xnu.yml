@@ -127,7 +127,6 @@ jobs:
             echo "firehose_buffer_private.h already exists"
           fi
           ls -la osfmk/arm64/firehose_buffer_private.h
-          # Also copy to export headers directory for build system
           mkdir -p BUILD/obj/EXPORT_HDRS/osfmk/arm64
           cp osfmk/arm64/firehose_buffer_private.h BUILD/obj/EXPORT_HDRS/osfmk/arm64/
 
@@ -141,32 +140,27 @@ jobs:
           done
           grep -r "enable-trivial-auto-var-init-zero-knowing" . 2>/dev/null | head -5 || echo "Flag not found in source (may be added at build time)"
 
-      - name: Fix DriverKit IORPC compatibility with Xcode 26
+      - name: Fix DriverKit IORPC for Xcode 26
         run: |
           cd xnu-source
           echo "=== Patching DriverKit IORPC for Xcode 26 compatibility ==="
-          # The IORPC structure in Xcode 26 expects a kernelContent field
-          # that doesn't exist in XNU 8796. Add it to the IORPC struct.
           if [ -f iokit/DriverKit/IORPC.h ]; then
             echo "Patching IORPC.h to add kernelContent field..."
-            sed -i '' '/struct IORPC {/,/};/{
-              /uint32_t           replySize;/a\
-  void *             kernelContent;  // Added for Xcode 26 compatibility
-            }' iokit/DriverKit/IORPC.h
-            echo "Patched IORPC.h successfully"
+            python3 ../xnu/patches/patch_iorpc.py
           else
             echo "IORPC.h not found, skipping"
           fi
-          # Also patch OSObject.iig.cpp if it exists (fallback)
-          if [ -f iokit/Kernel/OSObject.iig.cpp ]; then
-            echo "Patching OSObject.iig.cpp as fallback..."
-            sed -i '' 's/rpc\.kernelContent/nullptr \/\* kernelContent \*\//g' iokit/Kernel/OSObject.iig.cpp
-            sed -i '' 's/\.kernelContent = /\.kernelContent = \/\* removed \*\//g' iokit/Kernel/OSObject.iig.cpp
-            sed -i '' 's/\.kernelContent = /\/\* .kernelContent = \*\//g' iokit/Kernel/OSObject.iig.cpp
-            echo "Patched OSObject.iig.cpp as fallback"
-          fi
-          # Verify patches
           grep -n "kernelContent" iokit/DriverKit/IORPC.h 2>/dev/null | head -5 || echo "kernelContent not found in IORPC.h"
+
+      - name: Fix clang flag incompatibility with Xcode 26
+        run: |
+          cd xnu-source
+          echo "=== Patching out incompatible clang flags ==="
+          find . -name "*.def" -o -name "Makefile*" -o -name "*.mk" -o -name "*.inc" | xargs grep -l "enable-trivial-auto-var-init-zero-knowing" 2>/dev/null | while read file; do
+            echo "Patching: $file"
+            sed -i '' 's/-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang//g' "$file"
+          done
+          grep -r "enable-trivial-auto-var-init-zero-knowing" . 2>/dev/null | head -5 || echo "Flag not found in source (may be added at build time)"
 
       - name: Build bootstrap_cmds (mig)
         run: |
@@ -208,9 +202,6 @@ jobs:
           SYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
-          # Build XNU kernel via install target (triggers kernel link via MakeInc.top)
-          # Disable DriverKit (DRIVERKIT=0) to avoid Xcode 26 compatibility issues with IORPC
-          # Set as environment variable to ensure it's inherited by all sub-makes
           export DRIVERKIT=0
           make -j1 install VERBOSE=YES \
             SDKROOT=macosx \
