@@ -22,6 +22,7 @@ env:
   MACOS_VERSION: ${{ inputs.macos_version || '13.5' }}
   KERNEL_CONFIG: ${{ inputs.kernel_config || 'DEVELOPMENT' }}
   MACHINE_CONFIG: ${{ inputs.machine_config || 'M30LTE' }}
+  DRIVERKIT: "0"
 
 jobs:
   build:
