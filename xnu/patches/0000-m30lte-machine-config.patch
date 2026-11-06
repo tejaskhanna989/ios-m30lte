@@ -19636,8 +19636,6 @@ diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/ar
 +{
 +}
 +
-+#endif /* __arm64__ */
-+
 +#endif /* _ARM_PMAP_INTERNAL_H_ */
 diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_ppl_interface.c xnu-final-patch/osfmk/arm/pmap/pmap_ppl_interface.c
 --- xnu-orig-clean/osfmk/arm/pmap/pmap_ppl_interface.c	2026-11-05 21:35:46.646331934 +0530
