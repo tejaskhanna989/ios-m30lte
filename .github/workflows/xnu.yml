@@ -208,17 +208,18 @@ jobs:
           SDKROOT_PATH=$(xcrun --sdk macosx --show-sdk-path)
           echo "SDKROOT_PATH=$SDKROOT_PATH"
           
-          # Fix kextsymboltool Makefile - add isysroot and include paths
+          # Fix kextsymboltool Makefile - ensure CFLAGS includes sysroot
           if [ -f SETUP/kextsymboltool/Makefile ]; then
             echo "Patching SETUP/kextsymboltool/Makefile"
-            awk -v sdk="$SDKROOT_PATH" 'NR==1{print "CFLAGS += -isysroot " sdk " -I" sdk "/usr/include"} 1' SETUP/kextsymboltool/Makefile > SETUP/kextsymboltool/Makefile.new && mv SETUP/kextsymboltool/Makefile.new SETUP/kextsymboltool/Makefile
+            # Use sed to prepend CFLAGS line
+            sed -i '' '1s/^/CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'\/usr\/include\n/' SETUP/kextsymboltool/Makefile
             cat SETUP/kextsymboltool/Makefile
           fi
           
-          # Fix config Makefile - add isysroot and include paths
+          # Fix config Makefile - ensure CFLAGS includes sysroot
           if [ -f SETUP/config/Makefile ]; then
             echo "Patching SETUP/config/Makefile"
-            awk -v sdk="$SDKROOT_PATH" 'NR==1{print "CFLAGS += -isysroot " sdk " -I" sdk "/usr/include"} 1' SETUP/config/Makefile > SETUP/config/Makefile.new && mv SETUP/config/Makefile.new SETUP/config/Makefile
+            sed -i '' '1s/^/CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'\/usr\/include\n/' SETUP/config/Makefile
             cat SETUP/config/Makefile
           fi
           
@@ -235,9 +236,10 @@ jobs:
           SYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
+          SDKROOT_PATH=$(xcrun --sdk macosx --show-sdk-path)
           export DRIVERKIT=0
-          export CFLAGS="-Wno-format"
-          export CXXFLAGS="-Wno-format"
+          export CFLAGS="-Wno-format -isysroot $SDKROOT_PATH -I$SDKROOT_PATH/usr/include"
+          export CXXFLAGS="-Wno-format -isysroot $SDKROOT_PATH -I$SDKROOT_PATH/usr/include"
           echo "=== Building XNU kernel (default target) ==="
           set -x
           make -j1 VERBOSE=YES \
@@ -257,8 +259,8 @@ jobs:
             KERNEL_BUILDS_IN_PARALLEL=1 \
             BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
             DRIVERKIT=0 \
-            CFLAGS="-Wno-format" \
-            CXXFLAGS="-Wno-format" \
+            CFLAGS="-Wno-format -isysroot $SDKROOT_PATH -I$SDKROOT_PATH/usr/include" \
+            CXXFLAGS="-Wno-format -isysroot $SDKROOT_PATH -I$SDKROOT_PATH/usr/include" \
             2>&1 | tee /tmp/xnu-build.log
           BUILD_EXIT=${PIPESTATUS[0]}
           echo "make exit code: $BUILD_EXIT"
