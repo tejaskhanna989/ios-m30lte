@@ -290,17 +290,19 @@ jobs:
         if: failure()
         run: |
           echo "=== Main build failed, running bsd link step to capture linker error ==="
-          cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd
-          # Run the exact sub-make command from the parent build (uses build_all, not do_build_all)
-          make VERBOSE=YES \
+          # Run the EXACT sub-make command from the parent build (with -C to build obj dir)
+          /Applications/Xcode_26.0.1.app/Contents/Developer/usr/bin/make \
+            -C "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd" \
+            -f "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/Makefile" \
             CURRENT_KERNEL_CONFIG=DEVELOPMENT \
             CURRENT_ARCH_CONFIG=ARM64 \
             CURRENT_MACHINE_CONFIG=M30LTE \
             CURRENT_BUILD_CONFIG=DEVELOPMENT^ARM64^M30LTE \
-            SOURCE=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/ \
-            RELATIVE_SOURCE_PATH=./bsd \
+            SOURCE="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/" \
+            RELATIVE_SOURCE_PATH="./bsd" \
             TARGET=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/. \
             OBJPATH=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE \
+            VERBOSE=YES \
             build_all 2>&1 | tee /tmp/bsd-build.log
           BSD_EXIT=${PIPESTATUS[0]}
           echo "bsd build exit code: ${BSD_EXIT}"
