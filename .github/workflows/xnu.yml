@@ -90,10 +90,15 @@ jobs:
         run: |
           echo "=== Fixing /makedefs paths in Makefiles ==="
           cd xnu-source
-          # Replace /makedefs with $(SRCROOT)/makedefs in all Makefiles
+          # Replace /makedefs with $(SRCROOT)/makedefs in all Makefiles, but preserve existing $(SRCROOT)/makedefs
           find . -name "Makefile" -o -name "*.mk" -o -name "*.mak" | xargs grep -l "/makedefs" | while read file; do
             echo "Patching: $file"
+            # Step 1: Protect existing $(SRCROOT)/makedefs with a placeholder
+            sed -i '' 's|\$\(SRCROOT\)/makedefs|__SRCROOT_MAKEDEFS_PLACEHOLDER__|g' "$file"
+            # Step 2: Replace remaining /makedefs with $(SRCROOT)/makedefs
             sed -i '' 's|/makedefs|$(SRCROOT)/makedefs|g' "$file"
+            # Step 3: Restore the placeholder
+            sed -i '' 's|__SRCROOT_MAKEDEFS_PLACEHOLDER__|$(SRCROOT)/makedefs|g' "$file"
           done
           # Verify the changes
           grep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found"
