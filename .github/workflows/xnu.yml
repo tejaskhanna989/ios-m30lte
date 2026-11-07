@@ -214,6 +214,7 @@ jobs:
           export CXXFLAGS="-Wno-format"
           # First try to build just the kernel to see linker errors
           echo "=== Attempting kernel link directly ==="
+          set -o pipefail
           make -j1 kernel VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
@@ -238,6 +239,7 @@ jobs:
           echo "Kernel link exit code: $KERNEL_LINK_EXIT"
           echo "=== Kernel link log ==="
           cat /tmp/xnu-kernel-link.log
+          echo "=== End kernel link log ==="
           if [ $KERNEL_LINK_EXIT -ne 0 ]; then
             echo "KERNEL LINK FAILED"
             exit $KERNEL_LINK_EXIT
