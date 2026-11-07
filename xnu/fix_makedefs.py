@@ -12,26 +12,11 @@ def fix_file(filepath):
     with open(filepath, 'r') as f:
         content = f.read()
     
-    # Pattern: match /makedefs that is at the start of a word (after whitespace or start of line)
-    # but not $(SRCROOT)/makedefs or already expanded paths like /Users/.../xnu-source/makedefs
+    # Protect existing $(SRCROOT)/makedefs
+    content = content.replace('$(SRCROOT)/makedefs', '__SRCROOT_MAKEDEFS_PLACEHOLDER__')
     
-    # First, protect existing $(SRCROOT)/makedefs
-    content = re.sub(r'\$\(SRCROOT\)/makedefs', '__SRCROOT_MAKEDEFS_PLACEHOLDER__', content)
-    
-    # Replace /makedefs that appears at the start of a word (after whitespace, (, =, or start of line)
-    # This matches patterns like:
-    #   /makedefs/MakeInc.cmd
-    #   -I/makedefs
-    #   include /makedefs/MakeInc.def
-    # But NOT:
-    #   /Users/.../xnu-source/makedefs (expanded path)
-    #   $(SRCROOT)/makedefs (already fixed)
-    
-    # Match /makedefs at start of path component (after whitespace, (, =, or start)
-    content = re.sub(r'(?<=[\s(=])/makedefs(?=/|$)', '$(SRCROOT)/makedefs', content)
-    
-    # Also match at start of line
-    content = re.sub(r'^/makedefs(?=/|$)', '$(SRCROOT)/makedefs', content, flags=re.MULTILINE)
+    # Replace ALL remaining /makedefs with $(SRCROOT)/makedefs
+    content = content.replace('/makedefs', '$(SRCROOT)/makedefs')
     
     # Restore placeholder
     content = content.replace('__SRCROOT_MAKEDEFS_PLACEHOLDER__', '$(SRCROOT)/makedefs')
