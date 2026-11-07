@@ -86,14 +86,6 @@ jobs:
           cd xnu-source
           git describe --tags --always
 
-      - name: Fix makedefs path in Makefiles
-        run: |
-          echo "=== Fixing /makedefs paths in Makefiles ==="
-          cd xnu-source
-          python3 ../xnu/fix_makedefs.py .
-          # Verify the changes
-          grep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found"
-
       - name: Stage libpthread dependency
         run: |
           cd xnu-source
@@ -115,6 +107,14 @@ jobs:
           ls -la pexpert/pexpert/arm64/M30LTE.h 2>&1 || echo "M30LTE.h NOT FOUND - creating from patch"
           cat ../xnu/patches/0000-m30lte-machine-config.patch | grep -A 50 "M30LTE.h" | head -60 || true
           sed -i '' 's|^AVAILABILITY_PL="${SDKROOT}/${DRIVERKITROOT}|AVAILABILITY_PL="${FAKEROOT_DIR}|g' bsd/sys/make_symbol_aliasing.sh 2>/dev/null || true
+
+      - name: Fix makedefs path in Makefiles
+        run: |
+          echo "=== Fixing /makedefs paths in Makefiles ==="
+          cd xnu-source
+          python3 ../xnu/fix_makedefs.py .
+          # Verify the changes
+          grep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found"
 
       - name: Force patch proc_reg.h for M30LTE
         run: |
@@ -237,6 +237,14 @@ jobs:
             sed -i '' 's|#include <config.h>|#include "config.h"|' SETUP/config/externs.c
           fi
 
+      - name: Fix makedefs paths in build directory
+        run: |
+          echo "=== Fixing /makedefs paths in build directory ==="
+          cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
+          python3 ../xnu/fix_makedefs.py BUILD/obj
+          # Verify the changes
+          grep -r "/makedefs" BUILD/obj --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found in build directory"
+
       - name: Build XNU kernel
         run: |
           cd xnu-source
@@ -279,23 +287,24 @@ jobs:
       - name: Capture bsd linker error
         if: always()
         run: |
-          echo "=== Trying to run bsd build from source root to capture linker error ==="
+          echo "=== Running bsd link step from source root to capture linker error ==="
           cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
-          # Run the exact sub-make command from the parent build
+          # Run the exact sub-make command from the parent build - use fixed makedefs paths
           make VERBOSE=YES \
             -C BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd \
-            -f /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/Makefile \
+            -f bsd/Makefile \
             CURRENT_KERNEL_CONFIG=DEVELOPMENT \
             CURRENT_ARCH_CONFIG=ARM64 \
             CURRENT_MACHINE_CONFIG=M30LTE \
             CURRENT_BUILD_CONFIG=DEVELOPMENT^ARM64^M30LTE \
-            SOURCE=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/ \
+            SOURCE=bsd/ \
             RELATIVE_SOURCE_PATH=./bsd \
-            TARGET=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/. \
-            OBJPATH=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE \
+            TARGET=BUILD/obj/DEVELOPMENT_ARM64_M30LTE/. \
+            OBJPATH=BUILD/obj/DEVELOPMENT_ARM64_M30LTE \
             do_build_all 2>&1 | tee /tmp/bsd-build.log
           echo "bsd build exit code: ${PIPESTATUS[0]}"
-          tail -200 /tmp/bsd-build.log
+          echo "=== Full bsd build log ==="
+          cat /tmp/bsd-build.log
           # Save bsd build log as artifact
           cp /tmp/bsd-build.log /tmp/bsd-build.log.artifact 2>/dev/null || true
 
