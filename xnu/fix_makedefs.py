@@ -12,11 +12,19 @@ def fix_file(filepath):
     with open(filepath, 'r') as f:
         content = f.read()
     
-    # Protect existing $(SRCROOT)/makedefs
-    content = content.replace('$(SRCROOT)/makedefs', '__SRCROOT_MAKEDEFS_PLACEHOLDER__')
+    # Pattern: match /makedefs at start of path component
+    # Matches: /makedefs/..., /makedefs at end of line
+    # After: whitespace, (, =, start of line
+    # NOT in middle of expanded path like /Users/.../xnu-source/makedefs
     
-    # Replace ALL remaining /makedefs with $(SRCROOT)/makedefs
-    content = content.replace('/makedefs', '$(SRCROOT)/makedefs')
+    # First, protect existing $(SRCROOT)/makedefs
+    content = re.sub(r'\$\(SRCROOT\)/makedefs', '__SRCROOT_MAKEDEFS_PLACEHOLDER__', content)
+    
+    # Replace /makedefs at start of path component (after whitespace, (, =, or start of line)
+    # Matches: " /makedefs/", " /makedefs\n", "(/makedefs/", "=/makedefs/", "^/makedefs/"
+    content = re.sub(r'(?<=[\s(=])/makedefs(?=/|$)', '$(SRCROOT)/makedefs', content)
+    # Also match at start of line
+    content = re.sub(r'^/makedefs(?=/|$)', '$(SRCROOT)/makedefs', content, flags=re.MULTILINE)
     
     # Restore placeholder
     content = content.replace('__SRCROOT_MAKEDEFS_PLACEHOLDER__', '$(SRCROOT)/makedefs')
