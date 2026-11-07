@@ -254,6 +254,7 @@ jobs:
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
           echo "=== Building XNU kernel (default target) ==="
           set -x
+          set -o pipefail
           # Build with explicit linker verbose output, capture all sub-make output
           make VERBOSE=YES \
             SDKROOT=macosx \
@@ -282,31 +283,17 @@ jobs:
           echo "=== Kernel artifacts ==="
           find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
           find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
-          # Don't exit here, let the next step run to capture bsd linker error
-
-      - name: Capture bsd linker error
-        if: always()
-        run: |
-          echo "=== Running bsd link step from source root to capture linker error ==="
-          cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
-          # Run the exact sub-make command from the parent build - use fixed makedefs paths
-          make VERBOSE=YES \
-            -C BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd \
-            -f bsd/Makefile \
-            CURRENT_KERNEL_CONFIG=DEVELOPMENT \
-            CURRENT_ARCH_CONFIG=ARM64 \
-            CURRENT_MACHINE_CONFIG=M30LTE \
-            CURRENT_BUILD_CONFIG=DEVELOPMENT^ARM64^M30LTE \
-            SOURCE=bsd/ \
-            RELATIVE_SOURCE_PATH=./bsd \
-            TARGET=BUILD/obj/DEVELOPMENT_ARM64_M30LTE/. \
-            OBJPATH=BUILD/obj/DEVELOPMENT_ARM64_M30LTE \
-            do_build_all 2>&1 | tee /tmp/bsd-build.log
-          echo "bsd build exit code: ${PIPESTATUS[0]}"
-          echo "=== Full bsd build log ==="
-          cat /tmp/bsd-build.log
-          # Save bsd build log as artifact
-          cp /tmp/bsd-build.log /tmp/bsd-build.log.artifact 2>/dev/null || true
+          if [ $BUILD_EXIT -ne 0 ]; then
+            echo "KERNEL BUILD FAILED with exit code $BUILD_EXIT"
+            # Run bsd build directly to capture linker error
+            echo "=== Running bsd link step from build directory to capture linker error ==="
+            cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd
+            make VERBOSE=YES do_build_all 2>&1 | tee /tmp/bsd-build.log
+            echo "bsd build exit code: ${PIPESTATUS[0]}"
+            echo "=== Full bsd build log ==="
+            cat /tmp/bsd-build.log
+            exit $BUILD_EXIT
+          fi
 
       - name: Upload build log
         if: always()
