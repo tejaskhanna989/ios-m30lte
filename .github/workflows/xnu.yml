@@ -206,16 +206,36 @@ jobs:
         run: |
           cd xnu-source
           echo "=== Fixing SETUP tool include paths ==="
-          # The host tools need macOS SDK headers - add include path
+          SDKROOT_PATH=$(xcrun --sdk macosx --show-sdk-path)
+          echo "SDKROOT_PATH=$SDKROOT_PATH"
+          
+          # Fix kextsymboltool Makefile - add isysroot and include paths
           if [ -f SETUP/kextsymboltool/Makefile ]; then
             echo "Patching SETUP/kextsymboltool/Makefile"
-            sed -i '' 's|^CFLAGS.*=|CFLAGS = -isysroot $(SDKROOT) -I$(SDKROOT)/usr/include |' SETUP/kextsymboltool/Makefile
+            # Add CFLAGS with sysroot and include path
+            sed -i '' '/^CFLAGS[[:space:]]*=/s/$/ -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'\/usr\/include/' SETUP/kextsymboltool/Makefile
+            # If no CFLAGS line, add one
+            if ! grep -q "^CFLAGS" SETUP/kextsymboltool/Makefile; then
+              sed -i '' '1i\
+CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include
+' SETUP/kextsymboltool/Makefile
+            fi
+            cat SETUP/kextsymboltool/Makefile
           fi
+          
+          # Fix config Makefile - add isysroot and include paths
           if [ -f SETUP/config/Makefile ]; then
             echo "Patching SETUP/config/Makefile"
-            sed -i '' 's|^CFLAGS.*=|CFLAGS = -isysroot $(SDKROOT) -I$(SDKROOT)/usr/include |' SETUP/config/Makefile
+            sed -i '' '/^CFLAGS[[:space:]]*=/s/$/ -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'\/usr\/include/' SETUP/config/Makefile
+            if ! grep -q "^CFLAGS" SETUP/config/Makefile; then
+              sed -i '' '1i\
+CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include
+' SETUP/config/Makefile
+            fi
+            cat SETUP/config/Makefile
           fi
-          # Also fix the angled include in externs.c
+          
+          # Fix angled include in externs.c
           if [ -f SETUP/config/externs.c ]; then
             echo "Fixing externs.c include"
             sed -i '' 's|#include <config.h>|#include "config.h"|' SETUP/config/externs.c
