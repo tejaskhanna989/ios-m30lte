@@ -246,6 +246,7 @@ jobs:
           grep -r "/makedefs" BUILD/obj --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found in build directory"
 
       - name: Build XNU kernel
+        id: build_kernel
         run: |
           cd xnu-source
           SYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)
@@ -253,7 +254,6 @@ jobs:
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
           echo "=== Building XNU kernel (default target) ==="
-          set -x
           set -o pipefail
           # Build with explicit linker verbose output, capture all sub-make output
           make VERBOSE=YES \
@@ -283,22 +283,23 @@ jobs:
           echo "=== Kernel artifacts ==="
           find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
           find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
-          if [ $BUILD_EXIT -ne 0 ]; then
-            echo "KERNEL BUILD FAILED with exit code $BUILD_EXIT"
-            # Run bsd build directly to capture linker error
-            echo "=== Running bsd link step from build directory to capture linker error ==="
-            cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd
-            # Write to a file in the current directory, then copy to workspace
-            make VERBOSE=YES do_build_all 2>&1 | tee bsd-build.log
-            BSD_EXIT=${PIPESTATUS[0]}
-            echo "bsd build exit code: ${BSD_EXIT}"
-            echo "=== Full bsd build log ==="
-            cat bsd-build.log
-            # Copy to workspace for artifact upload
-            cp bsd-build.log /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
-            ls -la /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
-            exit $BUILD_EXIT
-          fi
+          echo "BUILD_EXIT=$BUILD_EXIT" >> $GITHUB_OUTPUT
+          exit $BUILD_EXIT
+
+      - name: Run bsd build to capture linker error
+        if: steps.build_kernel.outputs.BUILD_EXIT != '0'
+        run: |
+          echo "=== Running bsd link step from build directory to capture linker error ==="
+          cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd
+          make VERBOSE=YES do_build_all 2>&1 | tee /tmp/bsd-build.log
+          BSD_EXIT=${PIPESTATUS[0]}
+          echo "bsd build exit code: ${BSD_EXIT}"
+          echo "=== Full bsd build log ==="
+          cat /tmp/bsd-build.log
+          # Copy to workspace for artifact upload
+          cp /tmp/bsd-build.log /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
+          ls -la /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
+          echo "BSD_EXIT=$BSD_EXIT" >> $GITHUB_OUTPUT
 
       - name: Upload bsd build log
         if: always()
