@@ -202,6 +202,25 @@ jobs:
           echo "=== Pre-build IORPC patch for DriverKit ==="
           python3 ../xnu/patches/patch_all_iorpc.py
 
+      - name: Fix SETUP tool include paths
+        run: |
+          cd xnu-source
+          echo "=== Fixing SETUP tool include paths ==="
+          # The host tools need macOS SDK headers - add include path
+          if [ -f SETUP/kextsymboltool/Makefile ]; then
+            echo "Patching SETUP/kextsymboltool/Makefile"
+            sed -i '' 's|^CFLAGS.*=|CFLAGS = -isysroot $(SDKROOT) -I$(SDKROOT)/usr/include |' SETUP/kextsymboltool/Makefile
+          fi
+          if [ -f SETUP/config/Makefile ]; then
+            echo "Patching SETUP/config/Makefile"
+            sed -i '' 's|^CFLAGS.*=|CFLAGS = -isysroot $(SDKROOT) -I$(SDKROOT)/usr/include |' SETUP/config/Makefile
+          fi
+          # Also fix the angled include in externs.c
+          if [ -f SETUP/config/externs.c ]; then
+            echo "Fixing externs.c include"
+            sed -i '' 's|#include <config.h>|#include "config.h"|' SETUP/config/externs.c
+          fi
+
       - name: Build XNU kernel
         run: |
           cd xnu-source
