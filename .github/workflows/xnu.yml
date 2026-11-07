@@ -233,8 +233,8 @@ jobs:
             DRIVERKIT=0 \
             CFLAGS="-Wno-format" \
             CXXFLAGS="-Wno-format" \
-            > /tmp/xnu-kernel-link.log 2>&1
-          KERNEL_LINK_EXIT=$?
+            2>&1 | tee /tmp/xnu-kernel-link.log
+          KERNEL_LINK_EXIT=${PIPESTATUS[0]}
           echo "Kernel link exit code: $KERNEL_LINK_EXIT"
           echo "=== Kernel link log ==="
           cat /tmp/xnu-kernel-link.log
@@ -264,8 +264,8 @@ jobs:
             KERNEL_BUILDS_IN_PARALLEL=1 \
             BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
             DRIVERKIT=0 \
-            > /tmp/xnu-build.log 2>&1
-          BUILD_EXIT=$?
+            2>&1 | tee /tmp/xnu-build.log
+          BUILD_EXIT=${PIPESTATUS[0]}
           echo "make exit code: $BUILD_EXIT"
           echo "=== Errors in build log ==="
           grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found" /tmp/xnu-build.log | head -20 || echo "No errors found in log"
