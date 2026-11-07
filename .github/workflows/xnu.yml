@@ -254,8 +254,8 @@ jobs:
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
           echo "=== Building XNU kernel (default target) ==="
-          set -o pipefail
           # Build with explicit linker verbose output, capture all sub-make output
+          # Don't use set -o pipefail - we need to capture exit code manually
           make VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
