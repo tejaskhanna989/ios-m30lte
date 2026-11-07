@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Fix /makedefs references in XNU Makefiles to use $(SRCROOT)/makedefs instead.
+Fix /makedefs references in XNU Makefiles to use absolute path instead.
 This avoids the need for a symlink at /makedefs which isn't possible on read-only root.
 """
 import os
 import re
 import sys
 
-def fix_file(filepath):
+def fix_file(filepath, makedefs_abs_path):
     """Fix /makedefs references in a single file."""
     with open(filepath, 'r') as f:
         content = f.read()
@@ -17,23 +17,28 @@ def fix_file(filepath):
     # After: whitespace, (, =, start of line
     # NOT in middle of expanded path like /Users/.../xnu-source/makedefs
     
-    # First, protect existing $(SRCROOT)/makedefs
-    content = re.sub(r'\$\(SRCROOT\)/makedefs', '__SRCROOT_MAKEDEFS_PLACEHOLDER__', content)
+    # First, protect existing absolute makedefs paths
+    content = re.sub(re.escape(makedefs_abs_path), '__MAKEDEFS_ABS_PLACEHOLDER__', content)
     
     # Replace /makedefs at start of path component (after whitespace, (, =, or start of line)
     # Matches: " /makedefs/", " /makedefs\n", "(/makedefs/", "=/makedefs/", "^/makedefs/"
-    content = re.sub(r'(?<=[\s(=])/makedefs(?=/|$)', '$(SRCROOT)/makedefs', content)
+    content = re.sub(r'(?<=[\s(=])/makedefs(?=/|$)', makedefs_abs_path, content)
     # Also match at start of line
-    content = re.sub(r'^/makedefs(?=/|$)', '$(SRCROOT)/makedefs', content, flags=re.MULTILINE)
+    content = re.sub(r'^/makedefs(?=/|$)', makedefs_abs_path, content, flags=re.MULTILINE)
     
     # Restore placeholder
-    content = content.replace('__SRCROOT_MAKEDEFS_PLACEHOLDER__', '$(SRCROOT)/makedefs')
+    content = content.replace('__MAKEDEFS_ABS_PLACEHOLDER__', makedefs_abs_path)
     
     with open(filepath, 'w') as f:
         f.write(content)
 
 def main():
     source_root = sys.argv[1] if len(sys.argv) > 1 else '.'
+    source_root = os.path.abspath(source_root)
+    makedefs_abs_path = os.path.join(source_root, 'makedefs')
+    
+    print(f"Source root: {source_root}")
+    print(f"Makedefs absolute path: {makedefs_abs_path}")
     
     # Find all Makefiles
     for root, dirs, files in os.walk(source_root):
@@ -44,7 +49,7 @@ def main():
                     with open(filepath, 'r') as f:
                         if '/makedefs' in f.read():
                             print(f"Fixing: {filepath}")
-                            fix_file(filepath)
+                            fix_file(filepath, makedefs_abs_path)
                 except Exception as e:
                     print(f"Error processing {filepath}: {e}")
 
