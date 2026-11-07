@@ -247,7 +247,6 @@ jobs:
 
       - name: Build XNU kernel
         id: build_kernel
-        continue-on-error: true
         run: |
           cd xnu-source
           SYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)
@@ -256,6 +255,7 @@ jobs:
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
           echo "=== Building XNU kernel (default target) ==="
           # Build with explicit linker verbose output, capture all sub-make output
+          # Do NOT use set -o pipefail - it kills the script before we capture PIPESTATUS
           make VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
@@ -287,17 +287,11 @@ jobs:
           exit $BUILD_EXIT
 
       - name: Run bsd build to capture linker error
-        if: always()
+        if: failure()
         run: |
-          # Check if main build failed
-          BUILD_EXIT="${{ steps.build_kernel.outputs.BUILD_EXIT }}"
-          if [ "$BUILD_EXIT" = "0" ]; then
-            echo "Main build succeeded, skipping bsd build"
-            exit 0
-          fi
-          echo "=== Main build failed with exit code $BUILD_EXIT, running bsd link step to capture linker error ==="
+          echo "=== Main build failed, running bsd link step to capture linker error ==="
           cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd
-          make VERBOSE=YES do_build_all 2>&1 | tee /tmp/bsd-build.log
+          make VERBOSE=YES build_all 2>&1 | tee /tmp/bsd-build.log
           BSD_EXIT=${PIPESTATUS[0]}
           echo "bsd build exit code: ${BSD_EXIT}"
           echo "=== Full bsd build log ==="
