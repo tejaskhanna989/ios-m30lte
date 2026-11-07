@@ -238,7 +238,7 @@ jobs:
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
           echo "=== Building XNU kernel (default target) ==="
           set -x
-          # Build with explicit linker verbose output
+          # Build with explicit linker verbose output, capture all sub-make output
           make VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
@@ -261,8 +261,8 @@ jobs:
           echo "make exit code: $BUILD_EXIT"
           echo "=== Errors in build log ==="
           grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found|ld:|symbol|library not found|collect2" /tmp/xnu-build.log | head -50 || echo "No errors found in log"
-          echo "=== Last 500 lines of build log ==="
-          tail -500 /tmp/xnu-build.log
+          echo "=== Last 1000 lines of build log ==="
+          tail -1000 /tmp/xnu-build.log
           echo "=== Kernel artifacts ==="
           find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
           find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
