@@ -214,7 +214,7 @@ jobs:
           export CXXFLAGS="-Wno-format"
           # First try to build just the kernel to see linker errors
           echo "=== Attempting kernel link directly ==="
-          set -o pipefail
+          set -x
           make -j1 kernel VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
@@ -234,8 +234,8 @@ jobs:
             DRIVERKIT=0 \
             CFLAGS="-Wno-format" \
             CXXFLAGS="-Wno-format" \
-            > /tmp/xnu-kernel-link.log 2>&1
-          KERNEL_LINK_EXIT=$?
+            2>&1 | tee /tmp/xnu-kernel-link.log
+          KERNEL_LINK_EXIT=${PIPESTATUS[0]}
           echo "Kernel link exit code: $KERNEL_LINK_EXIT"
           echo "=== Kernel link log ==="
           cat /tmp/xnu-kernel-link.log
@@ -278,28 +278,20 @@ jobs:
             echo "KERNEL BUILD FAILED with exit code $BUILD_EXIT"
             exit $BUILD_EXIT
           fi
-          BUILD_EXIT=$?
-          echo "make exit code: $BUILD_EXIT"
-          echo "=== Errors in build log ==="
-          grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found" /tmp/xnu-build.log | head -20 || echo "No errors found in log"
-          echo "=== Kernel artifacts ==="
-          find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
-          find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
-          if [ $BUILD_EXIT -ne 0 ]; then
-            echo "KERNEL BUILD FAILED with exit code $BUILD_EXIT"
-            exit $BUILD_EXIT
-          fi
 
       - name: Upload build log
         if: always()
         run: |
           cp /tmp/xnu-build.log xnu-build.log 2>/dev/null || true
+          cp /tmp/xnu-kernel-link.log xnu-kernel-link.log 2>/dev/null || true
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: xnu-build-log
-          path: xnu-build.log
+          path: |
+            xnu-build.log
+            xnu-kernel-link.log
           if-no-files-found: warn
 
       - name: Collect kernel artifact
