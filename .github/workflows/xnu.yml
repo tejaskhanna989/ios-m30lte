@@ -288,23 +288,22 @@ jobs:
             # Run bsd build directly to capture linker error
             echo "=== Running bsd link step from build directory to capture linker error ==="
             cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd
-            # Write to a known absolute path
-            BSD_LOG="/Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log"
-            make VERBOSE=YES do_build_all 2>&1 | tee "$BSD_LOG"
+            # Write to a file in the current directory, then copy to workspace
+            make VERBOSE=YES do_build_all 2>&1 | tee bsd-build.log
             BSD_EXIT=${PIPESTATUS[0]}
             echo "bsd build exit code: ${BSD_EXIT}"
             echo "=== Full bsd build log ==="
-            cat "$BSD_LOG"
-            # Ensure the log file is in workspace for artifact upload
-            ls -la "$BSD_LOG"
-            cp "$BSD_LOG" /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log.artifact 2>/dev/null || true
+            cat bsd-build.log
+            # Copy to workspace for artifact upload
+            cp bsd-build.log /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
+            ls -la /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
             exit $BUILD_EXIT
           fi
 
       - name: Upload bsd build log
         if: always()
         run: |
-          cp ${GITHUB_WORKSPACE}/bsd-build.log.artifact bsd-build.log 2>/dev/null || cp ${GITHUB_WORKSPACE}/bsd-build.log bsd-build.log 2>/dev/null || true
+          cp /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log bsd-build.log 2>/dev/null || true
           ls -la bsd-build.log 2>/dev/null || echo "bsd-build.log not found"
 
       - uses: actions/upload-artifact@v4
