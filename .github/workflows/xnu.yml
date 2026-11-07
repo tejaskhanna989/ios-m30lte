@@ -298,6 +298,9 @@ jobs:
         if: failure()
         run: |
           echo "=== Main build failed, running bsd link step to capture linker error ==="
+          # Re-apply makedefs fix to source directory to ensure it's current
+          cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
+          python3 ../xnu/fix_makedefs.py .
           # Run the EXACT sub-make command from the parent build (with -C to build obj dir)
           /Applications/Xcode_26.0.1.app/Contents/Developer/usr/bin/make \
             -C "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd" \
