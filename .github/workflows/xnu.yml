@@ -293,13 +293,16 @@ jobs:
             echo "bsd build exit code: ${BSD_EXIT}"
             echo "=== Full bsd build log ==="
             cat ${GITHUB_WORKSPACE}/bsd-build.log
+            # Ensure the log file is in workspace for artifact upload
+            cp ${GITHUB_WORKSPACE}/bsd-build.log ${GITHUB_WORKSPACE}/bsd-build.log.artifact 2>/dev/null || true
             exit $BUILD_EXIT
           fi
 
       - name: Upload bsd build log
         if: always()
         run: |
-          cp ${GITHUB_WORKSPACE}/bsd-build.log bsd-build.log 2>/dev/null || true
+          cp ${GITHUB_WORKSPACE}/bsd-build.log.artifact bsd-build.log 2>/dev/null || cp ${GITHUB_WORKSPACE}/bsd-build.log bsd-build.log 2>/dev/null || true
+          ls -la bsd-build.log 2>/dev/null || echo "bsd-build.log not found"
 
       - uses: actions/upload-artifact@v4
         if: always()
