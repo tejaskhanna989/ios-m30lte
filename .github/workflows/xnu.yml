@@ -252,6 +252,11 @@ jobs:
           python3 ../xnu/fix_makedefs.py .
           # Verify the changes
           grep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found in source directory"
+          # VERIFY: Print bsd/Makefile lines that matter
+          echo "=== VERIFICATION: bsd/Makefile lines 1-10 ==="
+          head -10 bsd/Makefile
+          echo "=== VERIFICATION: bsd/Makefile lines 90-100 ==="
+          sed -n '90,100p' bsd/Makefile
 
       - name: Build XNU kernel
         id: build_kernel
@@ -301,6 +306,13 @@ jobs:
           # Re-apply makedefs fix to source directory to ensure it's current
           cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
           python3 ../xnu/fix_makedefs.py .
+          # VERIFY: Print the bsd/Makefile lines that are failing
+          echo "=== VERIFICATION: bsd/Makefile lines 1-10 ==="
+          head -10 bsd/Makefile
+          echo "=== VERIFICATION: bsd/Makefile lines 90-100 ==="
+          sed -n '90,100p' bsd/Makefile
+          echo "=== VERIFICATION: Checking for any remaining /makedefs/ ==="
+          grep -n "/makedefs" bsd/Makefile || echo "No /makedefs/ found in bsd/Makefile"
           # Run the EXACT sub-make command from the parent build (with -C to build obj dir)
           /Applications/Xcode_26.0.1.app/Contents/Developer/usr/bin/make \
             -C "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd" \
