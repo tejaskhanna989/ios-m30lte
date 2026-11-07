@@ -314,7 +314,8 @@ jobs:
           echo "=== VERIFICATION: Checking for any remaining /makedefs/ ==="
           grep -n "/makedefs" bsd/Makefile || echo "No /makedefs/ found in bsd/Makefile"
           # Run the EXACT sub-make command from the parent build (with -C to build obj dir)
-          # CRITICAL: Pass SRCROOT so ${SRCROOT}/makedefs expands correctly
+          # CRITICAL: Export SRCROOT so it propagates to ALL sub-makes (bsd/conf, SETUP, etc.)
+          export SRCROOT="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source"
           /Applications/Xcode_26.0.1.app/Contents/Developer/usr/bin/make \
             -C "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd" \
             -f "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/Makefile" \
@@ -322,7 +323,6 @@ jobs:
             CURRENT_ARCH_CONFIG=ARM64 \
             CURRENT_MACHINE_CONFIG=M30LTE \
             CURRENT_BUILD_CONFIG=DEVELOPMENT^ARM64^M30LTE \
-            SRCROOT="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source" \
             SOURCE="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/" \
             RELATIVE_SOURCE_PATH="./bsd" \
             TARGET=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/. \
