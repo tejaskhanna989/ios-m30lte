@@ -30,6 +30,10 @@ jobs:
       KERNEL_CONFIG: "DEVELOPMENT"
       MACHINE_CONFIG: "M30LTE"
       DRIVERKIT: "0"
+      # Set CFLAGS globally for all steps including build_setup
+      SDKROOT_PATH: "/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk"
+      CFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/usr/include"
+      CXXFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/usr/include"
     steps:
       - uses: actions/checkout@v4
 
@@ -236,10 +240,6 @@ jobs:
           SYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
-          SDKROOT_PATH=$(xcrun --sdk macosx --show-sdk-path)
-          export DRIVERKIT=0
-          export CFLAGS="-Wno-format -isysroot $SDKROOT_PATH -I$SDKROOT_PATH/usr/include"
-          export CXXFLAGS="-Wno-format -isysroot $SDKROOT_PATH -I$SDKROOT_PATH/usr/include"
           echo "=== Building XNU kernel (default target) ==="
           set -x
           make -j1 VERBOSE=YES \
@@ -259,8 +259,6 @@ jobs:
             KERNEL_BUILDS_IN_PARALLEL=1 \
             BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
             DRIVERKIT=0 \
-            CFLAGS="-Wno-format -isysroot $SDKROOT_PATH -I$SDKROOT_PATH/usr/include" \
-            CXXFLAGS="-Wno-format -isysroot $SDKROOT_PATH -I$SDKROOT_PATH/usr/include" \
             2>&1 | tee /tmp/xnu-build.log
           BUILD_EXIT=${PIPESTATUS[0]}
           echo "make exit code: $BUILD_EXIT"
