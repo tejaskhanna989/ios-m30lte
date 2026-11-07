@@ -211,15 +211,15 @@ jobs:
           # Fix kextsymboltool Makefile - ensure CFLAGS includes sysroot
           if [ -f SETUP/kextsymboltool/Makefile ]; then
             echo "Patching SETUP/kextsymboltool/Makefile"
-            # Use @ as delimiter to avoid conflicts with paths
             sed -i '' '1s@^@CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include\n@' SETUP/kextsymboltool/Makefile
             cat SETUP/kextsymboltool/Makefile
           fi
           
-          # Fix config Makefile - ensure CFLAGS includes sysroot
+          # Fix config Makefile - ensure CFLAGS includes sysroot AND source directory
           if [ -f SETUP/config/Makefile ]; then
             echo "Patching SETUP/config/Makefile"
-            sed -i '' '1s@^@CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include\n@' SETUP/config/Makefile
+            # Add sysroot, SDK include, and source directory for generated files
+            sed -i '' '1s@^@CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include -I$(SRCROOT)/SETUP/config\n@' SETUP/config/Makefile
             cat SETUP/config/Makefile
           fi
           
