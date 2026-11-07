@@ -86,11 +86,17 @@ jobs:
           cd xnu-source
           git describe --tags --always
 
-      - name: Create makedefs symlink for XNU build
+      - name: Fix makedefs path in Makefiles
         run: |
-          echo "=== Creating /makedefs symlink ==="
-          sudo ln -sf /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/makedefs /makedefs
-          ls -la /makedefs
+          echo "=== Fixing /makedefs paths in Makefiles ==="
+          cd xnu-source
+          # Replace /makedefs with $(SRCROOT)/makedefs in all Makefiles
+          find . -name "Makefile" -o -name "*.mk" -o -name "*.mak" | xargs grep -l "/makedefs" | while read file; do
+            echo "Patching: $file"
+            sed -i '' 's|/makedefs|$(SRCROOT)/makedefs|g' "$file"
+          done
+          # Verify the changes
+          grep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found"
 
       - name: Stage libpthread dependency
         run: |
