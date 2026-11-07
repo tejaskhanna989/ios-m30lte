@@ -152,6 +152,19 @@ jobs:
           done
           grep -r "enable-trivial-auto-var-init-zero-knowing" . 2>/dev/null | head -5 || echo "Flag not found in source (may be added at build time)"
 
+      - name: Patch bsd/Makefile to propagate SRCROOT/SETUP to sub-makes
+        run: |
+          cd xnu-source
+          echo "=== Patching bsd/Makefile to propagate SRCROOT/SETUP to sub-makes ==="
+          # Patch the do_all target to pass SRCROOT and SETUP to sub-makes
+          sed -i '' '/^do_all: \$(TARGET)\/\$\$(CURRENT_KERNEL_CONFIG)\/Makefile/,/^[[:space:]]*build_all/ {
+            /^[[:space:]]*OBJPATH=\$\${OBJPATH}/a\
+\		SRCROOT=\${SRCROOT}					\\
+\		SETUP=\$\${SRCROOT}/SETUP					\\
+          }' bsd/Makefile
+          # Verify the patch
+          grep -A 12 "do_all:" bsd/Makefile | head -15
+
       - name: Fix DriverKit IORPC for Xcode 26
         run: |
           cd xnu-source
