@@ -211,26 +211,15 @@ jobs:
           # Fix kextsymboltool Makefile - add isysroot and include paths
           if [ -f SETUP/kextsymboltool/Makefile ]; then
             echo "Patching SETUP/kextsymboltool/Makefile"
-            # Add CFLAGS with sysroot and include path
-            sed -i '' '/^CFLAGS[[:space:]]*=/s/$/ -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'\/usr\/include/' SETUP/kextsymboltool/Makefile
-            # If no CFLAGS line, add one
-            if ! grep -q "^CFLAGS" SETUP/kextsymboltool/Makefile; then
-              sed -i '' '1i\
-CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include
-' SETUP/kextsymboltool/Makefile
-            fi
+            # Use awk to add CFLAGS at the beginning
+            awk -v sdk="$SDKROOT_PATH" 'NR==1{print "CFLAGS += -isysroot " sdk " -I" sdk "/usr/include"} 1' SETUP/kextsymboltool/Makefile > SETUP/kextsymboltool/Makefile.new && mv SETUP/kextsymboltool/Makefile.new SETUP/kextsymboltool/Makefile
             cat SETUP/kextsymboltool/Makefile
           fi
           
           # Fix config Makefile - add isysroot and include paths
           if [ -f SETUP/config/Makefile ]; then
             echo "Patching SETUP/config/Makefile"
-            sed -i '' '/^CFLAGS[[:space:]]*=/s/$/ -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'\/usr\/include/' SETUP/config/Makefile
-            if ! grep -q "^CFLAGS" SETUP/config/Makefile; then
-              sed -i '' '1i\
-CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include
-' SETUP/config/Makefile
-            fi
+            awk -v sdk="$SDKROOT_PATH" 'NR==1{print "CFLAGS += -isysroot " sdk " -I" sdk "/usr/include"} 1' SETUP/config/Makefile > SETUP/config/Makefile.new && mv SETUP/config/Makefile.new SETUP/config/Makefile
             cat SETUP/config/Makefile
           fi
           
@@ -250,7 +239,6 @@ CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include
           export DRIVERKIT=0
           export CFLAGS="-Wno-format"
           export CXXFLAGS="-Wno-format"
-          # Build using default target (no 'kernel' target exists)
           echo "=== Building XNU kernel (default target) ==="
           set -x
           make -j1 VERBOSE=YES \
