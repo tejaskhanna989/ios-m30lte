@@ -47,6 +47,11 @@ jobs:
           xcode-select -p
           xcodebuild -version
 
+      - name: Check disk space
+        run: |
+          echo "=== Disk space before build ==="
+          df -h /
+
       - name: Deps
         run: |
           brew install jq gum bash cmake ninja
@@ -201,6 +206,11 @@ jobs:
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           make installhdrs -j8 SDKROOT=macosx ARCH_CONFIGS="X86_64 ARM64" OBJROOT="$PWD/BUILD/xnu-hdrs.obj" SYMROOT="$PWD/BUILD/xnu-hdrs.sym" DSTROOT="$PWD/fakeroot" FAKEROOT_DIR="$PWD/fakeroot" KDKROOT="/Library/Developer/KDKs" TIGHTBEAMC="" RC_DARWIN_KERNEL_VERSION="22.6.0" MEMORY_SIZE="${MEMORY_SIZE}" SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" KERNEL_BUILDS_IN_PARALLEL=1 2>&1 | tail -20 || true
 
+      - name: Check disk space after deps
+        run: |
+          echo "=== Disk space after deps ==="
+          df -h /
+
       - name: Pre-build IORPC patch for DriverKit
         run: |
           cd xnu-source
@@ -234,6 +244,11 @@ jobs:
             echo "Fixing externs.c include"
             sed -i '' 's|#include <config.h>|#include "config.h"|' SETUP/config/externs.c
           fi
+
+      - name: Check disk space before kernel build
+        run: |
+          echo "=== Disk space before kernel build ==="
+          df -h /
 
       - name: Build XNU kernel
         run: |
@@ -273,6 +288,11 @@ jobs:
             echo "KERNEL BUILD FAILED with exit code $BUILD_EXIT"
             exit $BUILD_EXIT
           fi
+
+      - name: Check disk space after kernel build
+        run: |
+          echo "=== Disk space after kernel build ==="
+          df -h /
 
       - name: Upload build log
         if: always()
