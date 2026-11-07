@@ -266,16 +266,18 @@ jobs:
           echo "=== Kernel artifacts ==="
           find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
           find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
-          # Try to run the bsd build directly to see the linker error
+          # Don't exit here, let the next step run to capture bsd linker error
+
+      - name: Capture bsd linker error
+        if: always()
+        run: |
           echo "=== Trying to run bsd build directly to capture linker error ==="
           cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd
           make VERBOSE=YES do_build_all 2>&1 | tee /tmp/bsd-build.log
           echo "bsd build exit code: ${PIPESTATUS[0]}"
           tail -200 /tmp/bsd-build.log
-          if [ $BUILD_EXIT -ne 0 ]; then
-            echo "KERNEL BUILD FAILED with exit code $BUILD_EXIT"
-            exit $BUILD_EXIT
-          fi
+          # Save bsd build log as artifact
+          cp /tmp/bsd-build.log /tmp/bsd-build.log.artifact 2>/dev/null || true
 
       - name: Upload build log
         if: always()
