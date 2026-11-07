@@ -269,9 +269,9 @@ jobs:
           echo "=== Building XNU kernel (default target) ==="
           # Build with explicit linker verbose output, capture all sub-make output
           # Do NOT use set -o pipefail - it kills the script before we capture PIPESTATUS
-          # CRITICAL: Export SRCROOT so it propagates to ALL sub-makes (bsd/conf, SETUP, etc.)
+          # CRITICAL: Export SRCROOT to environment AND use -e so it propagates to ALL sub-makes (bsd/conf, SETUP, etc.)
           export SRCROOT="$PWD"
-          make VERBOSE=YES \
+          make -e VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
             SRCROOT="$PWD" \
@@ -316,9 +316,9 @@ jobs:
           echo "=== VERIFICATION: Checking for any remaining /makedefs/ ==="
           grep -n "/makedefs" bsd/Makefile || echo "No /makedefs/ found in bsd/Makefile"
           # Run the EXACT sub-make command from the parent build (with -C to build obj dir)
-          # CRITICAL: Explicitly pass SRCROOT and SETUP to propagate to ALL sub-makes (bsd/conf, SETUP, etc.)
+          # CRITICAL: Export SRCROOT to environment AND use -e so it propagates to ALL sub-makes (bsd/conf, SETUP, etc.)
           export SRCROOT="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source"
-          /Applications/Xcode_26.0.1.app/Contents/Developer/usr/bin/make \
+          /Applications/Xcode_26.0.1.app/Contents/Developer/usr/bin/make -e \
             -C "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd" \
             -f "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/Makefile" \
             CURRENT_KERNEL_CONFIG=DEVELOPMENT \
