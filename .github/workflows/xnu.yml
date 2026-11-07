@@ -215,6 +215,7 @@ jobs:
           # First try to build just the kernel to see linker errors
           echo "=== Attempting kernel link directly ==="
           set -x
+          # Direct redirect to file (no tee) to capture output
           make -j1 kernel VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
@@ -234,8 +235,8 @@ jobs:
             DRIVERKIT=0 \
             CFLAGS="-Wno-format" \
             CXXFLAGS="-Wno-format" \
-            2>&1 | tee /tmp/xnu-kernel-link.log
-          KERNEL_LINK_EXIT=${PIPESTATUS[0]}
+            > /tmp/xnu-kernel-link.log 2>&1
+          KERNEL_LINK_EXIT=$?
           echo "Kernel link exit code: $KERNEL_LINK_EXIT"
           echo "=== Kernel link log ==="
           cat /tmp/xnu-kernel-link.log
