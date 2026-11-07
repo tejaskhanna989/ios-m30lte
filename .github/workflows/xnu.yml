@@ -45,11 +45,6 @@ jobs:
           xcode-select -p
           xcodebuild -version
 
-      - name: Check disk space
-        run: |
-          echo "=== Disk space before build ==="
-          df -h /
-
       - name: Deps
         run: |
           brew install jq gum bash cmake ninja
@@ -234,11 +229,6 @@ jobs:
             sed -i '' 's|#include <config.h>|#include "config.h"|' SETUP/config/externs.c
           fi
 
-      - name: Check disk space before kernel build
-        run: |
-          echo "=== Disk space before kernel build ==="
-          df -h /
-
       - name: Build XNU kernel
         run: |
           cd xnu-source
@@ -277,11 +267,6 @@ jobs:
             echo "KERNEL BUILD FAILED with exit code $BUILD_EXIT"
             exit $BUILD_EXIT
           fi
-
-      - name: Check disk space after kernel build
-        run: |
-          echo "=== Disk space after kernel build ==="
-          df -h /
 
       - name: Upload build log
         if: always()
