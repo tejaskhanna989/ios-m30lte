@@ -245,6 +245,14 @@ jobs:
           # Verify the changes
           grep -r "/makedefs" BUILD/obj --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found in build directory"
 
+      - name: Fix makedefs paths in source directory
+        run: |
+          echo "=== Fixing /makedefs paths in source directory ==="
+          cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
+          python3 ../xnu/fix_makedefs.py .
+          # Verify the changes
+          grep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found in source directory"
+
       - name: Build XNU kernel
         id: build_kernel
         run: |
