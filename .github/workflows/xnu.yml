@@ -273,18 +273,18 @@ jobs:
         run: |
           echo "=== Trying to run bsd build from source root to capture linker error ==="
           cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
-          # Run the exact sub-make command from the parent build, but from source root
+          # Run the exact sub-make command from the parent build
           make VERBOSE=YES \
             -C BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd \
-            -f bsd/Makefile \
+            -f /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/Makefile \
             CURRENT_KERNEL_CONFIG=DEVELOPMENT \
             CURRENT_ARCH_CONFIG=ARM64 \
             CURRENT_MACHINE_CONFIG=M30LTE \
             CURRENT_BUILD_CONFIG=DEVELOPMENT^ARM64^M30LTE \
-            SOURCE=bsd/ \
+            SOURCE=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/ \
             RELATIVE_SOURCE_PATH=./bsd \
-            TARGET=BUILD/obj/DEVELOPMENT_ARM64_M30LTE/. \
-            OBJPATH=BUILD/obj/DEVELOPMENT_ARM64_M30LTE \
+            TARGET=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/. \
+            OBJPATH=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE \
             do_build_all 2>&1 | tee /tmp/bsd-build.log
           echo "bsd build exit code: ${PIPESTATUS[0]}"
           tail -200 /tmp/bsd-build.log
