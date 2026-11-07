@@ -288,14 +288,16 @@ jobs:
             # Run bsd build directly to capture linker error
             echo "=== Running bsd link step from build directory to capture linker error ==="
             cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd
-            make VERBOSE=YES do_build_all 2>&1 | tee ${GITHUB_WORKSPACE}/bsd-build.log
+            # Write to a known absolute path
+            BSD_LOG="/Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log"
+            make VERBOSE=YES do_build_all 2>&1 | tee "$BSD_LOG"
             BSD_EXIT=${PIPESTATUS[0]}
             echo "bsd build exit code: ${BSD_EXIT}"
             echo "=== Full bsd build log ==="
-            cat ${GITHUB_WORKSPACE}/bsd-build.log
+            cat "$BSD_LOG"
             # Ensure the log file is in workspace for artifact upload
-            ls -la ${GITHUB_WORKSPACE}/bsd-build.log
-            cp ${GITHUB_WORKSPACE}/bsd-build.log ${GITHUB_WORKSPACE}/bsd-build.log.artifact 2>/dev/null || true
+            ls -la "$BSD_LOG"
+            cp "$BSD_LOG" /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log.artifact 2>/dev/null || true
             exit $BUILD_EXIT
           fi
 
