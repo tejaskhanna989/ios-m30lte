@@ -26,9 +26,9 @@ jobs:
       contents: read
       actions: read
     env:
-      MACOS_VERSION: ${{ inputs.macos_version || '13.5' }}
-      KERNEL_CONFIG: ${{ inputs.kernel_config || 'DEVELOPMENT' }}
-      MACHINE_CONFIG: ${{ inputs.machine_config || 'M30LTE' }}
+      MACOS_VERSION: ${{ inputs.macos_version }}
+      KERNEL_CONFIG: ${{ inputs.kernel_config }}
+      MACHINE_CONFIG: ${{ inputs.machine_config }}
       DRIVERKIT: "0"
     steps:
       - uses: actions/checkout@v4
