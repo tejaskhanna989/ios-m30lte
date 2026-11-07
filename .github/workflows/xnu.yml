@@ -30,11 +30,9 @@ jobs:
       KERNEL_CONFIG: "DEVELOPMENT"
       MACHINE_CONFIG: "M30LTE"
       DRIVERKIT: "0"
-      # Set CFLAGS globally for all steps including build_setup
       SDKROOT_PATH: "/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk"
       CFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/usr/include"
       CXXFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/usr/include"
-      # Force single-threaded builds to avoid resource issues
       MAKEFLAGS: "-j1"
     steps:
       - uses: actions/checkout@v4
@@ -206,11 +204,6 @@ jobs:
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           make installhdrs -j8 SDKROOT=macosx ARCH_CONFIGS="X86_64 ARM64" OBJROOT="$PWD/BUILD/xnu-hdrs.obj" SYMROOT="$PWD/BUILD/xnu-hdrs.sym" DSTROOT="$PWD/fakeroot" FAKEROOT_DIR="$PWD/fakeroot" KDKROOT="/Library/Developer/KDKs" TIGHTBEAMC="" RC_DARWIN_KERNEL_VERSION="22.6.0" MEMORY_SIZE="${MEMORY_SIZE}" SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" KERNEL_BUILDS_IN_PARALLEL=1 2>&1 | tail -20 || true
 
-      - name: Check disk space after deps
-        run: |
-          echo "=== Disk space after deps ==="
-          df -h /
-
       - name: Pre-build IORPC patch for DriverKit
         run: |
           cd xnu-source
@@ -224,22 +217,18 @@ jobs:
           SDKROOT_PATH=$(xcrun --sdk macosx --show-sdk-path)
           echo "SDKROOT_PATH=$SDKROOT_PATH"
           
-          # Fix kextsymboltool Makefile - ensure CFLAGS includes sysroot
           if [ -f SETUP/kextsymboltool/Makefile ]; then
             echo "Patching SETUP/kextsymboltool/Makefile"
             sed -i '' '1s@^@CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include\n@' SETUP/kextsymboltool/Makefile
             cat SETUP/kextsymboltool/Makefile
           fi
           
-          # Fix config Makefile - ensure CFLAGS includes sysroot AND source directory
           if [ -f SETUP/config/Makefile ]; then
             echo "Patching SETUP/config/Makefile"
-            # Use $(SOURCE) which is passed by the build system
             sed -i '' '1s@^@CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include -I$(SOURCE)\n@' SETUP/config/Makefile
             cat SETUP/config/Makefile
           fi
           
-          # Fix angled include in externs.c
           if [ -f SETUP/config/externs.c ]; then
             echo "Fixing externs.c include"
             sed -i '' 's|#include <config.h>|#include "config.h"|' SETUP/config/externs.c
