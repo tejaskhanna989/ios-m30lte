@@ -212,6 +212,41 @@ jobs:
           export DRIVERKIT=0
           export CFLAGS="-Wno-format"
           export CXXFLAGS="-Wno-format"
+          # First try to build just the kernel to see linker errors
+          echo "=== Attempting kernel link directly ==="
+          make -j1 kernel VERBOSE=YES \
+            SDKROOT=macosx \
+            TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
+            SRCROOT="$PWD" \
+            OBJROOT="$PWD/BUILD/obj" \
+            SYMROOT="$PWD/BUILD/sym" \
+            DSTROOT="$PWD/fakeroot" \
+            FAKEROOT_DIR="$PWD/fakeroot" \
+            KDKROOT="/Library/Developer/KDKs" \
+            TIGHTBEAMC="" \
+            RC_DARWIN_KERNEL_VERSION="22.6.0" \
+            MEMORY_SIZE="${MEMORY_SIZE}" \
+            SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" \
+            SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" \
+            KERNEL_BUILDS_IN_PARALLEL=1 \
+            BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
+            DRIVERKIT=0 \
+            CFLAGS="-Wno-format" \
+            CXXFLAGS="-Wno-format" \
+            > /tmp/xnu-kernel-link.log 2>&1
+          KERNEL_LINK_EXIT=$?
+          echo "Kernel link exit code: $KERNEL_LINK_EXIT"
+          echo "=== Kernel link log ==="
+          cat /tmp/xnu-kernel-link.log
+          if [ $KERNEL_LINK_EXIT -ne 0 ]; then
+            echo "KERNEL LINK FAILED"
+            exit $KERNEL_LINK_EXIT
+          fi
+          # If kernel link succeeds, run install
+          echo "=== Running install ==="
+          export DRIVERKIT=0
+          export CFLAGS="-Wno-format"
+          export CXXFLAGS="-Wno-format"
           make -j1 install VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
@@ -230,6 +265,17 @@ jobs:
             BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
             DRIVERKIT=0 \
             > /tmp/xnu-build.log 2>&1
+          BUILD_EXIT=$?
+          echo "make exit code: $BUILD_EXIT"
+          echo "=== Errors in build log ==="
+          grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found" /tmp/xnu-build.log | head -20 || echo "No errors found in log"
+          echo "=== Kernel artifacts ==="
+          find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
+          find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
+          if [ $BUILD_EXIT -ne 0 ]; then
+            echo "KERNEL BUILD FAILED with exit code $BUILD_EXIT"
+            exit $BUILD_EXIT
+          fi
           BUILD_EXIT=$?
           echo "make exit code: $BUILD_EXIT"
           echo "=== Errors in build log ==="
