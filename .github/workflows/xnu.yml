@@ -294,6 +294,7 @@ jobs:
             echo "=== Full bsd build log ==="
             cat ${GITHUB_WORKSPACE}/bsd-build.log
             # Ensure the log file is in workspace for artifact upload
+            ls -la ${GITHUB_WORKSPACE}/bsd-build.log
             cp ${GITHUB_WORKSPACE}/bsd-build.log ${GITHUB_WORKSPACE}/bsd-build.log.artifact 2>/dev/null || true
             exit $BUILD_EXIT
           fi
