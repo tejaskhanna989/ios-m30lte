@@ -291,7 +291,17 @@ jobs:
         run: |
           echo "=== Main build failed, running bsd link step to capture linker error ==="
           cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd
-          make VERBOSE=YES build_all 2>&1 | tee /tmp/bsd-build.log
+          # Run the exact sub-make command from the parent build
+          make VERBOSE=YES \
+            CURRENT_KERNEL_CONFIG=DEVELOPMENT \
+            CURRENT_ARCH_CONFIG=ARM64 \
+            CURRENT_MACHINE_CONFIG=M30LTE \
+            CURRENT_BUILD_CONFIG=DEVELOPMENT^ARM64^M30LTE \
+            SOURCE=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/ \
+            RELATIVE_SOURCE_PATH=./bsd \
+            TARGET=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/. \
+            OBJPATH=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE \
+            do_build_all 2>&1 | tee /tmp/bsd-build.log
           BSD_EXIT=${PIPESTATUS[0]}
           echo "bsd build exit code: ${BSD_EXIT}"
           echo "=== Full bsd build log ==="
