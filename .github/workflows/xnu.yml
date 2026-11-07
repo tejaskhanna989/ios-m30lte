@@ -18,12 +18,6 @@ on:
       - "xnu/patches/**"
       - ".github/workflows/xnu.yml"
 
-env:
-  MACOS_VERSION: ${{ inputs.macos_version || '13.5' }}
-  KERNEL_CONFIG: ${{ inputs.kernel_config || 'DEVELOPMENT' }}
-  MACHINE_CONFIG: ${{ inputs.machine_config || 'M30LTE' }}
-  DRIVERKIT: "0"
-
 jobs:
   build:
     runs-on: macos-26
@@ -31,6 +25,11 @@ jobs:
     permissions:
       contents: read
       actions: read
+    env:
+      MACOS_VERSION: ${{ inputs.macos_version || '13.5' }}
+      KERNEL_CONFIG: ${{ inputs.kernel_config || 'DEVELOPMENT' }}
+      MACHINE_CONFIG: ${{ inputs.machine_config || 'M30LTE' }}
+      DRIVERKIT: "0"
     steps:
       - uses: actions/checkout@v4
 
