@@ -26,9 +26,9 @@ jobs:
       contents: read
       actions: read
     env:
-      MACOS_VERSION: ${{ inputs.macos_version }}
-      KERNEL_CONFIG: ${{ inputs.kernel_config }}
-      MACHINE_CONFIG: ${{ inputs.machine_config }}
+      MACOS_VERSION: "13.5"
+      KERNEL_CONFIG: "DEVELOPMENT"
+      MACHINE_CONFIG: "M30LTE"
       DRIVERKIT: "0"
     steps:
       - uses: actions/checkout@v4
@@ -211,7 +211,6 @@ jobs:
           # Fix kextsymboltool Makefile - add isysroot and include paths
           if [ -f SETUP/kextsymboltool/Makefile ]; then
             echo "Patching SETUP/kextsymboltool/Makefile"
-            # Use awk to add CFLAGS at the beginning
             awk -v sdk="$SDKROOT_PATH" 'NR==1{print "CFLAGS += -isysroot " sdk " -I" sdk "/usr/include"} 1' SETUP/kextsymboltool/Makefile > SETUP/kextsymboltool/Makefile.new && mv SETUP/kextsymboltool/Makefile.new SETUP/kextsymboltool/Makefile
             cat SETUP/kextsymboltool/Makefile
           fi
