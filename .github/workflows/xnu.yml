@@ -269,6 +269,8 @@ jobs:
           echo "=== Building XNU kernel (default target) ==="
           # Build with explicit linker verbose output, capture all sub-make output
           # Do NOT use set -o pipefail - it kills the script before we capture PIPESTATUS
+          # CRITICAL: Export SRCROOT so it propagates to ALL sub-makes (bsd/conf, SETUP, etc.)
+          export SRCROOT="$PWD"
           make VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
