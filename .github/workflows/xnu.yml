@@ -295,6 +295,18 @@ jobs:
             exit $BUILD_EXIT
           fi
 
+      - name: Upload bsd build log
+        if: always()
+        run: |
+          cp /tmp/bsd-build.log bsd-build.log 2>/dev/null || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bsd-build-log
+          path: bsd-build.log
+          if-no-files-found: warn
+
       - name: Upload build log
         if: always()
         run: |
