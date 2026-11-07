@@ -212,11 +212,10 @@ jobs:
           export DRIVERKIT=0
           export CFLAGS="-Wno-format"
           export CXXFLAGS="-Wno-format"
-          # First try to build just the kernel to see linker errors
-          echo "=== Attempting kernel link directly ==="
+          # Build using default target (no 'kernel' target exists)
+          echo "=== Building XNU kernel (default target) ==="
           set -x
-          # Direct redirect to file (no tee) to capture output
-          make -j1 kernel VERBOSE=YES \
+          make -j1 VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
             SRCROOT="$PWD" \
@@ -235,43 +234,11 @@ jobs:
             DRIVERKIT=0 \
             CFLAGS="-Wno-format" \
             CXXFLAGS="-Wno-format" \
-            > /tmp/xnu-kernel-link.log 2>&1
-          KERNEL_LINK_EXIT=$?
-          echo "Kernel link exit code: $KERNEL_LINK_EXIT"
-          echo "=== Kernel link log ==="
-          cat /tmp/xnu-kernel-link.log
-          echo "=== End kernel link log ==="
-          if [ $KERNEL_LINK_EXIT -ne 0 ]; then
-            echo "KERNEL LINK FAILED"
-            exit $KERNEL_LINK_EXIT
-          fi
-          # If kernel link succeeds, run install
-          echo "=== Running install ==="
-          export DRIVERKIT=0
-          export CFLAGS="-Wno-format"
-          export CXXFLAGS="-Wno-format"
-          make -j1 install VERBOSE=YES \
-            SDKROOT=macosx \
-            TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
-            SRCROOT="$PWD" \
-            OBJROOT="$PWD/BUILD/obj" \
-            SYMROOT="$PWD/BUILD/sym" \
-            DSTROOT="$PWD/fakeroot" \
-            FAKEROOT_DIR="$PWD/fakeroot" \
-            KDKROOT="/Library/Developer/KDKs" \
-            TIGHTBEAMC="" \
-            RC_DARWIN_KERNEL_VERSION="22.6.0" \
-            MEMORY_SIZE="${MEMORY_SIZE}" \
-            SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" \
-            SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" \
-            KERNEL_BUILDS_IN_PARALLEL=1 \
-            BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
-            DRIVERKIT=0 \
             2>&1 | tee /tmp/xnu-build.log
           BUILD_EXIT=${PIPESTATUS[0]}
           echo "make exit code: $BUILD_EXIT"
           echo "=== Errors in build log ==="
-          grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found" /tmp/xnu-build.log | head -20 || echo "No errors found in log"
+          grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found" /tmp/xnu-build.log | head -30 || echo "No errors found in log"
           echo "=== Kernel artifacts ==="
           find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
           find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
@@ -284,15 +251,12 @@ jobs:
         if: always()
         run: |
           cp /tmp/xnu-build.log xnu-build.log 2>/dev/null || true
-          cp /tmp/xnu-kernel-link.log xnu-kernel-link.log 2>/dev/null || true
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: xnu-build-log
-          path: |
-            xnu-build.log
-            xnu-kernel-link.log
+          path: xnu-build.log
           if-no-files-found: warn
 
       - name: Collect kernel artifact
