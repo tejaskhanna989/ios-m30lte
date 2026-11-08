@@ -108,6 +108,12 @@ jobs:
           cat ../xnu/patches/0000-m30lte-machine-config.patch | grep -A 50 "M30LTE.h" | head -60 || true
           sed -i '' 's|^AVAILABILITY_PL="${SDKROOT}/${DRIVERKITROOT}|AVAILABILITY_PL="${FAKEROOT_DIR}|g' bsd/sys/make_symbol_aliasing.sh 2>/dev/null || true
 
+      - name: Fix MASTER.arm64.m30lte config syntax
+        run: |
+          cd xnu-source
+          echo "=== Fixing MASTER.arm64.m30lte config syntax ==="
+          python3 ../xnu/patches/fix_master_m30lte.py
+
       - name: Fix makedefs path in Makefiles
         run: |
           echo "=== Fixing /makedefs paths in Makefiles ==="
