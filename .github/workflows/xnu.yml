@@ -1,6 +1,5 @@
 name: xnu
-
-on:
+true:
   workflow_dispatch:
     inputs:
       macos_version:
@@ -316,6 +315,19 @@ jobs:
         | tail -20 || true
 
         '
+    - name: Build SETUP tools for macOS (host platform)
+      run: "cd xnu-source\necho \"=== Building SETUP tools for macOS (host platform)\
+        \ ===\"\n# Build SETUP tools with macOS SDK (host platform)\nmake -C SETUP/config\
+        \ clean 2>/dev/null || true\nmake -C SETUP/config \\\n  SDKROOT=macosx \\\n\
+        \  HOST_SDKROOT=macosx \\\n  HOST_OS_VERSION=26.0 \\\n  OBJROOT=\"$PWD/BUILD/obj\"\
+        \ \\\n  SYMROOT=\"$PWD/BUILD/sym\" \\\n  DSTROOT=\"$PWD/fakeroot\" \\\n  FAKEROOT_DIR=\"\
+        $PWD/fakeroot\" \\\n  KDKROOT=\"/Library/Developer/KDKs\" \\\n  SRCROOT=\"\
+        $PWD\" \\\n  CURRENT_KERNEL_CONFIG=DEVELOPMENT \\\n  CURRENT_ARCH_CONFIG=ARM64\
+        \ \\\n  CURRENT_MACHINE_CONFIG=M30LTE \\\n  CURRENT_MACHINE_CONFIG_LC=m30lte\
+        \ \\\n  do_build_setup 2>&1 | tail -20\n# Copy built tools to main build directory\n\
+        mkdir -p BUILD/obj/SETUP/config\ncp -v SETUP/config/config BUILD/obj/SETUP/config/\
+        \ 2>/dev/null || true\ncp -v SETUP/config/*.o BUILD/obj/SETUP/config/ 2>/dev/null\
+        \ || true\necho \"SETUP tools built and copied for macOS\""
     - name: Pre-build IORPC patch for DriverKit
       run: 'cd xnu-source
 
@@ -325,21 +337,31 @@ jobs:
 
         '
     - name: Patch SETUP/config/Makefile for VPATH
-      run: |
-        cd xnu-source
+      run: 'cd xnu-source
+
         echo "=== Patching SETUP/config/Makefile for VPATH ==="
+
         python3 ../xnu/patches/patch_setup_config_vpath.py
+
         echo "Patched successfully"
 
+        '
     - name: Fix SETUP tool include paths
-      run: |
-        cd xnu-source
+      run: 'cd xnu-source
+
         echo "=== Fixing SETUP tool include paths ==="
+
         SDKROOT_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
+
         echo "SDKROOT_PATH=$SDKROOT_PATH"
+
         export SDKROOT_PATH
+
         python3 ../xnu/patches/fix_setup_tool_includes.py
+
         echo "Fixed successfully"
+
+        '
     - name: Fix makedefs paths in build directory
       run: 'echo "=== Fixing /makedefs paths in build directory ==="
 
@@ -356,13 +378,18 @@ jobs:
 
         '
     - name: Copy SETUP/config sources to build directory
-      run: |
-        cd xnu-source
+      run: 'cd xnu-source
+
         echo "=== Copying SETUP/config sources to build directory ==="
+
         mkdir -p BUILD/obj/SETUP/config
-        cp -v SETUP/config/*.c SETUP/config/*.h SETUP/config/*.y SETUP/config/*.l BUILD/obj/SETUP/config/ 2>/dev/null || true
+
+        cp -v SETUP/config/*.c SETUP/config/*.h SETUP/config/*.y SETUP/config/*.l
+        BUILD/obj/SETUP/config/ 2>/dev/null || true
+
         ls -la BUILD/obj/SETUP/config/
 
+        '
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
