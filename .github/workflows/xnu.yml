@@ -95,6 +95,23 @@ jobs:
           # Verify KDK installation
           ls -la /Library/Developer/KDKs/
 
+      - name: Verify build environment
+        run: |
+          echo "=== Build Environment Verification ==="
+          echo "SRCROOT: ${SRCROOT:-not set}"
+          echo "CURRENT_KERNEL_CONFIG: ${CURRENT_KERNEL_CONFIG:-not set}"
+          echo "CURRENT_ARCH_CONFIG: ${CURRENT_ARCH_CONFIG:-not set}"
+          echo "CURRENT_MACHINE_CONFIG: ${CURRENT_MACHINE_CONFIG:-not set}"
+          echo "CURRENT_MACHINE_CONFIG_LC: ${CURRENT_MACHINE_CONFIG_LC:-not set}"
+          echo "SDKROOT: ${SDKROOT:-not set}"
+          echo "DEVELOPER_DIR: ${DEVELOPER_DIR:-not set}"
+          echo "KDKROOT: ${KDKROOT:-not set}"
+          echo "OBJROOT: ${OBJROOT:-not set}"
+          echo "=== KDK Installation ==="
+          ls -la /Library/Developer/KDKs/ 2>/dev/null || echo "No KDKs found"
+          echo "=== SDKROOT ==="
+          xcrun --sdk macosx --show-sdk-path
+
       - name: Clone XNU
         run: |
           git clone --branch xnu-8796.141.3 --depth 1 https://github.com/apple-oss-distributions/xnu.git xnu-source
