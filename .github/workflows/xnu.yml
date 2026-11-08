@@ -362,6 +362,10 @@ jobs:
           make -e VERBOSE=YES \
             SDKROOT=iphoneos \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
+            CURRENT_KERNEL_CONFIG=DEVELOPMENT \
+            CURRENT_ARCH_CONFIG=ARM64 \
+            CURRENT_MACHINE_CONFIG=M30LTE \
+            CURRENT_MACHINE_CONFIG_LC=m30lte \
             OBJROOT="$PWD/BUILD/obj" \
             SYMROOT="$PWD/BUILD/sym" \
             DSTROOT="$PWD/fakeroot" \
