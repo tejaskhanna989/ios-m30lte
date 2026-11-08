@@ -266,6 +266,17 @@ jobs:
           git clone --branch "${AVAILABILITYVERSIONS_VERSION}" --depth 1 https://github.com/apple-oss-distributions/AvailabilityVersions.git AvailabilityVersions
           cd AvailabilityVersions
           make install -j8 OBJROOT="$PWD/../BUILD/" SYMROOT="$PWD/../BUILD/" DSTROOT="$PWD/../fakeroot" 2>&1 | tail -20 || true
+          # Also install availability.pl to host system location for make_symbol_aliasing.sh fallback
+          if [ -f "$PWD/../fakeroot/usr/local/libexec/availability.pl" ]; then
+            echo "Installing availability.pl to /usr/local/libexec/"
+            sudo mkdir -p /usr/local/libexec
+            sudo cp "$PWD/../fakeroot/usr/local/libexec/availability.pl" /usr/local/libexec/availability.pl
+            sudo chmod +x /usr/local/libexec/availability.pl
+            echo "Installed availability.pl to host system"
+          else
+            echo "WARNING: availability.pl not found in fakeroot"
+            find "$PWD/../fakeroot" -name "availability.pl" 2>/dev/null || true
+          fi
 
       - name: Patch make_symbol_aliasing.sh for availability.pl fallback
         run: |
