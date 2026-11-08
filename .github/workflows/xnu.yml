@@ -181,15 +181,6 @@ jobs:
           fi
           grep -n "kernelContent" iokit/DriverKit/IORPC.h 2>/dev/null | head -5 || echo "kernelContent not found in IORPC.h"
 
-        run: |
-          cd xnu-source
-          echo "=== Patching out incompatible clang flags ==="
-          find . -name "*.def" -o -name "Makefile*" -o -name "*.mk" -o -name "*.inc" | xargs grep -l "enable-trivial-auto-var-init-zero-knowing" 2>/dev/null | while read file; do
-            echo "Patching: $file"
-            sed -i '' 's/-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang//g' "$file"
-          done
-          grep -r "enable-trivial-auto-var-init-zero-knowing" . 2>/dev/null | head -5 || echo "Flag not found in source (may be added at build time)"
-
       - name: Build bootstrap_cmds (mig)
         run: |
           cd xnu-source
