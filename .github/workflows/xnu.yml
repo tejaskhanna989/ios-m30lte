@@ -253,7 +253,6 @@ jobs:
           python3 ../xnu/fix_makedefs.py BUILD/obj
           # Verify the changes
           grep -r "/makedefs" BUILD/obj --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found in build directory"
-    if idx >= 0:
           # Verify the patch
 
       - name: Build XNU kernel
