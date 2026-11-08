@@ -300,8 +300,8 @@ jobs:
           echo "=== Building XNU kernel (default target) ==="
           # Build with explicit linker verbose output, capture all sub-make output
           # Do NOT use set -o pipefail - it kills the script before we capture PIPESTATUS
-          # CRITICAL: Export SRCROOT and machine configs to environment AND use -e so they propagate to ALL sub-makes (bsd/conf, SETUP, etc.)
-          # ALSO pass machine configs explicitly as make variables to ensure config utility gets them
+          # CRITICAL: Pass machine configs explicitly as make variables AND environment variables
+          # to ensure config utility (doconf) receives them for file list generation
           export SRCROOT="$PWD"
           export CURRENT_KERNEL_CONFIG=DEVELOPMENT
           export CURRENT_ARCH_CONFIG=ARM64
@@ -312,6 +312,7 @@ jobs:
             CURRENT_KERNEL_CONFIG=DEVELOPMENT \
             CURRENT_ARCH_CONFIG=ARM64 \
             CURRENT_MACHINE_CONFIG=M30LTE \
+            CURRENT_MACHINE_CONFIG_LC=m30lte \
             OBJROOT="$PWD/BUILD/obj" \
             SYMROOT="$PWD/BUILD/sym" \
             DSTROOT="$PWD/fakeroot" \
