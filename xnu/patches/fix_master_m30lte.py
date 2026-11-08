@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fix MASTER.arm64.m30lte config file - replace #define with options and remove C preprocessor directives."""
+"""Fix MASTER.arm64.m30lte config file - replace #define with options and enable LIBKERN."""
 import sys
 import re
 
@@ -9,6 +9,12 @@ with open('config/MASTER.arm64.m30lte', 'r') as f:
 # Replace #define with options
 content = content.replace('#define nos_arm_asm 1\n', 'options\tNOS_ARM_ASM\t\t# <nos_arm_asm>\n')
 content = content.replace('#define nos_arm_pmap 1\n', 'options\tNOS_ARM_PMAP\t\t# <nos_arm_pmap>\n')
+
+# Uncomment LIBKERN lines
+content = re.sub(r'^#\s*(LIBKERN_BASE\s*=)', r'  \1', content, flags=re.MULTILINE)
+content = re.sub(r'^#\s*(LIBKERN_RELEASE\s*=)', r'  \1', content, flags=re.MULTILINE)
+content = re.sub(r'^#\s*(LIBKERN_DEV\s*=)', r'  \1', content, flags=re.MULTILINE)
+content = re.sub(r'^#\s*(LIBKERN_DEBUG\s*=)', r'  \1', content, flags=re.MULTILINE)
 
 # Remove C preprocessor directives that unifdef can't handle for M30LTE
 # For M30LTE: SOC_CONFIG_t8020 is not defined, SOC_IS_VIRTUALIZED is undefined (-U)
