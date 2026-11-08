@@ -332,17 +332,14 @@ jobs:
         echo "Patched successfully"
 
     - name: Fix SETUP tool include paths
-      run: "cd xnu-source\necho \"=== Fixing SETUP tool include paths ===\"\nSDKROOT_PATH=$(xcrun\
-        \ --sdk iphoneos --show-sdk-path)\necho \"SDKROOT_PATH=$SDKROOT_PATH\"\n\n\
-        if [ -f SETUP/kextsymboltool/Makefile ]; then\n  echo \"Patching SETUP/kextsymboltool/Makefile\"\
-        \n  sed -i '' '1s@^@CFLAGS += -isysroot '\"$SDKROOT_PATH\"' -I'\"$SDKROOT_PATH\"\
-        '/usr/include\\n@' SETUP/kextsymboltool/Makefile\n  cat SETUP/kextsymboltool/Makefile\n\
-        fi\n\nif [ -f SETUP/config/Makefile ]; then\n  echo \"Patching SETUP/config/Makefile\"\
-        \n  sed -i '' '1s@^@CFLAGS += -isysroot '\"$SDKROOT_PATH\"' -I'\"$SDKROOT_PATH\"\
-        '/usr/include -I$(SOURCE)\\n@' SETUP/config/Makefile\n  cat SETUP/config/Makefile\n\
-        fi\n\nif [ -f SETUP/config/externs.c ]; then\n  echo \"Fixing externs.c include\"\
-        \n  sed -i '' 's|#include <config.h>|#include \"config.h\"|' SETUP/config/externs.c\n\
-        fi\n"
+      run: |
+        cd xnu-source
+        echo "=== Fixing SETUP tool include paths ==="
+        SDKROOT_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
+        echo "SDKROOT_PATH=$SDKROOT_PATH"
+        export SDKROOT_PATH
+        python3 ../xnu/patches/fix_setup_tool_includes.py
+        echo "Fixed successfully"
     - name: Fix makedefs paths in build directory
       run: 'echo "=== Fixing /makedefs paths in build directory ==="
 
