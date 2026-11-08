@@ -355,6 +355,14 @@ jobs:
         # Verify the patch
 
         '
+    - name: Copy SETUP/config sources to build directory
+      run: |
+        cd xnu-source
+        echo "=== Copying SETUP/config sources to build directory ==="
+        mkdir -p BUILD/obj/SETUP/config
+        cp -v SETUP/config/*.c SETUP/config/*.h SETUP/config/*.y SETUP/config/*.l BUILD/obj/SETUP/config/ 2>/dev/null || true
+        ls -la BUILD/obj/SETUP/config/
+
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
