@@ -17,8 +17,9 @@ content = content.replace(
 )
 
 # Fix BSD_BASE: add config_imageboot_img4 and config_embedded for filelist generation
+# The original patch has: BSD_BASE = [ mach_bsd sysv_sem sysv_msg sysv_shm config_netboot config_imageboot psynch config_proc_uuid_policy config_coredump pgo config_personas ]
 content = content.replace(
-    'BSD_BASE =       [ mach_bsd sysv_sem sysv_msg sysv_shm config_netboot config_imageboot config_imageboot_img4 psynch config_proc_uuid_policy config_coredump pgo config_personas ]',
+    'BSD_BASE =       [ mach_bsd sysv_sem sysv_msg sysv_shm config_netboot config_imageboot psynch config_proc_uuid_policy config_coredump pgo config_personas ]',
     'BSD_BASE =       [ mach_bsd sysv_sem sysv_msg sysv_shm config_netboot config_imageboot config_imageboot_img4 config_embedded psynch config_proc_uuid_policy config_coredump pgo config_personas ]'
 )
 
