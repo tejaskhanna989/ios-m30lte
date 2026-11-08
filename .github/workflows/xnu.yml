@@ -280,6 +280,7 @@ jobs:
 
       - name: Create minimal availability.pl for _symbol_aliasing.h
         run: |
+          cd xnu-source
           echo "=== Creating minimal availability.pl for _symbol_aliasing.h ==="
           sudo mkdir -p /usr/local/libexec
           python3 ../xnu/patches/create_minimal_availability_pl.py > /tmp/availability.pl
