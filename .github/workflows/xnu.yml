@@ -119,6 +119,15 @@ jobs:
           cd xnu-source
           echo "=== MASTER.arm64.m30lte after fix ==="
           cat config/MASTER.arm64.m30lte
+          # Also save to file for artifact upload
+          cp config/MASTER.arm64.m30lte /tmp/MASTER.arm64.m30lte.debug
+
+      - name: Upload MASTER config debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: master-config-debug
+          path: /tmp/MASTER.arm64.m30lte.debug
+          if-no-files-found: warn
 
       - name: Fix makedefs path in Makefiles
         run: |
