@@ -10,10 +10,10 @@ with open('config/MASTER.arm64.m30lte', 'r') as f:
 content = content.replace('#define nos_arm_asm 1\n', 'options\tNOS_ARM_ASM\t\t# <nos_arm_asm>\n')
 content = content.replace('#define nos_arm_pmap 1\n', 'options\tNOS_ARM_PMAP\t\t# <nos_arm_pmap>\n')
 
-# Fix KERNEL_BASE: remove config_pmap_ppl (conflicts with nos_arm_pmap), add config_embedded
+# Fix KERNEL_BASE: remove config_pmap_ppl (conflicts with nos_arm_pmap), add missing standard options
 content = content.replace(
     'KERNEL_BASE =    [ arm64 config_pmap_ppl medium msgb_large config_requires_u32_munging config_delay_idle_sleep config_proc_udata_storage config_uexc config_darkboot ARM_EXTRAS_BASE nos_arm_asm nos_arm_pmap ]',
-    'KERNEL_BASE =    [ arm64 medium msgb_large config_embedded config_requires_u32_munging config_delay_idle_sleep config_proc_udata_storage config_uexc config_darkboot ARM_EXTRAS_BASE nos_arm_asm nos_arm_pmap ]'
+    'KERNEL_BASE =    [ arm64 medium msgb_large config_embedded config_enforce_signed_code config_code_signature_reconstitution config_requires_u32_munging config_delay_idle_sleep config_proc_udata_storage config_uexc config_darkboot ARM_EXTRAS_BASE nos_arm_asm nos_arm_pmap ]'
 )
 
 # Uncomment LIBKERN lines
