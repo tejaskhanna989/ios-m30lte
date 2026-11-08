@@ -30,16 +30,16 @@ jobs:
       KERNEL_CONFIG: "DEVELOPMENT"
       MACHINE_CONFIG: "M30LTE"
       DRIVERKIT: "0"
-      SDKROOT_PATH: "/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk"
-      CFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/usr/include"
-      CXXFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/usr/include"
+      SDKROOT_PATH: "/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk"
+      CFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include"
+      CXXFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include"
       MAKEFLAGS: "-j1"
       SRCROOT: "${{ github.workspace }}/xnu-source"
       CURRENT_KERNEL_CONFIG: "DEVELOPMENT"
       CURRENT_ARCH_CONFIG: "ARM64"
       CURRENT_MACHINE_CONFIG: "M30LTE"
       CURRENT_MACHINE_CONFIG_LC: "m30lte"
-      SDKROOT: "macosx"
+      SDKROOT: "iphoneos"
       DEVELOPER_DIR: "/Applications/Xcode_26.0.1.app/Contents/Developer"
       KDKROOT: "/Library/Developer/KDKs"
       OBJROOT: "${{ github.workspace }}/xnu-source/BUILD/obj"
@@ -147,7 +147,6 @@ jobs:
           done
           ls -la pexpert/pexpert/arm64/M30LTE.h 2>&1 || echo "M30LTE.h NOT FOUND - creating from patch"
           cat ../xnu/patches/0000-m30lte-machine-config.patch | grep -A 50 "M30LTE.h" | head -60 || true
-          sed -i '' 's|^AVAILABILITY_PL="${SDKROOT}/${DRIVERKITROOT}|AVAILABILITY_PL="${FAKEROOT_DIR}|g' bsd/sys/make_symbol_aliasing.sh 2>/dev/null || true
 
       - name: Fix MASTER.arm64.m30lte config syntax
         run: |
@@ -275,7 +274,7 @@ jobs:
           SYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           # Only install headers for our target architecture (ARM64 M30LTE), not X86_64 or VMAPPLE
-          make installhdrs -j8 SDKROOT=macosx ARCH_CONFIGS="ARM64" MACHINE_CONFIGS="M30LTE" OBJROOT="$PWD/BUILD/xnu-hdrs.obj" SYMROOT="$PWD/BUILD/xnu-hdrs.sym" DSTROOT="$PWD/fakeroot" FAKEROOT_DIR="$PWD/fakeroot" KDKROOT="/Library/Developer/KDKs" TIGHTBEAMC="" RC_DARWIN_KERNEL_VERSION="22.6.0" MEMORY_SIZE="${MEMORY_SIZE}" SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" KERNEL_BUILDS_IN_PARALLEL=1 2>&1 | tail -20 || true
+          make installhdrs -j8 SDKROOT=iphoneos ARCH_CONFIGS="ARM64" MACHINE_CONFIGS="M30LTE" OBJROOT="$PWD/BUILD/xnu-hdrs.obj" SYMROOT="$PWD/BUILD/xnu-hdrs.sym" DSTROOT="$PWD/fakeroot" FAKEROOT_DIR="$PWD/fakeroot" KDKROOT="/Library/Developer/KDKs" TIGHTBEAMC="" RC_DARWIN_KERNEL_VERSION="22.6.0" MEMORY_SIZE="${MEMORY_SIZE}" SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" KERNEL_BUILDS_IN_PARALLEL=1 2>&1 | tail -20 || true
 
       - name: Pre-build IORPC patch for DriverKit
         run: |
@@ -287,7 +286,7 @@ jobs:
         run: |
           cd xnu-source
           echo "=== Fixing SETUP tool include paths ==="
-          SDKROOT_PATH=$(xcrun --sdk macosx --show-sdk-path)
+          SDKROOT_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
           echo "SDKROOT_PATH=$SDKROOT_PATH"
           
           if [ -f SETUP/kextsymboltool/Makefile ]; then
@@ -329,7 +328,7 @@ jobs:
           # Do NOT use set -o pipefail - it kills the script before we capture PIPESTATUS
           # Environment variables are now set at job level for all steps
           make -e VERBOSE=YES \
-            SDKROOT=macosx \
+            SDKROOT=iphoneos \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
             OBJROOT="$PWD/BUILD/obj" \
             SYMROOT="$PWD/BUILD/sym" \
