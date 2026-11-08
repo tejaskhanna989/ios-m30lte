@@ -324,6 +324,13 @@ jobs:
         python3 ../xnu/patches/patch_all_iorpc.py
 
         '
+    - name: Patch SETUP/config/Makefile for VPATH
+      run: |
+        cd xnu-source
+        echo "=== Patching SETUP/config/Makefile for VPATH ==="
+        python3 ../xnu/patches/patch_setup_config_vpath.py
+        echo "Patched successfully"
+
     - name: Fix SETUP tool include paths
       run: "cd xnu-source\necho \"=== Fixing SETUP tool include paths ===\"\nSDKROOT_PATH=$(xcrun\
         \ --sdk iphoneos --show-sdk-path)\necho \"SDKROOT_PATH=$SDKROOT_PATH\"\n\n\
@@ -336,13 +343,6 @@ jobs:
         fi\n\nif [ -f SETUP/config/externs.c ]; then\n  echo \"Fixing externs.c include\"\
         \n  sed -i '' 's|#include <config.h>|#include \"config.h\"|' SETUP/config/externs.c\n\
         fi\n"
-    - name: Patch SETUP/config/Makefile for VPATH
-      run: |
-        cd xnu-source
-        echo "=== Patching SETUP/config/Makefile for VPATH ==="
-        python3 ../xnu/patches/patch_setup_config_vpath.py
-        echo "Patched successfully"
-
     - name: Fix makedefs paths in build directory
       run: 'echo "=== Fixing /makedefs paths in build directory ==="
 
