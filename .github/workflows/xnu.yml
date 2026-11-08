@@ -34,6 +34,15 @@ jobs:
       CFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/usr/include"
       CXXFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/usr/include"
       MAKEFLAGS: "-j1"
+      SRCROOT: "${{ github.workspace }}/xnu-source"
+      CURRENT_KERNEL_CONFIG: "DEVELOPMENT"
+      CURRENT_ARCH_CONFIG: "ARM64"
+      CURRENT_MACHINE_CONFIG: "M30LTE"
+      CURRENT_MACHINE_CONFIG_LC: "m30lte"
+      SDKROOT: "macosx"
+      DEVELOPER_DIR: "/Applications/Xcode_26.0.1.app/Contents/Developer"
+      KDKROOT: "/Library/Developer/KDKs"
+      OBJROOT: "${{ github.workspace }}/xnu-source/BUILD/obj"
     steps:
       - uses: actions/checkout@v4
 
@@ -317,20 +326,10 @@ jobs:
           echo "=== Building XNU kernel (default target) ==="
           # Build with explicit linker verbose output, capture all sub-make output
           # Do NOT use set -o pipefail - it kills the script before we capture PIPESTATUS
-          # CRITICAL: Pass machine configs explicitly as make variables AND environment variables
-          # to ensure config utility (doconf) receives them for file list generation
-          export SRCROOT="$PWD"
-          export CURRENT_KERNEL_CONFIG=DEVELOPMENT
-          export CURRENT_ARCH_CONFIG=ARM64
-          export CURRENT_MACHINE_CONFIG=M30LTE
-          export CURRENT_MACHINE_CONFIG_LC=m30lte
+          # Environment variables are now set at job level for all steps
           make -e VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
-            CURRENT_KERNEL_CONFIG=DEVELOPMENT \
-            CURRENT_ARCH_CONFIG=ARM64 \
-            CURRENT_MACHINE_CONFIG=M30LTE \
-            CURRENT_MACHINE_CONFIG_LC=m30lte \
             OBJROOT="$PWD/BUILD/obj" \
             SYMROOT="$PWD/BUILD/sym" \
             DSTROOT="$PWD/fakeroot" \
