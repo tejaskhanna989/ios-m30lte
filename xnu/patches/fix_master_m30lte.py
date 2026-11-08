@@ -198,10 +198,10 @@ content = re.sub(pv_pattern, pv_replacement, content)
 # Remove any remaining #define that aren't options
 content = re.sub(r'^#define\s+\w+\s+.*\n', '', content, flags=re.MULTILINE)
 
-# Remove any remaining #if/#else/#endif that might be malformed
-content = re.sub(r'^#if.*\n', '', content, flags=re.MULTILINE)
-content = re.sub(r'^#else.*\n', '', content, flags=re.MULTILINE)
-content = re.sub(r'^#endif.*\n', '', content, flags=re.MULTILINE)
+# Keep preprocessor directives for doconf syntax - don't remove them
+# content = re.sub(r'^#if.*\n', '', content, flags=re.MULTILINE)
+# content = re.sub(r'^#else.*\n', '', content, flags=re.MULTILINE)
+# content = re.sub(r'^#endif.*\n', '', content, flags=re.MULTILINE)
 
 with open('config/MASTER.arm64.m30lte', 'w') as f:
     f.write(content)
