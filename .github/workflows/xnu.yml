@@ -299,6 +299,26 @@ jobs:
           chmod +x bsd/sys/make_symbol_aliasing.sh
           echo "Patched successfully"
 
+      - name: Generate kernel configs (run doconf for all components)
+        run: |
+          cd xnu-source
+          echo "=== Generating kernel configs for M30LTE ==="
+          # Run doconf for each component that needs it
+          # This generates files.m30lte and other config files needed for the build
+          for component in bsd osfmk iokit security; do
+            echo "Generating config for $component..."
+            mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$component/DEVELOPMENT
+            $PWD/SETUP/config/doconf -c \
+              -cpu arm64 \
+              -soc m30lte \
+              -platform iPhoneOS \
+              -d BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$component/DEVELOPMENT \
+              -s $PWD/$component \
+              -m $PWD/config \
+              DEVELOPMENT
+          done
+          echo "Config generation complete"
+
       - name: Install xnu headers
         run: |
           cd xnu-source
