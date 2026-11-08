@@ -267,6 +267,14 @@ jobs:
           cd AvailabilityVersions
           make install -j8 OBJROOT="$PWD/../BUILD/" SYMROOT="$PWD/../BUILD/" DSTROOT="$PWD/../fakeroot" 2>&1 | tail -20 || true
 
+      - name: Patch make_symbol_aliasing.sh for availability.pl fallback
+        run: |
+          cd xnu-source
+          echo "=== Patching make_symbol_aliasing.sh for availability.pl fallback ==="
+          python3 ../xnu/patches/patch_availability_fallback.py
+          chmod +x bsd/sys/make_symbol_aliasing.sh
+          echo "Patched successfully"
+
       - name: Install xnu headers
         run: |
           cd xnu-source
