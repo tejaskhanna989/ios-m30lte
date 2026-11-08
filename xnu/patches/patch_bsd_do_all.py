@@ -1,44 +1,49 @@
 #!/usr/bin/env python3
 """Patch bsd/conf/Makefile do_all target to propagate SRCROOT and SETUP to sub-makes."""
 import sys
-import re
 
 with open('bsd/conf/Makefile', 'r') as f:
-    content = f.read()
+    lines = f.readlines()
 
-# Find the do_all target in bsd/conf/Makefile
-# Pattern: do_all: $(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile
-# The target body contains a sub-make invocation with OBJPATH
+# Find the do_all target and insert SRCROOT/SETUP after OBJPATH line
+in_do_all = False
+patched = False
+new_lines = []
 
-pattern = re.compile(
-    r'(do_all\s*:\s*\$\(TARGET\)/\$\(CURRENT_KERNEL_CONFIG\)/Makefile\s*\\n'
-    r'(?:\s.*?\\\\\n)*'
-    r'\s+OBJPATH\s*=\s*\$\{OBJPATH\}\s*\\\\\n'
-    r'(?:\s.*?\\\\\n)*'
-    r'\s+build_all)',
-    re.MULTILINE | re.DOTALL
-)
+for i, line in enumerate(lines):
+    new_lines.append(line)
+    
+    # Detect start of do_all target
+    if line.strip().startswith('do_all:') and '$(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile' in line:
+        in_do_all = True
+        continue
+    
+    # Detect end of do_all target (next target or include)
+    if in_do_all and (line.strip().startswith('do_build_all') or line.strip().startswith('include ')):
+        in_do_all = False
+        continue
+    
+    # Inside do_all target, look for OBJPATH line
+    if in_do_all and 'OBJPATH=${OBJPATH}' in line and line.rstrip().endswith('\\'):
+        # Insert SRCROOT and SETUP after this line
+        indent = line[:len(line) - len(line.lstrip())]
+        new_lines.append(indent + 'SRCROOT=${SRCROOT}\t\t\t\t\t\\\n')
+        new_lines.append(indent + 'SETUP=${SRCROOT}/SETUP\t\t\t\t\t\\\n')
+        print(f"Inserted SRCROOT/SETUP after line {i}: {line.rstrip()}")
+        patched = True
 
-match = pattern.search(content)
-if not match:
-    print("Could not find do_all target with OBJPATH pattern in bsd/conf/Makefile!")
-    # Debug: print context around do_all
-    idx = content.find('do_all:')
-    if idx >= 0:
-        print(content[max(0, idx-100):idx+1000])
+if not patched:
+    print("Could not find OBJPATH line in do_all target!")
+    # Debug: print the do_all area
+    for i, line in enumerate(lines):
+        if 'do_all:' in line:
+            print("=== Found do_all at line", i, "===")
+            for j in range(i, min(i+30, len(lines))):
+                print(f"  {j}: {repr(lines[j])}")
+            break
     sys.exit(1)
 
-print("Found do_all target with OBJPATH pattern in bsd/conf/Makefile")
-
-# Insert SRCROOT and SETUP after OBJPATH line
-matched_text = match.group(0)
-new_text = re.sub(
-    r'(OBJPATH\s*=\s*\$\{OBJPATH\}\s*\\\\\n)',
-    r'\1SRCROOT=${SRCROOT}\t\t\t\t\t\\\\\nSETUP=${SRCROOT}/SETUP\t\t\t\t\t\\\\\n',
-    matched_text
-)
-
-new_content = content[:content.index(matched_text)] + new_text + content[content.index(matched_text) + len(matched_text):]
+new_content = ''.join(new_lines)
 
 with open('bsd/conf/Makefile', 'w') as f:
     f.write(new_content)
