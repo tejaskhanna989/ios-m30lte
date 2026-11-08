@@ -1,6 +1,5 @@
 name: xnu
-
-on:
+true:
   workflow_dispatch:
     inputs:
       macos_version:
@@ -325,9 +324,11 @@ jobs:
         $PWD/fakeroot\" \\\n  KDKROOT=\"/Library/Developer/KDKs\" \\\n  SRCROOT=\"\
         $PWD\" \\\n  CURRENT_KERNEL_CONFIG=DEVELOPMENT \\\n  CURRENT_ARCH_CONFIG=ARM64\
         \ \\\n  CURRENT_MACHINE_CONFIG=M30LTE \\\n  CURRENT_MACHINE_CONFIG_LC=m30lte\
-        \ \\\n  do_build_setup 2>&1 | tail -20\n# Copy built tools to main build directory\n\
-        mkdir -p BUILD/obj/SETUP/config\ncp -v SETUP/config/config BUILD/obj/SETUP/config/\
-        \ 2>/dev/null || true\ncp -v SETUP/config/*.o BUILD/obj/SETUP/config/ 2>/dev/null\
+        \ \\\n  do_build_setup 2>&1 | tail -20\n# Copy built tools to main build directory\
+        \ and touch to prevent rebuild\nmkdir -p BUILD/obj/SETUP/config\ncp -v SETUP/config/config\
+        \ BUILD/obj/SETUP/config/ 2>/dev/null || true\ncp -v SETUP/config/*.o BUILD/obj/SETUP/config/\
+        \ 2>/dev/null || true\n# Touch all output files to prevent rebuild\ntouch\
+        \ BUILD/obj/SETUP/config/config\ntouch BUILD/obj/SETUP/config/*.o 2>/dev/null\
         \ || true\necho \"SETUP tools built and copied for macOS\""
     - name: Pre-build IORPC patch for DriverKit
       run: 'cd xnu-source
