@@ -161,13 +161,13 @@ jobs:
           echo "=== First 30 lines of bsd/Makefile ==="
           head -30 bsd/Makefile
 
-      - name: Patch bsd/Makefile do_all to pass SRCROOT/SETUP to sub-make
+      - name: Patch bsd/conf/Makefile do_all to pass SRCROOT/SETUP to sub-make
         run: |
           cd xnu-source
-          echo "=== Patching bsd/Makefile do_all target to pass SRCROOT/SETUP ==="
+          echo "=== Patching bsd/conf/Makefile do_all target to pass SRCROOT/SETUP ==="
           python3 ../xnu/patches/patch_bsd_do_all.py
           # Verify the patch
-          grep -A 12 "do_all" bsd/Makefile | head -15
+          grep -A 12 "do_all" bsd/conf/Makefile | head -15
 
       - name: Fix DriverKit IORPC for Xcode 26
         run: |
