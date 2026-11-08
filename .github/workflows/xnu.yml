@@ -73,18 +73,27 @@ jobs:
 
       - name: Download KDK
         run: |
-          # Direct URL from dortania release (known working)
-          KDK_URL="https://github.com/dortania/KdkSupportPkg/releases/download/22G74/Kernel_Debug_Kit_13.5_build_22G74.dmg"
-          echo "Downloading KDK from: $KDK_URL"
-          curl -L -o /tmp/KDK.dmg "${KDK_URL}" || {
-            echo "Primary download failed, trying alternative source..."
-            # Fallback to Apple Developer (requires auth, may fail)
-            KDK_URL="https://developer.apple.com/services-account/download?path=/Developer_Tools/Kernel_Debug_Kit_13.5/Kernel_Debug_Kit_13.5_build_22G74.dmg"
-            curl -L -o /tmp/KDK.dmg "${KDK_URL}"
-          }
-          hdiutil attach /tmp/KDK.dmg
-          sudo installer -pkg '/Volumes/Kernel Debug Kit/KernelDebugKit.pkg' -target /
-          hdiutil detach '/Volumes/Kernel Debug Disk' 2>/dev/null || true
+          # Check if KDK is already installed
+          if [ -d "/Library/Developer/KDKs/KernelDebugKit_13.5_build_22G74.kdk" ]; then
+            echo "KDK already installed at /Library/Developer/KDKs/"
+            ls -la /Library/Developer/KDKs/
+          else
+            echo "KDK not found, downloading..."
+            # Direct URL from dortania release (known working)
+            KDK_URL="https://github.com/dortania/KdkSupportPkg/releases/download/22G74/Kernel_Debug_Kit_13.5_build_22G74.dmg"
+            echo "Downloading KDK from: $KDK_URL"
+            curl -L -o /tmp/KDK.dmg "${KDK_URL}" || {
+              echo "Primary download failed, trying alternative source..."
+              # Fallback to Apple Developer (requires auth, may fail)
+              KDK_URL="https://developer.apple.com/services-account/download?path=/Developer_Tools/Kernel_Debug_Kit_13.5/Kernel_Debug_Kit_13.5_build_22G74.dmg"
+              curl -L -o /tmp/KDK.dmg "${KDK_URL}"
+            }
+            hdiutil attach /tmp/KDK.dmg
+            sudo installer -pkg '/Volumes/Kernel Debug Kit/KernelDebugKit.pkg' -target /
+            hdiutil detach '/Volumes/Kernel Debug Disk' 2>/dev/null || true
+          fi
+          # Verify KDK installation
+          ls -la /Library/Developer/KDKs/
 
       - name: Clone XNU
         run: |
