@@ -1,156 +1,310 @@
 name: xnu
+name: xnu
+
 
 on:
+on:
+  workflow_dispatch:
   workflow_dispatch:
     inputs:
+    inputs:
+      macos_version:
       macos_version:
         description: macOS release whose xnu to build (13.5 = xnu-8796, iOS 16 era)
+        description: macOS release whose xnu to build (13.5 = xnu-8796, iOS 16 era)
+        default: "13.5"
         default: "13.5"
       kernel_config:
+      kernel_config:
+        description: RELEASE / DEVELOPMENT / DEBUG
         description: RELEASE / DEVELOPMENT / DEBUG
         default: DEVELOPMENT
+        default: DEVELOPMENT
+      machine_config:
       machine_config:
         description: xnu MACHINE_CONFIG
+        description: xnu MACHINE_CONFIG
+        default: M30LTE
         default: M30LTE
   push:
+  push:
+    branches: [main]
     branches: [main]
     paths:
+    paths:
+      - "xnu/patches/**"
       - "xnu/patches/**"
       - ".github/workflows/xnu.yml"
+      - ".github/workflows/xnu.yml"
+
 
 jobs:
+jobs:
+  build:
   build:
     runs-on: macos-26
+    runs-on: macos-26
+    timeout-minutes: 180
     timeout-minutes: 180
     permissions:
+    permissions:
+      contents: read
       contents: read
       actions: read
+      actions: read
+    env:
     env:
       MACOS_VERSION: "13.5"
+      MACOS_VERSION: "13.5"
+      KERNEL_CONFIG: "DEVELOPMENT"
       KERNEL_CONFIG: "DEVELOPMENT"
       MACHINE_CONFIG: "M30LTE"
+      MACHINE_CONFIG: "M30LTE"
+      DRIVERKIT: "0"
       DRIVERKIT: "0"
       SDKROOT_PATH: "/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk"
+      SDKROOT_PATH: "/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk"
+      CFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/usr/include"
       CFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/usr/include"
       CXXFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/usr/include"
+      CXXFLAGS: "-Wno-format -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/usr/include"
+      MAKEFLAGS: "-j1"
       MAKEFLAGS: "-j1"
     steps:
+    steps:
+      - uses: actions/checkout@v4
       - uses: actions/checkout@v4
 
+
+      - name: Check available Xcode versions
       - name: Check available Xcode versions
         run: |
+        run: |
+          echo "=== Checking pre-installed Xcode versions ==="
           echo "=== Checking pre-installed Xcode versions ==="
           ls -la /Applications/Xcode*.app 2>/dev/null || echo "No Xcode apps found"
+          ls -la /Applications/Xcode*.app 2>/dev/null || echo "No Xcode apps found"
+          echo "=== Checking xcode-select ==="
           echo "=== Checking xcode-select ==="
           xcode-select -p
+          xcode-select -p
           xcodebuild -version
+          xcodebuild -version
+
 
       - name: Deps
+      - name: Deps
+        run: |
         run: |
           brew install jq gum bash cmake ninja
+          brew install jq gum bash cmake ninja
+          XC=$(ls -d /Applications/Xcode_15.0.1.app 2>/dev/null || ls -d /Applications/Xcode_15.*.app 2>/dev/null | head -1)
           XC=$(ls -d /Applications/Xcode_15.0.1.app 2>/dev/null || ls -d /Applications/Xcode_15.*.app 2>/dev/null | head -1)
           if [ -z "$XC" ]; then
+          if [ -z "$XC" ]; then
+            echo "Xcode 15 not pre-installed, attempting to install via xcodes with Apple ID from secrets..."
             echo "Xcode 15 not pre-installed, attempting to install via xcodes with Apple ID from secrets..."
             printf '#!/bin/sh\nexit 0\n' | sudo tee /usr/local/bin/xcodes >/dev/null
+            printf '#!/bin/sh\nexit 0\n' | sudo tee /usr/local/bin/xcodes >/dev/null
+            sudo chmod +x /usr/local/bin/xcodes
             sudo chmod +x /usr/local/bin/xcodes
             brew uninstall xcodes 2>/dev/null || true
+            brew uninstall xcodes 2>/dev/null || true
+            brew install xcodesorg/made/xcodes
             brew install xcodesorg/made/xcodes
             if [ -n "${{ secrets.APPLE_ID }}" ] && [ -n "${{ secrets.APPLE_PASSWORD }}" ]; then
+            if [ -n "${{ secrets.APPLE_ID }}" ] && [ -n "${{ secrets.APPLE_PASSWORD }}" ]; then
+              xcodes install --latest 15.0.1 --apple-id "${{ secrets.APPLE_ID }}" --password "${{ secrets.APPLE_PASSWORD }}"
               xcodes install --latest 15.0.1 --apple-id "${{ secrets.APPLE_ID }}" --password "${{ secrets.APPLE_PASSWORD }}"
               XC=$(ls -d /Applications/Xcode_15.0.1.app 2>/dev/null || ls -d /Applications/Xcode_15.*.app 2>/dev/null | head -1)
+              XC=$(ls -d /Applications/Xcode_15.0.1.app 2>/dev/null || ls -d /Applications/Xcode_15.*.app 2>/dev/null | head -1)
+            else
             else
               echo "No Apple ID credentials in secrets. Trying to use pre-installed Xcode 26 as fallback..."
+              echo "No Apple ID credentials in secrets. Trying to use pre-installed Xcode 26 as fallback..."
+              XC=$(ls -d /Applications/Xcode_26.*.app 2>/dev/null | head -1)
               XC=$(ls -d /Applications/Xcode_26.*.app 2>/dev/null | head -1)
             fi
+            fi
+          fi
           fi
           if [ -z "$XC" ]; then
+          if [ -z "$XC" ]; then
+            echo "ERROR: No suitable Xcode found"
             echo "ERROR: No suitable Xcode found"
             exit 1
+            exit 1
+          fi
           fi
           echo "DEVELOPER_DIR=$XC/Contents/Developer" >> "$GITHUB_ENV"
+          echo "DEVELOPER_DIR=$XC/Contents/Developer" >> "$GITHUB_ENV"
+          sudo xcode-select -s "$XC"
           sudo xcode-select -s "$XC"
           xcodebuild -version
+          xcodebuild -version
+
 
       - name: Download KDK
+      - name: Download KDK
+        run: |
         run: |
           KDK_NAME='Kernel Debug Kit 13.5 build 22G74'
+          KDK_NAME='Kernel Debug Kit 13.5 build 22G74'
+          KDK_URL=$(curl -s "https://raw.githubusercontent.com/dortania/KdkSupportPkg/gh-pages/manifest.json" | jq -r --arg KDK_NAME "$KDK_NAME" '.[] | select(.name==$KDK_NAME) | .url')
           KDK_URL=$(curl -s "https://raw.githubusercontent.com/dortania/KdkSupportPkg/gh-pages/manifest.json" | jq -r --arg KDK_NAME "$KDK_NAME" '.[] | select(.name==$KDK_NAME) | .url')
           curl -L -o /tmp/KDK.dmg "${KDK_URL}"
+          curl -L -o /tmp/KDK.dmg "${KDK_URL}"
+          hdiutil attach /tmp/KDK.dmg
           hdiutil attach /tmp/KDK.dmg
           sudo installer -pkg '/Volumes/Kernel Debug Kit/KernelDebugKit.pkg' -target /
+          sudo installer -pkg '/Volumes/Kernel Debug Kit/KernelDebugKit.pkg' -target /
+          hdiutil detach '/Volumes/Kernel Debug Disk' 2>/dev/null || true
           hdiutil detach '/Volumes/Kernel Debug Disk' 2>/dev/null || true
 
+
+      - name: Clone XNU
       - name: Clone XNU
         run: |
+        run: |
+          git clone --branch xnu-8796.141.3 --depth 1 https://github.com/apple-oss-distributions/xnu.git xnu-source
           git clone --branch xnu-8796.141.3 --depth 1 https://github.com/apple-oss-distributions/xnu.git xnu-source
           cd xnu-source
+          cd xnu-source
+          git describe --tags --always
           git describe --tags --always
 
+
+      - name: Stage libpthread dependency
       - name: Stage libpthread dependency
         run: |
+        run: |
+          cd xnu-source
           cd xnu-source
           MACHINE_CONFIG=M30LTE bash ../xnu/patches/0019-stage-libpthread.sh
+          MACHINE_CONFIG=M30LTE bash ../xnu/patches/0019-stage-libpthread.sh
+
 
       - name: Stage BearSSL dependency
+      - name: Stage BearSSL dependency
         run: |
+        run: |
+          cd xnu-source
           cd xnu-source
           MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-bearssl.sh || true
+          MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-bearssl.sh || true
+
 
       - name: Apply M30LTE patches
+      - name: Apply M30LTE patches
         run: |
+        run: |
+          cd xnu-source
           cd xnu-source
           for patch in ../xnu/patches/00*.patch; do
+          for patch in ../xnu/patches/00*.patch; do
+            name=$(basename "$patch")
             name=$(basename "$patch")
             echo "Applying: $name"
+            echo "Applying: $name"
+            patch -p1 --no-backup-if-mismatch < "$patch" 2>&1 || true
             patch -p1 --no-backup-if-mismatch < "$patch" 2>&1 || true
           done
+          done
+          ls -la pexpert/pexpert/arm64/M30LTE.h 2>&1 || echo "M30LTE.h NOT FOUND - creating from patch"
           ls -la pexpert/pexpert/arm64/M30LTE.h 2>&1 || echo "M30LTE.h NOT FOUND - creating from patch"
           cat ../xnu/patches/0000-m30lte-machine-config.patch | grep -A 50 "M30LTE.h" | head -60 || true
+          cat ../xnu/patches/0000-m30lte-machine-config.patch | grep -A 50 "M30LTE.h" | head -60 || true
+          sed -i '' 's|^AVAILABILITY_PL="${SDKROOT}/${DRIVERKITROOT}|AVAILABILITY_PL="${FAKEROOT_DIR}|g' bsd/sys/make_symbol_aliasing.sh 2>/dev/null || true
           sed -i '' 's|^AVAILABILITY_PL="${SDKROOT}/${DRIVERKITROOT}|AVAILABILITY_PL="${FAKEROOT_DIR}|g' bsd/sys/make_symbol_aliasing.sh 2>/dev/null || true
 
+
+      - name: Fix makedefs path in Makefiles
       - name: Fix makedefs path in Makefiles
         run: |
+        run: |
+          echo "=== Fixing /makedefs paths in Makefiles ==="
           echo "=== Fixing /makedefs paths in Makefiles ==="
           cd xnu-source
+          cd xnu-source
+          python3 ../xnu/fix_makedefs.py .
           python3 ../xnu/fix_makedefs.py .
           # Verify the changes
+          # Verify the changes
+          grep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found"
           grep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found"
 
+
+      - name: Force patch proc_reg.h for M30LTE
       - name: Force patch proc_reg.h for M30LTE
         run: |
+        run: |
+          cd xnu-source
           cd xnu-source
           echo "=== Force patching proc_reg.h for M30LTE ==="
+          echo "=== Force patching proc_reg.h for M30LTE ==="
+          if ! grep -q "M30LTE" osfmk/arm64/proc_reg.h; then
           if ! grep -q "M30LTE" osfmk/arm64/proc_reg.h; then
             echo "M30LTE not found in proc_reg.h, applying manually..."
+            echo "M30LTE not found in proc_reg.h, applying manually..."
+            python3 ../xnu/patches/patch_proc_reg.py
             python3 ../xnu/patches/patch_proc_reg.py
           else
+          else
+            echo "M30LTE already defined in proc_reg.h"
             echo "M30LTE already defined in proc_reg.h"
           fi
+          fi
+          grep -n "M30LTE" osfmk/arm64/proc_reg.h | head -5
           grep -n "M30LTE" osfmk/arm64/proc_reg.h | head -5
 
+
+      - name: Create firehose_buffer_private.h for M30LTE
       - name: Create firehose_buffer_private.h for M30LTE
         run: |
-          cd xnu-source
-          echo "=== Creating firehose_buffer_private.h for M30LTE ==="
-          if [ ! -f osfmk/arm64/firehose_buffer_private.h ]; then
-            echo "firehose_buffer_private.h not found, creating..."
-            python3 ../xnu/patches/create_firehose_buffer_private.py
-          else
-            echo "firehose_buffer_private.h already exists"
-          fi
-          ls -la osfmk/arm64/firehose_buffer_private.h
-          mkdir -p BUILD/obj/EXPORT_HDRS/osfmk/arm64
-          cp osfmk/arm64/firehose_buffer_private.h BUILD/obj/EXPORT_HDRS/osfmk/arm64/
-
-      - name: Fix clang flag incompatibility with Xcode 26
         run: |
           cd xnu-source
+          cd xnu-source
+          echo "=== Creating firehose_buffer_private.h for M30LTE ==="
+          echo "=== Creating firehose_buffer_private.h for M30LTE ==="
+          if [ ! -f osfmk/arm64/firehose_buffer_private.h ]; then
+          if [ ! -f osfmk/arm64/firehose_buffer_private.h ]; then
+            echo "firehose_buffer_private.h not found, creating..."
+            echo "firehose_buffer_private.h not found, creating..."
+            python3 ../xnu/patches/create_firehose_buffer_private.py
+            python3 ../xnu/patches/create_firehose_buffer_private.py
+          else
+          else
+            echo "firehose_buffer_private.h already exists"
+            echo "firehose_buffer_private.h already exists"
+          fi
+          fi
+          ls -la osfmk/arm64/firehose_buffer_private.h
+          ls -la osfmk/arm64/firehose_buffer_private.h
+          mkdir -p BUILD/obj/EXPORT_HDRS/osfmk/arm64
+          mkdir -p BUILD/obj/EXPORT_HDRS/osfmk/arm64
+          cp osfmk/arm64/firehose_buffer_private.h BUILD/obj/EXPORT_HDRS/osfmk/arm64/
+          cp osfmk/arm64/firehose_buffer_private.h BUILD/obj/EXPORT_HDRS/osfmk/arm64/
+
+
+      - name: Fix clang flag incompatibility with Xcode 26
+      - name: Fix clang flag incompatibility with Xcode 26
+        run: |
+        run: |
+          cd xnu-source
+          cd xnu-source
+          echo "=== Patching out incompatible clang flags ==="
           echo "=== Patching out incompatible clang flags ==="
           find . -name "*.def" -o -name "Makefile*" -o -name "*.mk" -o -name "*.inc" | xargs grep -l "enable-trivial-auto-var-init-zero-knowing" 2>/dev/null | while read file; do
+          find . -name "*.def" -o -name "Makefile*" -o -name "*.mk" -o -name "*.inc" | xargs grep -l "enable-trivial-auto-var-init-zero-knowing" 2>/dev/null | while read file; do
+            echo "Patching: $file"
             echo "Patching: $file"
             sed -i '' 's/-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang//g' "$file"
+            sed -i '' 's/-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang//g' "$file"
+          done
           done
           grep -r "enable-trivial-auto-var-init-zero-knowing" . 2>/dev/null | head -5 || echo "Flag not found in source (may be added at build time)"
+          grep -r "enable-trivial-auto-var-init-zero-knowing" . 2>/dev/null | head -5 || echo "Flag not found in source (may be added at build time)"
+
 
       - name: Verify bsd/Makefile structure
         run: |
@@ -161,228 +315,459 @@ jobs:
           echo "=== First 30 lines of bsd/Makefile ==="
           head -30 bsd/Makefile
 
+
+      - name: Patch bsd/Makefile do_all to pass SRCROOT/SETUP to sub-make
+        run: |
+          cd xnu-source
+          echo "=== Patching bsd/Makefile do_all target to pass SRCROOT/SETUP ==="
+          python3 ../xnu/patches/patch_bsd_do_all.py
+          # Verify the patch
+          grep -A 12 "do_all" bsd/Makefile | head -15
+
       - name: Fix DriverKit IORPC for Xcode 26
         run: |
+        run: |
+          cd xnu-source
           cd xnu-source
           echo "=== Patching DriverKit IORPC for Xcode 26 compatibility ==="
+          echo "=== Patching DriverKit IORPC for Xcode 26 compatibility ==="
+          if [ -f iokit/DriverKit/IORPC.h ]; then
           if [ -f iokit/DriverKit/IORPC.h ]; then
             echo "Patching IORPC.h to add kernelContent field..."
+            echo "Patching IORPC.h to add kernelContent field..."
+            python3 ../xnu/patches/patch_iorpc.py
             python3 ../xnu/patches/patch_iorpc.py
           else
+          else
+            echo "IORPC.h not found, skipping"
             echo "IORPC.h not found, skipping"
           fi
+          fi
+          grep -n "kernelContent" iokit/DriverKit/IORPC.h 2>/dev/null | head -5 || echo "kernelContent not found in IORPC.h"
           grep -n "kernelContent" iokit/DriverKit/IORPC.h 2>/dev/null | head -5 || echo "kernelContent not found in IORPC.h"
 
+
+      - name: Fix clang flag incompatibility with Xcode 26
       - name: Fix clang flag incompatibility with Xcode 26
         run: |
+        run: |
+          cd xnu-source
           cd xnu-source
           echo "=== Patching out incompatible clang flags ==="
+          echo "=== Patching out incompatible clang flags ==="
+          find . -name "*.def" -o -name "Makefile*" -o -name "*.mk" -o -name "*.inc" | xargs grep -l "enable-trivial-auto-var-init-zero-knowing" 2>/dev/null | while read file; do
           find . -name "*.def" -o -name "Makefile*" -o -name "*.mk" -o -name "*.inc" | xargs grep -l "enable-trivial-auto-var-init-zero-knowing" 2>/dev/null | while read file; do
             echo "Patching: $file"
+            echo "Patching: $file"
+            sed -i '' 's/-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang//g' "$file"
             sed -i '' 's/-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang//g' "$file"
           done
+          done
+          grep -r "enable-trivial-auto-var-init-zero-knowing" . 2>/dev/null | head -5 || echo "Flag not found in source (may be added at build time)"
           grep -r "enable-trivial-auto-var-init-zero-knowing" . 2>/dev/null | head -5 || echo "Flag not found in source (may be added at build time)"
 
+
+      - name: Build bootstrap_cmds (mig)
       - name: Build bootstrap_cmds (mig)
         run: |
+        run: |
+          cd xnu-source
           cd xnu-source
           BOOTSTRAP_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json" | jq -r '.projects[] | select(.project=="bootstrap_cmds") | .tag')
+          BOOTSTRAP_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json" | jq -r '.projects[] | select(.project=="bootstrap_cmds") | .tag')
+          git clone --branch "${BOOTSTRAP_VERSION}" --depth 1 https://github.com/apple-oss-distributions/bootstrap_cmds.git bootstrap_cmds
           git clone --branch "${BOOTSTRAP_VERSION}" --depth 1 https://github.com/apple-oss-distributions/bootstrap_cmds.git bootstrap_cmds
           cd bootstrap_cmds
+          cd bootstrap_cmds
+          sed -i '' 's|-o root -g wheel||g' xcodescripts/install-mig.sh
           sed -i '' 's|-o root -g wheel||g' xcodescripts/install-mig.sh
           xcodebuild install -sdk macosx -project mig.xcodeproj ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/bootstrap_cmds.obj" SYMROOT="$PWD/../BUILD/bootstrap_cmds.sym" DSTROOT="$PWD/../fakeroot" RC_ProjectNameAndSourceVersion="${BOOTSTRAP_VERSION}" 2>&1 | tail -20 || true
+          xcodebuild install -sdk macosx -project mig.xcodeproj ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/bootstrap_cmds.obj" SYMROOT="$PWD/../BUILD/bootstrap_cmds.sym" DSTROOT="$PWD/../fakeroot" RC_ProjectNameAndSourceVersion="${BOOTSTRAP_VERSION}" 2>&1 | tail -20 || true
+
 
       - name: Build dtrace (ctf tools)
+      - name: Build dtrace (ctf tools)
         run: |
+        run: |
+          cd xnu-source
           cd xnu-source
           DTRACE_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json" | jq -r '.projects[] | select(.project=="dtrace") | .tag')
+          DTRACE_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json" | jq -r '.projects[] | select(.project=="dtrace") | .tag')
+          git clone --branch "${DTRACE_VERSION}" --depth 1 https://github.com/apple-oss-distributions/dtrace.git dtrace
           git clone --branch "${DTRACE_VERSION}" --depth 1 https://github.com/apple-oss-distributions/dtrace.git dtrace
           cd dtrace
+          cd dtrace
+          xcodebuild install -sdk macosx -target ctfconvert -target ctfdump -target ctfmerge ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/dtrace.obj" SYMROOT="$PWD/../BUILD/dtrace.sym" DSTROOT="$PWD/../fakeroot" 2>&1 | tail -20 || true
           xcodebuild install -sdk macosx -target ctfconvert -target ctfdump -target ctfmerge ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/dtrace.obj" SYMROOT="$PWD/../BUILD/dtrace.sym" DSTROOT="$PWD/../fakeroot" 2>&1 | tail -20 || true
 
+
+      - name: Build availability versions
       - name: Build availability versions
         run: |
+        run: |
+          cd xnu-source
           cd xnu-source
           AVAILABILITYVERSIONS_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json" | jq -r '.projects[] | select(.project=="AvailabilityVersions") | .tag')
+          AVAILABILITYVERSIONS_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json" | jq -r '.projects[] | select(.project=="AvailabilityVersions") | .tag')
+          git clone --branch "${AVAILABILITYVERSIONS_VERSION}" --depth 1 https://github.com/apple-oss-distributions/AvailabilityVersions.git AvailabilityVersions
           git clone --branch "${AVAILABILITYVERSIONS_VERSION}" --depth 1 https://github.com/apple-oss-distributions/AvailabilityVersions.git AvailabilityVersions
           cd AvailabilityVersions
+          cd AvailabilityVersions
+          make install -j8 OBJROOT="$PWD/../BUILD/" SYMROOT="$PWD/../BUILD/" DSTROOT="$PWD/../fakeroot" 2>&1 | tail -20 || true
           make install -j8 OBJROOT="$PWD/../BUILD/" SYMROOT="$PWD/../BUILD/" DSTROOT="$PWD/../fakeroot" 2>&1 | tail -20 || true
 
+
+      - name: Install xnu headers
       - name: Install xnu headers
         run: |
+        run: |
+          cd xnu-source
           cd xnu-source
           SYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)
+          SYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)
+          SYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)
           SYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
+          MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
+          make installhdrs -j8 SDKROOT=macosx ARCH_CONFIGS="X86_64 ARM64" OBJROOT="$PWD/BUILD/xnu-hdrs.obj" SYMROOT="$PWD/BUILD/xnu-hdrs.sym" DSTROOT="$PWD/fakeroot" FAKEROOT_DIR="$PWD/fakeroot" KDKROOT="/Library/Developer/KDKs" TIGHTBEAMC="" RC_DARWIN_KERNEL_VERSION="22.6.0" MEMORY_SIZE="${MEMORY_SIZE}" SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" KERNEL_BUILDS_IN_PARALLEL=1 2>&1 | tail -20 || true
           make installhdrs -j8 SDKROOT=macosx ARCH_CONFIGS="X86_64 ARM64" OBJROOT="$PWD/BUILD/xnu-hdrs.obj" SYMROOT="$PWD/BUILD/xnu-hdrs.sym" DSTROOT="$PWD/fakeroot" FAKEROOT_DIR="$PWD/fakeroot" KDKROOT="/Library/Developer/KDKs" TIGHTBEAMC="" RC_DARWIN_KERNEL_VERSION="22.6.0" MEMORY_SIZE="${MEMORY_SIZE}" SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" KERNEL_BUILDS_IN_PARALLEL=1 2>&1 | tail -20 || true
 
+
+      - name: Pre-build IORPC patch for DriverKit
       - name: Pre-build IORPC patch for DriverKit
         run: |
+        run: |
+          cd xnu-source
           cd xnu-source
           echo "=== Pre-build IORPC patch for DriverKit ==="
+          echo "=== Pre-build IORPC patch for DriverKit ==="
+          python3 ../xnu/patches/patch_all_iorpc.py
           python3 ../xnu/patches/patch_all_iorpc.py
 
+
+      - name: Fix SETUP tool include paths
       - name: Fix SETUP tool include paths
         run: |
+        run: |
+          cd xnu-source
           cd xnu-source
           echo "=== Fixing SETUP tool include paths ==="
+          echo "=== Fixing SETUP tool include paths ==="
+          SDKROOT_PATH=$(xcrun --sdk macosx --show-sdk-path)
           SDKROOT_PATH=$(xcrun --sdk macosx --show-sdk-path)
           echo "SDKROOT_PATH=$SDKROOT_PATH"
+          echo "SDKROOT_PATH=$SDKROOT_PATH"
+          
           
           if [ -f SETUP/kextsymboltool/Makefile ]; then
+          if [ -f SETUP/kextsymboltool/Makefile ]; then
+            echo "Patching SETUP/kextsymboltool/Makefile"
             echo "Patching SETUP/kextsymboltool/Makefile"
             sed -i '' '1s@^@CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include\n@' SETUP/kextsymboltool/Makefile
+            sed -i '' '1s@^@CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include\n@' SETUP/kextsymboltool/Makefile
+            cat SETUP/kextsymboltool/Makefile
             cat SETUP/kextsymboltool/Makefile
           fi
+          fi
+          
           
           if [ -f SETUP/config/Makefile ]; then
+          if [ -f SETUP/config/Makefile ]; then
+            echo "Patching SETUP/config/Makefile"
             echo "Patching SETUP/config/Makefile"
             sed -i '' '1s@^@CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include -I$(SOURCE)\n@' SETUP/config/Makefile
+            sed -i '' '1s@^@CFLAGS += -isysroot '"$SDKROOT_PATH"' -I'"$SDKROOT_PATH"'/usr/include -I$(SOURCE)\n@' SETUP/config/Makefile
+            cat SETUP/config/Makefile
             cat SETUP/config/Makefile
           fi
+          fi
+          
           
           if [ -f SETUP/config/externs.c ]; then
+          if [ -f SETUP/config/externs.c ]; then
+            echo "Fixing externs.c include"
             echo "Fixing externs.c include"
             sed -i '' 's|#include <config.h>|#include "config.h"|' SETUP/config/externs.c
+            sed -i '' 's|#include <config.h>|#include "config.h"|' SETUP/config/externs.c
+          fi
           fi
 
+
+      - name: Fix makedefs paths in build directory
       - name: Fix makedefs paths in build directory
         run: |
+        run: |
+          echo "=== Fixing /makedefs paths in build directory ==="
           echo "=== Fixing /makedefs paths in build directory ==="
           cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
+          cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
+          python3 ../xnu/fix_makedefs.py BUILD/obj
           python3 ../xnu/fix_makedefs.py BUILD/obj
           # Verify the changes
+          # Verify the changes
+          grep -r "/makedefs" BUILD/obj --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found in build directory"
           grep -r "/makedefs" BUILD/obj --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found in build directory"
           # Verify the patch
+          # Verify the patch
+
 
       - name: Build XNU kernel
         id: build_kernel
+        id: build_kernel
+        run: |
         run: |
           cd xnu-source
+          cd xnu-source
+          SYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)
           SYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)
           SYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)
+          SYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)
+          MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
           echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
+          echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
+          echo "=== Building XNU kernel (default target) ==="
           echo "=== Building XNU kernel (default target) ==="
           # Build with explicit linker verbose output, capture all sub-make output
+          # Build with explicit linker verbose output, capture all sub-make output
+          # Do NOT use set -o pipefail - it kills the script before we capture PIPESTATUS
           # Do NOT use set -o pipefail - it kills the script before we capture PIPESTATUS
           # CRITICAL: Export SRCROOT to environment AND use -e so it propagates to ALL sub-makes (bsd/conf, SETUP, etc.)
+          # CRITICAL: Export SRCROOT to environment AND use -e so it propagates to ALL sub-makes (bsd/conf, SETUP, etc.)
+          export SRCROOT="$PWD"
           export SRCROOT="$PWD"
           make -e VERBOSE=YES \
+          make -e VERBOSE=YES \
+            SDKROOT=macosx \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
+            TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
+            SRCROOT="$PWD" \
             SRCROOT="$PWD" \
             OBJROOT="$PWD/BUILD/obj" \
+            OBJROOT="$PWD/BUILD/obj" \
+            SYMROOT="$PWD/BUILD/sym" \
             SYMROOT="$PWD/BUILD/sym" \
             DSTROOT="$PWD/fakeroot" \
+            DSTROOT="$PWD/fakeroot" \
+            FAKEROOT_DIR="$PWD/fakeroot" \
             FAKEROOT_DIR="$PWD/fakeroot" \
             KDKROOT="/Library/Developer/KDKs" \
+            KDKROOT="/Library/Developer/KDKs" \
+            TIGHTBEAMC="" \
             TIGHTBEAMC="" \
             RC_DARWIN_KERNEL_VERSION="22.6.0" \
+            RC_DARWIN_KERNEL_VERSION="22.6.0" \
+            MEMORY_SIZE="${MEMORY_SIZE}" \
             MEMORY_SIZE="${MEMORY_SIZE}" \
             SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" \
+            SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" \
+            SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" \
             SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" \
             KERNEL_BUILDS_IN_PARALLEL=1 \
+            KERNEL_BUILDS_IN_PARALLEL=1 \
+            BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
             BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
             DRIVERKIT=0 \
+            DRIVERKIT=0 \
+            2>&1 | tee /tmp/xnu-build.log
             2>&1 | tee /tmp/xnu-build.log
           BUILD_EXIT=${PIPESTATUS[0]}
+          BUILD_EXIT=${PIPESTATUS[0]}
+          echo "make exit code: $BUILD_EXIT"
           echo "make exit code: $BUILD_EXIT"
           echo "=== Errors in build log ==="
+          echo "=== Errors in build log ==="
+          grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found|ld:|symbol|library not found|collect2" /tmp/xnu-build.log | head -50 || echo "No errors found in log"
           grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found|ld:|symbol|library not found|collect2" /tmp/xnu-build.log | head -50 || echo "No errors found in log"
           echo "=== Last 1000 lines of build log ==="
+          echo "=== Last 1000 lines of build log ==="
+          tail -1000 /tmp/xnu-build.log
           tail -1000 /tmp/xnu-build.log
           echo "=== Kernel artifacts ==="
+          echo "=== Kernel artifacts ==="
+          find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
           find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
           find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
+          find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
+          echo "BUILD_EXIT=$BUILD_EXIT" >> $GITHUB_OUTPUT
           echo "BUILD_EXIT=$BUILD_EXIT" >> $GITHUB_OUTPUT
           exit $BUILD_EXIT
+          exit $BUILD_EXIT
+
 
       - name: Run bsd build to capture linker error
         if: failure()
+        if: failure()
+        run: |
         run: |
           echo "=== Main build failed, running bsd link step to capture linker error ==="
+          echo "=== Main build failed, running bsd link step to capture linker error ==="
+          # Re-apply makedefs fix to source directory to ensure it's current
           # Re-apply makedefs fix to source directory to ensure it's current
           cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
+          cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
+          python3 ../xnu/fix_makedefs.py .
           python3 ../xnu/fix_makedefs.py .
           # VERIFY: Print the bsd/Makefile lines that are failing
+          # VERIFY: Print the bsd/Makefile lines that are failing
+          echo "=== VERIFICATION: bsd/Makefile lines 1-10 ==="
           echo "=== VERIFICATION: bsd/Makefile lines 1-10 ==="
           head -10 bsd/Makefile
+          head -10 bsd/Makefile
+          echo "=== VERIFICATION: bsd/Makefile lines 90-100 ==="
           echo "=== VERIFICATION: bsd/Makefile lines 90-100 ==="
           sed -n '90,100p' bsd/Makefile
+          sed -n '90,100p' bsd/Makefile
+          echo "=== VERIFICATION: Checking for any remaining /makedefs/ ==="
           echo "=== VERIFICATION: Checking for any remaining /makedefs/ ==="
           grep -n "/makedefs" bsd/Makefile || echo "No /makedefs/ found in bsd/Makefile"
+          grep -n "/makedefs" bsd/Makefile || echo "No /makedefs/ found in bsd/Makefile"
+          # Run the EXACT sub-make command from the parent build (with -C to build obj dir)
           # Run the EXACT sub-make command from the parent build (with -C to build obj dir)
           # CRITICAL: Export SRCROOT to environment AND use -e so it propagates to ALL sub-makes (bsd/conf, SETUP, etc.)
+          # CRITICAL: Export SRCROOT to environment AND use -e so it propagates to ALL sub-makes (bsd/conf, SETUP, etc.)
+          export SRCROOT="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source"
           export SRCROOT="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source"
           /Applications/Xcode_26.0.1.app/Contents/Developer/usr/bin/make -e \
+          /Applications/Xcode_26.0.1.app/Contents/Developer/usr/bin/make -e \
+            -C "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd" \
             -C "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd" \
             -f "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/Makefile" \
+            -f "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/Makefile" \
+            CURRENT_KERNEL_CONFIG=DEVELOPMENT \
             CURRENT_KERNEL_CONFIG=DEVELOPMENT \
             CURRENT_ARCH_CONFIG=ARM64 \
+            CURRENT_ARCH_CONFIG=ARM64 \
+            CURRENT_MACHINE_CONFIG=M30LTE \
             CURRENT_MACHINE_CONFIG=M30LTE \
             CURRENT_BUILD_CONFIG=DEVELOPMENT^ARM64^M30LTE \
+            CURRENT_BUILD_CONFIG=DEVELOPMENT^ARM64^M30LTE \
+            SRCROOT="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source" \
             SRCROOT="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source" \
             SOURCE="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/" \
+            SOURCE="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/" \
+            RELATIVE_SOURCE_PATH="./bsd" \
             RELATIVE_SOURCE_PATH="./bsd" \
             TARGET=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/. \
+            TARGET=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/. \
+            OBJPATH=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE \
             OBJPATH=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE \
             VERBOSE=YES \
+            VERBOSE=YES \
+            build_all 2>&1 | tee /tmp/bsd-build.log
             build_all 2>&1 | tee /tmp/bsd-build.log
           BSD_EXIT=${PIPESTATUS[0]}
+          BSD_EXIT=${PIPESTATUS[0]}
+          echo "bsd build exit code: ${BSD_EXIT}"
           echo "bsd build exit code: ${BSD_EXIT}"
           echo "=== Full bsd build log ==="
+          echo "=== Full bsd build log ==="
+          cat /tmp/bsd-build.log
           cat /tmp/bsd-build.log
           # Copy to workspace for artifact upload
+          # Copy to workspace for artifact upload
+          cp /tmp/bsd-build.log /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
           cp /tmp/bsd-build.log /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
           ls -la /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
+          ls -la /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
+          echo "BSD_EXIT=$BSD_EXIT" >> $GITHUB_OUTPUT
           echo "BSD_EXIT=$BSD_EXIT" >> $GITHUB_OUTPUT
 
+
+      - name: Upload bsd build log
       - name: Upload bsd build log
         if: always()
+        if: always()
+        run: |
         run: |
           cp /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log bsd-build.log 2>/dev/null || true
+          cp /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log bsd-build.log 2>/dev/null || true
+          ls -la bsd-build.log 2>/dev/null || echo "bsd-build.log not found"
           ls -la bsd-build.log 2>/dev/null || echo "bsd-build.log not found"
 
+
+      - uses: actions/upload-artifact@v4
       - uses: actions/upload-artifact@v4
         if: always()
+        if: always()
+        with:
         with:
           name: bsd-build-log
+          name: bsd-build-log
+          path: bsd-build.log
           path: bsd-build.log
           if-no-files-found: warn
-
-      - name: Upload build log
-        if: always()
-        run: |
-          cp /tmp/xnu-build.log xnu-build.log 2>/dev/null || true
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: xnu-build-log
-          path: xnu-build.log
           if-no-files-found: warn
 
-      - name: Collect kernel artifact
+
+      - name: Upload build log
+      - name: Upload build log
+        if: always()
         if: always()
         run: |
-          mkdir -p out
-          echo "=== Searching for kernel binary ==="
-          find xnu-source/BUILD/obj -name "*kernel*" -type f 2>/dev/null | head -20
-          echo "=== Checking for any kernel binary ==="
-          KERNEL_PATH=$(find xnu-source/BUILD/obj -maxdepth 5 -name "kernel.development.m30lte" -o -name "mach_kernel" -o -name "kernel" 2>/dev/null | head -1)
-          if [ -n "$KERNEL_PATH" ]; then
-            echo "Found kernel at: $KERNEL_PATH"
-            cp "$KERNEL_PATH" out/kernel.development.m30lte
-          fi
-          ls -la out
-          if [ -f out/kernel.development.m30lte ]; then
-            (cd out && shasum -a 256 kernel.development.m30lte > SHA256SUMS)
-          fi
+        run: |
+          cp /tmp/xnu-build.log xnu-build.log 2>/dev/null || true
+          cp /tmp/xnu-build.log xnu-build.log 2>/dev/null || true
+
 
       - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
+        if: always()
         if: always()
         with:
+        with:
+          name: xnu-build-log
+          name: xnu-build-log
+          path: xnu-build.log
+          path: xnu-build.log
+          if-no-files-found: warn
+          if-no-files-found: warn
+
+
+      - name: Collect kernel artifact
+      - name: Collect kernel artifact
+        if: always()
+        if: always()
+        run: |
+        run: |
+          mkdir -p out
+          mkdir -p out
+          echo "=== Searching for kernel binary ==="
+          echo "=== Searching for kernel binary ==="
+          find xnu-source/BUILD/obj -name "*kernel*" -type f 2>/dev/null | head -20
+          find xnu-source/BUILD/obj -name "*kernel*" -type f 2>/dev/null | head -20
+          echo "=== Checking for any kernel binary ==="
+          echo "=== Checking for any kernel binary ==="
+          KERNEL_PATH=$(find xnu-source/BUILD/obj -maxdepth 5 -name "kernel.development.m30lte" -o -name "mach_kernel" -o -name "kernel" 2>/dev/null | head -1)
+          KERNEL_PATH=$(find xnu-source/BUILD/obj -maxdepth 5 -name "kernel.development.m30lte" -o -name "mach_kernel" -o -name "kernel" 2>/dev/null | head -1)
+          if [ -n "$KERNEL_PATH" ]; then
+          if [ -n "$KERNEL_PATH" ]; then
+            echo "Found kernel at: $KERNEL_PATH"
+            echo "Found kernel at: $KERNEL_PATH"
+            cp "$KERNEL_PATH" out/kernel.development.m30lte
+            cp "$KERNEL_PATH" out/kernel.development.m30lte
+          fi
+          fi
+          ls -la out
+          ls -la out
+          if [ -f out/kernel.development.m30lte ]; then
+          if [ -f out/kernel.development.m30lte ]; then
+            (cd out && shasum -a 256 kernel.development.m30lte > SHA256SUMS)
+            (cd out && shasum -a 256 kernel.development.m30lte > SHA256SUMS)
+          fi
+          fi
+
+
+      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
+        if: always()
+        if: always()
+        with:
+        with:
+          name: xnu-kernel
           name: xnu-kernel
           path: out/
+          path: out/
+          if-no-files-found: warn
           if-no-files-found: warn
