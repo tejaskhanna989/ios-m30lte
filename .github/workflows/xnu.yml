@@ -73,19 +73,13 @@ jobs:
 
       - name: Download KDK
         run: |
-          KDK_NAME='Kernel Debug Kit 13.5 build 22G74'
-          # Try primary URL from dortania manifest
-          KDK_URL=$(curl -s "https://raw.githubusercontent.com/dortania/KdkSupportPkg/gh-pages/manifest.json" | jq -r --arg KDK_NAME "$KDK_NAME" '.[] | select(.name==$KDK_NAME) | .url')
-          if [ -z "$KDK_URL" ] || [ "$KDK_URL" = "null" ]; then
-            echo "Primary KDK URL failed, trying fallback..."
-            # Fallback to known working URL
-            KDK_URL="https://developer.apple.com/services-account/download?path=/Developer_Tools/Kernel_Debug_Kit_13.5/Kernel_Debug_Kit_13.5_build_22G74.dmg"
-          fi
+          # Direct URL from dortania release (known working)
+          KDK_URL="https://github.com/dortania/KdkSupportPkg/releases/download/22G74/Kernel_Debug_Kit_13.5_build_22G74.dmg"
           echo "Downloading KDK from: $KDK_URL"
           curl -L -o /tmp/KDK.dmg "${KDK_URL}" || {
             echo "Primary download failed, trying alternative source..."
-            # Try alternative - GitHub release
-            KDK_URL="https://github.com/dortania/KdkSupportPkg/releases/download/13.5-22G74/Kernel_Debug_Kit_13.5_build_22G74.dmg"
+            # Fallback to Apple Developer (requires auth, may fail)
+            KDK_URL="https://developer.apple.com/services-account/download?path=/Developer_Tools/Kernel_Debug_Kit_13.5/Kernel_Debug_Kit_13.5_build_22G74.dmg"
             curl -L -o /tmp/KDK.dmg "${KDK_URL}"
           }
           hdiutil attach /tmp/KDK.dmg
