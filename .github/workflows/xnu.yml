@@ -1,6 +1,5 @@
 name: xnu
-
-on:
+true:
   workflow_dispatch:
     inputs:
       macos_version:
@@ -393,6 +392,14 @@ jobs:
         ls -la BUILD/obj/SETUP/config/
 
         '
+    - name: Patch SETUP/config/Makefile to skip rebuild
+      run: 'cd xnu-source
+
+        echo "=== Patching SETUP/config/Makefile to skip rebuild if tools exist ==="
+
+        python3 ../xnu/patches/patch_setup_config_skip_build.py
+
+        echo "Patched successfully"'
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
