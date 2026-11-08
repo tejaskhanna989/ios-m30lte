@@ -278,6 +278,18 @@ jobs:
             find "$PWD/../fakeroot" -name "availability.pl" 2>/dev/null || true
           fi
 
+      - name: Create minimal availability.pl for _symbol_aliasing.h
+        run: |
+          echo "=== Creating minimal availability.pl for _symbol_aliasing.h ==="
+          sudo mkdir -p /usr/local/libexec
+          python3 ../xnu/patches/create_minimal_availability_pl.py > /tmp/availability.pl
+          sudo cp /tmp/availability.pl /usr/local/libexec/availability.pl
+          sudo chmod +x /usr/local/libexec/availability.pl
+          echo "Created minimal availability.pl at /usr/local/libexec/availability.pl"
+          # Verify it works
+          /usr/local/libexec/availability.pl --ios | head -5
+          /usr/local/libexec/availability.pl --macosx | head -5
+
       - name: Patch make_symbol_aliasing.sh for availability.pl fallback
         run: |
           cd xnu-source
