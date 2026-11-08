@@ -152,13 +152,14 @@ jobs:
           done
           grep -r "enable-trivial-auto-var-init-zero-knowing" . 2>/dev/null | head -5 || echo "Flag not found in source (may be added at build time)"
 
-      - name: Patch bsd/Makefile to propagate SRCROOT/SETUP to sub-makes
+      - name: Verify bsd/Makefile structure
         run: |
           cd xnu-source
-          echo "=== Patching bsd/Makefile to propagate SRCROOT/SETUP to sub-makes ==="
-          python3 ../xnu/patches/patch_bsd_makefile.py
-          # Verify the patch
-          grep -A 12 "do_all:" bsd/Makefile | head -15
+          echo "=== Verifying bsd/Makefile structure ==="
+          grep -n "do_all" bsd/Makefile || echo "No do_all target found"
+          grep -n "OBJPATH" bsd/Makefile | head -5
+          echo "=== First 30 lines of bsd/Makefile ==="
+          head -30 bsd/Makefile
 
       - name: Fix DriverKit IORPC for Xcode 26
         run: |
@@ -252,19 +253,8 @@ jobs:
           python3 ../xnu/fix_makedefs.py BUILD/obj
           # Verify the changes
           grep -r "/makedefs" BUILD/obj --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found in build directory"
-
-      - name: Fix makedefs paths in source directory
-        run: |
-          echo "=== Fixing /makedefs paths in source directory ==="
-          cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
-          python3 ../xnu/fix_makedefs.py .
-          # Verify the changes
-          grep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found in source directory"
-          # VERIFY: Print bsd/Makefile lines that matter
-          echo "=== VERIFICATION: bsd/Makefile lines 1-10 ==="
-          head -10 bsd/Makefile
-          echo "=== VERIFICATION: bsd/Makefile lines 90-100 ==="
-          sed -n '90,100p' bsd/Makefile
+    if idx >= 0:
+          # Verify the patch
 
       - name: Build XNU kernel
         id: build_kernel
