@@ -16,10 +16,10 @@ content = content.replace(
     'KERNEL_BASE =    [ arm64 medium msgb_large config_embedded config_enforce_signed_code config_code_signature_reconstitution config_requires_u32_munging config_delay_idle_sleep config_proc_udata_storage config_uexc config_darkboot ARM_EXTRAS_BASE nos_arm_asm nos_arm_pmap ]'
 )
 
-# Fix BSD_BASE: add config_imageboot_img4 (required for filelist generation)
+# Fix BSD_BASE: add config_imageboot_img4 and config_embedded for filelist generation
 content = content.replace(
-    'BSD_BASE =       [ mach_bsd sysv_sem sysv_msg sysv_shm config_netboot config_imageboot psynch config_proc_uuid_policy config_coredump pgo config_personas ]',
-    'BSD_BASE =       [ mach_bsd sysv_sem sysv_msg sysv_shm config_netboot config_imageboot config_imageboot_img4 psynch config_proc_uuid_policy config_coredump pgo config_personas ]'
+    'BSD_BASE =       [ mach_bsd sysv_sem sysv_msg sysv_shm config_netboot config_imageboot config_imageboot_img4 psynch config_proc_uuid_policy config_coredump pgo config_personas ]',
+    'BSD_BASE =       [ mach_bsd sysv_sem sysv_msg sysv_shm config_netboot config_imageboot config_imageboot_img4 config_embedded psynch config_proc_uuid_policy config_coredump pgo config_personas ]'
 )
 
 # Uncomment LIBKERN lines
