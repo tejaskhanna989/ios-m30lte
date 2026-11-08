@@ -1,29 +1,29 @@
 #!/usr/bin/env python3
-"""Patch bsd/conf/Makefile to ensure SRCROOT is set and propagated to sub-makes."""
+"""Patch bsd/conf/Makefile to ensure SRCROOT is set early and propagated to sub-makes."""
 import sys
 
 with open('bsd/conf/Makefile', 'r') as f:
     lines = f.readlines()
 
-# Patch 1: Add SRCROOT fallback at the top of the file (after exports)
-# Find the line after the export statements
+# Patch 1: Add SRCROOT fallback at the VERY TOP of the file (before any includes)
+# Find the first non-comment, non-empty line
 patched_srcroot = False
 patched_do_all = False
 new_lines = []
 
 for i, line in enumerate(lines):
-    new_lines.append(line)
-    
-    # Patch 1: Add SRCROOT fallback after the export block
-    if not patched_srcroot and line.strip().startswith('include $(MakeInc_def)'):
-        # Add after the include MakeInc_def line
-        new_lines.append('\n# Ensure SRCROOT is set (fallback to environment)\n')
+    # Add SRCROOT fallback at the very beginning, right after any initial comments
+    if not patched_srcroot and i == 0:
+        # Add at the very top
+        new_lines.append('# Ensure SRCROOT is set early (fallback to environment)\n')
         new_lines.append('ifndef SRCROOT\n')
         new_lines.append('  SRCROOT := $(shell printenv SRCROOT 2>/dev/null)\n')
         new_lines.append('endif\n')
         new_lines.append('export SRCROOT\n\n')
         patched_srcroot = True
-        print("Added SRCROOT fallback after MakeInc_def include")
+        print("Added SRCROOT fallback at top of file")
+    
+    new_lines.append(line)
     
     # Patch 2: Find do_all target and add SRCROOT/SETUP to sub-make
     if not patched_do_all and line.strip().startswith('do_all:') and '$(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile' in line:
@@ -45,7 +45,7 @@ for i, line in enumerate(lines):
             patched_do_all = True
 
 if not patched_srcroot:
-    print("WARNING: Could not find MakeInc_def include to add SRCROOT fallback")
+    print("WARNING: Could not add SRCROOT fallback at top")
     
 if not patched_do_all:
     print("Could not find OBJPATH line in do_all target!")
@@ -63,6 +63,9 @@ with open('bsd/conf/Makefile', 'r') as f:
 
 if 'ifndef SRCROOT' in content and 'export SRCROOT' in content:
     print("SRCROOT fallback patch verified!")
+    # Show first 20 lines
+    print("=== First 20 lines ===")
+    print(content[:500])
 else:
     print("WARNING: SRCROOT fallback not found in patched content")
 
