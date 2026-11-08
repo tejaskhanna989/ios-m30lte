@@ -306,6 +306,7 @@ jobs:
           export CURRENT_KERNEL_CONFIG=DEVELOPMENT
           export CURRENT_ARCH_CONFIG=ARM64
           export CURRENT_MACHINE_CONFIG=M30LTE
+          export CURRENT_MACHINE_CONFIG_LC=m30lte
           make -e VERBOSE=YES \
             SDKROOT=macosx \
             TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
