@@ -17,7 +17,7 @@ for subdir in osfmk_subdirs:
     build_dir = os.path.join('BUILD', 'obj', 'DEVELOPMENT_ARM64_M30LTE', 'osfmk', subdir)
     
     if not os.path.exists(src_dir):
-        print(f"Source directory {src_dir} does not exist, skipping")
+        print(f"WARNING: Source directory {src_dir} does not exist, skipping")
         continue
     
     # Create build directory
@@ -31,10 +31,11 @@ for subdir in osfmk_subdirs:
             dst = os.path.join(build_dir, f)
             shutil.copy2(src, dst)
             count += 1
+            print(f"  Copied {f}")
     
     if count > 0:
         print(f"Copied {count} .defs files from {src_dir} to {build_dir}")
     else:
-        print(f"No .defs files found in {src_dir}")
+        print(f"WARNING: No .defs files found in {src_dir}")
 
 print("Done copying .defs files")
