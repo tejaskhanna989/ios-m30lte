@@ -1,51 +1,51 @@
 #!/usr/bin/env python3
-"""Patch security/Makefile to add kernel source includes at the beginning."""
+"""Patch security/Makefile to add kernel source includes at the VERY beginning."""
 import sys
 
 with open('security/Makefile', 'r') as f:
     content = f.read()
 
-# Add kernel source include paths at the beginning of the file, after the includes
-# Find the line with "include $(MakeInc_dir)" and add our includes after it
-# But better: add after the includes and before COMP_SUBDIRS
+# Add kernel source include paths at the VERY beginning of the file, right after the header
+# This ensures kernel source paths come before EXPORT_HDRS paths
+header_end = '''include $(MakeInc_dir)
 
-# Find the line with "COMP_SUBDIRS = conf" and add our includes before it
-old_comp_subdirs = 'COMP_SUBDIRS = conf'
-new_comp_subdirs = '''#
-# Kernel private include paths for security module
-# Must come before EXPORT_HDRS to ensure kernel-private headers are found
+INCDIR=$(SDKHEADERSROOT)/usr/local/include'''
+
+new_content = '''include $(MakeInc_dir)
+
 #
-INCFLAGS += -I$(SRCROOT)/bsd \\
+# Kernel private include paths for security module
+# Must come FIRST to ensure kernel-private headers are found before EXPORT_HDRS
+#
+INCFLAGS = -I$(SRCROOT)/bsd \\
 	-I$(SRCROOT)/osfmk \\
 	-I$(SRCROOT)/libkern \\
 	-I$(SRCROOT)/iokit \\
-	-I$(SRCROOT)/security
+	-I$(SRCROOT)/security \\
+	-I$(SOURCE)/..
 
-COMP_SUBDIRS = conf'''
+INCDIR=$(SDKHEADERSROOT)/usr/local/include'''
 
-if old_comp_subdirs not in content:
-    print("ERROR: Could not find COMP_SUBDIRS line")
+if header_end not in content:
+    print("ERROR: Could not find header_end pattern")
     sys.exit(1)
 
-content = content.replace(old_comp_subdirs, new_comp_subdirs)
+content = content.replace(header_end, new_content)
 
-# Also add kernel private definitions to CFLAGS for this component
-# Find the CFLAGS line or add it
-if 'CFLAGS+=' not in content:
-    # Add CFLAGS after the includes
-    include_makeinc_dir = 'include $(MakeInc_dir)'
-    if include_makeinc_dir in content:
-        content = content.replace(
-            include_makeinc_dir,
-            include_makeinc_dir + '\n\nCFLAGS+= -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DKERNEL -DXNU_KERNEL_PRIVATE -DPRIVATE'
-        )
-    else:
-        print("WARNING: Could not find include $(MakeInc_dir) line")
+# Also add kernel private definitions to CFLAGS
+old_cflags = 'CFLAGS+= -include meta_features.h -DBSD_KERNEL_PRIVATE'
+new_cflags = '''CFLAGS+= -include meta_features.h -DBSD_KERNEL_PRIVATE -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DKERNEL -DXNU_KERNEL_PRIVATE -DPRIVATE'''
+
+if old_cflags not in content:
+    print("ERROR: Could not find CFLAGS line with BSD_KERNEL_PRIVATE")
+    sys.exit(1)
+
+content = content.replace(old_cflags, new_cflags)
 
 with open('security/Makefile', 'w') as f:
     f.write(content)
 
-print("Patched security/Makefile with kernel source includes and kernel private definitions")
+print("Patched security/Makefile with kernel source includes at the beginning and kernel private definitions")
 
 # Verify
 with open('security/Makefile', 'r') as f:
