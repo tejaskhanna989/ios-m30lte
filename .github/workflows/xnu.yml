@@ -407,14 +407,6 @@ jobs:
         # Verify the patch
 
         '
-    - name: Patch libkern/libkern/Makefile in build directory for VPATH
-      run: 'cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
-
-        echo "=== Patching libkern/libkern/Makefile in build directory for VPATH ==="
-
-        python3 ../xnu/patches/patch_libkern_makefile.py BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libkern/libkern
-
-        echo "Patched successfully"'
     - name: Build SETUP tools for macOS (host platform)
       run: "cd xnu-source\necho \"=== Building ALL SETUP tools for macOS (host platform)\
         \ ===\"\n# List of SETUP tools to pre-build\nSETUP_TOOLS=\"config kextsymboltool\
@@ -453,6 +445,18 @@ jobs:
         python3 ../xnu/patches/patch_setup_config_skip_build.py
 
         echo "Patched successfully"'
+    - name: Copy version.h.template to build directory
+      run: 'cd xnu-source
+
+        echo "=== Copying version.h.template to build directory ==="
+
+        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libkern/libkern
+
+        cp -v libkern/libkern/version.h.template BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libkern/libkern/
+
+        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libkern/libkern/version.h.template
+
+        echo "Copied version.h.template"'
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
