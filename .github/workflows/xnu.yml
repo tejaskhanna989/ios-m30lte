@@ -517,6 +517,14 @@ jobs:
         ls -la BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h
 
         echo "Copied full kernel private headers"'
+    - name: Patch EXPORT_HDRS/osfmk/arm/locks.h for full lck_mtx_t definition
+      run: 'cd xnu-source
+
+        echo "=== Patching EXPORT_HDRS/osfmk/arm/locks.h for full lck_mtx_t definition ==="
+
+        python3 ../xnu/patches/patch_export_locks.py
+
+        echo "Patched successfully"'
     - name: Patch security/mac_audit.c for kernel includes and ptrauth
       run: 'cd xnu-source
 
