@@ -11,6 +11,8 @@ osfmk_subdirs = [
     'gssd',
     'kextd',
     'lockd',
+    'device',
+    'mach_debug',
     # Add more as needed
 ]
 
