@@ -23,7 +23,7 @@ for subdir in osfmk_subdirs:
     # Create build directory
     os.makedirs(build_dir, exist_ok=True)
     
-    # Copy all .defs files (including those with _mach suffix)
+    # Copy all .defs files
     count = 0
     for f in os.listdir(src_dir):
         if f.endswith('.defs'):
@@ -31,7 +31,7 @@ for subdir in osfmk_subdirs:
             dst = os.path.join(build_dir, f)
             shutil.copy2(src, dst)
             count += 1
-            print(f"  Copied {f}")
+            print(f"  Copied {subdir}/{f}")
     
     if count > 0:
         print(f"Copied {count} .defs files from {src_dir} to {build_dir}")
