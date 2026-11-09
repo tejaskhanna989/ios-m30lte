@@ -379,13 +379,13 @@ jobs:
         \ ===\"\n# List of SETUP tools to pre-build\nSETUP_TOOLS=\"config kextsymboltool\
         \ setsegname decomment installfile replacecontents\"\n\nfor tool in $SETUP_TOOLS;\
         \ do\n  echo \"Building $tool...\"\n  mkdir -p BUILD/obj/SETUP/$tool\n  cd\
-        \ BUILD/obj/SETUP/$tool\n  # Copy source files\n  cp -v ../../../SETUP/$tool/*.c\
+        \ BUILD/obj/SETUP/$tool\n  # Copy source files AND Makefile\n  cp -v ../../../SETUP/$tool/*.c\
         \ ../../../SETUP/$tool/*.h ../../../SETUP/$tool/*.y ../../../SETUP/$tool/*.l\
-        \ . 2>/dev/null || true\n  # Build with macOS SDK (host platform)\n  make\
-        \ -f ../../../SETUP/$tool/Makefile \\\\\n    SDKROOT=macosx \\\\\n    HOST_SDKROOT=macosx\
-        \ \\\\\n    HOST_OS_VERSION=26.0 \\\\\n    OBJROOT=\"../../..\" \\\\\n   \
-        \ SYMROOT=\"../../../BUILD/sym\" \\\\\n    DSTROOT=\"../../../fakeroot\" \\\
-        \\\n    FAKEROOT_DIR=\"../../../fakeroot\" \\\\\n    KDKROOT=\"/Library/Developer/KDKs\"\
+        \ ../../../SETUP/$tool/Makefile . 2>/dev/null || true\n  # Build with macOS\
+        \ SDK (host platform)\n  make -f Makefile \\\\\n    SDKROOT=macosx \\\\\n\
+        \    HOST_SDKROOT=macosx \\\\\n    HOST_OS_VERSION=26.0 \\\\\n    OBJROOT=\"\
+        ../../..\" \\\\\n    SYMROOT=\"../../../BUILD/sym\" \\\\\n    DSTROOT=\"../../../fakeroot\"\
+        \ \\\\\n    FAKEROOT_DIR=\"../../../fakeroot\" \\\\\n    KDKROOT=\"/Library/Developer/KDKs\"\
         \ \\\\\n    SRCROOT=\"../../..\" \\\\\n    CURRENT_KERNEL_CONFIG=DEVELOPMENT\
         \ \\\\\n    CURRENT_ARCH_CONFIG=ARM64 \\\\\n    CURRENT_MACHINE_CONFIG=M30LTE\
         \ \\\\\n    CURRENT_MACHINE_CONFIG_LC=m30lte \\\\\n    do_build_setup 2>&1\
