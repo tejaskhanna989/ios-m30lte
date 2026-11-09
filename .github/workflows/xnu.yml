@@ -1,6 +1,5 @@
 name: xnu
-
-on:
+true:
   workflow_dispatch:
     inputs:
       macos_version:
@@ -376,19 +375,22 @@ jobs:
         '
     - name: Build SETUP tools for macOS (host platform)
       run: "cd xnu-source\necho \"=== Building SETUP tools for macOS (host platform)\
-        \ in build directory ===\"\n# Build SETUP tools directly in the build directory\
-        \ with macOS SDK\nmkdir -p BUILD/obj/SETUP/config\ncd BUILD/obj/SETUP/config\n\
-        # Build with macOS SDK (host platform) - VPATH will find source files\nmake\
-        \ -f ../../../SETUP/config/Makefile \\\n  SDKROOT=macosx \\\n  HOST_SDKROOT=macosx\
-        \ \\\n  HOST_OS_VERSION=26.0 \\\n  OBJROOT=\"../../..\" \\\n  SYMROOT=\"../../../BUILD/sym\"\
-        \ \\\n  DSTROOT=\"../../../fakeroot\" \\\n  FAKEROOT_DIR=\"../../../fakeroot\"\
-        \ \\\n  KDKROOT=\"/Library/Developer/KDKs\" \\\n  SRCROOT=\"../../..\" \\\n\
-        \  CURRENT_KERNEL_CONFIG=DEVELOPMENT \\\n  CURRENT_ARCH_CONFIG=ARM64 \\\n\
-        \  CURRENT_MACHINE_CONFIG=M30LTE \\\n  CURRENT_MACHINE_CONFIG_LC=m30lte \\\
-        \n  do_build_setup 2>&1 | tail -20\n# Touch all output files to prevent rebuild\n\
-        touch config\ntouch *.o 2>/dev/null || true\necho \"SETUP tools built in build\
-        \ directory for macOS\"\n# Go back to source root\ncd ../../..\necho \"SETUP\
-        \ tools built in build directory for macOS\""
+        \ in build directory ===\"\n# Copy source files to build directory\nmkdir\
+        \ -p BUILD/obj/SETUP/config\ncp -v SETUP/config/*.c SETUP/config/*.h SETUP/config/*.y\
+        \ SETUP/config/*.l BUILD/obj/SETUP/config/ 2>/dev/null || true\necho \"Copied\
+        \ source files:\"\nls -la BUILD/obj/SETUP/config/*.c 2>/dev/null || echo \"\
+        No .c files found\"\n# Build SETUP tools directly in the build directory with\
+        \ macOS SDK\ncd BUILD/obj/SETUP/config\nmake -f ../../../SETUP/config/Makefile\
+        \ \\\n  SDKROOT=macosx \\\n  HOST_SDKROOT=macosx \\\n  HOST_OS_VERSION=26.0\
+        \ \\\n  OBJROOT=\"../../..\" \\\n  SYMROOT=\"../../../BUILD/sym\" \\\n  DSTROOT=\"\
+        ../../../fakeroot\" \\\n  FAKEROOT_DIR=\"../../../fakeroot\" \\\n  KDKROOT=\"\
+        /Library/Developer/KDKs\" \\\n  SRCROOT=\"../../..\" \\\n  CURRENT_KERNEL_CONFIG=DEVELOPMENT\
+        \ \\\n  CURRENT_ARCH_CONFIG=ARM64 \\\n  CURRENT_MACHINE_CONFIG=M30LTE \\\n\
+        \  CURRENT_MACHINE_CONFIG_LC=m30lte \\\n  do_build_setup 2>&1 | tail -20\n\
+        # Touch all output files to prevent rebuild\ntouch config\ntouch *.o 2>/dev/null\
+        \ || true\necho \"SETUP tools built in build directory for macOS\"\n# Go back\
+        \ to source root\ncd ../../..\necho \"SETUP tools built in build directory\
+        \ for macOS\""
     - name: Patch SETUP/config/Makefile to skip rebuild
       run: 'cd xnu-source
 
