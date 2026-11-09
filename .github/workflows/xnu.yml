@@ -465,6 +465,18 @@ jobs:
         ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libkern/libkern/version.h.template
 
         echo "Copied version.h.template"'
+    - name: Copy asm.h to build directory
+      run: 'cd xnu-source
+
+        echo "=== Copying asm.h to build directory ==="
+
+        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm
+
+        cp -v osfmk/arm/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm/
+
+        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm/asm.h
+
+        echo "Copied asm.h"'
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
