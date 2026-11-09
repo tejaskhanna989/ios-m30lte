@@ -478,7 +478,6 @@ jobs:
 
         echo "Copied arm asm.h"
 
-        # Also copy for arm64
         mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64
 
         cp -v osfmk/arm64/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64/
