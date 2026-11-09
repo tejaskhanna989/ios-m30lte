@@ -392,10 +392,11 @@ jobs:
         $SRCROOT/fakeroot\" KDKROOT=\"/Library/Developer/KDKs\" SRCROOT=\"$SRCROOT\"\
         \ CURRENT_KERNEL_CONFIG=DEVELOPMENT CURRENT_ARCH_CONFIG=ARM64 CURRENT_MACHINE_CONFIG=M30LTE\
         \ CURRENT_MACHINE_CONFIG_LC=m30lte make -f Makefile do_build_setup 2>&1 |\
-        \ tail -20\n    # Touch all output files to prevent rebuild\n    touch $tool\n\
-        \    touch *.o 2>/dev/null || true\n  else\n    echo \"ERROR: Makefile not\
-        \ found for $tool\"\n    exit 1\n  fi\n  cd \"$SRCROOT\"\ndone\n\necho \"\
-        ALL SETUP tools built in build directory for macOS\""
+        \ tail -20\n    # Make the tool executable\n    chmod +x $tool\n    # Touch\
+        \ all output files to prevent rebuild\n    touch $tool\n    touch *.o 2>/dev/null\
+        \ || true\n  else\n    echo \"ERROR: Makefile not found for $tool\"\n    exit\
+        \ 1\n  fi\n  cd \"$SRCROOT\"\ndone\n\necho \"ALL SETUP tools built in build\
+        \ directory for macOS\""
     - name: Patch SETUP/config/Makefile to skip rebuild
       run: 'cd xnu-source
 
