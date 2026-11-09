@@ -238,17 +238,12 @@ jobs:
         python3 ../xnu/patches/patch_gssd_makefile.py
 
         echo "Patched successfully"'
-    - name: Copy .defs files to build directory for osfmk/mach
+    - name: Copy .defs files to build directory for all osfmk subdirs
       run: 'cd xnu-source
 
-        echo "=== Copying .defs files to build directory for osfmk/mach ==="
+        echo "=== Copying .defs files to build directory for all osfmk subdirs ==="
 
-        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach
-
-        cp -v osfmk/mach/*.defs BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/ 2>/dev/null
-        || true
-
-        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/*.defs | head -20
+        python3 ../xnu/patches/copy_defs_files.py
 
         echo "Copied .defs files to build directory"'
     - name: Build bootstrap_cmds (mig)
