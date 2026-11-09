@@ -45,6 +45,10 @@ def main():
         for file in files:
             if file in ('Makefile', 'Makefile.inc', 'Makefile.def') or file.endswith('.mk') or file.endswith('.mak'):
                 filepath = os.path.join(root, file)
+                # Skip osfmk/mach/Makefile as it already uses ${SRCROOT}/makedefs correctly
+                if 'osfmk/mach/Makefile' in filepath.replace('\\', '/'):
+                    print(f"Skipping: {filepath} (already uses \${{SRCROOT}}/makedefs)")
+                    continue
                 try:
                     with open(filepath, 'r') as f:
                         if '/makedefs' in f.read():
