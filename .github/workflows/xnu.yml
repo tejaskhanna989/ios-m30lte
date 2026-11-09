@@ -389,18 +389,20 @@ jobs:
         \ $tool from $SRCROOT/SETUP/$tool...\"\n  cp -v \"$SRCROOT/SETUP/$tool\"/*.c\
         \ \"$SRCROOT/SETUP/$tool\"/*.h \"$SRCROOT/SETUP/$tool\"/*.y \"$SRCROOT/SETUP/$tool\"\
         /*.l \"$SRCROOT/SETUP/$tool/Makefile\" . 2>&1 || echo \"Copy failed for $tool\"\
-        \n  ls -la\n  # Build with macOS SDK (host platform) - single line to avoid\
-        \ backslash issues\n  if [ -f \"Makefile\" ]; then\n    echo \"Makefile found,\
-        \ building $tool...\"\n    SDKROOT=macosx HOST_SDKROOT=macosx HOST_OS_VERSION=26.0\
-        \ OBJROOT=\"$SRCROOT/BUILD/obj\" SYMROOT=\"$SRCROOT/BUILD/sym\" DSTROOT=\"\
-        $SRCROOT/fakeroot\" FAKEROOT_DIR=\"$SRCROOT/fakeroot\" KDKROOT=\"/Library/Developer/KDKs\"\
-        \ SRCROOT=\"$SRCROOT\" CURRENT_KERNEL_CONFIG=DEVELOPMENT CURRENT_ARCH_CONFIG=ARM64\
-        \ CURRENT_MACHINE_CONFIG=M30LTE CURRENT_MACHINE_CONFIG_LC=m30lte make -f Makefile\
-        \ do_build_setup 2>&1 | tail -20\n    # Make the tool executable\n    chmod\
-        \ +x $tool\n    # Touch all output files to prevent rebuild\n    touch $tool\n\
-        \    touch *.o 2>/dev/null || true\n  else\n    echo \"ERROR: Makefile not\
-        \ found for $tool\"\n    exit 1\n  fi\n  cd \"$SRCROOT\"\ndone\n\necho \"\
-        ALL SETUP tools built in build directory for macOS\""
+        \n  ls -la\n  # Build with macOS SDK (host platform) - run make WITHOUT -e\
+        \ flag to avoid env var override\n  if [ -f \"Makefile\" ]; then\n    echo\
+        \ \"Makefile found, building $tool...\"\n    # Run make with explicit variables\
+        \ and NO -e flag\n    make -f Makefile do_build_setup       SDKROOT=macosx\
+        \       HOST_SDKROOT=macosx       HOST_OS_VERSION=26.0       OBJROOT=\"$SRCROOT/BUILD/obj\"\
+        \       SYMROOT=\"$SRCROOT/BUILD/sym\"       DSTROOT=\"$SRCROOT/fakeroot\"\
+        \       FAKEROOT_DIR=\"$SRCROOT/fakeroot\"       KDKROOT=\"/Library/Developer/KDKs\"\
+        \       SRCROOT=\"$SRCROOT\"       CURRENT_KERNEL_CONFIG=DEVELOPMENT     \
+        \  CURRENT_ARCH_CONFIG=ARM64       CURRENT_MACHINE_CONFIG=M30LTE       CURRENT_MACHINE_CONFIG_LC=m30lte\
+        \       2>&1 | tail -20\n    # Make the tool executable\n    chmod +x $tool\n\
+        \    # Touch all output files to prevent rebuild\n    touch $tool\n    touch\
+        \ *.o 2>/dev/null || true\n  else\n    echo \"ERROR: Makefile not found for\
+        \ $tool\"\n    exit 1\n  fi\n  cd \"$SRCROOT\"\ndone\n\necho \"ALL SETUP tools\
+        \ built in build directory for macOS\""
     - name: Patch SETUP/config/Makefile to skip rebuild
       run: 'cd xnu-source
 
