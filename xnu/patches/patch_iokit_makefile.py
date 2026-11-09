@@ -1,50 +1,41 @@
 #!/usr/bin/env python3
-"""Patch iokit/Makefile to skip DriverKit when DRIVERKIT=0."""
-import yaml
+"""Patch iokit/Makefile to skip DriverKit when DRIVERKIT=0 using Python."""
+import sys
 
-with open('.github/workflows/xnu.yml', 'r') as f:
-    workflow = yaml.safe_load(f)
+with open('iokit/Makefile', 'r') as f:
+    content = f.read()
 
-steps = workflow['jobs']['build']['steps']
-
-# Find the "Fix DriverKit IORPC for Xcode 26" step index
-fix_iorpc_idx = None
-for i, step in enumerate(steps):
-    if step.get('name') == 'Fix DriverKit IORPC for Xcode 26':
-        fix_iorpc_idx = i
+# Find the line after the last include MakeInc.dir and add the DRIVERKIT check
+lines = content.split('\n')
+insert_idx = -1
+for i, line in enumerate(lines):
+    if 'include $(MakeInc.dir)' in line:
+        insert_idx = i + 1
         break
 
-if fix_iorpc_idx is None:
-    print("ERROR: Could not find 'Fix DriverKit IORPC for Xcode 26' step")
+if insert_idx == -1:
+    print("ERROR: Could not find 'include $(MakeInc.dir)' line")
     sys.exit(1)
 
-# Update the step to also patch iokit/Makefile to skip DriverKit
-steps[fix_iorpc_idx]['run'] = '''cd xnu-source
-echo "=== Patching DriverKit IORPC for Xcode 26 compatibility ==="
-if [ -f iokit/DriverKit/IORPC.h ]; then
-  echo "Patching IORPC.h to add kernelContent field..."
-  python3 ../xnu/patches/patch_iorpc.py
-else
-  echo "IORPC.h not found, skipping"
-fi
-grep -n "kernelContent" iokit/DriverKit/IORPC.h 2>/dev/null | head -5 || echo "kernelContent not found in IORPC.h"
+# Insert the DRIVERKIT check after the includes
+new_lines = lines[:insert_idx] + [
+    '',
+    'ifeq ($(DRIVERKIT),0)',
+    'SKIP_DRIVERKIT=1',
+    'endif',
+    ''
+] + lines[insert_idx:]
 
-echo "=== Patching iokit/Makefile to skip DriverKit when DRIVERKIT=0 ==="
-if [ -f iokit/Makefile ]; then
-  # Add condition to skip DriverKit when DRIVERKIT=0
-  # Find the line that builds DriverKit and add condition
-  sed -i '' '/DRIVERKIT/d' iokit/Makefile  # Remove any existing DRIVERKIT lines
-  # Add condition at the beginning of the file after includes
-  sed -i '' '/^include.*MakeInc.dir/a\
-ifeq ($(DRIVERKIT),0)\nSKIP_DRIVERKIT=1\nendif' iokit/Makefile
-  echo "Patched iokit/Makefile to skip DriverKit when DRIVERKIT=0"
-  grep -A2 "SKIP_DRIVERKIT" iokit/Makefile
-else
-  echo "iokit/Makefile not found"
-fi'''
+new_content = '\n'.join(new_lines)
 
-import sys
-with open('.github/workflows/xnu.yml', 'w') as f:
-    yaml.dump(workflow, f, sort_keys=False, default_style='')
+with open('iokit/Makefile', 'w') as f:
+    f.write(new_content)
 
-print("Updated Fix DriverKit IORPC step to also patch iokit/Makefile")
+print("Patched iokit/Makefile to skip DriverKit when DRIVERKIT=0")
+
+# Verify
+with open('iokit/Makefile', 'r') as f:
+    content = f.read()
+    for i, line in enumerate(content.split('\n')[:30]):
+        if 'DRIVERKIT' in line or 'SKIP_DRIVERKIT' in line or 'ifeq' in line or 'endif' in line:
+            print(f"  {i+1}: {line}")

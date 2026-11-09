@@ -221,14 +221,7 @@ jobs:
         else\n  echo \"IORPC.h not found, skipping\"\nfi\ngrep -n \"kernelContent\"\
         \ iokit/DriverKit/IORPC.h 2>/dev/null | head -5 || echo \"kernelContent not\
         \ found in IORPC.h\"\n\necho \"=== Patching iokit/Makefile to skip DriverKit\
-        \ when DRIVERKIT=0 ===\"\nif [ -f iokit/Makefile ]; then\n  # Add condition\
-        \ to skip DriverKit when DRIVERKIT=0\n  # Find the line that builds DriverKit\
-        \ and add condition\n  sed -i '' '/DRIVERKIT/d' iokit/Makefile  # Remove any\
-        \ existing DRIVERKIT lines\n  # Add condition at the beginning of the file\
-        \ after includes\n  sed -i '' '/^include.*MakeInc.dir/aifeq ($(DRIVERKIT),0)\n\
-        SKIP_DRIVERKIT=1\nendif' iokit/Makefile\n  echo \"Patched iokit/Makefile to\
-        \ skip DriverKit when DRIVERKIT=0\"\n  grep -A2 \"SKIP_DRIVERKIT\" iokit/Makefile\n\
-        else\n  echo \"iokit/Makefile not found\"\nfi"
+        \ when DRIVERKIT=0 ===\"\npython3 ../xnu/patches/patch_iokit_makefile.py"
     - name: Build bootstrap_cmds (mig)
       run: 'cd xnu-source
 
