@@ -246,6 +246,14 @@ jobs:
         python3 ../xnu/patches/patch_libkern_makefile.py
 
         echo "Patched successfully"'
+    - name: Patch libkern/os/atomic_private_impl.h for memory_order
+      run: 'cd xnu-source
+
+        echo "=== Patching libkern/os/atomic_private_impl.h for memory_order ==="
+
+        python3 ../xnu/patches/patch_atomic_memory_order.py
+
+        echo "Patched successfully"'
     - name: Patch osfmk/mach/arm/Makefile for VPATH
       run: 'cd xnu-source
 
