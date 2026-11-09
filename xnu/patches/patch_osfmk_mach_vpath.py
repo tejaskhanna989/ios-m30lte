@@ -5,17 +5,26 @@ import sys
 with open('osfmk/mach/Makefile', 'r') as f:
     content = f.read()
 
-# Add VPATH after the MODULEMAPFILES section, before the DATAFILES section
-# Find a good place to insert VPATH - after the includes
+# Find the line after the last include
 lines = content.split('\n')
 insert_idx = -1
 for i, line in enumerate(lines):
-    if 'include $(MakeInc_dir)' in line:
+    if line.strip() == 'include $(MakeInc_dir)':
         insert_idx = i + 1
         break
 
 if insert_idx == -1:
+    # Try alternative pattern
+    for i, line in enumerate(lines):
+        if 'include $(MakeInc_dir)' in line:
+            insert_idx = i + 1
+            break
+
+if insert_idx == -1:
     print("ERROR: Could not find 'include $(MakeInc_dir)' line")
+    print("First 30 lines of Makefile:")
+    for i, line in enumerate(lines[:30]):
+        print(f"  {i+1}: {line}")
     sys.exit(1)
 
 # Insert VPATH after the includes
