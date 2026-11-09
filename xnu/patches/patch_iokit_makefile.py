@@ -9,12 +9,22 @@ with open('iokit/Makefile', 'r') as f:
 lines = content.split('\n')
 insert_idx = -1
 for i, line in enumerate(lines):
-    if 'include $(MakeInc.dir)' in line:
+    if 'include $(MakeInc_dir)' in line:
         insert_idx = i + 1
         break
 
 if insert_idx == -1:
-    print("ERROR: Could not find 'include $(MakeInc.dir)' line")
+    # Try alternative pattern
+    for i, line in enumerate(lines):
+        if 'include $(MakeInc_dir' in line:
+            insert_idx = i + 1
+            break
+
+if insert_idx == -1:
+    print("ERROR: Could not find 'include $(MakeInc_dir)' line")
+    print("First 30 lines of Makefile:")
+    for i, line in enumerate(lines[:30]):
+        print(f"  {i+1}: {line}")
     sys.exit(1)
 
 # Insert the DRIVERKIT check after the includes
@@ -37,5 +47,5 @@ print("Patched iokit/Makefile to skip DriverKit when DRIVERKIT=0")
 with open('iokit/Makefile', 'r') as f:
     content = f.read()
     for i, line in enumerate(content.split('\n')[:30]):
-        if 'DRIVERKIT' in line or 'SKIP_DRIVERKIT' in line or 'ifeq' in line or 'endif' in line:
+        if 'DRIVERKIT' in line or 'SKIP_DRIVERKIT' in line or 'ifeq' in line or 'endif' in line or 'include' in line:
             print(f"  {i+1}: {line}")
