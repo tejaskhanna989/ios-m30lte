@@ -23,7 +23,7 @@ for subdir in osfmk_subdirs:
     # Create build directory
     os.makedirs(build_dir, exist_ok=True)
     
-    # Copy all .defs files
+    # Copy all .defs files (including those with _mach suffix)
     count = 0
     for f in os.listdir(src_dir):
         if f.endswith('.defs'):
@@ -37,5 +37,8 @@ for subdir in osfmk_subdirs:
         print(f"Copied {count} .defs files from {src_dir} to {build_dir}")
     else:
         print(f"WARNING: No .defs files found in {src_dir}")
+        # Debug: list all files in the directory
+        all_files = os.listdir(src_dir)
+        print(f"  Files in {src_dir}: {all_files}")
 
 print("Done copying .defs files")
