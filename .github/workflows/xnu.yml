@@ -248,6 +248,14 @@ jobs:
         python3 ../xnu/patches/patch_libkern_makefile.py
 
         echo "Patched successfully"'
+    - name: Patch security/Makefile for kernel source includes
+      run: 'cd xnu-source
+
+        echo "=== Patching security/Makefile for kernel source includes ==="
+
+        python3 ../xnu/patches/patch_security_makefile.py
+
+        echo "Patched successfully"'
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
       run: 'cd xnu-source
 
