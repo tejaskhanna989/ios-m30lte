@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Patch security/conf/Makefile.template to add kernel source include paths and kernel private definitions."""
+"""Patch security/conf/Makefile.template to add kernel private definitions and source includes."""
 import sys
 
 with open('security/conf/Makefile.template', 'r') as f:
@@ -20,7 +20,6 @@ if old_incflags not in content:
 content = content.replace(old_incflags, new_incflags)
 
 # 2. Add kernel private definitions to CFLAGS
-# Find the CFLAGS line and add kernel private definitions
 old_cflags = 'CFLAGS+= -include meta_features.h -DBSD_KERNEL_PRIVATE'
 new_cflags = '''CFLAGS+= -include meta_features.h -DBSD_KERNEL_PRIVATE -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DKERNEL -DXNU_KERNEL_PRIVATE -DPRIVATE'''
 
