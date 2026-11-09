@@ -476,7 +476,16 @@ jobs:
 
         ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm/asm.h
 
-        echo "Copied asm.h"'
+        echo "Copied arm asm.h"
+
+        # Also copy for arm64
+        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64
+
+        cp -v osfmk/arm64/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64/
+
+        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64/asm.h
+
+        echo "Copied arm64 asm.h"'
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
