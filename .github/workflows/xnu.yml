@@ -246,6 +246,14 @@ jobs:
         python3 ../xnu/patches/patch_libkern_makefile.py
 
         echo "Patched successfully"'
+    - name: Patch osfmk/mach/arm/Makefile for VPATH
+      run: 'cd xnu-source
+
+        echo "=== Patching osfmk/mach/arm/Makefile for VPATH ==="
+
+        python3 ../xnu/patches/patch_osfmk_mach_arm_vpath.py
+
+        echo "Patched successfully"'
     - name: Copy .defs files to build directory for all osfmk subdirs
       run: 'cd xnu-source
 
