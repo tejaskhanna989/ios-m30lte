@@ -9,6 +9,7 @@ osfmk_subdirs = [
     'mach',
     'UserNotification',
     'gssd',
+    'kextd',
     # Add more as needed
 ]
 
