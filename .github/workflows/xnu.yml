@@ -378,7 +378,11 @@ jobs:
       run: "cd xnu-source\necho \"=== Building ALL SETUP tools for macOS (host platform)\
         \ ===\"\n# List of SETUP tools to pre-build\nSETUP_TOOLS=\"config kextsymboltool\
         \ setsegname decomment installfile replacecontents\"\n\n# Use SRCROOT for\
-        \ absolute paths\nSRCROOT=\"$PWD\"\necho \"SRCROOT=$SRCROOT\"\n\nfor tool\
+        \ absolute paths\nSRCROOT=\"$PWD\"\necho \"SRCROOT=$SRCROOT\"\n\n# Unset iOS\
+        \ SDKROOT variables that would be inherited from parent build\nunset SDKROOT\n\
+        unset TARGET_CONFIGS\nunset CURRENT_KERNEL_CONFIG\nunset CURRENT_ARCH_CONFIG\n\
+        unset CURRENT_MACHINE_CONFIG\nunset CURRENT_MACHINE_CONFIG_LC\nunset OBJROOT\n\
+        unset SYMROOT\nunset DSTROOT\nunset FAKEROOT_DIR\nunset KDKROOT\n\nfor tool\
         \ in $SETUP_TOOLS; do\n  echo \"Building $tool...\"\n  mkdir -p BUILD/obj/SETUP/$tool\n\
         \  cd BUILD/obj/SETUP/$tool\n  # Copy source files AND Makefile using absolute\
         \ path\n  echo \"Copying source files for $tool from $SRCROOT/SETUP/$tool...\"\
