@@ -407,6 +407,14 @@ jobs:
         # Verify the patch
 
         '
+    - name: Patch libkern/libkern/Makefile in build directory for VPATH
+      run: 'cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
+
+        echo "=== Patching libkern/libkern/Makefile in build directory for VPATH ==="
+
+        python3 ../xnu/patches/patch_libkern_makefile.py BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libkern/libkern
+
+        echo "Patched successfully"'
     - name: Build SETUP tools for macOS (host platform)
       run: "cd xnu-source\necho \"=== Building ALL SETUP tools for macOS (host platform)\
         \ ===\"\n# List of SETUP tools to pre-build\nSETUP_TOOLS=\"config kextsymboltool\
