@@ -222,6 +222,14 @@ jobs:
         \ iokit/DriverKit/IORPC.h 2>/dev/null | head -5 || echo \"kernelContent not\
         \ found in IORPC.h\"\n\necho \"=== Patching iokit/Makefile to skip DriverKit\
         \ when DRIVERKIT=0 ===\"\npython3 ../xnu/patches/patch_iokit_makefile.py"
+    - name: Patch osfmk/mach/Makefile for VPATH
+      run: 'cd xnu-source
+
+        echo "=== Patching osfmk/mach/Makefile for VPATH ==="
+
+        python3 ../xnu/patches/patch_osfmk_mach_vpath.py
+
+        echo "Patched successfully"'
     - name: Build bootstrap_cmds (mig)
       run: 'cd xnu-source
 
