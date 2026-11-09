@@ -1,6 +1,5 @@
 name: xnu
-
-on:
+true:
   workflow_dispatch:
     inputs:
       macos_version:
@@ -363,19 +362,6 @@ jobs:
         | head -5 || echo "No more /makedefs references found in build directory"
 
         # Verify the patch
-
-        '
-    - name: Copy SETUP/config sources to build directory
-      run: 'cd xnu-source
-
-        echo "=== Copying SETUP/config sources to build directory ==="
-
-        mkdir -p BUILD/obj/SETUP/config
-
-        cp -v SETUP/config/*.c SETUP/config/*.h SETUP/config/*.y SETUP/config/*.l
-        BUILD/obj/SETUP/config/ 2>/dev/null || true
-
-        ls -la BUILD/obj/SETUP/config/
 
         '
     - name: Build SETUP tools for macOS (host platform)
