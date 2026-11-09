@@ -1,6 +1,5 @@
 name: xnu
-
-on:
+true:
   workflow_dispatch:
     inputs:
       macos_version:
@@ -419,14 +418,15 @@ jobs:
         22.6.0\" \\\n  MEMORY_SIZE=\"${MEMORY_SIZE}\" \\\n  SYSCTL_HW_PHYSICALCPU=\"\
         ${SYSCTL_PHYSICALCPU}\" \\\n  SYSCTL_HW_LOGICALCPU=\"${SYSCTL_LOGICALCPU}\"\
         \ \\\n  KERNEL_BUILDS_IN_PARALLEL=1 \\\n  BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0\
-        \ LOGCOLORS=y \\\n  DRIVERKIT=0 \\\n  2>&1 | tee /tmp/xnu-build.log\nBUILD_EXIT=${PIPESTATUS[0]}\n\
-        echo \"make exit code: $BUILD_EXIT\"\necho \"=== Errors in build log ===\"\
-        \ngrep -iE \"error:|error |make: \\*\\*\\*|No rule|syntax error|undefined\
-        \ reference|missing separator|command not found|ld:|symbol|library not found|collect2\"\
-        \ /tmp/xnu-build.log | head -50 || echo \"No errors found in log\"\necho \"\
-        === Last 1000 lines of build log ===\"\ntail -1000 /tmp/xnu-build.log\necho\
-        \ \"=== Kernel artifacts ===\"\nfind BUILD/obj -name \"kernel.*\" -type f\
-        \ 2>/dev/null | head -10\nfind BUILD/obj -maxdepth 3 \\( -name \"kernel.development.m30lte\"\
+        \ LOGCOLORS=y \\\n  DRIVERKIT=0 \\\n  SETUP_SUBDIRS=\"kextsymboltool setsegname\
+        \ decomment installfile replacecontents\" \\\n  2>&1 | tee /tmp/xnu-build.log\n\
+        BUILD_EXIT=${PIPESTATUS[0]}\necho \"make exit code: $BUILD_EXIT\"\necho \"\
+        === Errors in build log ===\"\ngrep -iE \"error:|error |make: \\*\\*\\*|No\
+        \ rule|syntax error|undefined reference|missing separator|command not found|ld:|symbol|library\
+        \ not found|collect2\" /tmp/xnu-build.log | head -50 || echo \"No errors found\
+        \ in log\"\necho \"=== Last 1000 lines of build log ===\"\ntail -1000 /tmp/xnu-build.log\n\
+        echo \"=== Kernel artifacts ===\"\nfind BUILD/obj -name \"kernel.*\" -type\
+        \ f 2>/dev/null | head -10\nfind BUILD/obj -maxdepth 3 \\( -name \"kernel.development.m30lte\"\
         \ -o -name \"mach_kernel\" \\) 2>/dev/null | head -10\necho \"BUILD_EXIT=$BUILD_EXIT\"\
         \ >> $GITHUB_OUTPUT\nexit $BUILD_EXIT\n"
     - name: Run bsd build to capture linker error
