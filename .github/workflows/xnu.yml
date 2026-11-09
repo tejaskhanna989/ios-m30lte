@@ -230,6 +230,14 @@ jobs:
         python3 ../xnu/patches/patch_osfmk_mach_vpath.py
 
         echo "Patched successfully"'
+    - name: Patch osfmk/gssd/Makefile for VPATH
+      run: 'cd xnu-source
+
+        echo "=== Patching osfmk/gssd/Makefile for VPATH ==="
+
+        python3 ../xnu/patches/patch_gssd_makefile.py
+
+        echo "Patched successfully"'
     - name: Copy .defs files to build directory for osfmk/mach
       run: 'cd xnu-source
 
