@@ -238,6 +238,14 @@ jobs:
         python3 ../xnu/patches/patch_gssd_makefile.py
 
         echo "Patched successfully"'
+    - name: Patch libkern/libkern/Makefile for VPATH
+      run: 'cd xnu-source
+
+        echo "=== Patching libkern/libkern/Makefile for VPATH ==="
+
+        python3 ../xnu/patches/patch_libkern_makefile.py
+
+        echo "Patched successfully"'
     - name: Copy .defs files to build directory for all osfmk subdirs
       run: 'cd xnu-source
 
