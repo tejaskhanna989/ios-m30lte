@@ -493,6 +493,14 @@ jobs:
         ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64/asm.h
 
         echo "Copied arm64 asm.h"'
+    - name: Patch security/mac_audit.c for kernel includes and ptrauth
+      run: 'cd xnu-source
+
+        echo "=== Patching security/mac_audit.c for kernel includes and ptrauth ==="
+
+        python3 ../xnu/patches/patch_mac_audit_includes.py
+
+        echo "Patched successfully"'
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
