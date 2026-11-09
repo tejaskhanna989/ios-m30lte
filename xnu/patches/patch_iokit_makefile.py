@@ -1,51 +1,53 @@
 #!/usr/bin/env python3
-"""Patch iokit/Makefile to skip DriverKit when DRIVERKIT=0 using Python."""
+"""Patch iokit/Makefile to skip DriverKit when DRIVERKIT=0 - properly remove from subdirs."""
 import sys
 
 with open('iokit/Makefile', 'r') as f:
     content = f.read()
 
-# Find the line after the last include MakeInc.dir and add the DRIVERKIT check
-lines = content.split('\n')
-insert_idx = -1
-for i, line in enumerate(lines):
-    if 'include $(MakeInc_dir)' in line:
-        insert_idx = i + 1
-        break
+# Replace the INSTINC_SUBDIRS and EXPINC_SUBDIRS lines to conditionally exclude DriverKit
+# Original:
+# INSTINC_SUBDIRS = IOKit DriverKit System IOKitUser
+# EXPINC_SUBDIRS = IOKit DriverKit
+#
+# New: conditionally exclude DriverKit when DRIVERKIT=0
 
-if insert_idx == -1:
-    # Try alternative pattern
-    for i, line in enumerate(lines):
-        if 'include $(MakeInc_dir' in line:
-            insert_idx = i + 1
-            break
+old_instinc = 'INSTINC_SUBDIRS = IOKit DriverKit System IOKitUser'
+new_instinc = '''ifeq ($(DRIVERKIT),0)
+INSTINC_SUBDIRS = IOKit System IOKitUser
+else
+INSTINC_SUBDIRS = IOKit DriverKit System IOKitUser
+endif'''
 
-if insert_idx == -1:
-    print("ERROR: Could not find 'include $(MakeInc_dir)' line")
-    print("First 30 lines of Makefile:")
-    for i, line in enumerate(lines[:30]):
-        print(f"  {i+1}: {line}")
+old_expinc = 'EXPINC_SUBDIRS = IOKit DriverKit'
+new_expinc = '''ifeq ($(DRIVERKIT),0)
+EXPINC_SUBDIRS = IOKit
+else
+EXPINC_SUBDIRS = IOKit DriverKit
+endif'''
+
+if old_instinc in content:
+    content = content.replace(old_instinc, new_instinc)
+    print("Patched INSTINC_SUBDIRS")
+else:
+    print("ERROR: Could not find INSTINC_SUBDIRS line")
     sys.exit(1)
 
-# Insert the DRIVERKIT check after the includes
-new_lines = lines[:insert_idx] + [
-    '',
-    'ifeq ($(DRIVERKIT),0)',
-    'SKIP_DRIVERKIT=1',
-    'endif',
-    ''
-] + lines[insert_idx:]
-
-new_content = '\n'.join(new_lines)
+if old_expinc in content:
+    content = content.replace(old_expinc, new_expinc)
+    print("Patched EXPINC_SUBDIRS")
+else:
+    print("ERROR: Could not find EXPINC_SUBDIRS line")
+    sys.exit(1)
 
 with open('iokit/Makefile', 'w') as f:
-    f.write(new_content)
+    f.write(content)
 
-print("Patched iokit/Makefile to skip DriverKit when DRIVERKIT=0")
+print("Patched iokit/Makefile to conditionally exclude DriverKit")
 
 # Verify
 with open('iokit/Makefile', 'r') as f:
     content = f.read()
     for i, line in enumerate(content.split('\n')[:30]):
-        if 'DRIVERKIT' in line or 'SKIP_DRIVERKIT' in line or 'ifeq' in line or 'endif' in line or 'include' in line:
+        if 'INSTINC' in line or 'EXPINC' in line or 'ifeq' in line or 'else' in line or 'endif' in line:
             print(f"  {i+1}: {line}")
