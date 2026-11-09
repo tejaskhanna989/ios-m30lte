@@ -494,44 +494,51 @@ jobs:
 
         echo "Copied arm64 asm.h"'
     - name: Copy full kernel private headers to build directory
-      run: 'cd xnu-source
-
+      run: |
+        cd xnu-source
+        
         echo "=== Copying full kernel private headers to build directory ==="
-
-        echo "Checking BUILD/obj directory:"
-        ls -la BUILD/obj/ 2>/dev/null || echo "BUILD/obj does not exist"
-
-        # Ensure EXPORT_HDRS directory exists
-        mkdir -p BUILD/obj/EXPORT_HDRS/osfmk/arm
-        mkdir -p BUILD/obj/EXPORT_HDRS/osfmk/arm64
-        mkdir -p BUILD/obj/EXPORT_HDRS/osfmk/machine
-        mkdir -p BUILD/obj/EXPORT_HDRS/osfmk/kern
-
+        
+        # Get absolute paths
+        SRCROOT=$(pwd)
+        OBJROOT="${SRCROOT}/BUILD/obj"
+        EXPORT_HDRS="${OBJROOT}/EXPORT_HDRS"
+        
+        echo "SRCROOT=${SRCROOT}"
+        echo "OBJROOT=${OBJROOT}"
+        echo "EXPORT_HDRS=${EXPORT_HDRS}"
+        
+        # Ensure directories exist
+        mkdir -p "${EXPORT_HDRS}/osfmk/arm"
+        mkdir -p "${EXPORT_HDRS}/osfmk/arm64"
+        mkdir -p "${EXPORT_HDRS}/osfmk/machine"
+        mkdir -p "${EXPORT_HDRS}/osfmk/kern"
+        
         echo "Checking source files:"
-        ls -la osfmk/arm/locks.h 2>/dev/null || echo "osfmk/arm/locks.h NOT FOUND"
-        ls -la osfmk/arm64/locks.h 2>/dev/null || echo "osfmk/arm64/locks.h NOT FOUND"
-        ls -la osfmk/machine/locks.h 2>/dev/null || echo "osfmk/machine/locks.h NOT FOUND"
-        ls -la osfmk/kern/lock_mtx.h 2>/dev/null || echo "osfmk/kern/lock_mtx.h NOT FOUND"
-
+        ls -la "${SRCROOT}/osfmk/arm/locks.h" 2>/dev/null || echo "osfmk/arm/locks.h NOT FOUND"
+        ls -la "${SRCROOT}/osfmk/arm64/locks.h" 2>/dev/null || echo "osfmk/arm64/locks.h NOT FOUND"
+        ls -la "${SRCROOT}/osfmk/machine/locks.h" 2>/dev/null || echo "osfmk/machine/locks.h NOT FOUND"
+        ls -la "${SRCROOT}/osfmk/kern/lock_mtx.h" 2>/dev/null || echo "osfmk/kern/lock_mtx.h NOT FOUND"
+        
         # Copy full locks.h with complete lck_mtx_t definition
-        cp -v osfmk/arm/locks.h BUILD/obj/EXPORT_HDRS/osfmk/arm/locks.h
-        ls -la BUILD/obj/EXPORT_HDRS/osfmk/arm/locks.h
-
+        cp -v "${SRCROOT}/osfmk/arm/locks.h" "${EXPORT_HDRS}/osfmk/arm/locks.h"
+        ls -la "${EXPORT_HDRS}/osfmk/arm/locks.h"
+        
         # Copy full locks.h for arm64
-        cp -v osfmk/arm64/locks.h BUILD/obj/EXPORT_HDRS/osfmk/arm64/locks.h 2>/dev/null || echo "arm64/locks.h not found, using arm version"
-
+        cp -v "${SRCROOT}/osfmk/arm64/locks.h" "${EXPORT_HDRS}/osfmk/arm64/locks.h" 2>/dev/null || echo "arm64/locks.h not found, using arm version"
+        
         # Copy full locks.h for machine
-        cp -v osfmk/machine/locks.h BUILD/obj/EXPORT_HDRS/osfmk/machine/locks.h 2>/dev/null || echo "machine/locks.h not found"
-
+        cp -v "${SRCROOT}/osfmk/machine/locks.h" "${EXPORT_HDRS}/osfmk/machine/locks.h" 2>/dev/null || echo "machine/locks.h not found"
+        
         # Copy full lock_mtx.h
-        cp -v osfmk/kern/lock_mtx.h BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h
-        ls -la BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h
-
+        cp -v "${SRCROOT}/osfmk/kern/lock_mtx.h" "${EXPORT_HDRS}/osfmk/kern/lock_mtx.h"
+        ls -la "${EXPORT_HDRS}/osfmk/kern/lock_mtx.h"
+        
         echo "Verifying copied files:"
-        ls -la BUILD/obj/EXPORT_HDRS/osfmk/arm/
-        ls -la BUILD/obj/EXPORT_HDRS/osfmk/kern/
-
-        echo "Copied full kernel private headers"'
+        ls -la "${EXPORT_HDRS}/osfmk/arm/"
+        ls -la "${EXPORT_HDRS}/osfmk/kern/"
+        
+        echo "Copied full kernel private headers"
     - name: Patch EXPORT_HDRS/osfmk/arm/locks.h for full lck_mtx_t definition
       run: 'cd xnu-source
 
