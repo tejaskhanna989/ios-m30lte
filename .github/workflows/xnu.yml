@@ -1,6 +1,5 @@
 name: xnu
-
-on:
+true:
   workflow_dispatch:
     inputs:
       macos_version:
@@ -79,15 +78,24 @@ jobs:
       run: "# Check if KDK is already installed\nif [ -d \"/Library/Developer/KDKs/KernelDebugKit_13.5_build_22G74.kdk\"\
         \ ]; then\n  echo \"KDK already installed at /Library/Developer/KDKs/\"\n\
         \  ls -la /Library/Developer/KDKs/\nelse\n  echo \"KDK not found, downloading...\"\
-        \n  # Direct URL from dortania release (known working)\n  KDK_URL=\"https://github.com/dortania/KdkSupportPkg/releases/download/22G74/Kernel_Debug_Kit_13.5_build_22G74.dmg\"\
-        \n  echo \"Downloading KDK from: $KDK_URL\"\n  curl -L -o /tmp/KDK.dmg \"\
-        ${KDK_URL}\" || {\n    echo \"Primary download failed, trying alternative\
-        \ source...\"\n    # Fallback to Apple Developer (requires auth, may fail)\n\
-        \    KDK_URL=\"https://developer.apple.com/services-account/download?path=/Developer_Tools/Kernel_Debug_Kit_13.5/Kernel_Debug_Kit_13.5_build_22G74.dmg\"\
-        \n    curl -L -o /tmp/KDK.dmg \"${KDK_URL}\"\n  }\n  hdiutil attach /tmp/KDK.dmg\n\
-        \  sudo installer -pkg '/Volumes/Kernel Debug Kit/KernelDebugKit.pkg' -target\
+        \n  # Try multiple URLs with timeout and retry\n  KDK_URLS=(\n    \"https://github.com/dortania/KdkSupportPkg/releases/download/22G74/Kernel_Debug_Kit_13.5_build_22G74.dmg\"\
+        \n    \"https://developer.apple.com/services-account/download?path=/Developer_Tools/Kernel_Debug_Kit_13.5/Kernel_Debug_Kit_13.5_build_22G74.dmg\"\
+        \n  )\n  \n  DOWNLOAD_SUCCESS=false\n  for KDK_URL in \"${KDK_URLS[@]}\";\
+        \ do\n    echo \"Trying to download KDK from: $KDK_URL\"\n    # Download with\
+        \ timeout and follow redirects\n    if curl -L --max-time 300 --retry 3 --retry-delay\
+        \ 5 -o /tmp/KDK.dmg \"${KDK_URL}\"; then\n      # Verify the download is a\
+        \ valid DMG (at least 100MB)\n      FILE_SIZE=$(stat -f%z /tmp/KDK.dmg 2>/dev/null\
+        \ || stat -c%s /tmp/KDK.dmg 2>/dev/null)\n      if [ \"$FILE_SIZE\" -gt 100000000\
+        \ ]; then\n        echo \"Download successful (${FILE_SIZE} bytes)\"\n   \
+        \     DOWNLOAD_SUCCESS=true\n        break\n      else\n        echo \"Downloaded\
+        \ file too small (${FILE_SIZE} bytes), likely an error page\"\n        rm\
+        \ -f /tmp/KDK.dmg\n      fi\n    else\n      echo \"Download failed from $KDK_URL\"\
+        \n    fi\n  done\n  \n  if [ \"$DOWNLOAD_SUCCESS\" = false ]; then\n    echo\
+        \ \"All download attempts failed\"\n    exit 1\n  fi\n  \n  echo \"Mounting\
+        \ KDK DMG...\"\n  hdiutil attach /tmp/KDK.dmg\n  echo \"Installing KDK...\"\
+        \n  sudo installer -pkg '/Volumes/Kernel Debug Kit/KernelDebugKit.pkg' -target\
         \ /\n  hdiutil detach '/Volumes/Kernel Debug Disk' 2>/dev/null || true\nfi\n\
-        # Verify KDK installation\nls -la /Library/Developer/KDKs/\n"
+        \n# Verify KDK installation\nls -la /Library/Developer/KDKs/"
     - name: Verify build environment
       run: 'echo "=== Build Environment Verification ==="
 
