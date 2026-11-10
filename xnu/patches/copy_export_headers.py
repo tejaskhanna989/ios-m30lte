@@ -219,6 +219,13 @@ def patch_vnode_internal_h(path):
         with open(path, 'r') as f:
             content = f.read()
         print(f"DEBUG: {path} exists, length: {len(content)}")
+        # First, remove any existing lck_mtx_t typedef/forward declaration to avoid redefinition
+        if 'typedef struct _lck_mtx_ lck_mtx_t;' in content:
+            content = content.replace('typedef struct _lck_mtx_ lck_mtx_t;', '')
+            print(f"DEBUG: Removed forward declaration of lck_mtx_t")
+        if 'typedef struct _lck_mtx_t lck_mtx_t;' in content:
+            content = content.replace('typedef struct _lck_mtx_t lck_mtx_t;', '')
+            print(f"DEBUG: Removed forward declaration of lck_mtx_t (alt)")
         # Add missing type definitions and includes
         lines = content.split('\n')
         insert_pos = 0
