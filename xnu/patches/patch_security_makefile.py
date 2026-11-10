@@ -5,17 +5,27 @@ import sys
 with open('security/Makefile', 'r') as f:
     content = f.read()
 
-# 1. Add kernel source include paths before COMP_SUBDIRS
-# The file has:
-# COMP_SUBDIRS = conf
-# 
-# include $(MakeInc_rule)
-# include $(MakeInc_dir)
-# 
-# We need to add INCFLAGS before COMP_SUBDIRS
+print("=== Original content ===")
+print(content)
+print("=== End of content ===")
 
-old_comp_subdirs = 'COMP_SUBDIRS = conf\n\ninclude $(MakeInc_rule)\ninclude $(MakeInc_dir)'
-new_comp_subdirs = '''#
+# 1. Add kernel source include paths before COMP_SUBDIRS
+# Find the line with COMP_SUBDIRS = conf and insert before it
+lines = content.split('\n')
+
+# Find the line with COMP_SUBDIRS = conf
+comp_subdirs_idx = -1
+for i, line in enumerate(lines):
+    if line.strip() == 'COMP_SUBDIRS = conf':
+        comp_subdirs_idx = i
+        break
+
+if comp_subdirs_idx == -1:
+    print("ERROR: Could not find COMP_SUBDIRS = conf")
+    sys.exit(1)
+
+# Insert our INCFLAGS before COMP_SUBDIRS = conf
+incflags = '''#
 # Kernel private include paths for security module
 # Must come FIRST to ensure kernel-private headers are found before EXPORT_HDRS
 #
@@ -25,40 +35,31 @@ INCFLAGS = -I$(SRCROOT)/bsd \\
 	-I$(SRCROOT)/iokit \\
 	-I$(SRCROOT)/security
 
-COMP_SUBDIRS = conf
+'''
 
-include $(MakeInc_rule)
-include $(MakeInc_dir)'''
-
-if old_comp_subdirs in content:
-    content = content.replace(old_comp_subdirs, new_comp_subdirs)
-    print("Replaced COMP_SUBDIRS pattern")
-else:
-    print("ERROR: Could not find COMP_SUBDIRS pattern")
-    # Print the end of the file to debug
-    lines = content.split('\n')
-    for i, line in enumerate(lines[-20:]):
-        print(f"  {len(lines)-20+i+1}: {line}")
-    sys.exit(1)
+lines.insert(comp_subdirs_idx, incflags)
 
 # 2. Add kernel private definitions to CFLAGS
-# The security Makefile doesn't have CFLAGS, so we need to add it
-# Add after the includes
-old_include_dir = 'include $(MakeInc_rule)\ninclude $(MakeInc_dir)'
-new_include_dir = '''include $(MakeInc_rule)
-include $(MakeInc_dir)
+# Find the last include line and add CFLAGS after it
+# Find the last line with "include $(MakeInc_"
+last_include_idx = -1
+for i, line in enumerate(lines):
+    if line.strip().startswith('include $(MakeInc_'):
+        last_include_idx = i
 
-CFLAGS+= -include meta_features.h -DBSD_KERNEL_PRIVATE -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DKERNEL -DXNU_KERNEL_PRIVATE -DPRIVATE'''
-
-if old_include_dir in content:
-    content = content.replace(old_include_dir, new_include_dir)
-    print("Added CFLAGS after includes")
-else:
-    print("ERROR: Could not find include pattern")
+if last_include_idx == -1:
+    print("ERROR: Could not find include lines")
     sys.exit(1)
 
+# Insert CFLAGS after the last include
+cflags = '\nCFLAGS+= -include meta_features.h -DBSD_KERNEL_PRIVATE -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DKERNEL -DXNU_KERNEL_PRIVATE -DPRIVATE\n'
+lines.insert(last_include_idx + 1, cflags)
+
+# Join and write
+new_content = '\n'.join(lines)
+
 with open('security/Makefile', 'w') as f:
-    f.write(content)
+    f.write(new_content)
 
 print("Patched security/Makefile with kernel source includes and kernel private definitions")
 
