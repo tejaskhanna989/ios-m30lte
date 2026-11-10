@@ -213,16 +213,21 @@ def patch_systm_h(path):
 
 
 def patch_vnode_internal_h(path):
-    """Add missing types and includes to vnode_internal.h."""
+    """Add missing types and includes to vnode_internal.h.
+    
+    When MACH_KERNEL_PRIVATE=1 is set, lock_mtx.h provides the full lck_mtx_t
+    definition. We should NOT add our own typedef to avoid redefinition.
+    """
     print(f"DEBUG: patch_vnode_internal_h called for {path}")
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
         print(f"DEBUG: {path} exists, length: {len(content)}")
+        
         # Add missing type definitions and includes in CORRECT ORDER:
         # 1. First add the includes
         # 2. Then add the typedefs that depend on those includes
-        # 3. Add lck_mtx_t typedef LAST (after lock_mtx.h include)
+        # 3. Do NOT add lck_mtx_t typedef - rely on lock_mtx.h when MACH_KERNEL_PRIVATE=1
         lines = content.split('\n')
         insert_pos = 0
         # Find the last include
@@ -247,14 +252,10 @@ def patch_vnode_internal_h(path):
                     print(f"DEBUG: Already present: {item}")
             
             # Now add the typedefs (after includes)
+            # Note: lck_mtx_t is provided by lock_mtx.h when MACH_KERNEL_PRIVATE=1
             typedefs_to_add = [
                 'typedef uint32_t vfs_rename_flags_t;',
                 'typedef enum dir_clone_authorizer_op { OP_AUTHORIZE = 0, OP_VATTR_SETUP = 1, OP_VATTR_CLEANUP = 2 } dir_clone_authorizer_op_t;',
-                # Ensure full lck_mtx_t definition is visible (vnode uses it as a field, not pointer)
-                # Use the SAME struct name as the forward declaration in lock_mtx.h: _lck_mtx_
-                'typedef struct _lck_mtx_ {\n'
-                '    uintptr_t opaque[2] __kernel_data_semantics;\n'
-                '} lck_mtx_t;',
             ]
             for item in reversed(typedefs_to_add):
                 if item not in content:
@@ -265,8 +266,8 @@ def patch_vnode_internal_h(path):
             
             content = '\n'.join(lines)
             
-            # Now remove any forward declaration that might have come from lock_mtx.h include
-            # to avoid typedef redefinition with our full definition
+            # Remove any forward declaration that might have come from lock_mtx.h include
+            # to avoid typedef redefinition with the full definition from lock_mtx.h
             if 'typedef struct _lck_mtx_ lck_mtx_t;' in content:
                 content = content.replace('typedef struct _lck_mtx_ lck_mtx_t;', '')
                 print(f"DEBUG: Removed forward declaration of lck_mtx_t after include")
