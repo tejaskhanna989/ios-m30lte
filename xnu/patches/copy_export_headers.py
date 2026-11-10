@@ -219,7 +219,10 @@ def patch_vnode_internal_h(path):
         with open(path, 'r') as f:
             content = f.read()
         print(f"DEBUG: {path} exists, length: {len(content)}")
-        # Add missing type definitions and includes
+        # Add missing type definitions and includes in CORRECT ORDER:
+        # 1. First add the includes
+        # 2. Then add the typedefs that depend on those includes
+        # 3. Add lck_mtx_t typedef LAST (after lock_mtx.h include)
         lines = content.split('\n')
         insert_pos = 0
         # Find the last include
@@ -229,11 +232,22 @@ def patch_vnode_internal_h(path):
                 print(f"DEBUG: Found include at line {i}: {line.strip()}")
         print(f"DEBUG: Insert position: {insert_pos}")
         if insert_pos > 0:
-            # Add missing type definitions and includes
-            new_items = [
+            # Add missing type definitions and includes in CORRECT ORDER:
+            # 1. First add the includes
+            includes_to_add = [
                 '#include <sys/mount.h>',
                 '#include <sys/vnode_if.h>',
                 '#include <kern/lock_mtx.h>',  # For lck_mtx_t definition
+            ]
+            for item in reversed(['#include <sys/mount.h>', '#include <sys/vnode_if.h>', '#include <kern/lock_mtx.h>']):
+                if item not in content:
+                    lines.insert(insert_pos, item)
+                    print(f"DEBUG: Added include: {item}")
+                else:
+                    print(f"DEBUG: Already present: {item}")
+            
+            # Now add the typedefs (after includes)
+            typedefs_to_add = [
                 'typedef uint32_t vfs_rename_flags_t;',
                 'typedef enum dir_clone_authorizer_op { OP_AUTHORIZE = 0, OP_VATTR_SETUP = 1, OP_VATTR_CLEANUP = 2 } dir_clone_authorizer_op_t;',
                 # Ensure full lck_mtx_t definition is visible (vnode uses it as a field, not pointer)
@@ -242,12 +256,13 @@ def patch_vnode_internal_h(path):
                 '    uintptr_t opaque[2] __kernel_data_semantics;\n'
                 '} lck_mtx_t;',
             ]
-            for item in reversed(new_items):
+            for item in reversed(typedefs_to_add):
                 if item not in content:
                     lines.insert(insert_pos, item)
-                    print(f"DEBUG: Added: {item}")
+                    print(f"DEBUG: Added typedef: {item}")
                 else:
                     print(f"DEBUG: Already present: {item}")
+            
             content = '\n'.join(lines)
             
             # Now remove any forward declaration that might have come from lock_mtx.h include
