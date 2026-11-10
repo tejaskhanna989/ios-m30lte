@@ -52,19 +52,6 @@ jobs:
       OBJROOT: ${{ github.workspace }}/xnu-source/BUILD/obj
     steps:
     - uses: actions/checkout@v4
-    - name: Create stdatomic prefix header
-      run: |
-        cat > "${{ github.workspace }}/xnu-source/stdatomic_prefix.h" << 'EOF'
-        /* Prefix header to force include stdatomic.h for C11 atomic functions */
-        #ifndef __STDATOMIC_PREFIX_H__
-        #define __STDATOMIC_PREFIX_H__
-        
-        #include <stdatomic.h>
-        #include <os/atomic.h>
-        
-        #endif /* __STDATOMIC_PREFIX_H__ */
-        EOF
-        echo "Created stdatomic_prefix.h"
     - name: Check available Xcode versions
       run: 'echo "=== Checking pre-installed Xcode versions ==="
 
@@ -154,6 +141,19 @@ jobs:
         git describe --tags --always
 
         '
+    - name: Create stdatomic prefix header
+      run: |
+        cat > "${{ github.workspace }}/xnu-source/stdatomic_prefix.h" << 'EOF'
+        /* Prefix header to force include stdatomic.h for C11 atomic functions */
+        #ifndef __STDATOMIC_PREFIX_H__
+        #define __STDATOMIC_PREFIX_H__
+        
+        #include <stdatomic.h>
+        #include <os/atomic.h>
+        
+        #endif /* __STDATOMIC_PREFIX_H__ */
+        EOF
+        echo "Created stdatomic_prefix.h"
     - name: Stage libpthread dependency
       run: 'cd xnu-source
 
