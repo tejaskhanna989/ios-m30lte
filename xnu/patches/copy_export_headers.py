@@ -279,9 +279,11 @@ def patch_mac_internal_h(path):
 
 def patch_refcnt_internal_h(path):
     """Add memory_order enum definitions to refcnt_internal.h"""
+    print(f"DEBUG: patch_refcnt_internal_h called for {path}")
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
+        print(f"DEBUG: File {path} exists, length: {len(content)}")
         # Add memory_order enum definitions after the license header
         # Find a good place to insert - after the includes
         memory_order_defs = '''
@@ -311,6 +313,8 @@ typedef enum {
         for i, line in enumerate(lines):
             if line.strip().startswith('#include'):
                 last_include = i
+                print(f"DEBUG: Found include at line {i}: {line.strip()}")
+        print(f"DEBUG: Last include at line {last_include}")
         if last_include >= 0:
             lines.insert(last_include + 1, memory_order_defs)
             content = '\n'.join(lines)
@@ -318,6 +322,10 @@ typedef enum {
                 f.write(content)
             print(f"Patched {path} - added memory_order enum definitions")
             return True
+        else:
+            print(f"DEBUG: No include lines found in {path}")
+    else:
+        print(f"DEBUG: File {path} does not exist")
     return False
 
 def main():
