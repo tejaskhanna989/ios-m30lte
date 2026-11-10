@@ -278,12 +278,24 @@ def patch_mac_internal_h(path):
     return patch_file(path, replacements)
 
 def patch_refcnt_internal_h(path):
-    """Add memory_order enum definitions to refcnt_internal.h"""
+    """Add memory_order enum definitions and stdatomic.h include to refcnt_internal.h"""
     print(f"DEBUG: patch_refcnt_internal_h called for {path}")
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
         print(f"DEBUG: File {path} exists, length: {len(content)}")
+        # Add stdatomic.h include after the existing includes
+        if '#include <stdatomic.h>' not in content:
+            lines = content.split('\n')
+            insert_pos = 0
+            # Find the last include line
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include'):
+                    insert_pos = i + 1
+            if insert_pos > 0:
+                lines.insert(insert_pos, '#include <stdatomic.h>')
+                content = '\n'.join(lines)
+                print(f"Patched {path} - added stdatomic.h include")
         # Add memory_order enum definitions right after the header guard
         # The file starts with #ifndef _OS_REFCNT_INTERNAL_H / #define _OS_REFCNT_INTERNAL_H
         # We need to insert right after the header guard
@@ -359,6 +371,28 @@ def patch_param_h_undef_setbit_clrbit(path):
             with open(path, 'w') as f:
                 f.write(content)
             print(f"Patched {path} - added undef for setbit/clrbit")
+            return True
+    return False
+
+
+def patch_misc_protos_h_undef_setbit_clrbit(path):
+    """Undef setbit/clrbit macros in misc_protos.h before function declarations to avoid conflicts."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add undef before the setbit/clrbit function declarations
+        import re
+        # Find the setbit function declaration and insert undef before it
+        pattern = r'(extern void setbit\()'
+        if re.search(pattern, content) and '#undef setbit' not in content:
+            content = re.sub(
+                pattern,
+                '/* Undef setbit/clrbit to avoid conflicts with macros in param.h */\n#undef setbit\n#undef clrbit\n\nextern void setbit(',
+                content
+            )
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - added undef for setbit/clrbit before function declarations")
             return True
     return False
 
@@ -598,6 +632,7 @@ def main():
     patch_mac_internal_h('security/mac_internal.h')
     patch_refcnt_internal_h('libkern/os/refcnt_internal.h')
     patch_param_h_undef_setbit_clrbit('bsd/sys/param.h')
+    patch_misc_protos_h_undef_setbit_clrbit('osfmk/kern/misc_protos.h')
     patch_kern_types_h_clock_t('osfmk/kern/kern_types.h')
     patch_lock_mtx_h_consolidate('osfmk/kern/lock_mtx.h')
     patch_proc_internal_h_task_get_proc_raw('bsd/sys/proc_internal.h')
@@ -618,6 +653,7 @@ def main():
     patch_mac_internal_h('BUILD/obj/EXPORT_HDRS/security/mac_internal.h')
     patch_refcnt_internal_h('BUILD/obj/EXPORT_HDRS/libkern/os/refcnt_internal.h')
     patch_param_h_undef_setbit_clrbit('BUILD/obj/EXPORT_HDRS/bsd/sys/param.h')
+    patch_misc_protos_h_undef_setbit_clrbit('BUILD/obj/EXPORT_HDRS/osfmk/kern/misc_protos.h')
     patch_kern_types_h_clock_t('BUILD/obj/EXPORT_HDRS/osfmk/kern/kern_types.h')
     patch_lock_mtx_h_consolidate('BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h')
     patch_proc_internal_h_task_get_proc_raw('BUILD/obj/EXPORT_HDRS/bsd/sys/proc_internal.h')
