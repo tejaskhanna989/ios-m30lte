@@ -482,14 +482,17 @@ def patch_vnode_internal_h_dir_clone(path):
 
 def patch_syslog_h_log_conflict(path):
     """Guard the log function declaration in syslog.h to avoid conflict with misc_protos.h."""
+    import re
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
-        # Guard the log function declaration
-        if 'void    log(int, const char *, ...) __printflike(2, 3);' in content and '#ifndef __SYSLOG_H_LOG_DEFINED__' not in content:
-            content = content.replace(
-                'void    log(int, const char *, ...) __printflike(2, 3);',
-                '#ifndef __SYSLOG_H_LOG_DEFINED__\nvoid    log(int, const char *, ...) __printflike(2, 3);\n#define __SYSLOG_H_LOG_DEFINED__\n#endif'
+        # Guard the log function declaration - use regex to handle varying whitespace
+        pattern = r'void\s+log\(int,\s*const\s+char\s*\*,\s*\.\.\.\)\s*__printflike\(2,\s*3\);'
+        if re.search(pattern, content) and '#ifndef __SYSLOG_H_LOG_DEFINED__' not in content:
+            content = re.sub(
+                pattern,
+                '#ifndef __SYSLOG_H_LOG_DEFINED__\nvoid    log(int, const char *, ...) __printflike(2, 3);\n#define __SYSLOG_H_LOG_DEFINED__\n#endif',
+                content
             )
             with open(path, 'w') as f:
                 f.write(content)
