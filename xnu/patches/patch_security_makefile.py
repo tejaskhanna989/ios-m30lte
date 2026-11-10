@@ -5,13 +5,36 @@ import sys
 with open('security/Makefile', 'r') as f:
     content = f.read()
 
-# 1. Add kernel source include paths at the beginning of INCFLAGS
-# The file has: include $(MakeInc_dir) followed by INCDIR=...
-# We'll add our includes right after the includes
+print("=== Original content ===")
+print(content[:2000])
+print("=== End of content ===")
 
-# Find the line with "include $(MakeInc_dir)" and add our includes after it
-old_include_dir = 'include $(MakeInc_dir)\n\nINCDIR=$(SDKHEADERSROOT)/usr/local/include'
-new_include_dir = '''include $(MakeInc_dir)
+# 1. Add kernel source include paths at the beginning of INCFLAGS
+# Find the right place - after the includes, before COMP_SUBDIRS
+# The file has include $(MakeInc_dir) then INCDIR
+
+# First, let's see the exact content around the include
+lines = content.split('\n')
+for i, line in enumerate(lines):
+    if 'include $(MakeInc_dir)' in line:
+        print(f"Found include at line {i}: {line}")
+    if 'INCDIR=' in line:
+        print(f"Found INCDIR at line {i}: {line}")
+    if 'COMP_SUBDIRS = conf' in line:
+        print(f"Found COMP_SUBDIRS at line {i}: {line}")
+
+# Find the right place to insert - after include $(MakeInc_dir) and before INCDIR
+# The file has:
+# include $(MakeInc_dir)
+# 
+# INCDIR=$(SDKHEADERSROOT)/usr/local/include
+
+# We need to insert after include $(MakeInc_dir) and before INCDIR
+old_pattern = '''include $(MakeInc_dir)
+
+INCDIR=$(SDKHEADERSROOT)/usr/local/include'''
+
+new_pattern = '''include $(MakeInc_dir)
 
 #
 # Kernel private include paths for security module
@@ -25,21 +48,33 @@ INCFLAGS = -I$(SRCROOT)/bsd \\
 
 INCDIR=$(SDKHEADERSROOT)/usr/local/include'''
 
-if old_include_dir not in content:
-    # Try alternative pattern
-    old_include_dir2 = 'include $(MakeInc_dir)\n\nINCDIR=$(SDKHEADERSROOT)/usr/local/include'
-    if old_include_dir2 in content:
-        content = content.replace(old_include_dir2, new_include_dir)
-    else:
-        # Try without newline
-        old_include_dir3 = 'include $(MakeInc_dir)\nINCDIR=$(SDKHEADERSROOT)/usr/local/include'
-        if old_include_dir3 in content:
-            content = content.replace(old_include_dir3, new_include_dir)
-        else:
-            print("ERROR: Could not find include $(MakeInc_dir) pattern")
-            sys.exit(1)
+if old_pattern in content:
+    content = content.replace(old_pattern, new_pattern)
+    print("Replaced include pattern")
 else:
-    content = content.replace(old_include_dir, new_include_dir)
+    # Try alternative with single newline
+    old_pattern2 = 'include $(MakeInc_dir)\nINCDIR=$(SDKHEADERSROOT)/usr/local/include'
+    if old_pattern2 in content:
+        content = content.replace(old_pattern2, '''include $(MakeInc_dir)
+
+#
+# Kernel private include paths for security module
+# Must come FIRST to ensure kernel-private headers are found before EXPORT_HDRS
+#
+INCFLAGS = -I$(SRCROOT)/bsd \\
+	-I$(SRCROOT)/osfmk \\
+	-I$(SRCROOT)/libkern \\
+	-I$(SRCROOT)/iokit \\
+	-I$(SRCROOT)/security
+
+INCDIR=$(SDKHEADERSROOT)/usr/local/include''')
+        print("Replaced with single newline pattern")
+    else:
+        print("ERROR: Could not find include pattern")
+        # Print the first 50 lines to debug
+        for i, line in enumerate(content.split('\n')[:30]):
+            print(f"  {i+1}: {line}")
+        sys.exit(1)
 
 # 2. Add kernel private definitions to CFLAGS
 old_cflags = 'CFLAGS+= -include meta_features.h -DBSD_KERNEL_PRIVATE'
@@ -59,5 +94,5 @@ print("Patched security/Makefile with kernel source includes and kernel private 
 # Verify
 with open('security/Makefile', 'r') as f:
     content = f.read()
-    for i, line in enumerate(content.split('\n')[:50]):
+    for i, line in enumerate(content.split('\n')[:60]):
         print(f"  {i+1}: {line}")
