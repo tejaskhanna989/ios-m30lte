@@ -295,13 +295,6 @@ def patch_smr_h(path):
                 print(f"Patched {path} - added stdatomic.h include")
                 return True
     return False
-            with open(path, 'w') as f:
-                f.write(content)
-            print(f"Patched {path} - added stdatomic.h")
-            return True
-        else:
-            print(f"stdatomic.h already present in {path}")
-    return False
 
 def patch_mac_framework_h(path):
     """Remove the #error from mac_framework.h"""
