@@ -310,7 +310,10 @@ typedef enum {
         lines = content.split('\n')
         insert_pos = 0
         for i, line in enumerate(lines):
-            if 'memory_order ' in line or 'memory_order\t' in line:
+            # Search for memory_order as a word (not part of another identifier)
+            # Look for memory_order followed by space, tab, comma, ), *, or end of line
+            import re
+            if re.search(r'\bmemory_order\b', line):
                 # Found first usage, insert before it
                 insert_pos = i
                 print(f"DEBUG: Found memory_order usage at line {i+1}: {line.strip()}")
