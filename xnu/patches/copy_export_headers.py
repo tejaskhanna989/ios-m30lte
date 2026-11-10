@@ -49,6 +49,10 @@ headers_to_copy = [
     ('osfmk/mach/std_types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/types.h'),
     ('bsd/sys/types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/types.h'),
     
+    # Missing headers
+    ('osfmk/mach/mach_assert.h', 'BUILD/obj/EXPORT_HDRS/osfmk/mach_assert.h'),
+    ('osfmk/mach/mach_assert.h', 'BUILD/obj/EXPORT_HDRS/mach_assert.h'),
+    
     # security - fix mac_framework.h and mac_internal.h
     ('security/mac_framework.h', 'BUILD/obj/EXPORT_HDRS/security/mac_framework.h'),
     ('security/mac_internal.h', 'BUILD/obj/EXPORT_HDRS/security/mac_internal.h'),
@@ -61,6 +65,7 @@ headers_to_copy = [
     ('libkern/os/atomic.h', 'BUILD/obj/EXPORT_HDRS/libkern/os/atomic.h'),
     ('libkern/os/atomic_private.h', 'BUILD/obj/EXPORT_HDRS/libkern/os/atomic_private.h'),
     ('libkern/os/atomic_private_impl.h', 'BUILD/obj/EXPORT_HDRS/libkern/os/atomic_private_impl.h'),
+    ('libkern/os/refcnt_internal.h', 'BUILD/obj/EXPORT_HDRS/libkern/os/refcnt_internal.h'),
     
     # osfmk/kern - smr and atomic
     ('osfmk/kern/smr.h', 'BUILD/obj/EXPORT_HDRS/osfmk/kern/smr.h'),
@@ -272,6 +277,49 @@ def patch_mac_internal_h(path):
     }
     return patch_file(path, replacements)
 
+def patch_refcnt_internal_h(path):
+    """Add memory_order enum definitions to refcnt_internal.h"""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add memory_order enum definitions after the license header
+        # Find a good place to insert - after the includes
+        memory_order_defs = '''
+/*
+ * Memory order definitions for C11 atomics.
+ * These are normally provided by <stdatomic.h> but we define them here
+ * for kernel use where stdatomic.h may not be available.
+ */
+#ifndef __OS_MEMORY_ORDER_DEFINED__
+#define __OS_MEMORY_ORDER_DEFINED__
+
+typedef enum {
+    memory_order_relaxed = 0,
+    memory_order_consume = 1,
+    memory_order_acquire = 2,
+    memory_order_release = 3,
+    memory_order_acq_rel = 4,
+    memory_order_seq_cst = 5
+} memory_order;
+
+#endif /* __OS_MEMORY_ORDER_DEFINED__ */
+
+'''
+        # Find the last include line and add after it
+        lines = content.split('\n')
+        last_include = -1
+        for i, line in enumerate(lines):
+            if line.strip().startswith('#include'):
+                last_include = i
+        if last_include >= 0:
+            lines.insert(last_include + 1, memory_order_defs)
+            content = '\n'.join(lines)
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - added memory_order enum definitions")
+            return True
+    return False
+
 def main():
     print("Copying kernel-private headers to EXPORT_HDRS...")
     copy_headers()
@@ -285,6 +333,7 @@ def main():
     patch_smr_h('osfmk/kern/smr.h')
     patch_mac_framework_h('security/mac_framework.h')
     patch_mac_internal_h('security/mac_internal.h')
+    patch_refcnt_internal_h('libkern/os/refcnt_internal.h')
     
     print("\nPatching EXPORT_HDRS headers...")
     # Also patch EXPORT_HDRS copies
@@ -295,6 +344,7 @@ def main():
     patch_smr_h('BUILD/obj/EXPORT_HDRS/osfmk/kern/smr.h')
     patch_mac_framework_h('BUILD/obj/EXPORT_HDRS/security/mac_framework.h')
     patch_mac_internal_h('BUILD/obj/EXPORT_HDRS/security/mac_internal.h')
+    patch_refcnt_internal_h('BUILD/obj/EXPORT_HDRS/libkern/os/refcnt_internal.h')
     
     print("\nAll patches applied!")
 
