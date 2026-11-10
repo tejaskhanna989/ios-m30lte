@@ -606,7 +606,7 @@ jobs:
         \ ===\"\n# Build with explicit linker verbose output, capture all sub-make\
         \ output\n# Do NOT use set -o pipefail - it kills the script before we capture\
         \ PIPESTATUS\n# Environment variables are now set at job level for all steps\n\
-        export DRIVERKIT=0\nmake -e VERBOSE=YES \\\n  SDKROOT=iphoneos \\\n  HOST_SDKROOT=macosx\
+        export DRIVERKIT=0\nmake -e VERBOSE=YES \\\n  CFLAGS="-include ${SRCROOT}/stdatomic_prefix.h" \\\n  SDKROOT=iphoneos \\\n  HOST_SDKROOT=macosx\
         \ \\\n  HOST_OS_VERSION=26.0 \\\n  TARGET_CONFIGS=\"DEVELOPMENT ARM64 M30LTE\"\
         \ \\\n  CURRENT_KERNEL_CONFIG=DEVELOPMENT \\\n  CURRENT_ARCH_CONFIG=ARM64\
         \ \\\n  CURRENT_MACHINE_CONFIG=M30LTE \\\n  CURRENT_MACHINE_CONFIG_LC=m30lte\
