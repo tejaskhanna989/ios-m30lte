@@ -155,9 +155,17 @@ typedef struct {
 #elif KERNEL_PRIVATE'''
         if old in content:
             print(f"DEBUG: Found pattern 1 in {path}")
+            # Count occurrences
+            count = content.count(old)
+            print(f"DEBUG: Pattern 1 occurs {count} times")
             content = content.replace(old, new)
             with open(path, 'w') as f:
                 f.write(content)
+            # Verify the patch
+            if 'lck_mtx_t' in content and 'uintptr_t opaque[2]' in content:
+                print(f"DEBUG: Verified lck_mtx_t definition added to {path}")
+            else:
+                print(f"DEBUG: WARNING - lck_mtx_t definition may not have been added correctly!")
             print(f"Patched {path} - added lck_mtx_t to MACH_KERNEL_PRIVATE section")
             return True
         else:
