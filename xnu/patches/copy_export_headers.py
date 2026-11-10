@@ -284,7 +284,8 @@ def patch_refcnt_internal_h(path):
         with open(path, 'r') as f:
             content = f.read()
         print(f"DEBUG: File {path} exists, length: {len(content)}")
-        # Add memory_order enum definitions BEFORE the first usage of memory_order
+        # Add memory_order enum definitions at the very beginning of the file
+        # (after any initial comment block) to ensure it's before ALL usages
         memory_order_defs = '''
 /*
  * Memory order definitions for C11 atomics.
@@ -306,46 +307,18 @@ typedef enum {
 #endif /* __OS_MEMORY_ORDER_DEFINED__ */
 
 '''
-        # Find the first usage of memory_order and insert before it
+        # Insert at the very beginning of the file (position 0)
+        # This guarantees the enum is defined before ANY usage in the file
         lines = content.split('\n')
         insert_pos = 0
-        for i, line in enumerate(lines):
-            # Search for memory_order as a word (not part of another identifier)
-            # Look for memory_order followed by space, tab, comma, ), *, or end of line
-            import re
-            if re.search(r'\bmemory_order\b', line):
-                # Found first usage, insert before it
-                insert_pos = i
-                print(f"DEBUG: Found memory_order usage at line {i+1}: {line.strip()}")
-                break
-        if insert_pos == 0:
-            # Fallback: insert after license header
-            print(f"DEBUG: No memory_order usage found, trying to insert after license header")
-            insert_pos = 0
-            in_license = False
-            for i, line in enumerate(lines):
-                stripped = line.strip()
-                if stripped.startswith('/*') or stripped.startswith('*') or stripped.startswith('//'):
-                    in_license = True
-                elif in_license and stripped == '':
-                    # End of license header
-                    insert_pos = i + 1
-                    break
-                elif in_license and not (stripped.startswith('*') or stripped.startswith('//') or stripped == ''):
-                    # End of license header
-                    insert_pos = i
-                    break
-            if insert_pos == 0:
-                # Fallback: insert at beginning
-                insert_pos = 0
-        print(f"DEBUG: Inserting at position {insert_pos}")
+        print(f"DEBUG: Inserting memory_order enum at beginning of file (position 0)")
         lines.insert(insert_pos, memory_order_defs)
         content = '\n'.join(lines)
         with open(path, 'w') as f:
             f.write(content)
         # Verify the patch was applied
         if 'memory_order_relaxed' in content and 'memory_order' in content:
-            print(f"Patched {path} - added memory_order enum definitions, VERIFIED")
+            print(f"Patched {path} - added memory_order enum definitions at beginning, VERIFIED")
             return True
         else:
             print(f"ERROR: Patch may not have been applied correctly to {path}")
