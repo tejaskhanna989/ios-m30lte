@@ -236,8 +236,11 @@ def patch_vnode_internal_h(path):
                 '#include <kern/lock_mtx.h>',  # For lck_mtx_t definition
                 'typedef uint32_t vfs_rename_flags_t;',
                 'typedef enum dir_clone_authorizer_op { OP_AUTHORIZE = 0, OP_VATTR_SETUP = 1, OP_VATTR_CLEANUP = 2 } dir_clone_authorizer_op_t;',
-                # Ensure lck_mtx_t is visible
-                'typedef struct _lck_mtx_ lck_mtx_t;',
+                # Ensure full lck_mtx_t definition is visible (vnode uses it as a field, not pointer)
+                # The forward declaration in lock_mtx.h might be inside a conditional
+                'typedef struct {\n'
+                '    uintptr_t opaque[2] __kernel_data_semantics;\n'
+                '} lck_mtx_t;',
             ]
             for item in reversed(new_items):
                 if item not in content:
