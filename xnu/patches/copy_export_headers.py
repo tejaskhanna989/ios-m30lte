@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Copy all needed kernel-private headers to EXPORT_HDRS for security module."""
+"""Copy and patch all needed kernel-private headers for security module.
+Patches both source tree and EXPORT_HDRS to ensure correct definitions are used
+regardless of include path order."""
 import os
 import shutil
 
 # List of headers to copy from source to EXPORT_HDRS
-# These are the headers that mac_audit.c and its transitive includes need
 headers_to_copy = [
     # osfmk/kern - lock types
     ('osfmk/kern/lock_mtx.h', 'BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h'),
@@ -110,111 +111,25 @@ def copy_headers():
         shutil.copy2(src_path, dst_path)
         print(f"Copied {src_path} -> {dst_path}")
 
-def patch_mac_framework_h():
-    """Remove the #error from mac_framework.h in EXPORT_HDRS"""
-    path = 'BUILD/obj/EXPORT_HDRS/security/mac_framework.h'
+def patch_file(path, replacements):
+    """Apply replacements to a file if it exists."""
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
-        # Remove or comment out the #error line
-        content = content.replace('#error "no user-serviceable parts inside"', '/* #error "no user-serviceable parts inside" */')
-        with open(path, 'w') as f:
-            f.write(content)
-        print(f"Patched {path}")
-
-def patch_mac_internal_h():
-    """Fix implicit int errors in mac_internal.h"""
-    path = 'BUILD/obj/EXPORT_HDRS/security/mac_internal.h'
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        # Fix implicit int errors - add explicit types
-        # The errors are about function declarations without explicit return types
-        # This is a common pattern in older C code
-        content = content.replace('__mac_get_proc_args(', 'int __mac_get_proc_args(')
-        content = content.replace('__mac_set_proc_args(', 'int __mac_set_proc_args(')
-        content = content.replace('__mac_get_lcid_args(', 'int __mac_get_lcid_args(')
-        content = content.replace('__mac_get_fd_args(', 'int __mac_get_fd_args(')
-        content = content.replace('__mac_get_file_args(', 'int __mac_get_file_args(')
-        content = content.replace('__mac_get_link_args(', 'int __mac_get_link_args(')
-        content = content.replace('__mac_set_fd_args(', 'int __mac_set_fd_args(')
-        content = content.replace('__mac_set_file_args(', 'int __mac_set_file_args(')
-        content = content.replace('__mac_syscall_args(', 'int __mac_syscall_args(')
-        with open(path, 'w') as f:
-            f.write(content)
-        print(f"Patched {path}")
-
-def patch_smr_h():
-    """Add atomic includes to smr.h"""
-    path = 'BUILD/obj/EXPORT_HDRS/osfmk/kern/smr.h'
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        # Add stdatomic.h include if not present
-        if '#include <stdatomic.h>' not in content:
-            # Add after the existing includes
-            content = content.replace(
-                '#include <kern/smr_types.h>',
-                '#include <kern/smr_types.h>\n#include <stdatomic.h>'
-            )
-            with open(path, 'w') as f:
-                f.write(content)
-            print(f"Patched {path}")
-
-def patch_vnode_internal_h():
-    """Add missing types to vnode_internal.h"""
-    path = 'BUILD/obj/EXPORT_HDRS/bsd/sys/vnode_internal.h'
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        # Add missing type definitions
-        # vfs_rename_flags_t and dir_clone_authorizer_op_t are missing
-        if 'vfs_rename_flags_t' not in content:
-            # Add after the existing typedefs
-            content = content.replace(
-                'typedef struct namecache *namecache_t;',
-                'typedef struct namecache *namecache_t;\ntypedef uint32_t vfs_rename_flags_t;\ntypedef int dir_clone_authorizer_op_t;'
-            )
-            with open(path, 'w') as f:
-                f.write(content)
-            print(f"Patched {path}")
-
-def patch_mac_internal_h():
-    """Fix implicit int errors in mac_internal.h"""
-    path = 'BUILD/obj/EXPORT_HDRS/security/mac_internal.h'
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        # Fix implicit int errors - add explicit return types
-        # The errors are about function declarations without explicit return types
-        replacements = {
-            'struct __mac_get_proc_args;': 'int __mac_get_proc_args(void);',
-            'struct __mac_set_proc_args;': 'int __mac_set_proc_args(void);',
-            'struct __mac_get_lcid_args;': 'int __mac_get_lcid_args(void);',
-            'struct __mac_get_fd_args;': 'int __mac_get_fd_args(void);',
-            'struct __mac_get_file_args;': 'int __mac_get_file_args(void);',
-            'struct __mac_get_link_args;': 'int __mac_get_link_args(void);',
-            'struct __mac_set_fd_args;': 'int __mac_set_fd_args(void);',
-            'struct __mac_set_file_args;': 'int __mac_set_file_args(void);',
-            'struct __mac_syscall_args;': 'int __mac_syscall_args(void);',
-        }
+        original = content
         for old, new in replacements.items():
             content = content.replace(old, new)
-        with open(path, 'w') as f:
-            f.write(content)
-        print(f"Patched {path}")
+        if content != original:
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path}")
+        return True
+    return False
 
-def patch_lock_mtx_h():
+def patch_lock_mtx_h(path):
     """Add full lck_mtx_t definition to lock_mtx.h"""
-    path = 'BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h'
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        # Replace forward declaration with full definition
-        if 'typedef struct __lck_mtx_t__            lck_mtx_t;' in content:
-            content = content.replace(
-                'typedef struct __lck_mtx_t__            lck_mtx_t;',
-                '''typedef struct lck_mtx {
+    replacements = {
+        'typedef struct __lck_mtx_t__            lck_mtx_t;': '''typedef struct lck_mtx {
     uint32_t lck_mtx_type;
     lck_grp_t lck_mtx_grp;
     union {
@@ -231,31 +146,18 @@ def patch_lock_mtx_h():
     uint16_t lck_mtx_ilk_tail;
     uint16_t lck_mtx_as_tail;
 } lck_mtx_t;'''
-            )
-            with open(path, 'w') as f:
-                f.write(content)
-            print(f"Patched {path}")
+    }
+    return patch_file(path, replacements)
 
-def patch_systm_h():
+def patch_systm_h(path):
     """Add mount_t definition to systm.h"""
-    path = 'BUILD/obj/EXPORT_HDRS/bsd/sys/systm.h'
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        # Add mount_t definition if missing
-        if 'typedef struct mount *mount_t;' not in content:
-            # Add after the includes
-            content = content.replace(
-                '#include <sys/mount.h>',
-                '#include <sys/mount.h>\ntypedef struct mount *mount_t;'
-            )
-            with open(path, 'w') as f:
-                f.write(content)
-            print(f"Patched {path}")
+    replacements = {
+        '#include <sys/mount.h>': '#include <sys/mount.h>\ntypedef struct mount *mount_t;'
+    }
+    return patch_file(path, replacements)
 
-def patch_smr_h():
+def patch_smr_h(path):
     """Add stdatomic.h include to smr.h"""
-    path = 'BUILD/obj/EXPORT_HDRS/osfmk/kern/smr.h'
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
@@ -267,113 +169,59 @@ def patch_smr_h():
             with open(path, 'w') as f:
                 f.write(content)
             print(f"Patched {path}")
+            return True
+    return False
 
-def patch_vnode_internal_h():
+def patch_vnode_internal_h(path):
     """Add missing types to vnode_internal.h"""
-    path = 'BUILD/obj/EXPORT_HDRS/bsd/sys/vnode_internal.h'
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        if 'vfs_rename_flags_t' not in content:
-            content = content.replace(
-                'typedef struct namecache *namecache_t;',
-                'typedef struct namecache *namecache_t;\ntypedef uint32_t vfs_rename_flags_t;\ntypedef int dir_clone_authorizer_op_t;'
-            )
-            with open(path, 'w') as f:
-                f.write(content)
-            print(f"Patched {path}")
+    replacements = {
+        'typedef struct namecache *namecache_t;': 'typedef struct namecache *namecache_t;\ntypedef uint32_t vfs_rename_flags_t;\ntypedef int dir_clone_authorizer_op_t;'
+    }
+    return patch_file(path, replacements)
 
-def patch_mac_framework_h():
+def patch_mac_framework_h(path):
     """Remove the #error from mac_framework.h"""
-    path = 'BUILD/obj/EXPORT_HDRS/security/mac_framework.h'
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        content = content.replace('#error "no user-serviceable parts inside"', '/* #error "no user-serviceable parts inside" */')
-        with open(path, 'w') as f:
-            f.write(content)
-        print(f"Patched {path}")
+    replacements = {
+        '#error "no user-serviceable parts inside"': '/* #error "no user-serviceable parts inside" */'
+    }
+    return patch_file(path, replacements)
 
-def patch_mac_internal_h():
+def patch_mac_internal_h(path):
     """Fix implicit int errors in mac_internal.h"""
-    path = 'BUILD/obj/EXPORT_HDRS/security/mac_internal.h'
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        replacements = {
-            'struct __mac_get_proc_args;': 'int __mac_get_proc_args(void);',
-            'struct __mac_set_proc_args;': 'int __mac_set_proc_args(void);',
-            'struct __mac_get_lcid_args;': 'int __mac_get_lcid_args(void);',
-            'struct __mac_get_fd_args;': 'int __mac_get_fd_args(void);',
-            'struct __mac_get_file_args;': 'int __mac_get_file_args(void);',
-            'struct __mac_get_link_args;': 'int __mac_get_link_args(void);',
-            'struct __mac_set_fd_args;': 'int __mac_set_fd_args(void);',
-            'struct __mac_set_file_args;': 'int __mac_set_file_args(void);',
-            'struct __mac_syscall_args;': 'int __mac_syscall_args(void);',
-        }
-        for old, new in replacements.items():
-            content = content.replace(old, new)
-        with open(path, 'w') as f:
-            f.write(content)
-        print(f"Patched {path}")
-
-def patch_lock_mtx_h():
-    """Add full lck_mtx_t definition to lock_mtx.h"""
-    path = 'BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h'
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        if 'typedef struct __lck_mtx_t__' in content and 'struct lck_mtx' not in content:
-            content = content.replace(
-                'typedef struct __lck_mtx_t__            lck_mtx_t;',
-                '''typedef struct lck_mtx {
-    uint32_t lck_mtx_type;
-    lck_grp_t lck_mtx_grp;
-    union {
-        struct {
-            uint32_t owner:28;
-            uint32_t ilocked:1;
-            uint32_t spin_mode:1;
-            uint32_t needs_wakeup:1;
-            uint32_t profile:1;
-        };
-        uint32_t data;
-        uint64_t val;
-    } lck_mtx;
-    uint16_t lck_mtx_ilk_tail;
-    uint16_t lck_mtx_as_tail;
-} lck_mtx_t;'''
-            )
-            with open(path, 'w') as f:
-                f.write(content)
-            print(f"Patched {path}")
-
-def patch_systm_h():
-    """Add mount_t definition to systm.h"""
-    path = 'BUILD/obj/EXPORT_HDRS/bsd/sys/systm.h'
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        if 'typedef struct mount *mount_t;' not in content:
-            content = content.replace(
-                '#include <sys/mount.h>',
-                '#include <sys/mount.h>\ntypedef struct mount *mount_t;'
-            )
-            with open(path, 'w') as f:
-                f.write(content)
-            print(f"Patched {path}")
+    replacements = {
+        'struct __mac_get_proc_args;': 'int __mac_get_proc_args(void);',
+        'struct __mac_set_proc_args;': 'int __mac_set_proc_args(void);',
+        'struct __mac_get_lcid_args;': 'int __mac_get_lcid_args(void);',
+        'struct __mac_get_fd_args;': 'int __mac_get_fd_args(void);',
+        'struct __mac_get_file_args;': 'int __mac_get_file_args(void);',
+        'struct __mac_get_link_args;': 'int __mac_get_link_args(void);',
+        'struct __mac_set_fd_args;': 'int __mac_set_fd_args(void);',
+        'struct __mac_set_file_args;': 'int __mac_set_file_args(void);',
+        'struct __mac_syscall_args;': 'int __mac_syscall_args(void);',
+    }
+    return patch_file(path, replacements)
 
 def main():
     print("Copying kernel-private headers to EXPORT_HDRS...")
     copy_headers()
     
-    print("\nPatching headers...")
-    patch_lock_mtx_h()
-    patch_systm_h()
-    patch_smr_h()
-    patch_vnode_internal_h()
-    patch_mac_framework_h()
-    patch_mac_internal_h()
+    print("\nPatching SOURCE headers...")
+    # Patch source files directly (these are used first by build system)
+    patch_lock_mtx_h('osfmk/kern/lock_mtx.h')
+    patch_systm_h('bsd/sys/systm.h')
+    patch_smr_h('osfmk/kern/smr.h')
+    patch_vnode_internal_h('bsd/sys/vnode_internal.h')
+    patch_mac_framework_h('security/mac_framework.h')
+    patch_mac_internal_h('security/mac_internal.h')
+    
+    print("\nPatching EXPORT_HDRS headers...")
+    # Also patch EXPORT_HDRS copies
+    patch_lock_mtx_h('BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h')
+    patch_systm_h('BUILD/obj/EXPORT_HDRS/bsd/sys/systm.h')
+    patch_smr_h('BUILD/obj/EXPORT_HDRS/osfmk/kern/smr.h')
+    patch_vnode_internal_h('BUILD/obj/EXPORT_HDRS/bsd/sys/vnode_internal.h')
+    patch_mac_framework_h('BUILD/obj/EXPORT_HDRS/security/mac_framework.h')
+    patch_mac_internal_h('BUILD/obj/EXPORT_HDRS/security/mac_internal.h')
     
     print("\nAll patches applied!")
 
