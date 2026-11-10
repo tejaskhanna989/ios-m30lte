@@ -136,29 +136,38 @@ def patch_arm_locks_h(path):
         with open(path, 'r') as f:
             content = f.read()
         # Find the MACH_KERNEL_PRIVATE section that defines lck_spin_t and add lck_mtx_t after it
-        # Look for the end of the lck_spin_t definition in MACH_KERNEL_PRIVATE
-        old = '''#elif KERNEL_PRIVATE
+        # The structure is:
+        # #ifdef MACH_KERNEL_PRIVATE
+        # ... lck_spin_t definition ...
+        # #elif KERNEL_PRIVATE
+        # We need to add lck_mtx_t in the MACH_KERNEL_PRIVATE section after lck_spin_t
+        old = '''#endif
+
+#elif KERNEL_PRIVATE
 
 typedef struct {
 	uintptr_t opaque[2] __kernel_data_semantics;
 } lck_spin_t;'''
-        new = '''#elif KERNEL_PRIVATE
+        new = '''#endif
+
+/* Full lck_mtx_t definition for MACH_KERNEL_PRIVATE (ARM64 uses LCK_MTX_USE_ARCH) */
+typedef struct {
+	uintptr_t opaque[2] __kernel_data_semantics;
+} lck_mtx_t;
+
+#elif KERNEL_PRIVATE
 
 typedef struct {
 	uintptr_t opaque[2] __kernel_data_semantics;
-} lck_spin_t;
-
-typedef struct {
-	uintptr_t opaque[2] __kernel_data_semantics;
-} lck_mtx_t;'''
+} lck_spin_t;'''
         if old in content:
             content = content.replace(old, new)
             with open(path, 'w') as f:
                 f.write(content)
-            print(f"Patched {path} - added lck_mtx_t to KERNEL_PRIVATE section")
+            print(f"Patched {path} - added lck_mtx_t to MACH_KERNEL_PRIVATE section")
             return True
         else:
-            # Try alternative: add to MACH_KERNEL_PRIVATE section after lck_spin_t
+            # Try alternative pattern
             old2 = '''#endif
 
 #elif KERNEL_PRIVATE'''
@@ -174,13 +183,13 @@ typedef struct {
                 content = content.replace(old2, new2)
                 with open(path, 'w') as f:
                     f.write(content)
-                print(f"Patched {path} - added lck_mtx_t to MACH_KERNEL_PRIVATE section")
+                print(f"Patched {path} - added lck_mtx_t to MACH_KERNEL_PRIVATE section (alt)")
                 return True
             else:
                 print(f"Could not find pattern to patch in {path}")
                 # Debug
                 for i, line in enumerate(content.split('\n')):
-                    if 'lck_spin_t' in line or 'lck_mtx_t' in line or 'KERNEL_PRIVATE' in line:
+                    if 'lck_spin_t' in line or 'lck_mtx_t' in line or 'KERNEL_PRIVATE' in line or '#elif' in line:
                         print(f"  Line {i+1}: {line}")
     return False
 
