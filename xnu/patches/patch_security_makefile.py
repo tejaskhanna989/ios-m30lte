@@ -24,12 +24,14 @@ if comp_subdirs_idx == -1:
     sys.exit(1)
 
 # Insert INCFLAGS before COMP_SUBDIRS = conf
+# EXPORT_HDRS must come FIRST to use patched headers with full definitions
 incflags_lines = [
     '#',
     '# Kernel private include paths for security module',
-    '# Must come FIRST to ensure kernel-private headers are found before EXPORT_HDRS',
+    '# EXPORT_HDRS must come FIRST to use patched headers with full definitions',
     '#',
-    'INCFLAGS = -I$(SRCROOT)/bsd \\',
+    'INCFLAGS = -I$(OBJROOT)/EXPORT_HDRS \\',
+    '	-I$(SRCROOT)/bsd \\',
     '	-I$(SRCROOT)/osfmk \\',
     '	-I$(SRCROOT)/libkern \\',
     '	-I$(SRCROOT)/iokit \\',
@@ -41,9 +43,10 @@ incflags_lines = [
 for i, line in enumerate([
     '#',
     '# Kernel private include paths for security module',
-    '# Must come FIRST to ensure kernel-private headers are found before EXPORT_HDRS',
+    '# EXPORT_HDRS must come FIRST to use patched headers with full definitions',
     '#',
-    'INCFLAGS = -I$(SRCROOT)/bsd \\',
+    'INCFLAGS = -I$(OBJROOT)/EXPORT_HDRS \\',
+    '	-I$(SRCROOT)/bsd \\',
     '	-I$(SRCROOT)/osfmk \\',
     '	-I$(SRCROOT)/libkern \\',
     '	-I$(SRCROOT)/iokit \\',
