@@ -34,12 +34,9 @@ jobs:
       CFLAGS: -std=gnu11 -Wno-format -Wno-error=visibility -Wno-error=reserved-identifier -ferror-limit=1000 -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk
         -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include
         -I${SRCROOT}/osfmk -I${SRCROOT}/bsd -I${SRCROOT}/libkern -I${SRCROOT}/iokit -I${SRCROOT}/security
-        -DBSD_KERNEL_PRIVATE -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DKERNEL -DXNU_KERNEL_PRIVATE -DPRIVATE
-        -include ${SRCROOT}/stdatomic_prefix.h
       CXXFLAGS: -std=gnu++11 -Wno-format -Wno-error=visibility -Wno-error=reserved-identifier -ferror-limit=1000 -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk
         -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include
         -I${SRCROOT}/osfmk -I${SRCROOT}/bsd -I${SRCROOT}/libkern -I${SRCROOT}/iokit -I${SRCROOT}/security
-        -DBSD_KERNEL_PRIVATE -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DKERNEL -DXNU_KERNEL_PRIVATE -DPRIVATE
       MAKEFLAGS: -j1 -e
       SRCROOT: ${{ github.workspace }}/xnu-source
       CURRENT_KERNEL_CONFIG: DEVELOPMENT
@@ -141,19 +138,6 @@ jobs:
         git describe --tags --always
 
         '
-    - name: Create stdatomic prefix header
-      run: |
-        cat > "${{ github.workspace }}/xnu-source/stdatomic_prefix.h" << 'EOF'
-        /* Prefix header to force include stdatomic.h for C11 atomic functions */
-        #ifndef __STDATOMIC_PREFIX_H__
-        #define __STDATOMIC_PREFIX_H__
-        
-        #include <stdatomic.h>
-        #include <os/atomic.h>
-        
-        #endif /* __STDATOMIC_PREFIX_H__ */
-        EOF
-        echo "Created stdatomic_prefix.h"
     - name: Stage libpthread dependency
       run: 'cd xnu-source
 
@@ -606,7 +590,7 @@ jobs:
         \ ===\"\n# Build with explicit linker verbose output, capture all sub-make\
         \ output\n# Do NOT use set -o pipefail - it kills the script before we capture\
         \ PIPESTATUS\n# Environment variables are now set at job level for all steps\n\
-        export DRIVERKIT=0\nmake -e VERBOSE=YES \\\n  CFLAGS="-include ${SRCROOT}/stdatomic_prefix.h" \\\n  SDKROOT=iphoneos \\\n  HOST_SDKROOT=macosx\
+        export DRIVERKIT=0\nmake -e VERBOSE=YES \\\n  SDKROOT=iphoneos \\\n  HOST_SDKROOT=macosx\
         \ \\\n  HOST_OS_VERSION=26.0 \\\n  TARGET_CONFIGS=\"DEVELOPMENT ARM64 M30LTE\"\
         \ \\\n  CURRENT_KERNEL_CONFIG=DEVELOPMENT \\\n  CURRENT_ARCH_CONFIG=ARM64\
         \ \\\n  CURRENT_MACHINE_CONFIG=M30LTE \\\n  CURRENT_MACHINE_CONFIG_LC=m30lte\
