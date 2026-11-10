@@ -45,8 +45,9 @@ headers_to_copy = [
     ('osfmk/mach/vm_param.h', 'BUILD/obj/EXPORT_HDRS/osfmk/mach/vm_param.h'),
     ('osfmk/mach/memory_object.h', 'BUILD/obj/EXPORT_HDRS/osfmk/mach/memory_object.h'),
     ('osfmk/mach/memory_object_types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/mach/memory_object_types.h'),
-    ('osfmk/mach/types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/mach/types.h'),
-    ('osfmk/mach/types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/types.h'),
+    ('osfmk/mach/std_types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/std_types.h'),
+    ('osfmk/mach/std_types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/types.h'),
+    ('bsd/sys/types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/types.h'),
     
     # security - fix mac_framework.h and mac_internal.h
     ('security/mac_framework.h', 'BUILD/obj/EXPORT_HDRS/security/mac_framework.h'),
