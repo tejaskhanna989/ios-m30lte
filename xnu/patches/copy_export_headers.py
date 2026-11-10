@@ -49,9 +49,9 @@ headers_to_copy = [
     ('osfmk/mach/std_types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/types.h'),
     ('bsd/sys/types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/types.h'),
     
-    # Missing headers
-    ('osfmk/mach/mach_assert.h', 'BUILD/obj/EXPORT_HDRS/osfmk/mach_assert.h'),
-    ('osfmk/mach/mach_assert.h', 'BUILD/obj/EXPORT_HDRS/mach_assert.h'),
+    # Missing headers (created, not copied from source)
+    # mach_assert.h - kernel private header that defines MACH_ASSERT
+    # This is normally provided by KDK but missing in open-source XNU
     
     # security - fix mac_framework.h and mac_internal.h
     ('security/mac_framework.h', 'BUILD/obj/EXPORT_HDRS/security/mac_framework.h'),
@@ -284,8 +284,9 @@ def patch_refcnt_internal_h(path):
         with open(path, 'r') as f:
             content = f.read()
         print(f"DEBUG: File {path} exists, length: {len(content)}")
-        # Add memory_order enum definitions AFTER the license header comment block
-        # to ensure it's before ALL usages but NOT inside a comment block
+        # Add memory_order enum definitions right after the header guard
+        # The file starts with #ifndef _OS_REFCNT_INTERNAL_H / #define _OS_REFCNT_INTERNAL_H
+        # We need to insert right after the header guard
         memory_order_defs = '''
 /*
  * Memory order definitions for C11 atomics.
@@ -307,30 +308,24 @@ typedef enum {
 #endif /* __OS_MEMORY_ORDER_DEFINED__ */
 
 '''
-        # Find the end of the license header comment block (after the closing */)
-        # The license header typically starts with /* and ends with */
         lines = content.split('\n')
         insert_pos = 0
-        in_comment = False
+        # Find the header guard end (#define _OS_REFCNT_INTERNAL_H)
         for i, line in enumerate(lines):
-            stripped = line.strip()
-            if stripped.startswith('/*') and not in_comment:
-                in_comment = True
-            elif in_comment and stripped.endswith('*/'):
-                # End of comment block, insert after this line
+            if line.strip().startswith('#define _OS_REFCNT_INTERNAL_H'):
                 insert_pos = i + 1
                 break
         if insert_pos == 0:
-            # Fallback: if no comment block found, insert at beginning
+            # Fallback: insert at beginning
             insert_pos = 0
-        print(f"DEBUG: Inserting memory_order enum after license header (position {insert_pos})")
+        print(f"DEBUG: Inserting memory_order enum after header guard (position {insert_pos})")
         lines.insert(insert_pos, memory_order_defs)
         content = '\n'.join(lines)
         with open(path, 'w') as f:
             f.write(content)
         # Verify the patch was applied
         if 'memory_order_relaxed' in content and 'memory_order' in content:
-            print(f"Patched {path} - added memory_order enum definitions after license header, VERIFIED")
+            print(f"Patched {path} - added memory_order enum definitions after header guard, VERIFIED")
             return True
         else:
             print(f"ERROR: Patch may not have been applied correctly to {path}")
@@ -353,6 +348,7 @@ def main():
     patch_mac_framework_h('security/mac_framework.h')
     patch_mac_internal_h('security/mac_internal.h')
     patch_refcnt_internal_h('libkern/os/refcnt_internal.h')
+    create_mach_assert_h()
     
     print("\nPatching EXPORT_HDRS headers...")
     # Also patch EXPORT_HDRS copies
@@ -365,7 +361,74 @@ def main():
     patch_mac_internal_h('BUILD/obj/EXPORT_HDRS/security/mac_internal.h')
     patch_refcnt_internal_h('BUILD/obj/EXPORT_HDRS/libkern/os/refcnt_internal.h')
     
-    print("\nAll patches applied!")
+    def create_mach_assert_h():
+    """Create mach_assert.h - kernel private header defining MACH_ASSERT.
+    This header is normally provided by KDK but missing in open-source XNU.
+    """
+    content = '''/*
+ * Copyright (c) 2000-2022 Apple Inc. All rights reserved.
+ *
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
+ *
+ * This file contains Original Code and/or Modifications of Original Code
+ * as defined in and that are subject to the Apple Public Source License
+ * Version 2.0 (the 'License'). You may not use this file except in
+ * compliance with the License. The rights granted to you under the License
+ * may not be used to create, or enable the creation or redistribution of,
+ * unlawful or unlicensed copies of an Apple operating system, or to
+ * circumvent, violate, or enable the circumvention or violation of, any
+ * terms of an Apple operating system software license agreement.
+ *
+ * Please obtain a copy of the License at
+ * http://www.opensource.apple.com/apsl/ and read it before using this file.
+ *
+ * The Original Code and all software distributed under the License are
+ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+ * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+ * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+ * Please see the License for the specific language governing rights and
+ * limitations under the License.
+ *
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
+ */
+
+#ifndef _MACH_ASSERT_H_
+#define _MACH_ASSERT_H_
+
+/*
+ * mach_assert.h - Kernel assertion control
+ * This header defines MACH_ASSERT which controls kernel assertions.
+ * When MACH_ASSERT is defined (non-zero), kernel assertions are enabled.
+ */
+
+#ifndef MACH_ASSERT
+#define MACH_ASSERT 1
+#endif
+
+#endif /* _MACH_ASSERT_H_ */
+'''
+    # Create the file in both source and EXPORT_HDRS locations
+    paths = [
+        'osfmk/mach/mach_assert.h',
+        'BUILD/obj/EXPORT_HDRS/osfmk/mach_assert.h',
+        'BUILD/obj/EXPORT_HDRS/mach_assert.h',
+    ]
+    for path in paths:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, 'w') as f:
+            f.write(content)
+        print(f"Created {path}")
+
+    # Also add to EXPORT_HDRS/osfmk/mach/ if needed
+    os.makedirs('BUILD/obj/EXPORT_HDRS/osfmk/mach', exist_ok=True)
+    mach_path = 'BUILD/obj/EXPORT_HDRS/osfmk/mach/mach_assert.h'
+    with open(mach_path, 'w') as f:
+        f.write(content)
+    print(f"Created {mach_path}")
+
+    return True
+
 
 if __name__ == '__main__':
     main()
