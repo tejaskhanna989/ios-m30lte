@@ -135,6 +135,7 @@ def patch_arm_locks_h(path):
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
+        print(f"DEBUG: Patching {path}, content length: {len(content)}")
         # Find the MACH_KERNEL_PRIVATE section that defines lck_spin_t and add lck_mtx_t before #elif KERNEL_PRIVATE
         # The structure is:
         # #ifdef MACH_KERNEL_PRIVATE
@@ -153,12 +154,14 @@ typedef struct {
 
 #elif KERNEL_PRIVATE'''
         if old in content:
+            print(f"DEBUG: Found pattern 1 in {path}")
             content = content.replace(old, new)
             with open(path, 'w') as f:
                 f.write(content)
             print(f"Patched {path} - added lck_mtx_t to MACH_KERNEL_PRIVATE section")
             return True
         else:
+            print(f"DEBUG: Pattern 1 not found in {path}")
             # Try alternative pattern with more context
             old2 = '''#endif
 
@@ -188,12 +191,14 @@ typedef struct {
 
 #elif KERNEL_PRIVATE'''
             if old2 in content:
+                print(f"DEBUG: Found pattern 2 in {path}")
                 content = content.replace(old2, new2)
                 with open(path, 'w') as f:
                     f.write(content)
                 print(f"Patched {path} - added lck_mtx_t to MACH_KERNEL_PRIVATE section (alt)")
                 return True
             else:
+                print(f"DEBUG: Pattern 2 not found in {path}")
                 print(f"Could not find pattern to patch in {path}")
                 # Debug
                 for i, line in enumerate(content.split('\n')):
