@@ -284,8 +284,8 @@ def patch_refcnt_internal_h(path):
         with open(path, 'r') as f:
             content = f.read()
         print(f"DEBUG: File {path} exists, length: {len(content)}")
-        # Add memory_order enum definitions at the very beginning of the file
-        # (after any initial comment block) to ensure it's before ALL usages
+        # Add memory_order enum definitions AFTER the license header comment block
+        # to ensure it's before ALL usages but NOT inside a comment block
         memory_order_defs = '''
 /*
  * Memory order definitions for C11 atomics.
@@ -307,18 +307,30 @@ typedef enum {
 #endif /* __OS_MEMORY_ORDER_DEFINED__ */
 
 '''
-        # Insert at the very beginning of the file (position 0)
-        # This guarantees the enum is defined before ANY usage in the file
+        # Find the end of the license header comment block (after the closing */)
+        # The license header typically starts with /* and ends with */
         lines = content.split('\n')
         insert_pos = 0
-        print(f"DEBUG: Inserting memory_order enum at beginning of file (position 0)")
+        in_comment = False
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped.startswith('/*') and not in_comment:
+                in_comment = True
+            elif in_comment and stripped.endswith('*/'):
+                # End of comment block, insert after this line
+                insert_pos = i + 1
+                break
+        if insert_pos == 0:
+            # Fallback: if no comment block found, insert at beginning
+            insert_pos = 0
+        print(f"DEBUG: Inserting memory_order enum after license header (position {insert_pos})")
         lines.insert(insert_pos, memory_order_defs)
         content = '\n'.join(lines)
         with open(path, 'w') as f:
             f.write(content)
         # Verify the patch was applied
         if 'memory_order_relaxed' in content and 'memory_order' in content:
-            print(f"Patched {path} - added memory_order enum definitions at beginning, VERIFIED")
+            print(f"Patched {path} - added memory_order enum definitions after license header, VERIFIED")
             return True
         else:
             print(f"ERROR: Patch may not have been applied correctly to {path}")
