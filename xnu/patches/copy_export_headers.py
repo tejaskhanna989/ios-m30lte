@@ -284,22 +284,11 @@ def patch_refcnt_internal_h(path):
         with open(path, 'r') as f:
             content = f.read()
         print(f"DEBUG: File {path} exists, length: {len(content)}")
-        # Add stdatomic.h include after the existing includes
-        if '#include <stdatomic.h>' not in content:
-            lines = content.split('\n')
-            insert_pos = 0
-            # Find the last include line
-            for i, line in enumerate(lines):
-                if line.strip().startswith('#include'):
-                    insert_pos = i + 1
-            if insert_pos > 0:
-                lines.insert(insert_pos, '#include <stdatomic.h>')
-                content = '\n'.join(lines)
-                print(f"Patched {path} - added stdatomic.h include")
-        # Add memory_order enum definitions right after the header guard
+        # Add stdatomic.h include and memory_order enum definitions right after the header guard
         # The file starts with #ifndef _OS_REFCNT_INTERNAL_H / #define _OS_REFCNT_INTERNAL_H
         # We need to insert right after the header guard
-        memory_order_defs = '''
+        stdatomic_and_memory_order = '''#include <stdatomic.h>
+
 /*
  * Memory order definitions for C11 atomics.
  * These are normally provided by <stdatomic.h> but we define them here
@@ -330,14 +319,14 @@ typedef enum {
         if insert_pos == 0:
             # Fallback: insert at beginning
             insert_pos = 0
-        print(f"DEBUG: Inserting memory_order enum after header guard (position {insert_pos})")
-        lines.insert(insert_pos, memory_order_defs)
+        print(f"DEBUG: Inserting stdatomic.h and memory_order enum after header guard (position {insert_pos})")
+        lines.insert(insert_pos, stdatomic_and_memory_order)
         content = '\n'.join(lines)
         with open(path, 'w') as f:
             f.write(content)
         # Verify the patch was applied
-        if 'memory_order_relaxed' in content and 'memory_order' in content:
-            print(f"Patched {path} - added memory_order enum definitions after header guard, VERIFIED")
+        if 'memory_order_relaxed' in content and 'memory_order' in content and '#include <stdatomic.h>' in content:
+            print(f"Patched {path} - added stdatomic.h and memory_order enum definitions after header guard, VERIFIED")
             return True
         else:
             print(f"ERROR: Patch may not have been applied correctly to {path}")
@@ -399,17 +388,15 @@ def patch_misc_protos_h_undef_setbit_clrbit(path):
 
 def patch_kern_types_h_clock_t(path):
     """Guard clock_t typedef in kern_types.h to avoid redefinition with bsd/_clock_t.h"""
-    import re
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
-        # Guard the clock_t typedef - use regex to handle varying whitespace
-        pattern = r'typedef\s+struct\s+clock\s+\*clock_t;'
-        if re.search(pattern, content) and '#ifndef clock_t' not in content:
-            content = re.sub(
-                pattern,
-                '#ifndef clock_t\ntypedef  struct clock                   *clock_t;\n#endif',
-                content
+        # Guard the clock_t typedef - use exact string matching
+        exact_typedef = 'typedef  struct clock                   *clock_t;'
+        if exact_typedef in content and '#ifndef clock_t' not in content:
+            content = content.replace(
+                exact_typedef,
+                '#ifndef clock_t\ntypedef  struct clock                   *clock_t;\n#endif'
             )
             with open(path, 'w') as f:
                 f.write(content)
@@ -433,6 +420,75 @@ def patch_atomic_private_h_stdatomic(path):
                 f.write(content)
             print(f"Patched {path} - added stdatomic.h include")
             return True
+    return False
+
+
+def patch_mpsc_queue_h_stdatomic(path):
+    """Add stdatomic.h include to mpsc_queue.h for C11 atomic functions."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add stdatomic.h include after the existing includes
+        if '#include <stdatomic.h>' not in content:
+            lines = content.split('\n')
+            insert_pos = 0
+            # Find the last include line
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include'):
+                    insert_pos = i + 1
+            if insert_pos > 0:
+                lines.insert(insert_pos, '#include <stdatomic.h>')
+                content = '\n'.join(lines)
+                with open(path, 'w') as f:
+                    f.write(content)
+                print(f"Patched {path} - added stdatomic.h include")
+                return True
+    return False
+
+
+def patch_processor_h_stdatomic(path):
+    """Add stdatomic.h include to processor.h for C11 atomic functions."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add stdatomic.h include after the existing includes
+        if '#include <stdatomic.h>' not in content:
+            lines = content.split('\n')
+            insert_pos = 0
+            # Find the last include line
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include'):
+                    insert_pos = i + 1
+            if insert_pos > 0:
+                lines.insert(insert_pos, '#include <stdatomic.h>')
+                content = '\n'.join(lines)
+                with open(path, 'w') as f:
+                    f.write(content)
+                print(f"Patched {path} - added stdatomic.h include")
+                return True
+    return False
+
+
+def patch_ipc_object_h_stdatomic(path):
+    """Add stdatomic.h include to ipc_object.h for C11 atomic functions."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add stdatomic.h include after the existing includes
+        if '#include <stdatomic.h>' not in content:
+            lines = content.split('\n')
+            insert_pos = 0
+            # Find the last include line
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include'):
+                    insert_pos = i + 1
+            if insert_pos > 0:
+                lines.insert(insert_pos, '#include <stdatomic.h>')
+                content = '\n'.join(lines)
+                with open(path, 'w') as f:
+                    f.write(content)
+                print(f"Patched {path} - added stdatomic.h include")
+                return True
     return False
 
 
@@ -653,6 +709,9 @@ def main():
     patch_mac_internal_h('security/mac_internal.h')
     patch_refcnt_internal_h('libkern/os/refcnt_internal.h')
     patch_atomic_private_h_stdatomic('libkern/os/atomic_private.h')
+    patch_mpsc_queue_h_stdatomic('osfmk/kern/mpsc_queue.h')
+    patch_processor_h_stdatomic('osfmk/kern/processor.h')
+    patch_ipc_object_h_stdatomic('osfmk/ipc/ipc_object.h')
     patch_param_h_undef_setbit_clrbit('bsd/sys/param.h')
     patch_misc_protos_h_undef_setbit_clrbit('osfmk/kern/misc_protos.h')
     patch_kern_types_h_clock_t('osfmk/kern/kern_types.h')
@@ -675,6 +734,9 @@ def main():
     patch_mac_internal_h('BUILD/obj/EXPORT_HDRS/security/mac_internal.h')
     patch_refcnt_internal_h('BUILD/obj/EXPORT_HDRS/libkern/os/refcnt_internal.h')
     patch_atomic_private_h_stdatomic('BUILD/obj/EXPORT_HDRS/libkern/os/atomic_private.h')
+    patch_mpsc_queue_h_stdatomic('BUILD/obj/EXPORT_HDRS/osfmk/kern/mpsc_queue.h')
+    patch_processor_h_stdatomic('BUILD/obj/EXPORT_HDRS/osfmk/kern/processor.h')
+    patch_ipc_object_h_stdatomic('BUILD/obj/EXPORT_HDRS/osfmk/ipc/ipc_object.h')
     patch_param_h_undef_setbit_clrbit('BUILD/obj/EXPORT_HDRS/bsd/sys/param.h')
     patch_misc_protos_h_undef_setbit_clrbit('BUILD/obj/EXPORT_HDRS/osfmk/kern/misc_protos.h')
     patch_kern_types_h_clock_t('BUILD/obj/EXPORT_HDRS/osfmk/kern/kern_types.h')
