@@ -16,15 +16,15 @@ headers_to_copy = [
     ('osfmk/kern/lock_rw.h', 'BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_rw.h'),
     ('osfmk/kern/lock_sleep.h', 'BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_sleep.h'),
     ('osfmk/kern/lock_stat.h', 'BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_stat.h'),
-    
+
     # osfmk/kern - smr and atomic
     ('osfmk/kern/smr.h', 'BUILD/obj/EXPORT_HDRS/osfmk/kern/smr.h'),
     ('osfmk/kern/atomic.h', 'BUILD/obj/EXPORT_HDRS/osfmk/kern/atomic.h'),
-    
+
     # osfmk/kern - kern_types
     ('osfmk/kern/kern_types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/kern/kern_types.h'),
     ('osfmk/kern/queue.h', 'BUILD/obj/EXPORT_HDRS/osfmk/kern/queue.h'),
-    
+
     # bsd/sys - vnode and related
     ('bsd/sys/vnode_internal.h', 'BUILD/obj/EXPORT_HDRS/bsd/sys/vnode_internal.h'),
     ('bsd/sys/vnode.h', 'BUILD/obj/EXPORT_HDRS/bsd/sys/vnode.h'),
@@ -39,7 +39,7 @@ headers_to_copy = [
     ('bsd/sys/ucred.h', 'BUILD/obj/EXPORT_HDRS/bsd/sys/ucred.h'),
     ('bsd/sys/kauth.h', 'BUILD/obj/EXPORT_HDRS/bsd/sys/kauth.h'),
     ('bsd/sys/kernel_types.h', 'BUILD/obj/EXPORT_HDRS/bsd/sys/kernel_types.h'),
-    
+
     # osfmk/mach - needed types
     ('osfmk/mach/vm_types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/mach/vm_types.h'),
     ('osfmk/mach/vm_param.h', 'BUILD/obj/EXPORT_HDRS/osfmk/mach/vm_param.h'),
@@ -48,11 +48,11 @@ headers_to_copy = [
     ('osfmk/mach/std_types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/std_types.h'),
     ('osfmk/mach/std_types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/types.h'),
     ('bsd/sys/types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/types.h'),
-    
+
     # Missing headers (created, not copied from source)
     # mach_assert.h - kernel private header that defines MACH_ASSERT
     # This is normally provided by KDK but missing in open-source XNU
-    
+
     # security - fix mac_framework.h and mac_internal.h
     ('security/mac_framework.h', 'BUILD/obj/EXPORT_HDRS/security/mac_framework.h'),
     ('security/mac_internal.h', 'BUILD/obj/EXPORT_HDRS/security/mac_internal.h'),
@@ -60,18 +60,18 @@ headers_to_copy = [
     ('security/mac_data.h', 'BUILD/obj/EXPORT_HDRS/security/mac_data.h'),
     ('security/mac_mach_internal.h', 'BUILD/obj/EXPORT_HDRS/security/mac_mach_internal.h'),
     ('security/mac_policy.h', 'BUILD/obj/EXPORT_HDRS/security/mac_policy.h'),
-    
+
     # libkern - atomic and related
     ('libkern/os/atomic.h', 'BUILD/obj/EXPORT_HDRS/libkern/os/atomic.h'),
     ('libkern/os/atomic_private.h', 'BUILD/obj/EXPORT_HDRS/libkern/os/atomic_private.h'),
     ('libkern/os/atomic_private_impl.h', 'BUILD/obj/EXPORT_HDRS/libkern/os/atomic_private_impl.h'),
     ('libkern/os/refcnt_internal.h', 'BUILD/obj/EXPORT_HDRS/libkern/os/refcnt_internal.h'),
-    
+
     # osfmk/kern - smr and atomic
     ('osfmk/kern/smr.h', 'BUILD/obj/EXPORT_HDRS/osfmk/kern/smr.h'),
     ('osfmk/kern/smr_hash.h', 'BUILD/obj/EXPORT_HDRS/osfmk/kern/smr_hash.h'),
     ('osfmk/kern/smr_types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/kern/smr_types.h'),
-    
+
     # bsd/sys - vfs and rename
     ('bsd/sys/vfs.h', 'BUILD/obj/EXPORT_HDRS/bsd/sys/vfs.h'),
     ('bsd/sys/vnode.h', 'BUILD/obj/EXPORT_HDRS/bsd/sys/vnode.h'),
@@ -104,21 +104,23 @@ for src in type_headers:
     dst = src.replace('bsd/', 'BUILD/obj/EXPORT_HDRS/bsd/')
     headers_to_copy.append((src, dst))
 
+
 def copy_headers():
     for src, dst in headers_to_copy:
         src_path = src
         dst_path = dst
-        
+
         if not os.path.exists(src_path):
             print(f"WARNING: Source not found: {src_path}")
             continue
-        
+
         # Create destination directory
         os.makedirs(os.path.dirname(dst_path), exist_ok=True)
-        
+
         # Copy the file
         shutil.copy2(src_path, dst_path)
         print(f"Copied {src_path} -> {dst_path}")
+
 
 def patch_file(path, replacements):
     """Apply replacements to a file if it exists."""
@@ -139,6 +141,7 @@ def patch_file(path, replacements):
         print(f"WARNING: File not found: {path}")
     return False
 
+
 def patch_arm_locks_h(path):
     """Ensure arm/locks.h does NOT define lck_mtx_t (it's defined in lock_mtx.h)."""
     if os.path.exists(path):
@@ -147,7 +150,7 @@ def patch_arm_locks_h(path):
         print(f"DEBUG: Patching {path}, content length: {len(content)}")
         # Remove any lck_mtx_t typedef from arm/locks.h to avoid redefinition
         # The definition should come from lock_mtx.h
-        
+
         # Pattern 1: The full definition block with comment
         old_block1 = """/* Full lck_mtx_t definition for MACH_KERNEL_PRIVATE (ARM64 uses LCK_MTX_USE_ARCH) */
 typedef struct {
@@ -163,7 +166,7 @@ typedef struct {
 """
         # Pattern 3: Original Apple definition style
         old_block3 = """typedef struct __lck_mtx_t__            lck_mtx_t;"""
-        
+
         changed = False
         if old_block1 in content:
             content = content.replace(old_block1, '')
@@ -174,7 +177,7 @@ typedef struct {
         if old_block3 in content:
             content = content.replace(old_block3, '')
             changed = True
-        
+
         if changed:
             with open(path, 'w') as f:
                 f.write(content)
@@ -184,6 +187,7 @@ typedef struct {
             print(f"No duplicate lck_mtx_t definition found in {path}")
             return True
     return False
+
 
 def patch_systm_h(path):
     """Add missing includes to systm.h for mount_t type."""
@@ -210,9 +214,11 @@ def patch_systm_h(path):
 
 def patch_vnode_internal_h(path):
     """Add missing types and includes to vnode_internal.h."""
+    print(f"DEBUG: patch_vnode_internal_h called for {path}")
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
+        print(f"DEBUG: {path} exists, length: {len(content)}")
         # Add missing type definitions and includes
         lines = content.split('\n')
         insert_pos = 0
@@ -220,6 +226,8 @@ def patch_vnode_internal_h(path):
         for i, line in enumerate(lines):
             if line.strip().startswith('#include'):
                 insert_pos = i + 1
+                print(f"DEBUG: Found include at line {i}: {line.strip()}")
+        print(f"DEBUG: Insert position: {insert_pos}")
         if insert_pos > 0:
             # Add missing type definitions and includes
             new_items = [
@@ -230,19 +238,28 @@ def patch_vnode_internal_h(path):
             for item in reversed(new_items):
                 if item not in content:
                     lines.insert(insert_pos, item)
+                    print(f"DEBUG: Added: {item}")
+                else:
+                    print(f"DEBUG: Already present: {item}")
             content = '\n'.join(lines)
             with open(path, 'w') as f:
                 f.write(content)
             print(f"Patched {path} - added missing types and includes")
             return True
+        else:
+            print(f"WARNING: No include lines found in {path}")
+    else:
+        print(f"WARNING: File not found: {path}")
     return False
 
 
 def patch_smr_h(path):
     """Add stdatomic.h include to smr.h for atomic_thread_fence and atomic_signal_fence"""
+    print(f"DEBUG: patch_smr_h called for {path}")
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
+        print(f"DEBUG: {path} exists, length: {len(content)}, has stdatomic: {'#include <stdatomic.h>' in content}")
         if '#include <stdatomic.h>' not in content:
             # Add after the last include
             lines = content.split('\n')
@@ -250,14 +267,21 @@ def patch_smr_h(path):
             for i, line in enumerate(lines):
                 if line.strip().startswith('#include'):
                     insert_pos = i + 1
+                    print(f"DEBUG: Found include at line {i}: {line.strip()}")
+            print(f"DEBUG: Insert position: {insert_pos}")
             if insert_pos > 0:
                 lines.insert(insert_pos, '#include <stdatomic.h>')
                 content = '\n'.join(lines)
                 with open(path, 'w') as f:
                     f.write(content)
-                print(f"Patched {path} - added stdatomic.h include")
+                print(f"Patched {path} - added stdatomic.h include for atomic_thread_fence/atomic_signal_fence")
                 return True
+            else:
+                print(f"WARNING: No include lines found in {path}")
+    else:
+        print(f"WARNING: File not found: {path}")
     return False
+
 
 def patch_mac_framework_h(path):
     """Remove the #error from mac_framework.h"""
@@ -266,11 +290,14 @@ def patch_mac_framework_h(path):
     }
     return patch_file(path, replacements)
 
+
 def patch_mac_internal_h(path):
     """Fix implicit int errors in mac_internal.h and add missing includes."""
+    print(f"DEBUG: patch_mac_internal_h called for {path}")
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
+        print(f"DEBUG: {path} exists, length: {len(content)}")
         # Add sysctl.h include for SYSCTL_DECL macro - use sys/sysctl.h which is the standard path
         if '#include <sys/sysctl.h>' not in content and '#include <bsd/sys/sysctl.h>' not in content:
             lines = content.split('\n')
@@ -278,9 +305,12 @@ def patch_mac_internal_h(path):
             for i, line in enumerate(lines):
                 if line.strip().startswith('#include'):
                     insert_pos = i + 1
+                    print(f"DEBUG: Found include at line {i}: {line.strip()}")
+            print(f"DEBUG: Insert position: {insert_pos}")
             if insert_pos > 0:
                 lines.insert(insert_pos, '#include <sys/sysctl.h>')
                 content = '\n'.join(lines)
+                print(f"DEBUG: Added sys/sysctl.h include")
         # Fix implicit int declarations
         replacements = {
             'struct __mac_get_proc_args;': 'int __mac_get_proc_args(void);',
@@ -294,12 +324,19 @@ def patch_mac_internal_h(path):
             'struct __mac_syscall_args;': 'int __mac_syscall_args(void);',
         }
         for old, new in replacements.items():
-            content = content.replace(old, new)
+            if old in content:
+                content = content.replace(old, new)
+                print(f"DEBUG: Replaced: {old} -> {new}")
+            else:
+                print(f"DEBUG: Not found: {old}")
         with open(path, 'w') as f:
             f.write(content)
         print(f"Patched {path} - added sys/sysctl.h include and fixed implicit int")
         return True
+    else:
+        print(f"WARNING: File not found: {path}")
     return False
+
 
 def patch_refcnt_internal_h(path):
     """Add memory_order enum definitions and stdatomic.h include to refcnt_internal.h"""
@@ -311,7 +348,7 @@ def patch_refcnt_internal_h(path):
         # Add stdatomic.h include and memory_order enum definitions right after the header guard
         # The file starts with #ifndef _OS_REFCNT_INTERNAL_H / #define _OS_REFCNT_INTERNAL_H
         # We need to insert right after the header guard
-        stdatomic_and_memory_order = '''#include <stdatomic.h>
+        stdatomic_and_memory_order = """#include <stdatomic.h>
 
 /*
  * Memory order definitions for C11 atomics.
@@ -332,7 +369,7 @@ typedef enum {
 
 #endif /* __OS_MEMORY_ORDER_DEFINED__ */
 
-'''
+"""
         lines = content.split('\n')
         insert_pos = 0
         # Find the header guard end (#define _OS_REFCNT_INTERNAL_H)
@@ -340,92 +377,17 @@ typedef enum {
             if line.strip().startswith('#define _OS_REFCNT_INTERNAL_H'):
                 insert_pos = i + 1
                 break
-        if insert_pos == 0:
-            # Fallback: insert at beginning
-            insert_pos = 0
-        print(f"DEBUG: Inserting stdatomic.h and memory_order enum after header guard (position {insert_pos})")
-        lines.insert(insert_pos, stdatomic_and_memory_order)
-        content = '\n'.join(lines)
-        with open(path, 'w') as f:
-            f.write(content)
-        # Verify the patch was applied
-        if 'memory_order_relaxed' in content and 'memory_order' in content and '#include <stdatomic.h>' in content:
-            print(f"Patched {path} - added stdatomic.h and memory_order enum definitions after header guard, VERIFIED")
-            return True
-        else:
-            print(f"ERROR: Patch may not have been applied correctly to {path}")
-            return False
-    else:
-        print(f"DEBUG: File {path} does not exist")
-    return False
-
-
-def patch_param_h_undef_setbit_clrbit(path):
-    """Undef setbit/clrbit macros in param.h to avoid conflicts with kernel function declarations."""
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        # Add undef before the macros are defined, right after the includes
-        lines = content.split('\n')
-        insert_pos = 0
-        for i, line in enumerate(lines):
-            if line.strip().startswith('#define setbit'):
-                insert_pos = i
-                break
-        if insert_pos == 0:
-            # Fallback: find the end of includes
-            for i, line in enumerate(lines):
-                if line.strip().startswith('#include'):
-                    insert_pos = i + 1
         if insert_pos > 0:
-            undef_block = '\n/* Undef setbit/clrbit to avoid conflicts with kernel function declarations */\n#undef setbit\n#undef clrbit\n'
-            lines.insert(insert_pos, undef_block)
+            lines.insert(insert_pos, stdatomic_and_memory_order)
             content = '\n'.join(lines)
             with open(path, 'w') as f:
                 f.write(content)
-            print(f"Patched {path} - added undef for setbit/clrbit")
+            print(f"Patched {path} - added stdatomic.h include and memory_order enum")
             return True
-    return False
-
-
-def patch_misc_protos_h_undef_setbit_clrbit(path):
-    """Undef setbit/clrbit macros in misc_protos.h before function declarations to avoid conflicts."""
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        # Add undef before the setbit/clrbit function declarations
-        import re
-        # Find the setbit function declaration and insert undef before it
-        pattern = r'(extern void setbit\()'
-        if re.search(pattern, content) and '#undef setbit' not in content:
-            content = re.sub(
-                pattern,
-                '/* Undef setbit/clrbit to avoid conflicts with macros in param.h */\n#undef setbit\n#undef clrbit\n\nextern void setbit(',
-                content
-            )
-            with open(path, 'w') as f:
-                f.write(content)
-            print(f"Patched {path} - added undef for setbit/clrbit before function declarations")
-            return True
-    return False
-
-
-def patch_kern_types_h_clock_t(path):
-    """Guard clock_t typedef in kern_types.h to avoid redefinition with bsd/_clock_t.h"""
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        # Guard the clock_t typedef - use exact string matching
-        exact_typedef = 'typedef  struct clock                   *clock_t;'
-        if exact_typedef in content and '#ifndef clock_t' not in content:
-            content = content.replace(
-                exact_typedef,
-                '#ifndef clock_t\ntypedef  struct clock                   *clock_t;\n#endif'
-            )
-            with open(path, 'w') as f:
-                f.write(content)
-            print(f"Patched {path} - guarded clock_t typedef")
-            return True
+        else:
+            print(f"WARNING: Header guard not found in {path}")
+    else:
+        print(f"WARNING: File not found: {path}")
     return False
 
 
@@ -516,6 +478,94 @@ def patch_ipc_object_h_stdatomic(path):
     return False
 
 
+def patch_param_h_undef_setbit_clrbit(path):
+    """Undef setbit/clrbit macros in param.h to avoid conflicts with kernel function declarations."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add undef before the macros are defined, right after the includes
+        lines = content.split('\n')
+        insert_pos = 0
+        for i, line in enumerate(lines):
+            if line.strip().startswith('#define setbit'):
+                insert_pos = i
+                break
+        if insert_pos == 0:
+            # Fallback: find the end of includes
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include'):
+                    insert_pos = i + 1
+        if insert_pos > 0:
+            undef_block = '\n/* Undef setbit/clrbit to avoid conflicts with kernel function declarations */\n#undef setbit\n#undef clrbit\n'
+            lines.insert(insert_pos, undef_block)
+            content = '\n'.join(lines)
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - added undef for setbit/clrbit")
+            return True
+    return False
+
+
+def patch_misc_protos_h_undef_setbit_clrbit(path):
+    """Undef setbit/clrbit macros in misc_protos.h before function declarations to avoid conflicts."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add undef before the setbit/clrbit function declarations
+        import re
+        # Find the setbit function declaration and insert undef before it
+        pattern = r'(extern void setbit\()'
+        if re.search(pattern, content) and '#undef setbit' not in content:
+            content = re.sub(
+                pattern,
+                '/* Undef setbit/clrbit to avoid conflicts with macros in param.h */\n#undef setbit\n#undef clrbit\n\nextern void setbit(',
+                content
+            )
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - added undef for setbit/clrbit before function declarations")
+            return True
+    return False
+
+
+def patch_kern_types_h_clock_t(path):
+    """Guard clock_t typedef in kern_types.h to avoid redefinition with bsd/_clock_t.h"""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Guard the clock_t typedef - use exact string matching
+        exact_typedef = 'typedef  struct clock                   *clock_t;'
+        if exact_typedef in content and '#ifndef clock_t' not in content:
+            content = content.replace(
+                exact_typedef,
+                '#ifndef clock_t\ntypedef  struct clock                   *clock_t;\n#endif'
+            )
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - guarded clock_t typedef")
+            return True
+    return False
+
+
+def patch_clock_t_typedef(path):
+    """Fix clock_t typedef redefinition by using proper guard."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Fix the clock_t typedef with proper guard
+        exact_typedef = 'typedef  struct clock                   *clock_t;'
+        if exact_typedef in content and '#ifndef clock_t' not in content:
+            content = content.replace(
+                exact_typedef,
+                '#ifndef clock_t\ntypedef  struct clock                   *clock_t;\n#endif'
+            )
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - guarded clock_t typedef")
+            return True
+    return False
+
+
 def patch_lock_mtx_h_consolidate(path):
     """Fix lck_mtx_t visibility in lock_mtx.h by ensuring typedef is visible to function declarations."""
     if os.path.exists(path):
@@ -536,25 +586,6 @@ def patch_lock_mtx_h_consolidate(path):
                     f.write(content)
                 print(f"Patched {path} - added forward declaration for lck_mtx_t")
                 return True
-    return False
-
-
-def patch_clock_t_typedef(path):
-    """Fix clock_t typedef redefinition by using proper guard."""
-    if os.path.exists(path):
-        with open(path, 'r') as f:
-            content = f.read()
-        # Fix the clock_t typedef with proper guard
-        exact_typedef = 'typedef  struct clock                   *clock_t;'
-        if exact_typedef in content and '#ifndef clock_t' not in content:
-            content = content.replace(
-                exact_typedef,
-                '#ifndef clock_t\ntypedef  struct clock                   *clock_t;\n#endif'
-            )
-            with open(path, 'w') as f:
-                f.write(content)
-            print(f"Patched {path} - guarded clock_t typedef")
-            return True
     return False
 
 
@@ -619,17 +650,15 @@ def patch_syslog_h_log_conflict(path):
 
 
 def patch_proc_internal_h_zone_declare(path):
-    """Fix ZONE_DECLARE_ID conflict for ZONE_ID_PROC_TASK between proc_internal.h and task.h.
-    The proc_internal.h uses struct proc while task.h uses void*. We'll guard the proc_internal.h version.
-    """
+    """Remove our ZONE_DECLARE_ID for ZONE_ID_PROC_TASK since it's defined elsewhere."""
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
-        # Guard the ZONE_DECLARE_ID for ZONE_ID_PROC_TASK in proc_internal.h
-        if 'ZONE_DECLARE_ID(ZONE_ID_PROC_TASK, struct proc);' in content:
+        # Comment out the conflicting ZONE_DECLARE_ID
+        if 'ZONE_DECLARE_ID(ZONE_ID_PROC_TASK, "proc_task");' in content:
             content = content.replace(
-                'ZONE_DECLARE_ID(ZONE_ID_PROC_TASK, struct proc);',
-                '/* ZONE_DECLARE_ID(ZONE_ID_PROC_TASK, struct proc); -- conflicts with task.h */'
+                'ZONE_DECLARE_ID(ZONE_ID_PROC_TASK, "proc_task");',
+                '/* ZONE_DECLARE_ID(ZONE_ID_PROC_TASK, "proc_task");  -- conflicts with another definition */'
             )
             with open(path, 'w') as f:
                 f.write(content)
@@ -638,11 +667,11 @@ def patch_proc_internal_h_zone_declare(path):
     return False
 
 
-def create_mach_ldebug_h():
-    """Create mach_ldebug.h - kernel private header for libdebug support.
+def create_mach_assert_h():
+    """Create mach_assert.h - kernel private header defining MACH_ASSERT.
     This header is normally provided by KDK but missing in open-source XNU.
     """
-    content = '''/*
+    content = """/*
  * Copyright (c) 2000-2022 Apple Inc. All rights reserved.
  *
  * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
@@ -661,7 +690,89 @@ def create_mach_ldebug_h():
  *
  * The Original Code and all software distributed under the License are
  * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
- * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+ * EXPRESSION OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+ * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+ * Please see the License for the specific language governing rights and
+ * limitations under the License.
+ *
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
+ */
+
+#ifndef _MACH_ASSERT_H_
+#define _MACH_ASSERT_H_
+
+/*
+ * Kernel assertion macros.
+ */
+
+#ifndef MACH_ASSERT
+#ifdef DEBUG
+#define MACH_ASSERT(assertion) \
+    do { \
+        if (!(assertion)) { \
+            panic("MACH_ASSERT failed: %s", #assertion); \
+        } \
+    } while (0)
+#else
+#define MACH_ASSERT(assertion) \
+    do { } while (0)
+#endif /* DEBUG */
+#endif /* MACH_ASSERT */
+
+#ifndef MACH_ASSUME
+#define MACH_ASSUME(assertion) __builtin_assume(assertion)
+#endif /* MACH_ASSUME */
+
+#endif /* _MACH_ASSERT_H_ */
+"""
+    # Create the file in both source and EXPORT_HDRS locations
+    paths = [
+        'osfmk/mach/mach_assert.h',
+        'BUILD/obj/EXPORT_HDRS/osfmk/mach_assert.h',
+        'BUILD/obj/EXPORT_HDRS/mach_assert.h',
+        'BUILD/obj/EXPORT_HDRS/osfmk/mach/mach_assert.h',
+    ]
+    for path in paths:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, 'w') as f:
+            f.write(content)
+        print(f"Created {path}")
+
+    # Also add to EXPORT_HDRS/osfmk/mach/ if needed
+    os.makedirs('BUILD/obj/EXPORT_HDRS/osfmk/mach', exist_ok=True)
+    mach_path = 'BUILD/obj/EXPORT_HDRS/osfmk/mach/mach_assert.h'
+    with open(mach_path, 'w') as f:
+        f.write(content)
+    print(f"Created {mach_path}")
+
+    return True
+
+
+def create_mach_ldebug_h():
+    """Create mach_ldebug.h - kernel private header for libdebug support.
+    This header is normally provided by KDK but missing in open-source XNU.
+    """
+    content = """/*
+ * Copyright (c) 2000-2022 Apple Inc. All rights reserved.
+ *
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
+ *
+ * This file contains Original Code and/or Modifications of Original Code
+ * as defined in and that are subject to the Apple Public Source License
+ * Version 2.0 (the 'License'). You may not use this file except in
+ * compliance with the License. The rights granted to you under the License
+ * may not be used to create, or enable the creation or redistribution of,
+ * unlawful or unlicensed copies of an Apple operating system, or to
+ * circumvent, violate, or enable the circumvention or violation of, any
+ * terms of an Apple operating system software license agreement.
+ *
+ * Please obtain a copy of the License at
+ * http://www.opensource.apple.com/apsl/ and read it before using this file.
+ *
+ * The Original Code and all software distributed under the License are
+ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+ * EXPRESSION OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
  * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
  * Please see the License for the specific language governing rights and
@@ -683,7 +794,7 @@ def create_mach_ldebug_h():
 #endif
 
 #endif /* _MACH_LDEBUG_H_ */
-'''
+"""
     # Create the file in both source and EXPORT_HDRS locations
     paths = [
         'osfmk/mach/mach_ldebug.h',
@@ -697,13 +808,20 @@ def create_mach_ldebug_h():
             f.write(content)
         print(f"Created {path}")
 
+    # Also add to EXPORT_HDRS/osfmk/mach/ if needed
+    os.makedirs('BUILD/obj/EXPORT_HDRS/osfmk/mach', exist_ok=True)
+    mach_path = 'BUILD/obj/EXPORT_HDRS/osfmk/mach/mach_ldebug.h'
+    with open(mach_path, 'w') as f:
+        f.write(content)
+    print(f"Created {mach_path}")
+
     return True
 
 
 def main():
     print("Copying kernel-private headers to EXPORT_HDRS...")
     copy_headers()
-    
+
     print("\nPatching SOURCE headers...")
     # Patch source files directly (these are used first by build system)
     patch_arm_locks_h('osfmk/arm/locks.h')
@@ -729,7 +847,7 @@ def main():
     patch_proc_internal_h_zone_declare('bsd/sys/proc_internal.h')
     create_mach_assert_h()
     create_mach_ldebug_h()
-    
+
     print("\nPatching EXPORT_HDRS headers...")
     # Also patch EXPORT_HDRS copies
     patch_arm_locks_h('BUILD/obj/EXPORT_HDRS/osfmk/arm/locks.h')
@@ -753,76 +871,8 @@ def main():
     patch_vnode_internal_h_dir_clone('BUILD/obj/EXPORT_HDRS/bsd/sys/vnode_internal.h')
     patch_syslog_h_log_conflict('BUILD/obj/EXPORT_HDRS/bsd/sys/syslog.h')
     patch_proc_internal_h_zone_declare('BUILD/obj/EXPORT_HDRS/bsd/sys/proc_internal.h')
-    
+
     print("\nAll patches applied!")
-
-def create_mach_assert_h():
-    """Create mach_assert.h - kernel private header defining MACH_ASSERT.
-    This header is normally provided by KDK but missing in open-source XNU.
-    """
-    content = '''/*
- * Copyright (c) 2000-2022 Apple Inc. All rights reserved.
- *
- * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
- *
- * This file contains Original Code and/or Modifications of Original Code
- * as defined in and that are subject to the Apple Public Source License
- * Version 2.0 (the 'License'). You may not use this file except in
- * compliance with the License. The rights granted to you under the License
- * may not be used to create, or enable the creation or redistribution of,
- * unlawful or unlicensed copies of an Apple operating system, or to
- * circumvent, violate, or enable the circumvention or violation of, any
- * terms of an Apple operating system software license agreement.
- *
- * Please obtain a copy of the License at
- * http://www.opensource.apple.com/apsl/ and read it before using this file.
- *
- * The Original Code and all software distributed under the License are
- * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
- * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
- * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
- * Please see the License for the specific language governing rights and
- * limitations under the License.
- *
- * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
- */
-
-#ifndef _MACH_ASSERT_H_
-#define _MACH_ASSERT_H_
-
-/*
- * mach_assert.h - Kernel assertion control
- * This header defines MACH_ASSERT which controls kernel assertions.
- * When MACH_ASSERT is defined (non-zero), kernel assertions are enabled.
- */
-
-#ifndef MACH_ASSERT
-#define MACH_ASSERT 1
-#endif
-
-#endif /* _MACH_ASSERT_H_ */
-'''
-    # Create the file in both source and EXPORT_HDRS locations
-    paths = [
-        'osfmk/mach/mach_assert.h',
-        'BUILD/obj/EXPORT_HDRS/osfmk/mach_assert.h',
-        'BUILD/obj/EXPORT_HDRS/mach_assert.h',
-    ]
-    for path in paths:
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, 'w') as f:
-            f.write(content)
-        print(f"Created {path}")
-
-    # Also add to EXPORT_HDRS/osfmk/mach/ if needed
-    os.makedirs('BUILD/obj/EXPORT_HDRS/osfmk/mach', exist_ok=True)
-    mach_path = 'BUILD/obj/EXPORT_HDRS/osfmk/mach/mach_assert.h'
-    with open(mach_path, 'w') as f:
-        f.write(content)
-    print(f"Created {mach_path}")
-
-    return True
 
 
 if __name__ == '__main__':
