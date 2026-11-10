@@ -135,19 +135,15 @@ def patch_arm_locks_h(path):
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
-        # Find the MACH_KERNEL_PRIVATE section that defines lck_spin_t and add lck_mtx_t after it
+        # Find the MACH_KERNEL_PRIVATE section that defines lck_spin_t and add lck_mtx_t before #elif KERNEL_PRIVATE
         # The structure is:
         # #ifdef MACH_KERNEL_PRIVATE
-        # ... lck_spin_t definition ...
+        # ... #if LCK_SPIN_IS_TICKET_LOCK ... #else ... #endif (closes lck_spin_t)
         # #elif KERNEL_PRIVATE
-        # We need to add lck_mtx_t in the MACH_KERNEL_PRIVATE section after lck_spin_t
+        # We need to add lck_mtx_t in the MACH_KERNEL_PRIVATE section, right before #elif KERNEL_PRIVATE
         old = '''#endif
 
-#elif KERNEL_PRIVATE
-
-typedef struct {
-	uintptr_t opaque[2] __kernel_data_semantics;
-} lck_spin_t;'''
+#elif KERNEL_PRIVATE'''
         new = '''#endif
 
 /* Full lck_mtx_t definition for MACH_KERNEL_PRIVATE (ARM64 uses LCK_MTX_USE_ARCH) */
@@ -155,11 +151,7 @@ typedef struct {
 	uintptr_t opaque[2] __kernel_data_semantics;
 } lck_mtx_t;
 
-#elif KERNEL_PRIVATE
-
-typedef struct {
-	uintptr_t opaque[2] __kernel_data_semantics;
-} lck_spin_t;'''
+#elif KERNEL_PRIVATE'''
         if old in content:
             content = content.replace(old, new)
             with open(path, 'w') as f:
@@ -167,11 +159,27 @@ typedef struct {
             print(f"Patched {path} - added lck_mtx_t to MACH_KERNEL_PRIVATE section")
             return True
         else:
-            # Try alternative pattern
+            # Try alternative pattern with more context
             old2 = '''#endif
+
+#define lck_spin_data hwlock.lock_data
+
+#define LCK_SPIN_TAG_DESTROYED  0xdead  /* lock marked as Destroyed */
+
+#define LCK_SPIN_TYPE           0x00000011
+#define LCK_SPIN_TYPE_DESTROYED 0x000000ee
+#endif
 
 #elif KERNEL_PRIVATE'''
             new2 = '''#endif
+
+#define lck_spin_data hwlock.lock_data
+
+#define LCK_SPIN_TAG_DESTROYED  0xdead  /* lock marked as Destroyed */
+
+#define LCK_SPIN_TYPE           0x00000011
+#define LCK_SPIN_TYPE_DESTROYED 0x000000ee
+#endif
 
 /* Full lck_mtx_t definition for MACH_KERNEL_PRIVATE (ARM64 uses LCK_MTX_USE_ARCH) */
 typedef struct {
@@ -189,7 +197,7 @@ typedef struct {
                 print(f"Could not find pattern to patch in {path}")
                 # Debug
                 for i, line in enumerate(content.split('\n')):
-                    if 'lck_spin_t' in line or 'lck_mtx_t' in line or 'KERNEL_PRIVATE' in line or '#elif' in line:
+                    if 'lck_spin_t' in line or 'lck_mtx_t' in line or 'KERNEL_PRIVATE' in line or '#elif' in line or '#endif' in line:
                         print(f"  Line {i+1}: {line}")
     return False
 
