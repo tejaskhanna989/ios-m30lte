@@ -233,8 +233,11 @@ def patch_vnode_internal_h(path):
             new_items = [
                 '#include <sys/mount.h>',
                 '#include <sys/vnode_if.h>',
+                '#include <kern/lock_mtx.h>',  # For lck_mtx_t definition
                 'typedef uint32_t vfs_rename_flags_t;',
                 'typedef enum dir_clone_authorizer_op { OP_AUTHORIZE = 0, OP_VATTR_SETUP = 1, OP_VATTR_CLEANUP = 2 } dir_clone_authorizer_op_t;',
+                # Ensure lck_mtx_t is visible
+                'typedef struct _lck_mtx_ lck_mtx_t;',
             ]
             for item in reversed(new_items):
                 if item not in content:
@@ -367,6 +370,25 @@ def patch_mac_internal_h(path):
                 print(f"DEBUG: Replaced: {old} -> {new}")
             else:
                 print(f"DEBUG: Not found: {old}")
+        # Ensure SYSCTL_DECL is defined (fallback if not in sysctl.h)
+        if 'SYSCTL_DECL' in content and '#define SYSCTL_DECL' not in content:
+            lines = content.split('\n')
+            insert_pos = 0
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include'):
+                    insert_pos = i + 1
+            if insert_pos > 0:
+                sysctl_decl_def = (
+                    '\n'
+                    '/* Fallback definition for SYSCTL_DECL if not provided by sysctl.h */\n'
+                    '#ifndef SYSCTL_DECL\n'
+                    '#define SYSCTL_DECL(name) extern int name##_sysctl(void *oidp, void *arg1, int arg2, void *arg3, void *arg4)\n'
+                    '#endif\n'
+                    '\n'
+                )
+                lines.insert(insert_pos, sysctl_decl_def)
+                content = '\n'.join(lines)
+                print(f"DEBUG: Added SYSCTL_DECL fallback definition")
         with open(path, 'w') as f:
             f.write(content)
         print(f"Patched {path} - added sys/sysctl.h include and fixed implicit int")
