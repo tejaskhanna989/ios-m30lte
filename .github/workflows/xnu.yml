@@ -34,9 +34,11 @@ jobs:
       CFLAGS: -std=gnu11 -Wno-format -Wno-error=visibility -Wno-error=reserved-identifier -ferror-limit=1000 -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk
         -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include
         -I${SRCROOT}/osfmk -I${SRCROOT}/bsd -I${SRCROOT}/libkern -I${SRCROOT}/iokit -I${SRCROOT}/security
+        -DMACH_KERNEL_PRIVATE=1 -DKERNEL_PRIVATE=1
       CXXFLAGS: -std=gnu++11 -Wno-format -Wno-error=visibility -Wno-error=reserved-identifier -ferror-limit=1000 -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk
         -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include
         -I${SRCROOT}/osfmk -I${SRCROOT}/bsd -I${SRCROOT}/libkern -I${SRCROOT}/iokit -I${SRCROOT}/security
+        -DMACH_KERNEL_PRIVATE=1 -DKERNEL_PRIVATE=1
       MAKEFLAGS: -j1 -e
       SRCROOT: ${{ github.workspace }}/xnu-source
       CURRENT_KERNEL_CONFIG: DEVELOPMENT
@@ -600,7 +602,7 @@ jobs:
         22.6.0\" \\\n  MEMORY_SIZE=\"${MEMORY_SIZE}\" \\\n  SYSCTL_HW_PHYSICALCPU=\"\
         ${SYSCTL_PHYSICALCPU}\" \\\n  SYSCTL_HW_LOGICALCPU=\"${SYSCTL_LOGICALCPU}\"\
         \ \\\n  KERNEL_BUILDS_IN_PARALLEL=1 \\\n  BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0\
-        \ LOGCOLORS=y \\\n  DRIVERKIT=0 \\\n  SETUP_SUBDIRS=\"\" \\\n  2>&1 | tee\
+        \ LOGCOLORS=y \\\n  DRIVERKIT=0 \\\n  SETUP_SUBDIRS=\"\" \\\n  MACH_KERNEL_PRIVATE=1 \\\n  2>&1 | tee\
         \ /tmp/xnu-build.log\nBUILD_EXIT=${PIPESTATUS[0]}\necho \"make exit code:\
         \ $BUILD_EXIT\"\necho \"=== Errors in build log ===\"\ngrep -iE \"error:|error\
         \ |make: \\*\\*\\*|No rule|syntax error|undefined reference|missing separator|command\
