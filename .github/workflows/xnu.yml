@@ -578,9 +578,20 @@ jobs:
 
         echo "=== Copying and patching kernel-private headers to EXPORT_HDRS ==="
 
-        python3 ../xnu/patches/copy_export_headers.py
+        python3 ../xnu/patches/copy_export_headers.py 2>&1 | tee patch_output.log
 
-        echo "Copied and patched kernel-private headers"'
+        echo "Copied and patched kernel-private headers"
+
+        echo "=== Patch output ==="
+
+        cat patch_output.log'
+      shell: bash
+    - name: Upload patch output log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: patch-output-log
+        path: xnu-source/patch_output.log
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
