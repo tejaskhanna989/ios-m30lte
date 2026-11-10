@@ -224,18 +224,56 @@ typedef struct {
     return False
 
 def patch_systm_h(path):
-    """Add mount_t definition to systm.h"""
-    replacements = {
-        '#include <sys/vm.h>': '#include <sys/vm.h>\n#include <sys/mount.h>\ntypedef struct mount *mount_t;'
-    }
-    return patch_file(path, replacements)
+    """Add missing includes to systm.h for mount_t type."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add sys/mount.h include for mount_t type
+        if '#include <sys/mount.h>' not in content:
+            lines = content.split('\n')
+            insert_pos = 0
+            # Find the last system include
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include') and ('sys/' in line or 'kern/' in line):
+                    insert_pos = i + 1
+            if insert_pos > 0:
+                lines.insert(insert_pos, '#include <sys/mount.h>')
+                content = '\n'.join(lines)
+                with open(path, 'w') as f:
+                    f.write(content)
+                print(f"Patched {path} - added sys/mount.h include for mount_t")
+                return True
+    return False
+
 
 def patch_vnode_internal_h(path):
-    """Add missing types to vnode_internal.h"""
-    replacements = {
-        '#include <sys/vfs_context.h>': '#include <sys/vfs_context.h>\ntypedef uint32_t vfs_rename_flags_t;\ntypedef int dir_clone_authorizer_op_t;'
-    }
-    return patch_file(path, replacements)
+    """Add missing includes to vnode_internal.h for dir_clone_authorizer_op_t and mount_t."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add includes for dir_clone_authorizer_op_t (from vnode_if.h) and mount_t (from sys/mount.h)
+        lines = content.split('\n')
+        insert_pos = 0
+        # Find the last include
+        for i, line in enumerate(lines):
+            if line.strip().startswith('#include'):
+                insert_pos = i + 1
+        if insert_pos > 0:
+            # Add includes before the first non-include line
+            new_includes = [
+                '#include <sys/mount.h>',
+                '#include <sys/vnode_if.h>',
+            ]
+            for inc in reversed(new_includes):
+                if inc not in content:
+                    lines.insert(insert_pos, inc)
+            content = '\n'.join(lines)
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - added sys/mount.h and sys/vnode_if.h includes")
+            return True
+    return False
+
 
 def patch_smr_h(path):
     """Add stdatomic.h include to smr.h"""
@@ -243,10 +281,20 @@ def patch_smr_h(path):
         with open(path, 'r') as f:
             content = f.read()
         if '#include <stdatomic.h>' not in content:
-            content = content.replace(
-                '#include <kern/smr_types.h>',
-                '#include <kern/smr_types.h>\n#include <stdatomic.h>'
-            )
+            # Add after the last include
+            lines = content.split('\n')
+            insert_pos = 0
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include'):
+                    insert_pos = i + 1
+            if insert_pos > 0:
+                lines.insert(insert_pos, '#include <stdatomic.h>')
+                content = '\n'.join(lines)
+                with open(path, 'w') as f:
+                    f.write(content)
+                print(f"Patched {path} - added stdatomic.h include")
+                return True
+    return False
             with open(path, 'w') as f:
                 f.write(content)
             print(f"Patched {path} - added stdatomic.h")
@@ -263,19 +311,39 @@ def patch_mac_framework_h(path):
     return patch_file(path, replacements)
 
 def patch_mac_internal_h(path):
-    """Fix implicit int errors in mac_internal.h"""
-    replacements = {
-        'struct __mac_get_proc_args;': 'int __mac_get_proc_args(void);',
-        'struct __mac_set_proc_args;': 'int __mac_set_proc_args(void);',
-        'struct __mac_get_lcid_args;': 'int __mac_get_lcid_args(void);',
-        'struct __mac_get_fd_args;': 'int __mac_get_fd_args(void);',
-        'struct __mac_get_file_args;': 'int __mac_get_file_args(void);',
-        'struct __mac_get_link_args;': 'int __mac_get_link_args(void);',
-        'struct __mac_set_fd_args;': 'int __mac_set_fd_args(void);',
-        'struct __mac_set_file_args;': 'int __mac_set_file_args(void);',
-        'struct __mac_syscall_args;': 'int __mac_syscall_args(void);',
-    }
-    return patch_file(path, replacements)
+    """Fix implicit int errors in mac_internal.h and add missing includes."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add sysctl.h include for SYSCTL_DECL macro
+        if '#include <bsd/sys/sysctl.h>' not in content:
+            lines = content.split('\n')
+            insert_pos = 0
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include'):
+                    insert_pos = i + 1
+            if insert_pos > 0:
+                lines.insert(insert_pos, '#include <bsd/sys/sysctl.h>')
+                content = '\n'.join(lines)
+        # Fix implicit int declarations
+        replacements = {
+            'struct __mac_get_proc_args;': 'int __mac_get_proc_args(void);',
+            'struct __mac_set_proc_args;': 'int __mac_set_proc_args(void);',
+            'struct __mac_get_lcid_args;': 'int __mac_get_lcid_args(void);',
+            'struct __mac_get_fd_args;': 'int __mac_get_fd_args(void);',
+            'struct __mac_get_file_args;': 'int __mac_get_file_args(void);',
+            'struct __mac_get_link_args;': 'int __mac_get_link_args(void);',
+            'struct __mac_set_fd_args;': 'int __mac_set_fd_args(void);',
+            'struct __mac_set_file_args;': 'int __mac_set_file_args(void);',
+            'struct __mac_syscall_args;': 'int __mac_syscall_args(void);',
+        }
+        for old, new in replacements.items():
+            content = content.replace(old, new)
+        with open(path, 'w') as f:
+            f.write(content)
+        print(f"Patched {path} - added sysctl.h include and fixed implicit int")
+        return True
+    return False
 
 def patch_refcnt_internal_h(path):
     """Add memory_order enum definitions and stdatomic.h include to refcnt_internal.h"""
@@ -493,62 +561,44 @@ def patch_ipc_object_h_stdatomic(path):
 
 
 def patch_lock_mtx_h_consolidate(path):
-    """Ensure lck_mtx_t is only defined once - remove duplicate from lock_mtx.h if arm/locks.h has it."""
+    """Fix lck_mtx_t visibility in lock_mtx.h by ensuring typedef is visible to function declarations."""
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
-        # Remove the duplicate lck_mtx_t typedef from lock_mtx.h if it exists
-        # The definition in arm/locks.h takes precedence for ARM64
-        if '} lck_mtx_t;' in content and 'typedef struct _lck_mtx_' in content:
-            # Remove the duplicate typedef block
-            lines = content.split('\n')
-            new_lines = []
-            skip = False
-            for line in lines:
-                if 'typedef struct _lck_mtx_' in line:
-                    skip = True
-                    continue
-                if skip and '} lck_mtx_t;' in line:
-                    skip = False
-                    continue
-                if not skip:
-                    new_lines.append(line)
-            if len(new_lines) != len(lines):
-                content = '\n'.join(new_lines)
+        # The lck_mtx_t typedef is inside #if MACH_KERNEL_PRIVATE / #if !LCK_MTX_USE_ARCH block
+        # but function declarations are outside that block. Add a forward declaration
+        # before the function declarations so they can see the type.
+        if 'extern lck_mtx_t        *lck_mtx_alloc_init(' in content:
+            # Check if forward declaration already exists
+            if 'typedef struct _lck_mtx_ lck_mtx_t;' not in content:
+                # Add forward declaration before the first function declaration
+                content = content.replace(
+                    'extern lck_mtx_t        *lck_mtx_alloc_init(',
+                    'typedef struct _lck_mtx_ lck_mtx_t;\n\nextern lck_mtx_t        *lck_mtx_alloc_init('
+                )
                 with open(path, 'w') as f:
                     f.write(content)
-                print(f"Patched {path} - removed duplicate lck_mtx_t typedef")
+                print(f"Patched {path} - added forward declaration for lck_mtx_t")
                 return True
     return False
 
 
-def patch_lock_mtx_h_consolidate(path):
-    """Ensure lck_mtx_t is only defined once - remove duplicate from lock_mtx.h if arm/locks.h has it."""
+def patch_clock_t_typedef(path):
+    """Fix clock_t typedef redefinition by using proper guard."""
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
-        # Remove the duplicate lck_mtx_t typedef from lock_mtx.h if it exists
-        # The definition in arm/locks.h takes precedence for ARM64
-        if '} lck_mtx_t;' in content and 'typedef struct _lck_mtx_' in content:
-            # Remove the duplicate typedef block
-            lines = content.split('\n')
-            new_lines = []
-            skip = False
-            for line in lines:
-                if 'typedef struct _lck_mtx_' in line:
-                    skip = True
-                    continue
-                if skip and '} lck_mtx_t;' in line:
-                    skip = False
-                    continue
-                if not skip:
-                    new_lines.append(line)
-            if len(new_lines) != len(lines):
-                content = '\n'.join(new_lines)
-                with open(path, 'w') as f:
-                    f.write(content)
-                print(f"Patched {path} - removed duplicate lck_mtx_t typedef")
-                return True
+        # Fix the clock_t typedef with proper guard
+        exact_typedef = 'typedef  struct clock                   *clock_t;'
+        if exact_typedef in content and '#ifndef clock_t' not in content:
+            content = content.replace(
+                exact_typedef,
+                '#ifndef clock_t\ntypedef  struct clock                   *clock_t;\n#endif'
+            )
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - guarded clock_t typedef")
+            return True
     return False
 
 
@@ -715,6 +765,7 @@ def main():
     patch_param_h_undef_setbit_clrbit('bsd/sys/param.h')
     patch_misc_protos_h_undef_setbit_clrbit('osfmk/kern/misc_protos.h')
     patch_kern_types_h_clock_t('osfmk/kern/kern_types.h')
+    patch_clock_t_typedef('osfmk/kern/kern_types.h')
     patch_lock_mtx_h_consolidate('osfmk/kern/lock_mtx.h')
     patch_proc_internal_h_task_get_proc_raw('bsd/sys/proc_internal.h')
     patch_vnode_internal_h_dir_clone('bsd/sys/vnode_internal.h')
@@ -740,6 +791,7 @@ def main():
     patch_param_h_undef_setbit_clrbit('BUILD/obj/EXPORT_HDRS/bsd/sys/param.h')
     patch_misc_protos_h_undef_setbit_clrbit('BUILD/obj/EXPORT_HDRS/osfmk/kern/misc_protos.h')
     patch_kern_types_h_clock_t('BUILD/obj/EXPORT_HDRS/osfmk/kern/kern_types.h')
+    patch_clock_t_typedef('BUILD/obj/EXPORT_HDRS/osfmk/kern/kern_types.h')
     patch_lock_mtx_h_consolidate('BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h')
     patch_proc_internal_h_task_get_proc_raw('BUILD/obj/EXPORT_HDRS/bsd/sys/proc_internal.h')
     patch_vnode_internal_h_dir_clone('BUILD/obj/EXPORT_HDRS/bsd/sys/vnode_internal.h')
