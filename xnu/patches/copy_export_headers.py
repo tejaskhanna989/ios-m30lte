@@ -516,6 +516,9 @@ def patch_proc_internal_h_zone_declare(path):
             print(f"Patched {path} - commented out conflicting ZONE_DECLARE_ID")
             return True
     return False
+
+
+def create_mach_ldebug_h():
     """Create mach_ldebug.h - kernel private header for libdebug support.
     This header is normally provided by KDK but missing in open-source XNU.
     """
@@ -575,6 +578,7 @@ def patch_proc_internal_h_zone_declare(path):
         print(f"Created {path}")
 
     return True
+
 
 def main():
     print("Copying kernel-private headers to EXPORT_HDRS...")
