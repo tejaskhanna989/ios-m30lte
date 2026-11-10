@@ -411,7 +411,111 @@ def patch_lock_mtx_h_consolidate(path):
     return False
 
 
-def create_mach_ldebug_h():
+def patch_lock_mtx_h_consolidate(path):
+    """Ensure lck_mtx_t is only defined once - remove duplicate from lock_mtx.h if arm/locks.h has it."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Remove the duplicate lck_mtx_t typedef from lock_mtx.h if it exists
+        # The definition in arm/locks.h takes precedence for ARM64
+        if '} lck_mtx_t;' in content and 'typedef struct _lck_mtx_' in content:
+            # Remove the duplicate typedef block
+            lines = content.split('\n')
+            new_lines = []
+            skip = False
+            for line in lines:
+                if 'typedef struct _lck_mtx_' in line:
+                    skip = True
+                    continue
+                if skip and '} lck_mtx_t;' in line:
+                    skip = False
+                    continue
+                if not skip:
+                    new_lines.append(line)
+            if len(new_lines) != len(lines):
+                content = '\n'.join(new_lines)
+                with open(path, 'w') as f:
+                    f.write(content)
+                print(f"Patched {path} - removed duplicate lck_mtx_t typedef")
+                return True
+    return False
+
+
+def patch_proc_internal_h_task_get_proc_raw(path):
+    """Fix task_get_proc_raw conflict between proc_internal.h and task.h.
+    The proc_internal.h declares it as returning proc_t, while task.h declares it as void*.
+    We'll comment out the declaration in proc_internal.h since task.h is the authoritative one.
+    """
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Comment out the conflicting declaration
+        if 'extern proc_t task_get_proc_raw(task_t task);' in content:
+            content = content.replace(
+                'extern proc_t task_get_proc_raw(task_t task);',
+                '/* extern proc_t task_get_proc_raw(task_t task);  -- conflicts with task.h */'
+            )
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - commented out conflicting task_get_proc_raw declaration")
+            return True
+    return False
+
+
+def patch_vnode_internal_h_dir_clone(path):
+    """Remove our dir_clone_authorizer_op_t typedef since vnode_if.h already defines it as enum."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Remove our typedef since vnode_if.h already defines it properly
+        if 'typedef int dir_clone_authorizer_op_t;' in content:
+            content = content.replace(
+                'typedef int dir_clone_authorizer_op_t;',
+                '/* typedef int dir_clone_authorizer_op_t;  -- defined in vnode_if.h as enum */'
+            )
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - commented out duplicate dir_clone_authorizer_op_t typedef")
+            return True
+    return False
+
+
+def patch_syslog_h_log_conflict(path):
+    """Guard the log function declaration in syslog.h to avoid conflict with misc_protos.h."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Guard the log function declaration
+        if 'void    log(int, const char *, ...) __printflike(2, 3);' in content and '#ifndef __SYSLOG_H_LOG_DEFINED__' not in content:
+            content = content.replace(
+                'void    log(int, const char *, ...) __printflike(2, 3);',
+                '#ifndef __SYSLOG_H_LOG_DEFINED__\nvoid    log(int, const char *, ...) __printflike(2, 3);\n#define __SYSLOG_H_LOG_DEFINED__\n#endif'
+            )
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - guarded log function declaration")
+            return True
+    return False
+
+
+def patch_proc_internal_h_zone_declare(path):
+    """Fix ZONE_DECLARE_ID conflict for ZONE_ID_PROC_TASK between proc_internal.h and task.h.
+    The proc_internal.h uses struct proc while task.h uses void*. We'll guard the proc_internal.h version.
+    """
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Guard the ZONE_DECLARE_ID for ZONE_ID_PROC_TASK in proc_internal.h
+        if 'ZONE_DECLARE_ID(ZONE_ID_PROC_TASK, struct proc);' in content:
+            content = content.replace(
+                'ZONE_DECLARE_ID(ZONE_ID_PROC_TASK, struct proc);',
+                '/* ZONE_DECLARE_ID(ZONE_ID_PROC_TASK, struct proc); -- conflicts with task.h */'
+            )
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - commented out conflicting ZONE_DECLARE_ID")
+            return True
+    return False
     """Create mach_ldebug.h - kernel private header for libdebug support.
     This header is normally provided by KDK but missing in open-source XNU.
     """
@@ -489,6 +593,10 @@ def main():
     patch_param_h_undef_setbit_clrbit('bsd/sys/param.h')
     patch_kern_types_h_clock_t('osfmk/kern/kern_types.h')
     patch_lock_mtx_h_consolidate('osfmk/kern/lock_mtx.h')
+    patch_proc_internal_h_task_get_proc_raw('bsd/sys/proc_internal.h')
+    patch_vnode_internal_h_dir_clone('bsd/sys/vnode_internal.h')
+    patch_syslog_h_log_conflict('bsd/sys/syslog.h')
+    patch_proc_internal_h_zone_declare('bsd/sys/proc_internal.h')
     create_mach_assert_h()
     create_mach_ldebug_h()
     
@@ -505,6 +613,10 @@ def main():
     patch_param_h_undef_setbit_clrbit('BUILD/obj/EXPORT_HDRS/bsd/sys/param.h')
     patch_kern_types_h_clock_t('BUILD/obj/EXPORT_HDRS/osfmk/kern/kern_types.h')
     patch_lock_mtx_h_consolidate('BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h')
+    patch_proc_internal_h_task_get_proc_raw('BUILD/obj/EXPORT_HDRS/bsd/sys/proc_internal.h')
+    patch_vnode_internal_h_dir_clone('BUILD/obj/EXPORT_HDRS/bsd/sys/vnode_internal.h')
+    patch_syslog_h_log_conflict('BUILD/obj/EXPORT_HDRS/bsd/sys/syslog.h')
+    patch_proc_internal_h_zone_declare('BUILD/obj/EXPORT_HDRS/bsd/sys/proc_internal.h')
     
     print("\nAll patches applied!")
 
