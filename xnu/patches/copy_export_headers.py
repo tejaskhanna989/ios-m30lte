@@ -147,21 +147,35 @@ def patch_arm_locks_h(path):
         print(f"DEBUG: Patching {path}, content length: {len(content)}")
         # Remove any lck_mtx_t typedef from arm/locks.h to avoid redefinition
         # The definition should come from lock_mtx.h
-        if 'typedef struct {
+        
+        # Pattern 1: The full definition block with comment
+        old_block1 = """/* Full lck_mtx_t definition for MACH_KERNEL_PRIVATE (ARM64 uses LCK_MTX_USE_ARCH) */
+typedef struct {
 	uintptr_t opaque[2] __kernel_data_semantics;
-} lck_mtx_t;' in content:
-            content = content.replace(
-                '/* Full lck_mtx_t definition for MACH_KERNEL_PRIVATE (ARM64 uses LCK_MTX_USE_ARCH) */
-'
-                'typedef struct {
-'
-                '	uintptr_t opaque[2] __kernel_data_semantics;
-'
-                '} lck_mtx_t;
+} lck_mtx_t;
 
-',
-                ''
-            )
+"""
+        # Pattern 2: Without comment
+        old_block2 = """typedef struct {
+	uintptr_t opaque[2] __kernel_data_semantics;
+} lck_mtx_t;
+
+"""
+        # Pattern 3: Original Apple definition style
+        old_block3 = """typedef struct __lck_mtx_t__            lck_mtx_t;"""
+        
+        changed = False
+        if old_block1 in content:
+            content = content.replace(old_block1, '')
+            changed = True
+        if old_block2 in content:
+            content = content.replace(old_block2, '')
+            changed = True
+        if old_block3 in content:
+            content = content.replace(old_block3, '')
+            changed = True
+        
+        if changed:
             with open(path, 'w') as f:
                 f.write(content)
             print(f"Patched {path} - removed duplicate lck_mtx_t definition")
@@ -171,7 +185,7 @@ def patch_arm_locks_h(path):
             return True
     return False
 
-def patch_systm_h(path)::
+def patch_systm_h(path):
     """Add missing includes to systm.h for mount_t type."""
     if os.path.exists(path):
         with open(path, 'r') as f:
@@ -195,11 +209,11 @@ def patch_systm_h(path)::
 
 
 def patch_vnode_internal_h(path):
-    """Add missing includes to vnode_internal.h for dir_clone_authorizer_op_t and mount_t."""
+    """Add missing types and includes to vnode_internal.h."""
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
-        # Add includes for dir_clone_authorizer_op_t (from vnode_if.h) and mount_t (from sys/mount.h)
+        # Add missing type definitions and includes
         lines = content.split('\n')
         insert_pos = 0
         # Find the last include
@@ -207,24 +221,25 @@ def patch_vnode_internal_h(path):
             if line.strip().startswith('#include'):
                 insert_pos = i + 1
         if insert_pos > 0:
-            # Add includes before the first non-include line
-            new_includes = [
+            # Add missing type definitions and includes
+            new_items = [
                 '#include <sys/mount.h>',
                 '#include <sys/vnode_if.h>',
+                'typedef uint32_t vfs_rename_flags_t;',
             ]
-            for inc in reversed(new_includes):
-                if inc not in content:
-                    lines.insert(insert_pos, inc)
+            for item in reversed(new_items):
+                if item not in content:
+                    lines.insert(insert_pos, item)
             content = '\n'.join(lines)
             with open(path, 'w') as f:
                 f.write(content)
-            print(f"Patched {path} - added sys/mount.h and sys/vnode_if.h includes")
+            print(f"Patched {path} - added missing types and includes")
             return True
     return False
 
 
 def patch_smr_h(path):
-    """Add stdatomic.h include to smr.h"""
+    """Add stdatomic.h include to smr.h for atomic_thread_fence and atomic_signal_fence"""
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
@@ -256,15 +271,15 @@ def patch_mac_internal_h(path):
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
-        # Add sysctl.h include for SYSCTL_DECL macro
-        if '#include <bsd/sys/sysctl.h>' not in content:
+        # Add sysctl.h include for SYSCTL_DECL macro - use sys/sysctl.h which is the standard path
+        if '#include <sys/sysctl.h>' not in content and '#include <bsd/sys/sysctl.h>' not in content:
             lines = content.split('\n')
             insert_pos = 0
             for i, line in enumerate(lines):
                 if line.strip().startswith('#include'):
                     insert_pos = i + 1
             if insert_pos > 0:
-                lines.insert(insert_pos, '#include <bsd/sys/sysctl.h>')
+                lines.insert(insert_pos, '#include <sys/sysctl.h>')
                 content = '\n'.join(lines)
         # Fix implicit int declarations
         replacements = {
@@ -282,7 +297,7 @@ def patch_mac_internal_h(path):
             content = content.replace(old, new)
         with open(path, 'w') as f:
             f.write(content)
-        print(f"Patched {path} - added sysctl.h include and fixed implicit int")
+        print(f"Patched {path} - added sys/sysctl.h include and fixed implicit int")
         return True
     return False
 
