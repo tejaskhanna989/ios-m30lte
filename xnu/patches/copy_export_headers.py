@@ -285,7 +285,7 @@ def patch_refcnt_internal_h(path):
             content = f.read()
         print(f"DEBUG: File {path} exists, length: {len(content)}")
         # Add memory_order enum definitions after the license header
-        # Find a good place to insert - after the includes
+        # Find a good place to insert - after the includes or after license header
         memory_order_defs = '''
 /*
  * Memory order definitions for C11 atomics.
@@ -323,7 +323,32 @@ typedef enum {
             print(f"Patched {path} - added memory_order enum definitions")
             return True
         else:
-            print(f"DEBUG: No include lines found in {path}")
+            print(f"DEBUG: No include lines found in {path}, trying to insert after license header")
+            # Try to find the end of the license header (usually marked by a blank line after comments)
+            insert_pos = 0
+            in_license = False
+            for i, line in enumerate(lines):
+                stripped = line.strip()
+                if stripped.startswith('/*') or stripped.startswith('*') or stripped.startswith('//'):
+                    in_license = True
+                elif in_license and stripped == '':
+                    # End of license header
+                    insert_pos = i + 1
+                    break
+                elif in_license and not (stripped.startswith('*') or stripped.startswith('//') or stripped == ''):
+                    # End of license header
+                    insert_pos = i
+                    break
+            if insert_pos == 0:
+                # Fallback: insert at beginning
+                insert_pos = 0
+            print(f"DEBUG: Inserting at position {insert_pos}")
+            lines.insert(insert_pos, memory_order_defs)
+            content = '\n'.join(lines)
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - added memory_order enum definitions (fallback)")
+            return True
     else:
         print(f"DEBUG: File {path} does not exist")
     return False
