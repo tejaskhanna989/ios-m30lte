@@ -399,18 +399,39 @@ def patch_misc_protos_h_undef_setbit_clrbit(path):
 
 def patch_kern_types_h_clock_t(path):
     """Guard clock_t typedef in kern_types.h to avoid redefinition with bsd/_clock_t.h"""
+    import re
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
-        # Guard the clock_t typedef
-        if 'typedef  struct clock                   *clock_t;' in content and '#ifndef clock_t' not in content:
-            content = content.replace(
-                'typedef  struct clock                   *clock_t;',
-                '#ifndef clock_t\ntypedef  struct clock                   *clock_t;\n#endif'
+        # Guard the clock_t typedef - use regex to handle varying whitespace
+        pattern = r'typedef\s+struct\s+clock\s+\*clock_t;'
+        if re.search(pattern, content) and '#ifndef clock_t' not in content:
+            content = re.sub(
+                pattern,
+                '#ifndef clock_t\ntypedef  struct clock                   *clock_t;\n#endif',
+                content
             )
             with open(path, 'w') as f:
                 f.write(content)
             print(f"Patched {path} - guarded clock_t typedef")
+            return True
+    return False
+
+
+def patch_atomic_private_h_stdatomic(path):
+    """Add stdatomic.h include to atomic_private.h for C11 atomic functions."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add stdatomic.h include after the existing includes
+        if '#include <stdatomic.h>' not in content and '#include <os/atomic.h>' in content:
+            content = content.replace(
+                '#include <os/atomic.h>',
+                '#include <os/atomic.h>\n#include <stdatomic.h>'
+            )
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - added stdatomic.h include")
             return True
     return False
 
@@ -631,6 +652,7 @@ def main():
     patch_mac_framework_h('security/mac_framework.h')
     patch_mac_internal_h('security/mac_internal.h')
     patch_refcnt_internal_h('libkern/os/refcnt_internal.h')
+    patch_atomic_private_h_stdatomic('libkern/os/atomic_private.h')
     patch_param_h_undef_setbit_clrbit('bsd/sys/param.h')
     patch_misc_protos_h_undef_setbit_clrbit('osfmk/kern/misc_protos.h')
     patch_kern_types_h_clock_t('osfmk/kern/kern_types.h')
@@ -652,6 +674,7 @@ def main():
     patch_mac_framework_h('BUILD/obj/EXPORT_HDRS/security/mac_framework.h')
     patch_mac_internal_h('BUILD/obj/EXPORT_HDRS/security/mac_internal.h')
     patch_refcnt_internal_h('BUILD/obj/EXPORT_HDRS/libkern/os/refcnt_internal.h')
+    patch_atomic_private_h_stdatomic('BUILD/obj/EXPORT_HDRS/libkern/os/atomic_private.h')
     patch_param_h_undef_setbit_clrbit('BUILD/obj/EXPORT_HDRS/bsd/sys/param.h')
     patch_misc_protos_h_undef_setbit_clrbit('BUILD/obj/EXPORT_HDRS/osfmk/kern/misc_protos.h')
     patch_kern_types_h_clock_t('BUILD/obj/EXPORT_HDRS/osfmk/kern/kern_types.h')
