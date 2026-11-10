@@ -253,9 +253,10 @@ def patch_vnode_internal_h(path):
             
             # Now add the typedefs (after includes)
             # Note: lck_mtx_t is provided by lock_mtx.h when MACH_KERNEL_PRIVATE=1
+            # dir_clone_authorizer_op_t is defined in vnode_if.h, so guard against redefinition
             typedefs_to_add = [
                 'typedef uint32_t vfs_rename_flags_t;',
-                'typedef enum dir_clone_authorizer_op { OP_AUTHORIZE = 0, OP_VATTR_SETUP = 1, OP_VATTR_CLEANUP = 2 } dir_clone_authorizer_op_t;',
+                '#ifndef dir_clone_authorizer_op_t\ntypedef enum dir_clone_authorizer_op { OP_AUTHORIZE = 0, OP_VATTR_SETUP = 1, OP_VATTR_CLEANUP = 2 } dir_clone_authorizer_op_t;\n#endif',
             ]
             for item in reversed(typedefs_to_add):
                 if item not in content:
@@ -546,6 +547,75 @@ def patch_processor_h_stdatomic(path):
 
 def patch_ipc_object_h_stdatomic(path):
     """Add stdatomic.h include to ipc_object.h for C11 atomic functions."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add stdatomic.h include after the existing includes
+        if '#include <stdatomic.h>' not in content:
+            lines = content.split('\n')
+            insert_pos = 0
+            # Find the last include line
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include'):
+                    insert_pos = i + 1
+            if insert_pos > 0:
+                lines.insert(insert_pos, '#include <stdatomic.h>')
+                content = '\n'.join(lines)
+                with open(path, 'w') as f:
+                    f.write(content)
+                print(f"Patched {path} - added stdatomic.h include")
+                return True
+    return False
+
+
+def patch_ipc_space_h_stdatomic(path):
+    """Add stdatomic.h include to ipc_space.h for C11 atomic functions."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add stdatomic.h include after the existing includes
+        if '#include <stdatomic.h>' not in content:
+            lines = content.split('\n')
+            insert_pos = 0
+            # Find the last include line
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include'):
+                    insert_pos = i + 1
+            if insert_pos > 0:
+                lines.insert(insert_pos, '#include <stdatomic.h>')
+                content = '\n'.join(lines)
+                with open(path, 'w') as f:
+                    f.write(content)
+                print(f"Patched {path} - added stdatomic.h include")
+                return True
+    return False
+
+
+def patch_ipc_port_h_stdatomic(path):
+    """Add stdatomic.h include to ipc_port.h for C11 atomic functions."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add stdatomic.h include after the existing includes
+        if '#include <stdatomic.h>' not in content:
+            lines = content.split('\n')
+            insert_pos = 0
+            # Find the last include line
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include'):
+                    insert_pos = i + 1
+            if insert_pos > 0:
+                lines.insert(insert_pos, '#include <stdatomic.h>')
+                content = '\n'.join(lines)
+                with open(path, 'w') as f:
+                    f.write(content)
+                print(f"Patched {path} - added stdatomic.h include")
+                return True
+    return False
+
+
+def patch_thread_h_stdatomic(path):
+    """Add stdatomic.h include to thread.h for C11 atomic functions."""
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
@@ -925,6 +995,9 @@ def main():
     patch_mpsc_queue_h_stdatomic('osfmk/kern/mpsc_queue.h')
     patch_processor_h_stdatomic('osfmk/kern/processor.h')
     patch_ipc_object_h_stdatomic('osfmk/ipc/ipc_object.h')
+    patch_ipc_space_h_stdatomic('osfmk/ipc/ipc_space.h')
+    patch_ipc_port_h_stdatomic('osfmk/ipc/ipc_port.h')
+    patch_thread_h_stdatomic('osfmk/kern/thread.h')
     patch_param_h_undef_setbit_clrbit('bsd/sys/param.h')
     patch_misc_protos_h_undef_setbit_clrbit('osfmk/kern/misc_protos.h')
     patch_kern_types_h_clock_t('osfmk/kern/kern_types.h')
@@ -951,6 +1024,9 @@ def main():
     patch_mpsc_queue_h_stdatomic('BUILD/obj/EXPORT_HDRS/osfmk/kern/mpsc_queue.h')
     patch_processor_h_stdatomic('BUILD/obj/EXPORT_HDRS/osfmk/kern/processor.h')
     patch_ipc_object_h_stdatomic('BUILD/obj/EXPORT_HDRS/osfmk/ipc/ipc_object.h')
+    patch_ipc_space_h_stdatomic('BUILD/obj/EXPORT_HDRS/osfmk/ipc/ipc_space.h')
+    patch_ipc_port_h_stdatomic('BUILD/obj/EXPORT_HDRS/osfmk/ipc/ipc_port.h')
+    patch_thread_h_stdatomic('BUILD/obj/EXPORT_HDRS/osfmk/kern/thread.h')
     patch_param_h_undef_setbit_clrbit('BUILD/obj/EXPORT_HDRS/bsd/sys/param.h')
     patch_misc_protos_h_undef_setbit_clrbit('BUILD/obj/EXPORT_HDRS/osfmk/kern/misc_protos.h')
     patch_kern_types_h_clock_t('BUILD/obj/EXPORT_HDRS/osfmk/kern/kern_types.h')
