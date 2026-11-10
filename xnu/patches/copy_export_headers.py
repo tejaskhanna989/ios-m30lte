@@ -90,8 +90,9 @@ type_headers = [
     'bsd/sys/_types/_pthread_once_t.h',
 ]
 
-for src, dst in type_headers:
-    headers_to_copy.append((src, src.replace('bsd/', 'BUILD/obj/EXPORT_HDRS/bsd/')))
+for src in type_headers:
+    dst = src.replace('bsd/', 'BUILD/obj/EXPORT_HDRS/bsd/')
+    headers_to_copy.append((src, dst))
 
 def copy_headers():
     for src, dst in headers_to_copy:
