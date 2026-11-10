@@ -234,6 +234,7 @@ def patch_vnode_internal_h(path):
                 '#include <sys/mount.h>',
                 '#include <sys/vnode_if.h>',
                 'typedef uint32_t vfs_rename_flags_t;',
+                'typedef enum dir_clone_authorizer_op { OP_AUTHORIZE = 0, OP_VATTR_SETUP = 1, OP_VATTR_CLEANUP = 2 } dir_clone_authorizer_op_t;',
             ]
             for item in reversed(new_items):
                 if item not in content:
@@ -254,14 +255,14 @@ def patch_vnode_internal_h(path):
 
 
 def patch_smr_h(path):
-    """Add stdatomic.h include to smr.h for atomic_thread_fence and atomic_signal_fence"""
+    """Add stdatomic.h include and fallback implementations for atomic_thread_fence and atomic_signal_fence"""
     print(f"DEBUG: patch_smr_h called for {path}")
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
         print(f"DEBUG: {path} exists, length: {len(content)}, has stdatomic: {'#include <stdatomic.h>' in content}")
+        # Add stdatomic.h include after the last include
         if '#include <stdatomic.h>' not in content:
-            # Add after the last include
             lines = content.split('\n')
             insert_pos = 0
             for i, line in enumerate(lines):
@@ -272,12 +273,49 @@ def patch_smr_h(path):
             if insert_pos > 0:
                 lines.insert(insert_pos, '#include <stdatomic.h>')
                 content = '\n'.join(lines)
+
+        # Add fallback implementations for atomic_thread_fence and atomic_signal_fence
+        # These are C11 functions that may not be available in the iPhoneOS SDK's stdatomic.h
+        fallback_code = (
+            '\n'
+            '/*\n'
+            ' * Fallback implementations for C11 atomic functions.\n'
+            ' * These may not be available in the iPhoneOS SDK\'s stdatomic.h.\n'
+            ' */\n'
+            '#if !defined(atomic_thread_fence) && !defined(HAVE_ATOMIC_THREAD_FENCE)\n'
+            'static inline void atomic_thread_fence(memory_order order) {\n'
+            '    // Compiler barrier - in practice we use OSAtomic or os_atomic\n'
+            '    // This is a minimal fallback\n'
+            '    __asm__ __volatile__("" ::: "memory");\n'
+            '}\n'
+            '#define HAVE_ATOMIC_THREAD_FENCE 1\n'
+            '#endif\n'
+            '\n'
+            '#if !defined(atomic_signal_fence) && !defined(HAVE_ATOMIC_SIGNAL_FENCE)\n'
+            'static inline void atomic_signal_fence(memory_order order) {\n'
+            '    // Compiler barrier for signal handlers\n'
+            '    __asm__ __volatile__("" ::: "memory");\n'
+            '}\n'
+            '#define HAVE_ATOMIC_SIGNAL_FENCE 1\n'
+            '#endif\n'
+            '\n'
+        )
+        if fallback_code not in content:
+            lines = content.split('\n')
+            insert_pos = 0
+            for i, line in enumerate(lines):
+                if '#include <stdatomic.h>' in line:
+                    insert_pos = i + 1
+                    break
+            if insert_pos > 0:
+                lines.insert(insert_pos, fallback_code)
+                content = '\n'.join(lines)
                 with open(path, 'w') as f:
                     f.write(content)
-                print(f"Patched {path} - added stdatomic.h include for atomic_thread_fence/atomic_signal_fence")
+                print(f"Patched {path} - added stdatomic.h include and fallback atomic functions")
                 return True
             else:
-                print(f"WARNING: No include lines found in {path}")
+                print(f"WARNING: No stdatomic.h include found in {path}")
     else:
         print(f"WARNING: File not found: {path}")
     return False
