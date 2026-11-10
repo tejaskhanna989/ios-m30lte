@@ -361,7 +361,9 @@ def main():
     patch_mac_internal_h('BUILD/obj/EXPORT_HDRS/security/mac_internal.h')
     patch_refcnt_internal_h('BUILD/obj/EXPORT_HDRS/libkern/os/refcnt_internal.h')
     
-    def create_mach_assert_h():
+    print("\nAll patches applied!")
+
+def create_mach_assert_h():
     """Create mach_assert.h - kernel private header defining MACH_ASSERT.
     This header is normally provided by KDK but missing in open-source XNU.
     """
