@@ -219,13 +219,6 @@ def patch_vnode_internal_h(path):
         with open(path, 'r') as f:
             content = f.read()
         print(f"DEBUG: {path} exists, length: {len(content)}")
-        # First, remove any existing lck_mtx_t typedef/forward declaration to avoid redefinition
-        if 'typedef struct _lck_mtx_ lck_mtx_t;' in content:
-            content = content.replace('typedef struct _lck_mtx_ lck_mtx_t;', '')
-            print(f"DEBUG: Removed forward declaration of lck_mtx_t")
-        if 'typedef struct _lck_mtx_t lck_mtx_t;' in content:
-            content = content.replace('typedef struct _lck_mtx_t lck_mtx_t;', '')
-            print(f"DEBUG: Removed forward declaration of lck_mtx_t (alt)")
         # Add missing type definitions and includes
         lines = content.split('\n')
         insert_pos = 0
@@ -256,6 +249,16 @@ def patch_vnode_internal_h(path):
                 else:
                     print(f"DEBUG: Already present: {item}")
             content = '\n'.join(lines)
+            
+            # Now remove any forward declaration that might have come from lock_mtx.h include
+            # to avoid typedef redefinition with our full definition
+            if 'typedef struct _lck_mtx_ lck_mtx_t;' in content:
+                content = content.replace('typedef struct _lck_mtx_ lck_mtx_t;', '')
+                print(f"DEBUG: Removed forward declaration of lck_mtx_t after include")
+            if 'typedef struct _lck_mtx_t lck_mtx_t;' in content:
+                content = content.replace('typedef struct _lck_mtx_t lck_mtx_t;', '')
+                print(f"DEBUG: Removed forward declaration of lck_mtx_t (alt)")
+            
             with open(path, 'w') as f:
                 f.write(content)
             print(f"Patched {path} - added missing types and includes")
