@@ -284,8 +284,7 @@ def patch_refcnt_internal_h(path):
         with open(path, 'r') as f:
             content = f.read()
         print(f"DEBUG: File {path} exists, length: {len(content)}")
-        # Add memory_order enum definitions after the license header
-        # Find a good place to insert - after the includes or after license header
+        # Add memory_order enum definitions BEFORE the first usage of memory_order
         memory_order_defs = '''
 /*
  * Memory order definitions for C11 atomics.
@@ -307,29 +306,18 @@ typedef enum {
 #endif /* __OS_MEMORY_ORDER_DEFINED__ */
 
 '''
-        # Find the last include line and add after it
+        # Find the first usage of memory_order and insert before it
         lines = content.split('\n')
-        last_include = -1
+        insert_pos = 0
         for i, line in enumerate(lines):
-            if line.strip().startswith('#include'):
-                last_include = i
-                print(f"DEBUG: Found include at line {i}: {line.strip()}")
-        print(f"DEBUG: Last include at line {last_include}")
-        if last_include >= 0:
-            lines.insert(last_include + 1, memory_order_defs)
-            content = '\n'.join(lines)
-            with open(path, 'w') as f:
-                f.write(content)
-            # Verify the patch was applied
-            if 'memory_order_relaxed' in content and 'memory_order' in content:
-                print(f"Patched {path} - added memory_order enum definitions, VERIFIED")
-                return True
-            else:
-                print(f"ERROR: Patch may not have been applied correctly to {path}")
-                return False
-        else:
-            print(f"DEBUG: No include lines found in {path}, trying to insert after license header")
-            # Try to find the end of the license header (usually marked by a blank line after comments)
+            if 'memory_order ' in line or 'memory_order\t' in line:
+                # Found first usage, insert before it
+                insert_pos = i
+                print(f"DEBUG: Found memory_order usage at line {i+1}: {line.strip()}")
+                break
+        if insert_pos == 0:
+            # Fallback: insert after license header
+            print(f"DEBUG: No memory_order usage found, trying to insert after license header")
             insert_pos = 0
             in_license = False
             for i, line in enumerate(lines):
@@ -347,18 +335,18 @@ typedef enum {
             if insert_pos == 0:
                 # Fallback: insert at beginning
                 insert_pos = 0
-            print(f"DEBUG: Inserting at position {insert_pos}")
-            lines.insert(insert_pos, memory_order_defs)
-            content = '\n'.join(lines)
-            with open(path, 'w') as f:
-                f.write(content)
-            # Verify the patch was applied
-            if 'memory_order_relaxed' in content and 'memory_order' in content:
-                print(f"Patched {path} - added memory_order enum definitions (fallback), VERIFIED")
-                return True
-            else:
-                print(f"ERROR: Patch may not have been applied correctly to {path}")
-                return False
+        print(f"DEBUG: Inserting at position {insert_pos}")
+        lines.insert(insert_pos, memory_order_defs)
+        content = '\n'.join(lines)
+        with open(path, 'w') as f:
+            f.write(content)
+        # Verify the patch was applied
+        if 'memory_order_relaxed' in content and 'memory_order' in content:
+            print(f"Patched {path} - added memory_order enum definitions, VERIFIED")
+            return True
+        else:
+            print(f"ERROR: Patch may not have been applied correctly to {path}")
+            return False
     else:
         print(f"DEBUG: File {path} does not exist")
     return False
