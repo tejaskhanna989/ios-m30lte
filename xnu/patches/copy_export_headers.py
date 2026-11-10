@@ -123,36 +123,78 @@ def patch_file(path, replacements):
             with open(path, 'w') as f:
                 f.write(content)
             print(f"Patched {path}")
-        return True
+            return True
+        else:
+            print(f"No changes needed for {path}")
+    else:
+        print(f"WARNING: File not found: {path}")
     return False
 
-def patch_lock_mtx_h(path):
-    """Add full lck_mtx_t definition to lock_mtx.h"""
-    replacements = {
-        'typedef struct __lck_mtx_t__            lck_mtx_t;': '''typedef struct lck_mtx {
-    uint32_t lck_mtx_type;
-    lck_grp_t lck_mtx_grp;
-    union {
-        struct {
-            uint32_t owner:28;
-            uint32_t ilocked:1;
-            uint32_t spin_mode:1;
-            uint32_t needs_wakeup:1;
-            uint32_t profile:1;
-        };
-        uint32_t data;
-        uint64_t val;
-    } lck_mtx;
-    uint16_t lck_mtx_ilk_tail;
-    uint16_t lck_mtx_as_tail;
+def patch_arm_locks_h(path):
+    """Add lck_mtx_t definition to arm/locks.h in MACH_KERNEL_PRIVATE section."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Find the MACH_KERNEL_PRIVATE section that defines lck_spin_t and add lck_mtx_t after it
+        # Look for the end of the lck_spin_t definition in MACH_KERNEL_PRIVATE
+        old = '''#elif KERNEL_PRIVATE
+
+typedef struct {
+	uintptr_t opaque[2] __kernel_data_semantics;
+} lck_spin_t;'''
+        new = '''#elif KERNEL_PRIVATE
+
+typedef struct {
+	uintptr_t opaque[2] __kernel_data_semantics;
+} lck_spin_t;
+
+typedef struct {
+	uintptr_t opaque[2] __kernel_data_semantics;
 } lck_mtx_t;'''
-    }
-    return patch_file(path, replacements)
+        if old in content:
+            content = content.replace(old, new)
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - added lck_mtx_t to KERNEL_PRIVATE section")
+            return True
+        else:
+            # Try alternative: add to MACH_KERNEL_PRIVATE section after lck_spin_t
+            old2 = '''#endif
+
+#elif KERNEL_PRIVATE'''
+            new2 = '''#endif
+
+/* Full lck_mtx_t definition for MACH_KERNEL_PRIVATE (ARM64 uses LCK_MTX_USE_ARCH) */
+typedef struct {
+	uintptr_t opaque[2] __kernel_data_semantics;
+} lck_mtx_t;
+
+#elif KERNEL_PRIVATE'''
+            if old2 in content:
+                content = content.replace(old2, new2)
+                with open(path, 'w') as f:
+                    f.write(content)
+                print(f"Patched {path} - added lck_mtx_t to MACH_KERNEL_PRIVATE section")
+                return True
+            else:
+                print(f"Could not find pattern to patch in {path}")
+                # Debug
+                for i, line in enumerate(content.split('\n')):
+                    if 'lck_spin_t' in line or 'lck_mtx_t' in line or 'KERNEL_PRIVATE' in line:
+                        print(f"  Line {i+1}: {line}")
+    return False
 
 def patch_systm_h(path):
     """Add mount_t definition to systm.h"""
     replacements = {
-        '#include <sys/mount.h>': '#include <sys/mount.h>\ntypedef struct mount *mount_t;'
+        '#include <sys/vm.h>': '#include <sys/vm.h>\n#include <sys/mount.h>\ntypedef struct mount *mount_t;'
+    }
+    return patch_file(path, replacements)
+
+def patch_vnode_internal_h(path):
+    """Add missing types to vnode_internal.h"""
+    replacements = {
+        '#include <sys/vfs_context.h>': '#include <sys/vfs_context.h>\ntypedef uint32_t vfs_rename_flags_t;\ntypedef int dir_clone_authorizer_op_t;'
     }
     return patch_file(path, replacements)
 
@@ -168,16 +210,11 @@ def patch_smr_h(path):
             )
             with open(path, 'w') as f:
                 f.write(content)
-            print(f"Patched {path}")
+            print(f"Patched {path} - added stdatomic.h")
             return True
+        else:
+            print(f"stdatomic.h already present in {path}")
     return False
-
-def patch_vnode_internal_h(path):
-    """Add missing types to vnode_internal.h"""
-    replacements = {
-        'typedef struct namecache *namecache_t;': 'typedef struct namecache *namecache_t;\ntypedef uint32_t vfs_rename_flags_t;\ntypedef int dir_clone_authorizer_op_t;'
-    }
-    return patch_file(path, replacements)
 
 def patch_mac_framework_h(path):
     """Remove the #error from mac_framework.h"""
@@ -207,19 +244,21 @@ def main():
     
     print("\nPatching SOURCE headers...")
     # Patch source files directly (these are used first by build system)
-    patch_lock_mtx_h('osfmk/kern/lock_mtx.h')
+    patch_arm_locks_h('osfmk/arm/locks.h')
+    patch_arm_locks_h('osfmk/arm64/locks.h')  # Also patch arm64 if it exists
     patch_systm_h('bsd/sys/systm.h')
-    patch_smr_h('osfmk/kern/smr.h')
     patch_vnode_internal_h('bsd/sys/vnode_internal.h')
+    patch_smr_h('osfmk/kern/smr.h')
     patch_mac_framework_h('security/mac_framework.h')
     patch_mac_internal_h('security/mac_internal.h')
     
     print("\nPatching EXPORT_HDRS headers...")
     # Also patch EXPORT_HDRS copies
-    patch_lock_mtx_h('BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h')
+    patch_arm_locks_h('BUILD/obj/EXPORT_HDRS/osfmk/arm/locks.h')
+    patch_arm_locks_h('BUILD/obj/EXPORT_HDRS/osfmk/arm64/locks.h')
     patch_systm_h('BUILD/obj/EXPORT_HDRS/bsd/sys/systm.h')
-    patch_smr_h('BUILD/obj/EXPORT_HDRS/osfmk/kern/smr.h')
     patch_vnode_internal_h('BUILD/obj/EXPORT_HDRS/bsd/sys/vnode_internal.h')
+    patch_smr_h('BUILD/obj/EXPORT_HDRS/osfmk/kern/smr.h')
     patch_mac_framework_h('BUILD/obj/EXPORT_HDRS/security/mac_framework.h')
     patch_mac_internal_h('BUILD/obj/EXPORT_HDRS/security/mac_internal.h')
     
