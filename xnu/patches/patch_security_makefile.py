@@ -6,14 +6,13 @@ with open('security/Makefile', 'r') as f:
     content = f.read()
 
 print("=== Original content ===")
-print(content)
+for i, line in enumerate(content.split('\n')[:60]):
+    print(f"  {i+1}: {repr(line)}")
 print("=== End of content ===")
 
-# 1. Add kernel source include paths before COMP_SUBDIRS
-# Find the line with COMP_SUBDIRS = conf and insert before it
 lines = content.split('\n')
 
-# Find the line with COMP_SUBDIRS = conf
+# Find COMP_SUBDIRS = conf line
 comp_subdirs_idx = -1
 for i, line in enumerate(lines):
     if line.strip() == 'COMP_SUBDIRS = conf':
@@ -24,24 +23,31 @@ if comp_subdirs_idx == -1:
     print("ERROR: Could not find COMP_SUBDIRS = conf")
     sys.exit(1)
 
-# Insert our INCFLAGS before COMP_SUBDIRS = conf
-incflags = '''#
-# Kernel private include paths for security module
-# Must come FIRST to ensure kernel-private headers are found before EXPORT_HDRS
-#
-INCFLAGS = -I$(SRCROOT)/bsd \\
-	-I$(SRCROOT)/osfmk \\
-	-I$(SRCROOT)/libkern \\
-	-I$(SRCROOT)/iokit \\
-	-I$(SRCROOT)/security
+# Insert INCFLAGS before COMP_SUBDIRS = conf
+incflags_lines = [
+    '#',
+    '# Kernel private include paths for security module',
+    '# Must come FIRST to ensure kernel-private headers are found before EXPORT_HDRS',
+    '#',
+    'INCFLAGS = -I$(SRCROOT)/bsd \\',
+    '	-I$(SRCROOT)/osfmk \\',
+    '	-I$(SRCROOT)/libkern \\',
+    '	-I$(SRCROOT)/iokit \\',
+    '	-I$(SRCROOT)/security',
+    ''
+]
 
-'''
+# Insert before COMP_SUBDIRS = conf
+for i, line in enumerate(incflags_lines):
+    lines.insert(comp_subdirs_idx + i, line)
 
-lines.insert(comp_subdirs_idx, incflags)
+# Recalculate COMP_SUBDIRS index
+for i, line in enumerate(lines):
+    if line.strip() == 'COMP_SUBDIRS = conf':
+        comp_subdirs_idx = i
+        break
 
-# 2. Add kernel private definitions to CFLAGS
-# Find the last include line and add CFLAGS after it
-# Find the last line with "include $(MakeInc_"
+# Find the last include line to add CFLAGS after it
 last_include_idx = -1
 for i, line in enumerate(lines):
     if line.strip().startswith('include $(MakeInc_'):
@@ -52,8 +58,10 @@ if last_include_idx == -1:
     sys.exit(1)
 
 # Insert CFLAGS after the last include
-cflags = '\nCFLAGS+= -include meta_features.h -DBSD_KERNEL_PRIVATE -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DKERNEL -DXNU_KERNEL_PRIVATE -DPRIVATE\n'
-lines.insert(last_include_idx + 1, cflags)
+cflags_line = 'CFLAGS+= -include meta_features.h -DBSD_KERNEL_PRIVATE -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DKERNEL -DXNU_KERNEL_PRIVATE -DPRIVATE'
+lines.insert(last_include_idx + 1, '')
+lines.insert(last_include_idx + 2, 'CFLAGS+= -include meta_features.h -DBSD_KERNEL_PRIVATE -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DKERNEL -DXNU_KERNEL_PRIVATE -DPRIVATE')
+lines.insert(last_include_idx + 3, '')
 
 # Join and write
 new_content = '\n'.join(lines)
