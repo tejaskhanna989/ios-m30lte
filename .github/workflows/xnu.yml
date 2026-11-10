@@ -578,20 +578,9 @@ jobs:
 
         echo "=== Copying and patching kernel-private headers to EXPORT_HDRS ==="
 
-        python3 ../xnu/patches/copy_export_headers.py 2>&1 | tee patch_output.log
+        python3 ../xnu/patches/copy_export_headers.py
 
-        echo "Copied and patched kernel-private headers"
-
-        echo "=== Patch output ==="
-
-        cat patch_output.log'
-      shell: bash
-    - name: Upload patch output log
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: patch-output-log
-        path: xnu-source/patch_output.log
+        echo "Copied and patched kernel-private headers"'
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
@@ -611,7 +600,7 @@ jobs:
         22.6.0\" \\\n  MEMORY_SIZE=\"${MEMORY_SIZE}\" \\\n  SYSCTL_HW_PHYSICALCPU=\"\
         ${SYSCTL_PHYSICALCPU}\" \\\n  SYSCTL_HW_LOGICALCPU=\"${SYSCTL_LOGICALCPU}\"\
         \ \\\n  KERNEL_BUILDS_IN_PARALLEL=1 \\\n  BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0\
-        \ LOGCOLORS=y \\\n  DRIVERKIT=0 \\\n  SETUP_SUBDIRS=\"\" \\\n  CFLAGS="-std=c11" \\\n  CXXFLAGS="-std=c++11" \\\n  2>&1 | tee\
+        \ LOGCOLORS=y \\\n  DRIVERKIT=0 \\\n  SETUP_SUBDIRS=\"\" \\\n  2>&1 | tee\
         \ /tmp/xnu-build.log\nBUILD_EXIT=${PIPESTATUS[0]}\necho \"make exit code:\
         \ $BUILD_EXIT\"\necho \"=== Errors in build log ===\"\ngrep -iE \"error:|error\
         \ |make: \\*\\*\\*|No rule|syntax error|undefined reference|missing separator|command\
