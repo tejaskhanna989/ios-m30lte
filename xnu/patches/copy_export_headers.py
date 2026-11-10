@@ -45,6 +45,7 @@ headers_to_copy = [
     ('osfmk/mach/vm_param.h', 'BUILD/obj/EXPORT_HDRS/osfmk/mach/vm_param.h'),
     ('osfmk/mach/memory_object.h', 'BUILD/obj/EXPORT_HDRS/osfmk/mach/memory_object.h'),
     ('osfmk/mach/memory_object_types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/mach/memory_object_types.h'),
+    ('osfmk/mach/types.h', 'BUILD/obj/EXPORT_HDRS/osfmk/mach/types.h'),
     
     # security - fix mac_framework.h and mac_internal.h
     ('security/mac_framework.h', 'BUILD/obj/EXPORT_HDRS/security/mac_framework.h'),
@@ -72,6 +73,7 @@ headers_to_copy = [
 # Also copy sys/_types.h and related for bsd
 type_headers = [
     'bsd/sys/_types.h',
+    'bsd/sys/types.h',
     'bsd/machine/_types.h',
     'bsd/sys/_types/_fd_def.h',
     'bsd/sys/_types/_sigaltstack.h',
