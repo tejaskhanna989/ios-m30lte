@@ -334,6 +334,144 @@ typedef enum {
         print(f"DEBUG: File {path} does not exist")
     return False
 
+
+def patch_param_h_undef_setbit_clrbit(path):
+    """Undef setbit/clrbit macros in param.h to avoid conflicts with kernel function declarations."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Add undef before the macros are defined, right after the includes
+        lines = content.split('\n')
+        insert_pos = 0
+        for i, line in enumerate(lines):
+            if line.strip().startswith('#define setbit'):
+                insert_pos = i
+                break
+        if insert_pos == 0:
+            # Fallback: find the end of includes
+            for i, line in enumerate(lines):
+                if line.strip().startswith('#include'):
+                    insert_pos = i + 1
+        if insert_pos > 0:
+            undef_block = '\n/* Undef setbit/clrbit to avoid conflicts with kernel function declarations */\n#undef setbit\n#undef clrbit\n'
+            lines.insert(insert_pos, undef_block)
+            content = '\n'.join(lines)
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - added undef for setbit/clrbit")
+            return True
+    return False
+
+
+def patch_kern_types_h_clock_t(path):
+    """Guard clock_t typedef in kern_types.h to avoid redefinition with bsd/_clock_t.h"""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Guard the clock_t typedef
+        if 'typedef  struct clock                   *clock_t;' in content and '#ifndef clock_t' not in content:
+            content = content.replace(
+                'typedef  struct clock                   *clock_t;',
+                '#ifndef clock_t\ntypedef  struct clock                   *clock_t;\n#endif'
+            )
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched {path} - guarded clock_t typedef")
+            return True
+    return False
+
+
+def patch_lock_mtx_h_consolidate(path):
+    """Ensure lck_mtx_t is only defined once - remove duplicate from lock_mtx.h if arm/locks.h has it."""
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            content = f.read()
+        # Remove the duplicate lck_mtx_t typedef from lock_mtx.h if it exists
+        # The definition in arm/locks.h takes precedence for ARM64
+        if '} lck_mtx_t;' in content and 'typedef struct _lck_mtx_' in content:
+            # Remove the duplicate typedef block
+            lines = content.split('\n')
+            new_lines = []
+            skip = False
+            for line in lines:
+                if 'typedef struct _lck_mtx_' in line:
+                    skip = True
+                    continue
+                if skip and '} lck_mtx_t;' in line:
+                    skip = False
+                    continue
+                if not skip:
+                    new_lines.append(line)
+            if len(new_lines) != len(lines):
+                content = '\n'.join(new_lines)
+                with open(path, 'w') as f:
+                    f.write(content)
+                print(f"Patched {path} - removed duplicate lck_mtx_t typedef")
+                return True
+    return False
+
+
+def create_mach_ldebug_h():
+    """Create mach_ldebug.h - kernel private header for libdebug support.
+    This header is normally provided by KDK but missing in open-source XNU.
+    """
+    content = '''/*
+ * Copyright (c) 2000-2022 Apple Inc. All rights reserved.
+ *
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
+ *
+ * This file contains Original Code and/or Modifications of Original Code
+ * as defined in and that are subject to the Apple Public Source License
+ * Version 2.0 (the 'License'). You may not use this file except in
+ * compliance with the License. The rights granted to you under the License
+ * may not be used to create, or enable the creation or redistribution of,
+ * unlawful or unlicensed copies of an Apple operating system, or to
+ * circumvent, violate, or enable the circumvention or violation of, any
+ * terms of an Apple operating system software license agreement.
+ *
+ * Please obtain a copy of the License at
+ * http://www.opensource.apple.com/apsl/ and read it before using this file.
+ *
+ * The Original Code and all software distributed under the License are
+ * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+ * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+ * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+ * Please see the License for the specific language governing rights and
+ * limitations under the License.
+ *
+ * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
+ */
+
+#ifndef _MACH_LDEBUG_H_
+#define _MACH_LDEBUG_H_
+
+/*
+ * mach_ldebug.h - Kernel libdebug support
+ * This header provides kernel debugging support macros and definitions.
+ */
+
+#ifndef MACH_LDEBUG
+#define MACH_LDEBUG 0
+#endif
+
+#endif /* _MACH_LDEBUG_H_ */
+'''
+    # Create the file in both source and EXPORT_HDRS locations
+    paths = [
+        'osfmk/mach/mach_ldebug.h',
+        'BUILD/obj/EXPORT_HDRS/osfmk/mach_ldebug.h',
+        'BUILD/obj/EXPORT_HDRS/mach_ldebug.h',
+        'BUILD/obj/EXPORT_HDRS/osfmk/mach/mach_ldebug.h',
+    ]
+    for path in paths:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, 'w') as f:
+            f.write(content)
+        print(f"Created {path}")
+
+    return True
+
 def main():
     print("Copying kernel-private headers to EXPORT_HDRS...")
     copy_headers()
@@ -348,7 +486,11 @@ def main():
     patch_mac_framework_h('security/mac_framework.h')
     patch_mac_internal_h('security/mac_internal.h')
     patch_refcnt_internal_h('libkern/os/refcnt_internal.h')
+    patch_param_h_undef_setbit_clrbit('bsd/sys/param.h')
+    patch_kern_types_h_clock_t('osfmk/kern/kern_types.h')
+    patch_lock_mtx_h_consolidate('osfmk/kern/lock_mtx.h')
     create_mach_assert_h()
+    create_mach_ldebug_h()
     
     print("\nPatching EXPORT_HDRS headers...")
     # Also patch EXPORT_HDRS copies
@@ -360,6 +502,9 @@ def main():
     patch_mac_framework_h('BUILD/obj/EXPORT_HDRS/security/mac_framework.h')
     patch_mac_internal_h('BUILD/obj/EXPORT_HDRS/security/mac_internal.h')
     patch_refcnt_internal_h('BUILD/obj/EXPORT_HDRS/libkern/os/refcnt_internal.h')
+    patch_param_h_undef_setbit_clrbit('BUILD/obj/EXPORT_HDRS/bsd/sys/param.h')
+    patch_kern_types_h_clock_t('BUILD/obj/EXPORT_HDRS/osfmk/kern/kern_types.h')
+    patch_lock_mtx_h_consolidate('BUILD/obj/EXPORT_HDRS/osfmk/kern/lock_mtx.h')
     
     print("\nAll patches applied!")
 
