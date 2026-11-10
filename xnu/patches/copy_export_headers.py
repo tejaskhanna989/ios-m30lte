@@ -140,90 +140,38 @@ def patch_file(path, replacements):
     return False
 
 def patch_arm_locks_h(path):
-    """Add lck_mtx_t definition to arm/locks.h in MACH_KERNEL_PRIVATE section."""
+    """Ensure arm/locks.h does NOT define lck_mtx_t (it's defined in lock_mtx.h)."""
     if os.path.exists(path):
         with open(path, 'r') as f:
             content = f.read()
         print(f"DEBUG: Patching {path}, content length: {len(content)}")
-        # Find the MACH_KERNEL_PRIVATE section that defines lck_spin_t and add lck_mtx_t before #elif KERNEL_PRIVATE
-        # The structure is:
-        # #ifdef MACH_KERNEL_PRIVATE
-        # ... #if LCK_SPIN_IS_TICKET_LOCK ... #else ... #endif (closes lck_spin_t)
-        # #elif KERNEL_PRIVATE
-        # We need to add lck_mtx_t in the MACH_KERNEL_PRIVATE section, right before #elif KERNEL_PRIVATE
-        old = '''#endif
-
-#elif KERNEL_PRIVATE'''
-        new = '''#endif
-
-/* Full lck_mtx_t definition for MACH_KERNEL_PRIVATE (ARM64 uses LCK_MTX_USE_ARCH) */
-typedef struct {
+        # Remove any lck_mtx_t typedef from arm/locks.h to avoid redefinition
+        # The definition should come from lock_mtx.h
+        if 'typedef struct {
 	uintptr_t opaque[2] __kernel_data_semantics;
-} lck_mtx_t;
+} lck_mtx_t;' in content:
+            content = content.replace(
+                '/* Full lck_mtx_t definition for MACH_KERNEL_PRIVATE (ARM64 uses LCK_MTX_USE_ARCH) */
+'
+                'typedef struct {
+'
+                '	uintptr_t opaque[2] __kernel_data_semantics;
+'
+                '} lck_mtx_t;
 
-#elif KERNEL_PRIVATE'''
-        if old in content:
-            print(f"DEBUG: Found pattern 1 in {path}")
-            # Count occurrences
-            count = content.count(old)
-            print(f"DEBUG: Pattern 1 occurs {count} times")
-            content = content.replace(old, new)
+',
+                ''
+            )
             with open(path, 'w') as f:
                 f.write(content)
-            # Verify the patch
-            if 'lck_mtx_t' in content and 'uintptr_t opaque[2]' in content:
-                print(f"DEBUG: Verified lck_mtx_t definition added to {path}")
-            else:
-                print(f"DEBUG: WARNING - lck_mtx_t definition may not have been added correctly!")
-            print(f"Patched {path} - added lck_mtx_t to MACH_KERNEL_PRIVATE section")
+            print(f"Patched {path} - removed duplicate lck_mtx_t definition")
             return True
         else:
-            print(f"DEBUG: Pattern 1 not found in {path}")
-            # Try alternative pattern with more context
-            old2 = '''#endif
-
-#define lck_spin_data hwlock.lock_data
-
-#define LCK_SPIN_TAG_DESTROYED  0xdead  /* lock marked as Destroyed */
-
-#define LCK_SPIN_TYPE           0x00000011
-#define LCK_SPIN_TYPE_DESTROYED 0x000000ee
-#endif
-
-#elif KERNEL_PRIVATE'''
-            new2 = '''#endif
-
-#define lck_spin_data hwlock.lock_data
-
-#define LCK_SPIN_TAG_DESTROYED  0xdead  /* lock marked as Destroyed */
-
-#define LCK_SPIN_TYPE           0x00000011
-#define LCK_SPIN_TYPE_DESTROYED 0x000000ee
-#endif
-
-/* Full lck_mtx_t definition for MACH_KERNEL_PRIVATE (ARM64 uses LCK_MTX_USE_ARCH) */
-typedef struct {
-	uintptr_t opaque[2] __kernel_data_semantics;
-} lck_mtx_t;
-
-#elif KERNEL_PRIVATE'''
-            if old2 in content:
-                print(f"DEBUG: Found pattern 2 in {path}")
-                content = content.replace(old2, new2)
-                with open(path, 'w') as f:
-                    f.write(content)
-                print(f"Patched {path} - added lck_mtx_t to MACH_KERNEL_PRIVATE section (alt)")
-                return True
-            else:
-                print(f"DEBUG: Pattern 2 not found in {path}")
-                print(f"Could not find pattern to patch in {path}")
-                # Debug
-                for i, line in enumerate(content.split('\n')):
-                    if 'lck_spin_t' in line or 'lck_mtx_t' in line or 'KERNEL_PRIVATE' in line or '#elif' in line or '#endif' in line:
-                        print(f"  Line {i+1}: {line}")
+            print(f"No duplicate lck_mtx_t definition found in {path}")
+            return True
     return False
 
-def patch_systm_h(path):
+def patch_systm_h(path)::
     """Add missing includes to systm.h for mount_t type."""
     if os.path.exists(path):
         with open(path, 'r') as f:
