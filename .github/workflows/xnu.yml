@@ -573,6 +573,14 @@ jobs:
         python3 ../xnu/patches/patch_mac_audit_includes.py
 
         echo "Patched successfully"'
+    - name: Copy and patch kernel-private headers to EXPORT_HDRS
+      run: 'cd xnu-source
+
+        echo "=== Copying and patching kernel-private headers to EXPORT_HDRS ==="
+
+        python3 ../xnu/patches/copy_export_headers.py
+
+        echo "Copied and patched kernel-private headers"'
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
