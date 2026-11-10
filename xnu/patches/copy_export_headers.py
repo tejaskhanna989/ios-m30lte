@@ -320,8 +320,13 @@ typedef enum {
             content = '\n'.join(lines)
             with open(path, 'w') as f:
                 f.write(content)
-            print(f"Patched {path} - added memory_order enum definitions")
-            return True
+            # Verify the patch was applied
+            if 'memory_order_relaxed' in content and 'memory_order' in content:
+                print(f"Patched {path} - added memory_order enum definitions, VERIFIED")
+                return True
+            else:
+                print(f"ERROR: Patch may not have been applied correctly to {path}")
+                return False
         else:
             print(f"DEBUG: No include lines found in {path}, trying to insert after license header")
             # Try to find the end of the license header (usually marked by a blank line after comments)
@@ -347,8 +352,13 @@ typedef enum {
             content = '\n'.join(lines)
             with open(path, 'w') as f:
                 f.write(content)
-            print(f"Patched {path} - added memory_order enum definitions (fallback)")
-            return True
+            # Verify the patch was applied
+            if 'memory_order_relaxed' in content and 'memory_order' in content:
+                print(f"Patched {path} - added memory_order enum definitions (fallback), VERIFIED")
+                return True
+            else:
+                print(f"ERROR: Patch may not have been applied correctly to {path}")
+                return False
     else:
         print(f"DEBUG: File {path} does not exist")
     return False
