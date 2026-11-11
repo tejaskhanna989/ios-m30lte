@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Generate valid Makefiles for all conf directories and patch component Makefiles to use them.
+"""Generate valid Makefiles for all conf directories and patch component Makefiles
+to bypass conf subdirectory builds entirely.
 
-Bypasses doconf which generates Makefiles with tab issues.
+Instead of recursing into conf/ (which triggers doconf and generates broken
+Makefiles with tab issues), set COMP_SUBDIRS to empty and define .filelist
+targets directly from each component's own source files.
 """
 import os
 import shutil
+import re
 
 components = [
     ('security', 'security/conf'),
@@ -52,7 +56,6 @@ def generate_conf_makefile(conf_dir, component_name):
     """Generate a proper Makefile for a conf directory with literal tabs."""
     cfiles, cxxfiles, sfiles = parse_files_conf(conf_dir)
 
-    # Build OBJS from CFILES (replace .c with .o)
     objs = [f.replace('.c', '.o') for f in cfiles]
     objs += [f.replace('.cpp', '.o') for f in cxxfiles]
     objs += [f.replace('.s', '.o') for f in sfiles]
@@ -214,38 +217,108 @@ def generate_conf_makefile(conf_dir, component_name):
 
 
 def patch_component_makefile(component_dir):
-    """Patch component Makefile to use pre-generated conf Makefile instead of doconf.
+    """Patch component Makefile to bypass conf subdirectory builds.
 
-    Adds an override rule at the end of the Makefile. In GNU Make, the last
-    rule for a target wins, so this overrides any doconf rule that appeared
-    earlier.
+    Sets COMP_SUBDIRS to empty (so doconf is never called for conf)
+    and adds .filelist targets directly from component's own sources.
     """
     makefile_path = os.path.join(component_dir, 'Makefile')
     if not os.path.exists(makefile_path):
         print(f"WARNING: {makefile_path} not found")
         return False
 
-    conf_dir = os.path.join(component_dir, 'conf')
-    conf_name = component_dir
-
-    override_rule = f'''
-# Override doconf rule: use pre-generated Makefile instead
-$(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile: $(SOURCE)/conf/Makefile.valid $(SOURCE)/conf/$(CURRENT_KERNEL_CONFIG)
-\t$(_v)$(MKDIR) $(TARGET)/$(CURRENT_KERNEL_CONFIG)
-\t$(_v)$(CP) $(SOURCE)/conf/Makefile.valid $(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile
-'''
-
     with open(makefile_path, 'r') as f:
         content = f.read()
 
     # Check if already patched
-    if '$(SOURCE)/conf/Makefile.valid' in content:
+    if '# M30LTE: conf bypassed' in content:
         print(f"  Already patched {makefile_path}")
         return True
 
-    with open(makefile_path, 'a') as f:
-        f.write(override_rule)
-    print(f"  Patched {makefile_path}: added override rule for Makefile.valid")
+    # Read CFILES from component Makefile
+    cfiles = []
+    match = re.search(r'CFILES\s*=\s*\\\s*\n((?:\s*\\?[^\n]*\\\s*\n)*\s*[^\n]*\.c)', content)
+    if match:
+        block = match.group(0)
+        cfiles = re.findall(r'(\S+\.c)', block)
+
+    objs = [f.replace('.c', '.o') for f in cfiles]
+
+    # Build bypass block
+    bypass_lines = []
+    bypass_lines.append("")
+    bypass_lines.append("# M30LTE: bypass conf subdirectory (doconf generates broken Makefiles)")
+    bypass_lines.append("COMP_SUBDIRS =")
+    bypass_lines.append("")
+
+    # OBJS
+    if objs:
+        bypass_lines.append("OBJS = \\")
+        for obj in objs:
+            bypass_lines.append("\t" + obj + " \\")
+        bypass_lines[-1] = bypass_lines[-1].rstrip(" \\")
+    else:
+        bypass_lines.append("OBJS =")
+    bypass_lines.append("")
+
+    # CFILES
+    if cfiles:
+        bypass_lines.append("CFILES = \\")
+        for cf in cfiles:
+            bypass_lines.append("\t" + cf + " \\")
+        bypass_lines[-1] = bypass_lines[-1].rstrip(" \\")
+    else:
+        bypass_lines.append("CFILES =")
+    bypass_lines.append("")
+
+    # Build rules
+    bypass_lines.append("")
+    bypass_lines.append("# Rebuild if global compile flags change")
+    bypass_lines.append("$(COBJS): .CFLAGS")
+    bypass_lines.append(".CFLAGS: ALWAYS")
+    bypass_lines.append("\t$(_v)$(REPLACECONTENTS) $@ $(KCC) $(CFLAGS) $(INCFLAGS)")
+    bypass_lines.append("")
+    bypass_lines.append("# Rebuild if per-file overrides change")
+    bypass_lines.append("$(OBJS): $(firstword $(MAKEFILE_LIST))")
+    bypass_lines.append("")
+    bypass_lines.append("$(COMPONENT).filelist: $(OBJS)")
+    bypass_lines.append("\t@$(LOG_LDFILELIST) \"$(COMPONENT)\"")
+    bypass_lines.append("\t$(_v)for obj in ${OBJS}; do \\")
+    bypass_lines.append("\t\t $(ECHO) $(TARGET)/$(CURRENT_KERNEL_CONFIG)/$${obj}; \\")
+    lines_bypass_filelist_done = "\tdone > $(COMPONENT).filelist"
+    bypass_lines.append(lines_bypass_filelist_done)
+    bypass_lines.append("")
+    bypass_lines.append("$(COMPONENT).libfilelist:")
+    bypass_lines.append("\t@$(LOG_LDFILELIST) \"lib$(COMPONENT)\"")
+    bypass_lines.append("\t$(_v)touch $(COMPONENT).libfilelist")
+    bypass_lines.append("")
+
+    # Find the COMP_SUBDIRS line and replace it
+    comp_pattern = re.compile(r'COMP_SUBDIRS\s*=\s*\\\s*\n(?:\s*\\\s*\n)*\s*conf\s*\n')
+    match = comp_pattern.search(content)
+    if comp_match:
+        content = content.replace(comp_match.group(0), 'COMP_SUBDIRS =\n', 1)
+    else:
+        comp_pattern2 = re.compile(r'COMP_SUBDIRS\s*=\s*conf\s*\n')
+        match2 = comp_pattern2.search(content)
+        if match2:
+            content = content.replace(match2.group(0), 'COMP_SUBDIRS =\n', 1)
+        else:
+            comp_pattern3 = re.compile(r'COMP_SUBDIRS\s*=\s*\n')
+            match3 = comp_pattern3.search(content)
+            if match3:
+                content = content.replace(match3.group(0), 'COMP_SUBDIRS =\n', 1)
+
+    # Insert bypass block before include MakeInc_rule
+    include_marker = 'include $(MakeInc_rule)'
+    if include_marker in content:
+        content = content.replace(include_marker, '\n'.join(bypass_lines) + '\n' + include_marker, 1)
+    else:
+        content = content.rstrip() + '\n' + '\n'.join(bypass_lines) + '\n'
+
+    with open(makefile_path, 'w') as f:
+        f.write(content)
+    print(f"  Patched {makefile_path}: COMP_SUBDIRS emptied, .filelist added")
     return True
 
 
