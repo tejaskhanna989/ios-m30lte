@@ -10,6 +10,7 @@ makefiles = [
     'iokit/Makefile',
     'pexpert/Makefile',
     'libsa/Makefile',
+    'san/Makefile',
 ]
 
 for makefile in makefiles:
