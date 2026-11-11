@@ -589,8 +589,8 @@ jobs:
         python3 ../xnu/patches/copy_export_headers.py
 
         echo "Copied and patched kernel-private headers"'
-    - name: Copy export files to build config directory
-      run: "cd xnu-source\necho \"=== Copying export files to build config directory ===\"\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\nls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/*.exports 2>/dev/null | head -20 || echo \"No export files copied\"\n"
+    - name: Copy config files to build directory
+      run: "cd xnu-source\necho \"=== Copying config files to build directory ===\"\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config\ncp config/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\nls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/*.exports 2>/dev/null | head -20 || echo \"No export files copied\"\nls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null | head -30 || echo \"No files copied\"\n"
     - name: Generate component .filelist files
       run: "cd xnu-source\necho \"=== Generating .filelist files for all components ===\"\nfor comp in osfmk bsd libkern iokit pexpert libsa san security; do\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\n  echo \"Created empty $comp.filelist\"\ndone\n"
     - name: Build XNU kernel
