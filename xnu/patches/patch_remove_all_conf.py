@@ -8,6 +8,7 @@ makefiles = [
     'osfmk/Makefile',
     'libkern/Makefile',
     'iokit/Makefile',
+    'pexpert/Makefile',
 ]
 
 for makefile in makefiles:
