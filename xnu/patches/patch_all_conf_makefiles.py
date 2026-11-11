@@ -270,23 +270,16 @@ def patch_component_makefile(component_dir):
     bypass_lines.append("")
 
     # Find COMP_SUBDIRS line and replace it (handle multiline continuation)
-    comp_pattern = re.compile(r'COMP_SUBDIRS\s*=\s*\\\s*\n(?:\s*\\?[^\n]*\\\s*\n)*\s*[^\n]*\n')
+    comp_pattern = re.compile(r'COMP_SUBDIRS\s*=.*\n(?:\s+.*\n)*')
     match = comp_pattern.search(content)
     if match:
         content = content.replace(match.group(0), 'COMP_SUBDIRS =\n', 1)
     else:
-        # Try simpler pattern
-        comp_pattern2 = re.compile(r'COMP_SUBDIRS\s*=\s*.+\n')
-        match2 = comp_pattern2.search(content)
-        if match2:
-            content = content.replace(match2.group(0), 'COMP_SUBDIRS =\n', 1)
-        else:
-            print(f"  WARNING: Could not find COMP_SUBDIRS in {makefile_path}")
-            print(f"  Looking for: COMP_SUBDIRS =")
-            # Show what's around COMP_SUBDIRS
-            for i, line in enumerate(content.split('\n'), 1):
-                if 'COMP_SUBDIRS' in line:
-                    print(f"    Line {i}: {line[:80]}")
+        print(f"  WARNING: Could not find COMP_SUBDIRS in {makefile_path}")
+        # Show what's around COMP_SUBDIRS
+        for i, line in enumerate(content.split('\n'), 1):
+            if 'COMP_SUBDIRS' in line:
+                print(f"    Line {i}: {line[:80]}")
             return False
 
     # Insert bypass block before include MakeInc_rule
