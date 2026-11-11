@@ -159,7 +159,7 @@ jobs:
     - name: Fix MASTER.arm64.m30lte config
       run: "cd xnu-source\necho \"=== Fixing MASTER.arm64.m30lte config ===\"\nif [ -f config/MASTER.arm64.m30lte ]; then\n  python3 ../xnu/patches/fix_master_m30lte.py\n  echo \"=== MASTER.arm64.m30lte after fix ===\"\n  cat config/MASTER.arm64.m30lte\nelse\n  echo \"MASTER.arm64.m30lte not found, skipping fix\"\nfi\n"
     - name: Patch security/conf/Makefile for doconf SYS
-      run: "cd xnu-source\necho \"=== Patching security/conf/Makefile for doconf SYS ===\"\nif [ -f security/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_security_conf_makefile_doconf.py\nelse\n  echo \"security/conf/Makefile not found, skipping fix\"\nfi\n"
+      run: "cd xnu-source\necho \"=== Patching security/conf/Makefile for doconf SYS ===\"\nif [ -f security/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_security_conf_makefile_final.py\nelse\n  echo \"security/conf/Makefile not found, skipping fix\"\nfi\n"
     - name: Fix makedefs path in Makefiles
       run: 'echo "=== Fixing /makedefs paths in Makefiles ==="
 
