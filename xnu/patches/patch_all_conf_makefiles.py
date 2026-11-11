@@ -22,39 +22,25 @@ components = [
 ]
 
 
-def parse_files_conf(conf_dir):
-    """Parse files.DEVELOPMENT or files to get source file lists."""
-    files_path = os.path.join(conf_dir, 'files.DEVELOPMENT')
-    if not os.path.exists(files_path):
-        files_path = os.path.join(conf_dir, 'files')
-    if not os.path.exists(files_path):
-        return [], [], []
-
-    cfiles = []
-    cxxfiles = []
-    sfiles = []
-
-    with open(files_path, 'r') as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith('#'):
-                continue
-            parts = line.split()
-            filepath = parts[0]
-
-            if filepath.endswith('.c'):
-                cfiles.append(filepath)
-            elif filepath.endswith('.cpp'):
-                cxxfiles.append(filepath)
-            elif filepath.endswith('.s'):
-                sfiles.append(filepath)
-
-    return cfiles, cxxfiles, sfiles
+def parse_cfiles_from_makefile(makefile_path):
+    """Parse CFILES from component Makefile."""
+    if not os.path.exists(makefile_path):
+        return []
+    with open(makefile_path, 'r') as f:
+        content = f.read()
+    # Find CFILES = \ block
+    match = re.search(r'CFILES\s*=\s*\\', content)
+    if not match:
+        return []
+    # Find all .c files referenced anywhere in the file after CFILES =
+    remaining = content[match.end():]
+    cfiles = re.findall(r'(\S+\.c)', remaining)
+    return cfiles
 
 
 def generate_conf_makefile(conf_dir, component_name):
     """Generate a proper Makefile for a conf directory with literal tabs."""
-    cfiles, cxxfiles, sfiles = parse_files_conf(conf_dir)
+    cfiles, cxxfiles, sfiles = parse_cfiles_from_makefile(os.path.join(conf_dir, 'Makefile'))
 
     objs = [f.replace('.c', '.o') for f in cfiles]
     objs += [f.replace('.cpp', '.o') for f in cxxfiles]
@@ -217,11 +203,7 @@ def generate_conf_makefile(conf_dir, component_name):
 
 
 def patch_component_makefile(component_dir):
-    """Patch component Makefile to bypass conf subdirectory builds.
-
-    Sets COMP_SUBDIRS to empty (so doconf is never called for conf)
-    and adds .filelist targets directly from component's own sources.
-    """
+    """Patch component Makefile to bypass conf subdirectory builds."""
     makefile_path = os.path.join(component_dir, 'Makefile')
     if not os.path.exists(makefile_path):
         print(f"WARNING: {makefile_path} not found")
@@ -236,12 +218,7 @@ def patch_component_makefile(component_dir):
         return True
 
     # Read CFILES from component Makefile
-    cfiles = []
-    match = re.search(r'CFILES\s*=\s*\\\s*\n((?:\s*\\?[^\n]*\\\s*\n)*\s*[^\n]*\.c)', content)
-    if match:
-        block = match.group(0)
-        cfiles = re.findall(r'(\S+\.c)', block)
-
+    cfiles = parse_cfiles_from_makefile(makefile_path)
     objs = [f.replace('.c', '.o') for f in cfiles]
 
     # Build bypass block
@@ -285,29 +262,32 @@ def patch_component_makefile(component_dir):
     bypass_lines.append("\t@$(LOG_LDFILELIST) \"$(COMPONENT)\"")
     bypass_lines.append("\t$(_v)for obj in ${OBJS}; do \\")
     bypass_lines.append("\t\t $(ECHO) $(TARGET)/$(CURRENT_KERNEL_CONFIG)/$${obj}; \\")
-    lines_bypass_filelist_done = "\tdone > $(COMPONENT).filelist"
-    bypass_lines.append(lines_bypass_filelist_done)
+    bypass_lines.append("\tdone > $(COMPONENT).filelist")
     bypass_lines.append("")
     bypass_lines.append("$(COMPONENT).libfilelist:")
     bypass_lines.append("\t@$(LOG_LDFILELIST) \"lib$(COMPONENT)\"")
     bypass_lines.append("\t$(_v)touch $(COMPONENT).libfilelist")
     bypass_lines.append("")
 
-    # Find the COMP_SUBDIRS line and replace it
-    comp_pattern = re.compile(r'COMP_SUBDIRS\s*=\s*\\\s*\n(?:\s*\\\s*\n)*\s*conf\s*\n')
+    # Find COMP_SUBDIRS line and replace it (handle multiline continuation)
+    comp_pattern = re.compile(r'COMP_SUBDIRS\s*=\s*\\\s*\n(?:\s*\\?[^\n]*\\\s*\n)*\s*[^\n]*\n')
     match = comp_pattern.search(content)
     if match:
         content = content.replace(match.group(0), 'COMP_SUBDIRS =\n', 1)
     else:
-        comp_pattern2 = re.compile(r'COMP_SUBDIRS\s*=\s*conf\s*\n')
+        # Try simpler pattern
+        comp_pattern2 = re.compile(r'COMP_SUBDIRS\s*=\s*.+\n')
         match2 = comp_pattern2.search(content)
         if match2:
             content = content.replace(match2.group(0), 'COMP_SUBDIRS =\n', 1)
         else:
-            comp_pattern3 = re.compile(r'COMP_SUBDIRS\s*=\s*\n')
-            match3 = comp_pattern3.search(content)
-            if match3:
-                content = content.replace(match3.group(0), 'COMP_SUBDIRS =\n', 1)
+            print(f"  WARNING: Could not find COMP_SUBDIRS in {makefile_path}")
+            print(f"  Looking for: COMP_SUBDIRS =")
+            # Show what's around COMP_SUBDIRS
+            for i, line in enumerate(content.split('\n'), 1):
+                if 'COMP_SUBDIRS' in line:
+                    print(f"    Line {i}: {line[:80]}")
+            return False
 
     # Insert bypass block before include MakeInc_rule
     include_marker = 'include $(MakeInc_rule)'
