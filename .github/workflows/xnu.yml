@@ -264,6 +264,8 @@ jobs:
         python3 ../xnu/patches/patch_security_makefile.py
 
         echo "Patched successfully"'
+    - name: Restore conf to COMP_SUBDIRS in all Makefiles
+      run: "cd xnu-source\necho \"=== Restoring conf to COMP_SUBDIRS ===\"\nif [ -f xnu/patches/patch_restore_conf.py ]; then\n  python3 xnu/patches/patch_restore_conf.py\nelse\n  echo \"patch_restore_conf.py not found, skipping\"\nfi\n"
     - name: Fix doconf.csh argument parsing
       run: "cd xnu-source\necho \"=== Fixing doconf.csh argument parsing ===\"\nif [ -f SETUP/config/doconf ]; then\n  python3 ../xnu/patches/patch_doconf_csh.py\nelse\n  echo \"SETUP/config/doconf not found, skipping fix\"\nfi\n"
     - name: Create files.DEVELOPMENT in conf directories
@@ -284,8 +286,6 @@ jobs:
         python3 ../xnu/patches/patch_security_conf_makefile.py
 
         echo "Patched successfully"'
-    - name: Patch config/Makefile for export file paths
-      run: "cd xnu-source\necho \"=== Patching config/Makefile for export file paths ===\"\nif [ -f config/Makefile ]; then\n  python3 ../xnu/patches/patch_config_makefile_exports.py\nelse\n  echo \"config/Makefile not found, skipping fix\"\nfi\n"
     - name: Patch osfmk/mach/arm/Makefile for VPATH
       run: 'cd xnu-source
 
