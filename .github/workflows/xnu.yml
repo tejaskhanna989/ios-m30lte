@@ -270,10 +270,8 @@ jobs:
       run: "cd xnu-source\necho \"=== Fixing doconf.csh argument parsing ===\"\nif [ -f SETUP/config/doconf ]; then\n  python3 ../xnu/patches/patch_doconf_csh.py\nelse\n  echo \"SETUP/config/doconf not found, skipping fix\"\nfi\n"
     - name: Create files.DEVELOPMENT in conf directories
       run: "cd xnu-source\necho \"=== Creating files.DEVELOPMENT in conf directories ===\"\nfor dir in security/conf bsd/conf osfmk/conf libkern/conf iokit/conf pexpert/conf libsa/conf san/conf; do\n  if [ -d \"$dir\" ] && [ -f \"$dir/files\" ] && [ ! -f \"$dir/files.DEVELOPMENT\" ]; then\n    cp \"$dir/files\" \"$dir/files.DEVELOPMENT\"\n    echo \"Created $dir/files.DEVELOPMENT\"\n  fi\ndone\n"
-    - name: Generate valid Makefiles for all conf directories
-      run: "cd xnu-source\necho \"=== Generating valid conf Makefiles ===\"\npython3 ../xnu/patches/patch_all_conf_makefiles.py\n"
-    - name: Replace doconf with Makefile.valid copy wrapper
-      run: "cd xnu-source\necho \"=== Replacing doconf with wrapper ===\"\nif [ -f SETUP/config/doconf ]; then\n  python3 ../xnu/patches/patch_doconf_wrapper.py\nelse\n  echo \"SETUP/config/doconf not found, skipping\"\nfi\n"
+    - name: Generate valid conf Makefiles and patch component Makefiles
+      run: "cd xnu-source\necho \"=== Generating valid conf Makefiles ===\"\npython3 ../xnu/patches/patch_all_conf_makefiles.py\necho \"=== Copying Makefile.valid to component Makefiles ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san; do\n  if [ -f $comp/conf/Makefile.valid ]; then\n    cp $comp/conf/Makefile.valid $comp/Makefile\n    echo \"Copied Makefile.valid to $comp/Makefile\"\n  fi\ndone\n"
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
       run: 'cd xnu-source
 
@@ -593,6 +591,8 @@ jobs:
         echo "Copied and patched kernel-private headers"'
     - name: Copy export files to build config directory
       run: "cd xnu-source\necho \"=== Copying export files to build config directory ===\"\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\nls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/*.exports 2>/dev/null | head -20 || echo \"No export files copied\"\n"
+    - name: Generate component .filelist files
+      run: "cd xnu-source\necho \"=== Generating .filelist files for all components ===\"\nfor comp in osfmk bsd libkern iokit pexpert libsa san security; do\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\n  echo \"Created empty $comp.filelist\"\ndone\n"
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
