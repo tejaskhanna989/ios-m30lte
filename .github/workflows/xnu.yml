@@ -264,8 +264,10 @@ jobs:
         python3 ../xnu/patches/patch_security_makefile.py
 
         echo "Patched successfully"'
-    - name: Disable all conf submodules (bypass doconf failure)
-      run: "cd xnu-source\necho \"=== Disabling all conf submodules ===\"\nif [ -f security/Makefile ]; then\n  python3 ../xnu/patches/patch_remove_all_conf.py\nelse\n  echo \"Makefiles not found, skipping fix\"\nfi\n"
+    - name: Fix doconf.csh argument parsing
+      run: "cd xnu-source\necho \"=== Fixing doconf.csh argument parsing ===\"\nif [ -f SETUP/config/doconf ]; then\n  python3 ../xnu/patches/patch_doconf_csh.py\nelse\n  echo "SETUP/config/doconf not found, skipping fix"\nfi\n"
+    - name: Create files.DEVELOPMENT in conf directories
+      run: "cd xnu-source\necho \"=== Creating files.DEVELOPMENT in conf directories ===\"\nfor dir in security/conf bsd/conf osfmk/conf libkern/conf iokit/conf pexpert/conf libsa/conf san/conf; do\n  if [ -d \"$dir\" ] && [ -f \"$dir/files\" ] && [ ! -f \"$dir/files.DEVELOPMENT\" ]; then\n    cp \"$dir/files\" \"$dir/files.DEVELOPMENT\"\n    echo \"Created $dir/files.DEVELOPMENT\"\n  fi\ndone\n"
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
       run: 'cd xnu-source
 
