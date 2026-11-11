@@ -137,6 +137,10 @@ jobs:
 
         git describe --tags --always
 
+        echo "=== Checking for export files ==="
+        ls -la config/*.exports 2>/dev/null | head -20 || echo "No export files found"
+        echo "=== Config directory contents ==="
+        ls -la config/ | head -30
         '
     - name: Stage libpthread dependency
       run: 'cd xnu-source
