@@ -14,37 +14,32 @@ BACKUP_PATH = 'SETUP/config/doconf.original'
 DOCONF_WRAPPER = """#!/bin/csh -f
 # Wrapper around doconf that copies pre-generated Makefile.valid
 # instead of running the original doconf (which produces Makefiles with tab issues)
-if ($#argv >= 1) then
-    # Parse arguments to find -d (output dir) and -s (source dir)
-    set output_dir = ""
-    set source_dir = ""
-    set i = 1
-    while ($i <= $#argv)
-        if ("$argv[$i]" == "-d") then
-            set output_dir = "$argv[$((i + 1))]"
-            set i = $((i + 2))
-        else if ("$argv[$i]" == "-s") then
-            set source_dir = "$argv[$((i + 1))]"
-            set i = $((i + 2))
-        else
-            set i = $((i + 1))
-        endif
-    end
+set output_dir = ""
+set source_dir = ""
+set i = 1
+while ($i <= $#argv)
+    set arg = "$argv[$i]"
+    if ("$arg" == "-d") then
+        @ i = $i + 1
+        set output_dir = "$argv[$i]"
+    else if ("$arg" == "-s") then
+        @ i = $i + 1
+        set source_dir = "$argv[$i]"
+    endif
+    @ i = $i + 1
+end
 
-    if ("$output_dir" != "" && "$source_dir" != "") then
-        # Copy pre-generated Makefile.valid to target
-        if (-f "$source_dir/Makefile.valid") then
-            mkdir -p "$output_dir"
-            cp "$source_dir/Makefile.valid" "$output_dir/Makefile"
-            echo "Copied Makefile.valid to $output_dir/Makefile"
-        else
-            echo "WARNING: $source_dir/Makefile.valid not found"
-            exit 1
-        endif
+if ("$output_dir" != "" && "$source_dir" != "") then
+    if (-f "$source_dir/Makefile.valid") then
+        mkdir -p "$output_dir"
+        cp "$source_dir/Makefile.valid" "$output_dir/Makefile"
     else
-        echo "Usage: doconf -d <output_dir> -s <source_dir> ..."
+        echo "WARNING: $source_dir/Makefile.valid not found"
         exit 1
     endif
+else
+    echo "Usage: doconf -d <output_dir> -s <source_dir>"
+    exit 1
 endif
 """
 
