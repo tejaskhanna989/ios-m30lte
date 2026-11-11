@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate valid Makefiles for all conf directories and patch component Makefiles.
+"""Generate valid Makefiles for all conf directories and patch component Makefiles to use them.
 
 Bypasses doconf which generates Makefiles with tab issues.
 """
@@ -214,38 +214,38 @@ def generate_conf_makefile(conf_dir, component_name):
 
 
 def patch_component_makefile(component_dir):
-    """Patch component Makefile to copy pre-generated conf Makefile instead of running doconf."""
+    """Patch component Makefile to use pre-generated conf Makefile instead of doconf.
+
+    Adds an override rule at the end of the Makefile. In GNU Make, the last
+    rule for a target wins, so this overrides any doconf rule that appeared
+    earlier.
+    """
     makefile_path = os.path.join(component_dir, 'Makefile')
     if not os.path.exists(makefile_path):
         print(f"WARNING: {makefile_path} not found")
         return False
 
+    conf_dir = os.path.join(component_dir, 'conf')
+    conf_name = component_dir
+
+    override_rule = f'''
+# Override doconf rule: use pre-generated Makefile instead
+$(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile: $(SOURCE)/conf/Makefile.valid $(SOURCE)/conf/$(CURRENT_KERNEL_CONFIG)
+\t$(_v)$(MKDIR) $(TARGET)/$(CURRENT_KERNEL_CONFIG)
+\t$(_v)$(CP) $(SOURCE)/conf/Makefile.valid $(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile
+'''
+
     with open(makefile_path, 'r') as f:
         content = f.read()
 
-    conf_dir = os.path.join(component_dir, 'conf')
+    # Check if already patched
+    if '$(SOURCE)/conf/Makefile.valid' in content:
+        print(f"  Already patched {makefile_path}")
+        return True
 
-    # Replace the doconf rule with a copy of pre-generated Makefile
-    old_rule = '''$(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile: $(SRCROOT)/SETUP/config/doconf $(OBJROOT)/SETUP/config $(DOCONFDEPS)
-	$(_v)$(MKDIR) $(TARGET)/$(CURRENT_KERNEL_CONFIG)
-	$(_v)$(SRCROOT)/SETUP/config/doconf -c -cpu $(DOCONF_ARCH_CONFIG_LC) -soc $(CURRENT_MACHINE_CONFIG_LC) -platform $(PLATFORM) -d $(TARGET)/$(CURRENT_KERNEL_CONFIG) -s $(SOURCE) -m $(MASTERCONFDIR) $(DOCONF_SEED) $(CURRENT_KERNEL_CONFIG)'''
-
-    new_rule = '''$(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile: $(SOURCE)/conf/Makefile.valid $(SOURCE)/conf/$(CURRENT_KERNEL_CONFIG)
-	$(_v)$(MKDIR) $(TARGET)/$(CURRENT_KERNEL_CONFIG)
-	$(_v)$(CP) $(SOURCE)/conf/Makefile.valid $(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile'''
-
-    replaced = False
-    if old_rule in content:
-        content = content.replace(old_rule, new_rule, 1)
-        with open(makefile_path, 'w') as f:
-            f.write(content)
-        print(f"  Patched {makefile_path}: replaced doconf rule")
-        replaced = True
-
-    if not replaced:
-        print(f"  WARNING: Could not find doconf rule in {makefile_path}")
-        return False
-
+    with open(makefile_path, 'a') as f:
+        f.write(override_rule)
+    print(f"  Patched {makefile_path}: added override rule for Makefile.valid")
     return True
 
 
