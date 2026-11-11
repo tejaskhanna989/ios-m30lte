@@ -218,7 +218,7 @@ def patch_component_makefile(component_dir):
         return True
 
     # Read CFILES from component Makefile
-    cfiles = parse_cfiles_from_makefile(makefile_path)
+    cfiles, cxxfiles, sfiles = parse_cfiles_from_makefile(makefile_path)
     objs = [f.replace('.c', '.o') for f in cfiles]
 
     # Build bypass block
