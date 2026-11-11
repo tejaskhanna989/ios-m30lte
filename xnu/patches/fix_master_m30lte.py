@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Fix MASTER.arm64.m30lte config file - convert #define to options, uncomment sections."""
+"""Fix MASTER.arm64.m30lte config file - convert #define to options, uncomment sections.
+   Leave preprocessor directives intact for doconf/unifdef to handle."""
 import sys
-import re
 
 with open('config/MASTER.arm64.m30lte', 'r') as f:
     content = f.read()
@@ -50,21 +50,8 @@ content = content.replace('#  VPN =            [ ipsec flow_divert necp content_
 content = content.replace('#  PF =             [ pf pflog ]', '  PF =             [ pf pflog ]')
 content = content.replace('#  MULTIPATH =      [ multipath mptcp ]', '  MULTIPATH =      [ multipath mptcp ]')
 
-# Handle HIBERNATION preprocessor block - simplify to empty
-content = re.sub(
-    r'#if SOC_CONFIG_t8020 \|\| SOC_IS_VIRTUALIZED\n#\s*HIBERNATION\s*=\s*\[\s*\]\n#else /\*!\(SOC_CONFIG_t8020 \|\| SOC_IS_VIRTUALIZED\)\*/\n#\s*HIBERNATION\s*=\s*\[\s*\]\nendif /\*SOC_CONFIG_t8020 \|\| SOC_IS_VIRTUALIZED\*/\n',
-    '  HIBERNATION =    [ ]\n',
-    content,
-    flags=re.MULTILINE
-)
-
-# Handle PARAVIRT_BASE preprocessor block - simplify to empty
-content = re.sub(
-    r'#if SOC_IS_VIRTUALIZED\n#\s*PARAVIRT_BASE\s*=\s*\[\s*config_pv_ticket\s*\]\n#else\n#\s*PARAVIRT_BASE\s*=\s*\[\s*\]\nendif /\*SOC_IS_VIRTUALIZED\*/\n',
-    '  PARAVIRT_BASE =  [ ]\n',
-    content,
-    flags=re.MULTILINE
-)
+# Leave HIBERNATION preprocessor block as-is (doconf/unifdef handles it)
+# Leave PARAVIRT_BASE preprocessor block as-is
 
 # Uncomment IOKIT_BASE, etc.
 content = content.replace('#  IOKIT_BASE =     [ iokit iokitcpp no_kernel_hid config_sleep iokitstats HIBERNATION ]', '  IOKIT_BASE =     [ iokit iokitcpp no_kernel_hid config_sleep iokitstats HIBERNATION ]')
@@ -115,8 +102,7 @@ content = content.replace('#  DEVELOPMENT =    [ BASE KERNEL_DEV     BSD_DEV    
 content = content.replace('#  DEBUG =          [ BASE KERNEL_DEBUG   BSD_DEBUG   FILESYS_DEBUG   SKYWALK_DEBUG   NETWORKING_DEBUG   IOKIT_DEBUG   LIBKERN_DEBUG      PERF_DBG_DEBUG   MACH_DEBUG   SCHED_DEBUG   VM_DEBUG   ]', '  DEBUG =          [ BASE KERNEL_DEBUG   BSD_DEBUG   FILESYS_DEBUG   SKYWALK_DEBUG   NETWORKING_DEBUG   IOKIT_DEBUG   LIBKERN_DEBUG      PERF_DBG_DEBUG   MACH_DEBUG   SCHED_DEBUG   VM_DEBUG   ]')
 content = content.replace('#  KASAN =          [ BASE KERNEL_DEV     BSD_DEV     FILESYS_DEV     SKYWALK_DEV     NETWORKING_DEV     IOKIT_DEV     LIBKERN_DEV        PERF_DBG_DEV     MACH_DEV     SCHED_DEV     VM_KASAN   ]', '  KASAN =          [ BASE KERNEL_DEV     BSD_DEV     FILESYS_DEV     SKYWALK_DEV     NETWORKING_DEV     IOKIT_DEV     LIBKERN_DEV        PERF_DBG_DEV     MACH_DEV     SCHED_DEV     VM_KASAN   ]')
 
-# Remove #define lines (already converted to options above)
-# Keep preprocessor directives for doconf/unifdef
+# Leave preprocessor directives as-is for doconf/unifdef
 
 with open('config/MASTER.arm64.m30lte', 'w') as f:
     f.write(content)
