@@ -156,6 +156,8 @@ jobs:
         \ < \"$patch\" 2>&1 || true\ndone\nls -la pexpert/pexpert/arm64/M30LTE.h 2>&1\
         \ || echo \"M30LTE.h NOT FOUND - creating from patch\"\ncat ../xnu/patches/0000-m30lte-machine-config.patch\
         \ | grep -A 50 \"M30LTE.h\" | head -60 || true\n"
+    - name: Fix MASTER.arm64.m30lte config
+      run: "cd xnu-source\necho \"=== Fixing MASTER.arm64.m30lte config ===\"\nif [ -f config/MASTER.arm64.m30lte ]; then\n  python3 ../xnu/patches/fix_master_m30lte.py\nelse\n  echo \"MASTER.arm64.m30lte not found, skipping fix\"\nfi\n"
     - name: Fix makedefs path in Makefiles
       run: 'echo "=== Fixing /makedefs paths in Makefiles ==="
 
