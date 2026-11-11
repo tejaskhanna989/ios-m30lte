@@ -25,17 +25,17 @@ components = [
 def parse_cfiles_from_makefile(makefile_path):
     """Parse CFILES from component Makefile."""
     if not os.path.exists(makefile_path):
-        return []
+        return [], [], []
     with open(makefile_path, 'r') as f:
         content = f.read()
     # Find CFILES = \ block
     match = re.search(r'CFILES\s*=\s*\\', content)
     if not match:
-        return []
+        return [], [], []
     # Find all .c files referenced anywhere in the file after CFILES =
     remaining = content[match.end():]
     cfiles = re.findall(r'(\S+\.c)', remaining)
-    return cfiles
+    return cfiles, [], []
 
 
 def generate_conf_makefile(conf_dir, component_name):
