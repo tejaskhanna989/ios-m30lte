@@ -1,31 +1,26 @@
 #!/usr/bin/env python3
-"""Patch config/Makefile to ensure export files are found via VPATH."""
+"""Patch config/Makefile to copy export files to build directory before all-kpi.exp needs them."""
 import os
 
 with open('config/Makefile', 'r') as f:
     content = f.read()
 
-# Add VPATH at the top after includes
-old = '''include $(MakeInc_def)
+# Find the all-kpi.exp target and add a rule to copy export files before it
+old_all_kpi = '''$(OBJPATH)/all-kpi.exp: $(EXPORTS_FILES)'''
 
-# config is not a COMPONENT but we still want to build most files in a TARGET subdir'''
+new_all_kpi = '''# Copy export files from config source to build directory
+$(TARGET)/%.exports: $(SOURCE)/%.exports
+	$(_v)$(CP) $< $@
 
-new = '''include $(MakeInc_def)
+$(OBJPATH)/all-kpi.exp: $(addprefix $(TARGET)/,$(notdir $(EXPORTS_FILES)))'''
 
-# Add config source directory to VPATH so export files can be found
-VPATH = $(abspath $(SOURCE))
-
-# config is not a COMPONENT but we still want to build most files in a TARGET subdir'''
-
-if old not in content:
-    print("WARNING: Could not find insertion point for VPATH")
+if old_all_kpi not in content:
+    print("WARNING: Could not find all-kpi.exp target pattern")
 else:
-    content = content.replace(old, new)
-    with open('config/Makefile', 'w') as f:
-        f.write(content)
-    print("Patched config/Makefile to add VPATH")
+    content = content.replace(old_all_kpi, new_all_kpi)
+    print("Patched config/Makefile: added copy rule for export files")
 
-# Fix EXPORTS_FILES to use basenames (for VPATH lookup)
+# Fix EXPORTS_FILES to use basenames (since we copy to build dir)
 old_exports = '''EXPORTS_FILES := $(foreach symbolset,$(SYMBOL_COMPONENT_LIST),$(abspath $(SOURCE))/$(symbolset).exports \
 	$(abspath $(SOURCE))/$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).exports \
 	$(notdir $(wildcard $(SOURCE)/$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).$(PLATFORM).exports))) \
@@ -37,16 +32,16 @@ new_exports = '''EXPORTS_FILES := $(foreach symbolset,$(SYMBOL_COMPONENT_LIST),$
 	Unused.exports'''
 
 if old_exports not in content:
-    # Try alternative pattern
+    # Try original pattern
     old_exports2 = '''EXPORTS_FILES := $(foreach symbolset,$(SYMBOL_COMPONENT_LIST),$(symbolset).exports \
 	$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).exports \
 	$(notdir $(wildcard $(SOURCE)/$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).$(PLATFORM).exports))) \
 	Unused.exports'''
-    if old_exports2 in content:
-        content = content.replace(old_exports2, new_exports)
-        print("Patched config/Makefile EXPORTS_FILES to use basenames (alt pattern)")
-    else:
+    if old_exports2 not in content:
         print("WARNING: Could not find EXPORTS_FILES pattern")
+    else:
+        # Already basenames, no change needed
+        print("EXPORTS_FILES already uses basenames")
 else:
     content = content.replace(old_exports, new_exports)
     print("Patched config/Makefile EXPORTS_FILES to use basenames")
