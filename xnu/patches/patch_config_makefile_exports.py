@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-"""Patch config/Makefile to use full paths for export files."""
+"""Patch config/Makefile to use absolute paths for export files."""
 import os
 
 with open('config/Makefile', 'r') as f:
     content = f.read()
 
-# Fix EXPORTS_FILES to use full paths
+# Fix EXPORTS_FILES to use absolute paths
 old = '''EXPORTS_FILES := $(foreach symbolset,$(SYMBOL_COMPONENT_LIST),$(symbolset).exports \
 	$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).exports \
 	$(notdir $(wildcard $(SOURCE)/$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).$(PLATFORM).exports))) \
 	Unused.exports'''
 
-new = '''EXPORTS_FILES := $(foreach symbolset,$(SYMBOL_COMPONENT_LIST),$(SOURCE)/$(symbolset).exports \
-	$(SOURCE)/$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).exports \
+new = '''EXPORTS_FILES := $(foreach symbolset,$(SYMBOL_COMPONENT_LIST),$(abspath $(SOURCE))/$(symbolset).exports \
+	$(abspath $(SOURCE))/$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).exports \
 	$(notdir $(wildcard $(SOURCE)/$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).$(PLATFORM).exports))) \
 	Unused.exports'''
 
@@ -22,7 +22,7 @@ else:
     content = content.replace(old, new)
     with open('config/Makefile', 'w') as f:
         f.write(content)
-    print("Patched config/Makefile to use full paths for export files")
+    print("Patched config/Makefile to use absolute paths for export files")
 
 # Verify
 with open('config/Makefile', 'r') as f:
