@@ -260,8 +260,8 @@ jobs:
         python3 ../xnu/patches/patch_security_makefile.py
 
         echo "Patched successfully"'
-    - name: Disable security/conf module (bypass doconf failure)
-      run: "cd xnu-source\necho \"=== Disabling security/conf module ===\"\nif [ -f security/Makefile ]; then\n  python3 ../xnu/patches/patch_disable_security_conf.py\nelse\n  echo \"security/Makefile not found, skipping fix\"\nfi\n"
+    - name: Disable all conf submodules (bypass doconf failure)
+      run: "cd xnu-source\necho \"=== Disabling all conf submodules ===\"\nif [ -f security/Makefile ]; then\n  python3 ../xnu/patches/patch_remove_all_conf.py\nelse\n  echo \"Makefiles not found, skipping fix\"\nfi\n"
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
       run: 'cd xnu-source
 
