@@ -6,13 +6,41 @@ with open('config/Makefile', 'r') as f:
     content = f.read()
 
 # Find the all-kpi.exp target and add a rule to copy export files before it
-old_all_kpi = '''$(OBJPATH)/all-kpi.exp: $(EXPORTS_FILES)'''
+old_all_kpi = '''$(OBJPATH)/all-kpi.exp: $(EXPORTS_FILES)
+	$(_v)$(KEXT_CREATE_SYMBOL_SET)					\
+		$(ARCH_FLAGS_$(CURRENT_ARCH_CONFIG))			\
+		-import $(TARGET)/allsymbols				\
+		$(foreach symbolset,$(filter-out Private,$(SYMBOL_COMPONENT_LIST)),	\
+			-export $(SOURCE)/$(symbolset).exports		\
+			-export $(SOURCE)/$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).exports)	\
+		-output /dev/null $(_vstdout)
+	$(_v)$(KEXT_CREATE_SYMBOL_SET)					\
+		$(ARCH_FLAGS_$(CURRENT_ARCH_CONFIG))			\
+		-import $(TARGET)/allsymbols				\
+		$(foreach symbolset,$(filter-out Unsupported,$(SYMBOL_COMPONENT_LIST)),	\
+			-export $(SOURCE)/$(symbolset).exports		\
+			-export $(SOURCE)/$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).exports)	\
+		-output /dev/null $(_vstdout)'''
 
 new_all_kpi = '''# Copy export files from config source to build directory
 $(TARGET)/%.exports: $(SOURCE)/%.exports
 	$(_v)$(CP) $< $@
 
-$(OBJPATH)/all-kpi.exp: $(addprefix $(TARGET)/,$(notdir $(EXPORTS_FILES)))'''
+$(OBJPATH)/all-kpi.exp: $(addprefix $(TARGET)/,$(notdir $(EXPORTS_FILES)))
+	$(_v)$(KEXT_CREATE_SYMBOL_SET)					\
+		$(ARCH_FLAGS_$(CURRENT_ARCH_CONFIG))			\
+		-import $(TARGET)/allsymbols				\
+		$(foreach symbolset,$(filter-out Private,$(SYMBOL_COMPONENT_LIST)),	\
+			-export $(TARGET)/$(symbolset).exports		\
+			-export $(TARGET)/$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).exports)	\
+		-output /dev/null $(_vstdout)
+	$(_v)$(KEXT_CREATE_SYMBOL_SET)					\
+		$(ARCH_FLAGS_$(CURRENT_ARCH_CONFIG))			\
+		-import $(TARGET)/allsymbols				\
+		$(foreach symbolset,$(filter-out Unsupported,$(SYMBOL_COMPONENT_LIST)),	\
+			-export $(TARGET)/$(symbolset).exports		\
+			-export $(TARGET)/$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).exports)	\
+		-output /dev/null $(_vstdout)'''
 
 if old_all_kpi not in content:
     print("WARNING: Could not find all-kpi.exp target pattern")
@@ -38,7 +66,7 @@ if old_exports not in content:
 	$(notdir $(wildcard $(SOURCE)/$(symbolset).$(EXPORT_SOURCE_ARCH_CONFIG_LC).$(PLATFORM).exports))) \
 	Unused.exports'''
     if old_exports2 not in content:
-        print("WARNING: Could not find EXPORTS_FILES pattern")
+        print("WARNING: Could not find EXPORTS_FILES pattern (using original)")
     else:
         # Already basenames, no change needed
         print("EXPORTS_FILES already uses basenames")
