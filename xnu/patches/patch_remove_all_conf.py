@@ -7,6 +7,7 @@ makefiles = [
     'bsd/Makefile',
     'osfmk/Makefile',
     'libkern/Makefile',
+    'iokit/Makefile',
 ]
 
 for makefile in makefiles:
