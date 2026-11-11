@@ -591,6 +591,8 @@ jobs:
         python3 ../xnu/patches/copy_export_headers.py
 
         echo "Copied and patched kernel-private headers"'
+    - name: Copy export files to build config directory
+      run: "cd xnu-source\necho \"=== Copying export files to build config directory ===\"\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\nls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/*.exports 2>/dev/null | head -20 || echo \"No export files copied\"\n"
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
