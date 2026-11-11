@@ -296,8 +296,8 @@ def patch_component_makefile(component_dir):
     # Find the COMP_SUBDIRS line and replace it
     comp_pattern = re.compile(r'COMP_SUBDIRS\s*=\s*\\\s*\n(?:\s*\\\s*\n)*\s*conf\s*\n')
     match = comp_pattern.search(content)
-    if comp_match:
-        content = content.replace(comp_match.group(0), 'COMP_SUBDIRS =\n', 1)
+    if match:
+        content = content.replace(match.group(0), 'COMP_SUBDIRS =\n', 1)
     else:
         comp_pattern2 = re.compile(r'COMP_SUBDIRS\s*=\s*conf\s*\n')
         match2 = comp_pattern2.search(content)
