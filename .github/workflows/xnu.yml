@@ -282,6 +282,8 @@ jobs:
         python3 ../xnu/patches/patch_security_conf_makefile.py
 
         echo "Patched successfully"'
+    - name: Patch config/Makefile for export file paths
+      run: "cd xnu-source\necho \"=== Patching config/Makefile for export file paths ===\"\nif [ -f config/Makefile ]; then\n  python3 ../xnu/patches/patch_config_makefile_exports.py\nelse\n  echo \"config/Makefile not found, skipping fix\"\nfi\n"
     - name: Patch osfmk/mach/arm/Makefile for VPATH
       run: 'cd xnu-source
 
