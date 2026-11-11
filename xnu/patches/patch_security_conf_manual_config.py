@@ -180,7 +180,7 @@ with open('security/conf/Makefile', 'r') as f:
 # Replace the doconf rule with a copy of pre-generated files
 old_rule = '''$(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile: $(SRCROOT)/SETUP/config/doconf $(OBJROOT)/SETUP/config $(DOCONFDEPS)
 	$(_v)$(MKDIR) $(TARGET)/$(CURRENT_KERNEL_CONFIG)
-	$(_v)$(SRCROOT)/SETUP/config/doconf -c -cpu $(DOCONF_ARCH_CONFIG_LC) -soc $(CURRENT_MACHINE_CONFIG_LC) -platform $(PLATFORM) -d $(TARGET)/$(CURRENT_KERNEL_CONFIG) -s $(SOURCE) -m $(MASTERCONFDIR) $(DOCONF_SEED) $(CURRENT_KERNEL_CONFIG)'''
+	$(_v)$(SRCROOT)/SETUP/config/doconf -c -cpu $(DOCONF_ARCH_CONFIG_LC) -soc $(CURRENT_MACHINE_CONFIG_LC) -platform $(PLATFORM) -d $(TARGET)/$(CURRENT_KERNEL_CONFIG) -s $(SOURCE) -m $(MASTERCONFDIR) $(DOCONF_SEEF) $(CURRENT_KERNEL_CONFIG)'''
 
 new_rule = '''$(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile: $(SOURCE)/Makefile.generated $(SOURCE)/$(CURRENT_KERNEL_CONFIG)
 	$(_v)$(MKDIR) $(TARGET)/$(CURRENT_KERNEL_CONFIG)
