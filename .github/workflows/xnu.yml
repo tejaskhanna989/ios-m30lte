@@ -264,14 +264,9 @@ jobs:
         python3 ../xnu/patches/patch_security_makefile.py
 
         echo "Patched successfully"'
-    - name: Restore conf to COMP_SUBDIRS in all Makefiles
-      run: "cd xnu-source\necho \"=== Restoring conf to COMP_SUBDIRS ===\"\nif [ -f xnu/patches/patch_restore_conf.py ]; then\n  python3 xnu/patches/patch_restore_conf.py\nelse\n  echo \"patch_restore_conf.py not found, skipping\"\nfi\n"
-    - name: Fix doconf.csh argument parsing
-      run: "cd xnu-source\necho \"=== Fixing doconf.csh argument parsing ===\"\nif [ -f SETUP/config/doconf ]; then\n  python3 ../xnu/patches/patch_doconf_csh.py\nelse\n  echo \"SETUP/config/doconf not found, skipping fix\"\nfi\n"
-    - name: Create files.DEVELOPMENT in conf directories
-      run: "cd xnu-source\necho \"=== Creating files.DEVELOPMENT in conf directories ===\"\nfor dir in security/conf bsd/conf osfmk/conf libkern/conf iokit/conf pexpert/conf libsa/conf san/conf; do\n  if [ -d \"$dir\" ] && [ -f \"$dir/files\" ] && [ ! -f \"$dir/files.DEVELOPMENT\" ]; then\n    cp \"$dir/files\" \"$dir/files.DEVELOPMENT\"\n    echo \"Created $dir/files.DEVELOPMENT\"\n  fi\ndone\n"
-    - name: Bypass conf subdirectories in component Makefiles
-      run: "cd xnu-source\necho \"=== Bypassing conf subdirectories ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san; do\n  if [ -f $comp/Makefile ]; then\n    sed -i '' 's/^COMP_SUBDIRS.*/COMP_SUBDIRS =/' $comp/Makefile\n    echo \"Patched COMP_SUBDIRS in $comp/Makefile\"\n  fi\ndone\necho \"=== Creating empty .filelist files ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san; do\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\n  echo \"Created $comp.filelist\"\ndone\n"
+    - name: Create all export files and filelists for kernel build
+      run: "cd xnu-source\necho \"=== Creating all export files and filelists ===\"\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\n  echo \"Created $comp.filelist\"\ndone\n# Create empty all-kpi.exp\ntouch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp\necho \"Created all-kpi.exp\"\n"
+    - name: Patch libkern/os/atomic_private_impl.h for memory_order
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
       run: 'cd xnu-source
 
