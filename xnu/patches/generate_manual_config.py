@@ -693,10 +693,14 @@ SRCROOT := /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
 export SRCROOT
 
 # makedefs is at $(SRCROOT)/makedefs
-export MakeInc_cmd=$(SRCROOT)/makedefs/MakeInc.cmd
-export MakeInc_def=$(SRCROOT)/makedefs/MakeInc.def
-export MakeInc_rule=$(SRCROOT)/makedefs/MakeInc.rule
-export MakeInc_dir=$(SRCROOT)/makedefs/MakeInc.dir
+MakeInc_cmd = $(SRCROOT)/makedefs/MakeInc.cmd
+MakeInc_def = $(SRCROOT)/makedefs/MakeInc.def
+MakeInc_rule = $(SRCROOT)/makedefs/MakeInc.rule
+MakeInc_dir = $(SRCROOT)/makedefs/MakeInc.dir
+export MakeInc_cmd
+export MakeInc_def
+export MakeInc_rule
+export MakeInc_dir
 
 include $(MakeInc_cmd)
 include $(MakeInc_def)
