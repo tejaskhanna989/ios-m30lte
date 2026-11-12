@@ -209,8 +209,6 @@ endif
 
 do_build_all:: do_all
 
-%RULES
-
 include $(MakeInc_rule)
 include $(MakeInc_dir)
 """
