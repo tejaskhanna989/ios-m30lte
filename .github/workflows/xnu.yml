@@ -643,6 +643,21 @@ jobs:
           echo "--- $comp/conf/Makefile OBJS ---"
           grep -A 100 "^OBJS" "$comp/conf/Makefile" | head -120
         done
+    - name: Debug source file existence
+      run: |
+        cd xnu-source
+        echo "=== Debug: Checking source file existence ==="
+        for comp in bsd iokit osfmk libkern; do
+          echo "--- Checking $comp source files ---"
+          # Extract CFILES and CXXFILES from generated Makefile
+          for f in $(grep -A 500 "^CFILES" "$comp/conf/Makefile" | grep "\.c$" | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*\\*$//' | grep -v "^#" | head -200); do
+            if [ -f "$f" ]; then
+              echo "EXISTS: $f"
+            else
+              echo "MISSING: $f"
+            fi
+          done
+        done
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
