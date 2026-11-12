@@ -1,17 +1,12 @@
 name: XNU Kernel Build for M30LTE
 
 on:
-  workflow_dispatch:
-    inputs:
-      MACHINE_CONFIG:
-        description: Machine config name
-        default: M30LTE
   push:
     branches:
-    - main
+      - main
     paths:
-    - xnu/patches/**
-    - .github/workflows/xnu.yml
+      - xnu/patches/**
+      - .github/workflows/xnu.yml
 
 jobs:
   build:
@@ -74,7 +69,7 @@ jobs:
         xcodebuild -version
     - name: Download KDK
       run: |
-        echo "=== Checking for KDK ==="
+        echo "=== Checking if KDK is already installed ==="
         if [ -d "/Library/Developer/KDKs/KernelDebugKit_13.5_build_22G74.kdk" ]; then
           echo "KDK already installed at /Library/Developer/KDKs/"
           ls -la /Library/Developer/KDKs/
@@ -87,7 +82,7 @@ jobs:
           DOWNLOAD_SUCCESS=false
           for KDK_URL in "${KDK_URLS[@]}"; do
             echo "Trying to download KDK from: $KDK_URL"
-            if curl -L --max-time 300 --retry 3 --retry-delay 5 -o /tmp/KDK.dmg "${KDK_URL}"; then
+            if curl -L --max-time 300 --retry 3 --retry-delay 5 -o /tmp/KDK.dmg "$KDK_URL"; then
               FILE_SIZE=$(stat -f%z /tmp/KDK.dmg 2>/dev/null || stat -c%s /tmp/KDK.dmg 2>/dev/null)
               if [ "$FILE_SIZE" -gt 100000000 ]; then
                 echo "Download successful (${FILE_SIZE} bytes)"
@@ -115,13 +110,10 @@ jobs:
         ls -la /Library/Developer/KDKs/
     - name: Clone XNU
       run: |
+        cd xnu-source
         git clone --branch xnu-8796.141.3 --depth 1 https://github.com/apple-oss-distributions/xnu.git xnu-source
         cd xnu-source
         git describe --tags --always
-        echo "=== Checking for export files ==="
-        ls -la config/*.exports 2>/dev/null | head -20 || echo "No export files found"
-        echo "=== Config directory contents ==="
-        ls -la config/ | head -30
     - name: Stage libpthread dependency
       run: 'cd xnu-source && MACHINE_CONFIG=M30LTE bash ../xnu/patches/0019-stage-libpthread.sh'
     - name: Stage BearSSL dependency
@@ -133,21 +125,53 @@ jobs:
     - name: Fix makedefs path in Makefiles
       run: 'cd xnu-source\n\necho "=== Fixing /makedefs paths in Makefiles ==="\npython3 ../xnu/fix_makedefs.py .\ngrep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found"\n'
     - name: Patch security/Makefile for kernel source includes
-      run: 'cd xnu-source\necho "=== Patching security/Makefile for kernel source includes ===\npython3 ../xnu/patches/patch_security_makefile.py\necho "Patched successfully"'
+      run: 'cd xnu-source\n\necho "=== Patching security/Makefile for kernel source includes ==="\npython3 ../xnu/patches/patch_security_makefile.py\necho "Patched successfully"\n'
     - name: Bypass conf subdirectories and create build files
-      run: "cd xnu-source\necho \"=== Bypassing conf subdirectories ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  if [ -f $comp/Makefile ]; then\n    sed -i '' 's/^COMP_SUBDIRS.*/COMP_SUBDIRS =/' $comp/Makefile\n    echo \"Patched COMP_SUBDIRS in $comp/Makefile\"\n  fi\\ndone\\necho \\"=== Creating empty .filelist files ===\\\"\\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\\n  echo \\\"Created $comp.filelist\\\"\\ndone\\necho \\"=== Copying export files to build config directory ===\\\"\\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\\ntouch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp\\necho \\"Created all export files\\\"\n"'
+      run: "cd xnu-source\necho \"=== Bypassing conf subdirectories ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  if [ -f $comp/Makefile ]; then\n    sed -i 's/^COMP_SUBDIRS.*/COMP_SUBDIRS =/' $comp/Makefile\n    echo \"Patched COMP_SUBDIRS in $comp/Makefile\"\n  fi\ndone\necho \"=== Creating empty .filelist files ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\n  echo \"Created $comp.filelist\"\ndone\necho \"=== Copying export files to build config directory ===\"\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\ntouch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp\necho \"Created all export files\"\n"
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
-      run: 'cd xnu-source\n\n        echo "=== Patching libkern/os/atomic_private_impl.h for memory_order ==="\n\n        python3 ../xnu/patches/patch_atomic_memory_order.py\n\n        echo "Patched successfully"\n'
+      run: 'cd xnu-source\n\necho "=== Patching libkern/os/atomic_private_impl.h for memory_order ==="\npython3 ../xnu/patches/patch_atomic_memory_order.py\necho "Patched successfully"\n'
     - name: Patch osfmk/mach/arm/Makefile for VPATH
-      run: 'cd xnu-source\n\n        echo "=== Patching osfmk/mach/arm/Makefile for VPATH ==="\n\n        python3 ../xnu/patches/patch_osfmk_mach_arm_vpath.py\n\n        echo "Patched successfully"\n'
-    - name: Patch osfmk/mach/arm/Makefile for VPATH
-      run: 'cd xnu-source\n\n        echo "=== Patching osfmk/mach/arm/Makefile for VPATH ==="\n\n        python3 ../xnu/patches/patch_osfmk_mach_arm_vpath.py\n\n        echo "Patched successfully"'
+      run: 'cd xnu-source\n\necho "=== Patching osfmk/mach/arm/Makefile for VPATH ==="\npython3 ../xnu/patches/patch_osfmk_mach_arm_vpath.py\necho "Patched successfully"\n'
     - name: Copy .defs files to build directory for all osfmk subdirs
-      run: 'cd xnu-source\n\n        echo "=== Copying .defs files to build directory for all osfmk subdirs ===\n\n        python3 ../xnu/patches/copy_defs_files.py\n\n        echo "Copied .defs files to build directory"\n'
+      run: 'cd xnu-source\n\necho "=== Copying .defs files to build directory for all osfmk subdirs ==="\npython3 ../xnu/patches/copy_defs_files.py\necho "Copied .defs files to build directory"\n'
     - name: Build bootstrap_cmds (mig)
-      run: 'cd xnu-source\n\n        BOOTSTRAP_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json"\n| jq -r ''.projects[] | select(.project=="bootstrap_cmds") | .tag'\')\n\n        git clone --branch "${BOOTSTRAP_VERSION}" --depth 1 https://github.com/apple-oss-distributions/bootstrap_cmds.git\n        bootstrap_cmds\n\n        cd bootstrap_cmds\n\n        sed -i ''\\''s|-o root -g wheel||g' xcodescripts/install-mig.sh\n\n        xcodebuild install -sdk macosx -project mig.xcodeproj ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/bootstrap_cmds.obj" SYMROOT="$PWD/../BUILD/bootstrap_cmds.sym" DSTROOT="$PWD/../fakeroot" RC_ProjectNameAndSourceVersion="${BOOTSTRAP_VERSION}"\n\n        2>&1 | tail -20 || true\n        \n        '
+      run: 'cd xnu-source\n\n        BOOTSTRAP_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json"\n        | jq -r ".projects[] | select(.project==\"bootstrap_cmds\") | .tag")\n\n        git clone --branch "${BOOTSTRAP_VERSION}" --depth 1 https://github.com/apple-oss-distributions/bootstrap_cmds.git\n        bootstrap_cmds\n\n        cd bootstrap_cmds\n\n        sed -i "s|-o root -g wheel||g" xcodescripts/install-mig.sh\n\n        xcodebuild install -sdk macosx -project mig.xcodeproj ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/bootstrap_cmds.obj" SYMROOT="$PWD/../BUILD/bootstrap_cmds.sym" DSTROOT="$PWD/../fakeroot" RC_ProjectNameAndSourceVersion="${BOOTSTRAP_VERSION}"\n\n        2>&1 | tail -20 || true\n        \n        '
     - name: Build dtrace (ctf tools)
-      run: 'cd xnu-source\n\n        DTRACE_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json"\n| jq -r '''.projects[] | select(.project=="dtrace") | .tag'\')\n\n        git clone --branch "${DTRACE_VERSION}" --depth 1 https://github.com/apple-oss-distributions/dtrace.git\n        dtrace\n\n        cd dtrace\n\n        xcodebuild install -sdk macosx -target ctfconvert -target ctfdump -target ctfmerge ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/dtrace.obj" SYMROOT="$PWD/../BUILD/dtrace.sym" DSTROOT="$PWD/../fakeroot" 2>&1 | tail -20 || true\n        \n        '
-    - name: Bypass conf subdirectories and create build files
-      run: "cd xnu-source\necho \"=== Bypassing conf subdirectories ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  if [ -f $comp/Makefile ]; then\n    sed -i '' 's/^COMP_SUBDIRS.*/COMP_SUBDIRS =/' $comp/Makefile\n    echo \"Patched COMP_SUBDIRS in $comp/Makefile\"\n  fi\ndone\necho \"=== Creating empty .filelist files ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\n  echo \"Created $comp.filelist\"\ndone\necho \"=== Copying export files to build config directory ===\"\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\ntouch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp\necho \"Created all export files\"
-"\n
+      run: 'cd xnu-source\n\n        DTRACE_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json"\n| jq -r ".projects[] | select(.project==\"dtrace\") | .tag")\n\n        git clone --branch "${DTRACE_VERSION}" --depth 1 https://github.com/apple-oss-distributions/dtrace.git\n        dtrace\n\n        cd dtrace\n\n        xcodebuild install -sdk macosx -target ctfconvert -target ctfdump -target ctfmerge ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/dtrace.obj" SYMROOT="$PWD/../BUILD/dtrace.sym" DSTROOT="$PWD/../fakeroot" 2>&1 | tail -20 || true\n        \n        '
+    - name: Build availability versions
+      run: "cd xnu-source\nAVAILABILITYVERSIONS_VERSION=$(curl -s \"https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json\"\n| jq -r ".projects[] | select(.project==\"AvailabilityVersions\") | .tag")\n\ngit clone --branch \"${AVAILABILITYVERSIONS_VERSION}\" --depth 1 https://github.com/apple-oss-distributions/AvailabilityVersions.git\ncd AvailabilityVersions\nmake install -j8 OBJROOT=\"$PWD/../BUILD/\" SYMROOT=\"$PWD/../BUILD/\" DSTROOT=\"$PWD/../fakeroot\" 2>&1 | tail -20 || true\n# Also install availability.pl to host system location\nfor make_symbol_aliasing.sh fallback\nif [ -f \"$PWD/../fakeroot/usr/local/libexec/availability.pl\" ]; then\n  echo \"Installing availability.pl to /usr/local/libexec/\"\n  sudo mkdir -p /usr/local/libexec\n  sudo cp \"$PWD/../fakeroot/usr/local/libexec/availability.pl\" /usr/local/libexec/availability.pl\n  sudo chmod +x /usr/local/libexec/availability.pl\n  echo \"Installed availability.pl to host system\"\nelse\n  echo \"WARNING: availability.pl not found in fakeroot\"\n  find \"$PWD/../fakeroot\" -name \"availability.pl\" 2>/dev/null || true\nfi\n"
+    - name: Create minimal availability.pl for _symbol_aliasing.h
+      run: 'cd xnu-source\n\necho "=== Creating minimal availability.pl for _symbol_aliasing.h ==="\nsudo mkdir -p /usr/local/libexec\n\npython3 ../xnu/patches/create_minimal_availability_pl.py > /tmp/availability.pl\n\nsudo cp /tmp/availability.pl /usr/local/libexec/availability.pl\n\nsudo chmod +x /usr/local/libexec/availability.pl\n\necho "Created minimal availability.pl at /usr/local/libexec/availability.pl"\n\n# Verify it works\n\n/usr/local/libexec/availability.pl --ios | head -5\n\n/usr/local/libexec/availability.pl --macosx | head -5\n\n'
+    - name: Patch make_symbol_aliasing.sh for availability.pl fallback
+      run: 'cd xnu-source\n\necho "=== Patching make_symbol_aliasing.sh for availability.pl fallback ==="\npython3 ../xnu/patches/patch_availability_fallback.py\necho "Patched successfully"\n'
+    - name: Install xnu headers
+      run: 'cd xnu-source\n\necho "=== Installing XNU headers ==="\nmake installhdrs -j8 SDKROOT=iphoneos ARCH_CONFIGS="ARM64" MACHINE_CONFIGS="M30LTE" OBJROOT="$PWD/BUILD/obj" SYMROOT="$PWD/BUILD/sym" DSTROOT="$PWD/fakeroot" FAKEROOT_DIR="$PWD/fakeroot" KDKROOT="/Library/Developer/KDKs" TIGHTBEAMC="" RC_DARWIN_KERNEL_VERSION="22.6.0" MEMORY_SIZE="${MEMORY_SIZE}" SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" KERNEL_BUILDS_IN_PARALLEL=1 2>&1 | tail -20\n'
+    - name: Pre-build IORPC patch for DriverKit
+      run: 'cd xnu-source\n\necho "=== Pre-build IORPC patch for DriverKit ==="\npython3 ../xnu/patches/patch_all_iorpc.py\necho "Patched successfully"\n'
+    - name: Patch SETUP/config/Makefile for VPATH
+      run: 'cd xnu-source\n\necho "=== Patching SETUP/config/Makefile for VPATH ==="\npython3 ../xnu/patches/patch_setup_config_vpath.py\necho "Patched successfully"\n'
+    - name: Fix SETUP tool include paths
+      run: 'cd xnu-source\n\necho "=== Fixing SETUP tool include paths ==="\nSDKROOT_PATH=$(xcrun --sdk iphoneos --show-sdk-path)\necho "SDKROOT_PATH=$SDKROOT_PATH"\nexport SDKROOT_PATH\npython3 ../xnu/patches/fix_setup_tool_includes.py\necho "Patched successfully"\n'
+    - name: Fix makedefs paths in build directory
+      run: 'cd xnu-source\n\npython3 ../xnu/fix_makedefs.py BUILD/obj\n\n# Verify the changes\ngrep -r "/makedefs" BUILD/obj --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found in build directory"\n'
+    - name: Build SETUP tools for macOS (host platform)
+      run: "cd xnu-source\necho \"=== Building SETUP tools for macOS (host platform) ===\"\n# List of SETUP tools to pre-build\nSETUP_TOOLS=\"config kextsymboltool setsegname decomment installfile replacecontents\"\n\n# Use SRCROOT for absolute paths\nSRCROOT=\"$PWD\"\necho \"SRCROOT=$SRCROOT\"\n\n# Unset iOS SDKROOT environment variables that would be inherited from parent build\nexport SDKROOT=\nexport TARGET_CONFIGS=\nexport CURRENT_KERNEL_CONFIG=\nexport CURRENT_ARCH_CONFIG=\nexport CURRENT_MACHINE_CONFIG=\nexport CURRENT_MACHINE_CONFIG_LC=\n\n# Unset MAKEFLAGS to avoid -e flag which causes env vars to override makefile vars\nexport MAKEFLAGS=\n\nfor tool in $SETUP_TOOLS; do\n  echo \"Building $tool...\"\n  cd $SRCROOT/SETUP/$tool || continue\n\n  # Copy source files and Makefile from source\n  echo \"Copying source files for $tool from $SRCROOT/SETUP/$tool ...\"\n  cp -v \"$SRCROOT/SETUP/$tool\"/*.c \"$SRCROOT/SETUP/$tool\"/*.h \"$SRCROOT/SETUP/$tool\"/*.y \"$SRCROOT/SETUP/$tool\"/*.l \"$SRCROOT/SETUP/$tool\"/Makefile . 2>&1 || echo \"Copy failed for $tool\"\n  ls -la\n  # Build with macOS SDK (host platform) - run make WITHOUT -e flag\n  if [ -f \"Makefile\" ]; then\n    echo \"Makefile found, building $tool...\"\n    make -f Makefile do_build_setup \\\n      SDKROOT=macosx \\\n      HOST_SDKROOT=macosx \\\n      HOST_OS_VERSION=26.0 \\\n      OBJROOT=\"$PWD/BUILD/obj\" \\\n      SYMROOT=\"$PWD/BUILD/sym\" \\\n      DSTROOT=\"$PWD/fakeroot\" \\\n      FAKEROOT_DIR=\"$PWD/fakeroot\" \\\n      KDKROOT=\"/Library/Developer/KDKs\" \\\n      SRCROOT=\"$SRCROOT\" \\\n      CURRENT_KERNEL_CONFIG=DEVELOPMENT \\\n      CURRENT_ARCH_CONFIG=ARM64 \\\n      CURRENT_MACHINE_CONFIG=M30LTE \\\n      CURRENT_MACHINE_CONFIG_LC=m30lte \\\n      2>&1 | tail -20 || true\n    # Make the tool executable\n    chmod +x $tool\n    touch $tool\n    touch *.o 2>/dev/null || true\n  else\n    echo \"ERROR: Makefile not found for $tool\"\n    exit 1\n  fi\n  cd \"$SRCROOT\"\ndone\necho \"All SETUP tools built in build directory for macOS\"\n"
+    - name: Patch SETUP/config/Makefile to skip rebuild if tools exist
+      run: 'cd xnu-source\npython3 ../xnu/patches/patch_setup_config_skip_build.py\necho "Patched successfully"\n'
+    - name: Copy version.h.template to build directory
+      run: 'cd xnu-source\n\necho "=== Copying version.h.template to build directory ==="\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libkern/libkern\ncp -v osfmk/kern/version.h.template BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libkern/libkern/\nls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libkern/libkern/version.h.template\n'
+    - name: Copy asm.h to build directory
+      run: 'cd xnu-source\n\necho "=== Copying asm.h to build directory ==="\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm\ncp -v osfmk/arm/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm/\nls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm/asm.h\n\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64\ncp -v osfmk/arm64/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64/\nls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64/asm.h\n'
+    - name: Copy full kernel private headers to EXPORT_HDRS
+      run: 'cd xnu-source\n\necho "=== Copying full kernel private headers to EXPORT_HDRS ==="\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/arm/mach\ncp -v osfmk/arm/locks.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm/locks.h\nls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm/locks.h\n\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64\ncp -v osfmk/arm64/locks.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64/locks.h 2>/dev/null || echo "arm64/locks.h not found, using arm version"\ncp -v osfmk/machine/locks.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/machine/locks.h 2>/dev/null || echo "machine/locks.h not found"\ncp -v osfmk/kern/lock_mtx.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/kern/lock_mtx.h\nls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/kern/lock_mtx.h\n\ncp -v osfmk/kern/locks.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/kern/locks.h\nls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/kern/locks.h\n\necho "Copied full kernel private headers"\n'
+    - name: Patch EXPORT_HDRS/osfmk/arm/locks.h for full lck_mtx_t definition
+      run: 'cd xnu-source\n\necho "=== Patching EXPORT_HDRS/osfmk/arm/locks.h for full lck_mtx_t definition ==="\npython3 ../xnu/patches/patch_export_lock_h.py\necho "Patched successfully"\n'
+    - name: Patch security/mac_audit.c for kernel includes and ptrauth
+      run: 'cd xnu-source\n\necho "=== Patching security/mac_audit.c for kernel includes and ptrauth ==="\npython3 ../xnu/patches/patch_mac_audit.py\necho "Patched successfully"\n'
+    - name: Copy and patch kernel-private headers to EXPORT_HDRS
+      run: 'cd xnu-source\n\necho "=== Copying and patching kernel-private headers to EXPORT_HDRS ==="\npython3 ../xnu/patches/copy_export_headers.py\necho "Copied and patched kernel-private headers"\n'
+    - name: Create all export files and filelists for kernel build
+      run: "cd xnu-source\necho \"=== Copying all export files to build config directory ===\"\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\necho \"=== Creating empty .filelist files ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\n  echo \"Created $comp.filelist\"\ndone\necho \"=== Creating empty all-kpi.exp ===\"\ntouch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp\necho \"Created all-kpi.exp\"\n"
+    - name: Build XNU kernel
+      id: build_kernel
+      run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\nSYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)\nMEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)\necho \"SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE\"\necho \"=== Building XNU kernel (default target) ===\"\n# Build with explicit linker verbose output, capture all sub-make output\n# Do NOT use set -o pipefail - it kills the script before we capture PIPESTATUS\n# Environment variables are now set at job level for all steps\nexport DRIVERKIT=0\nmake -e VERBOSE=YES \\\n  SDKROOT=iphoneos \\\n  HOST_SDKROOT=macosx \\\n  HOST_OS_VERSION=26.0 \\\n  TARGET_CONFIGS=\"DEVELOPMENT ARM64 M30LTE\" \\\n  CURRENT_KERNEL_CONFIG=DEVELOPMENT \\\n  CURRENT_ARCH_CONFIG=ARM64 \\\n  CURRENT_MACHINE_CONFIG=M30LTE \\\n  CURRENT_MACHINE_CONFIG_LC=m30lte \\\n  OBJROOT=\"$PWD/BUILD/obj\" \\\n  SYMROOT=\"$PWD/BUILD/sym\" \\\n  DSTROOT=\"$PWD/fakeroot\" \\\n  FAKEROOT_DIR=\"$PWD/fakeroot\" \\\n  KDKROOT=\"/Library/Developer/KDKs\" \\\n  TIGHTBEAMC=\"\" \\\n  RC_DARWIN_KERNEL_VERSION=\"22.6.0\" \\\n  MEMORY_SIZE=\"${MEMORY_SIZE}\" \\\n  SYSCTL_HW_PHYSICALCPU=\"${SYSCTL_PHYSICALCPU}\" \\\n  SYSCTL_HW_LOGICALCPU=\"${SYSCTL_LOGICALCPU}\" \\\n  KERNEL_BUILDS_IN_PARALLEL=1 \\\n  BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 \\\n  LOGCOLORS=y \\\n  DRIVERKIT=0 \\\n  SETUP_SUBDIRS=\"\" \\\n  MACH_KERNEL_PRIVATE=1 \\\n  RC_NONARCH_CFLAGS=\"-DKERNEL -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DXNU_KERNEL_PRIVATE -DPRIVATE\" \\\n  2>&1 | tee /tmp/xnu-build.log\nBUILD_EXIT=${PIPESTATUS[0]}\necho \"make exit code: $BUILD_EXIT\"\necho \"=== Errors in build log ===\"\ngrep -iE \"error:|error |make: \\*\\*\\*|No rule|syntax error|undefined reference|missing separator|command not found|ld:|symbol|library not found|collect2\" /tmp/xnu-build.log | head -50 || echo \"No errors found in log\"\necho \"=== Last 1000 lines of build log ===\"\ntail -1000 /tmp/xnu-build.log\necho \"=== Kernel artifacts ===\"\nfind BUILD/obj -name \"kernel.*\" -type f 2>/dev/null | head -10\nfind BUILD/obj -maxdepth 3 \( -name \"kernel.development.m30lte\" -o -name \"mach_kernel\" \) 2>/dev/null | head-10\necho \"BUILD_EXIT=$BUILD_EXIT\" >> $GITHUB_OUTPUT\nexit $BUILD_EXIT\n"
