@@ -116,9 +116,11 @@ jobs:
         echo "=== XNU source cloned and checked out ==="
         ls -la
     - name: Stage libpthread dependency
-      run: 'cd xnu-source && MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-libpthread.sh || true'
+      run: |
+        cd xnu-source && MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-libpthread.sh || true
     - name: Stage BearSSL dependency
-      run: 'cd xnu-source && MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-bearssl.sh || true'
+      run: |
+        cd xnu-source && MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-bearssl.sh || true
     - name: Apply M30LTE patches
       run: "cd xnu-source\nfor patch in ../xnu/patches/00*.patch; do\n  name=$(basename \"$patch\")\n  echo \"Applying: $name\"\n  patch -p1 --no-backup-if-mismatch < \"$patch\" 2>&1 || true\ndone\nls -la pexpert/pexpert/arm64/M30LTE.h 2>&1 || echo \"M30LTE.h NOT FOUND - creating from patch\"\ncat ../xnu/patches/0000-m30lte-machine-config.patch | grep -A 50 \"M30LTE.h\" | head -60 || true\n"
     - name: Fix MASTER.arm64.m30lte config
@@ -266,3 +268,4 @@ jobs:
         find xnu-source/BUILD -name "kernel.*" -type f 2>/dev/null | head -10
         find xnu-source/BUILD -name "mach_kernel" -type f 2>/dev/null | head -10
         echo "=== Build Complete ==="
+        echo ""
