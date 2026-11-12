@@ -1,0 +1,22 @@
+name: Test Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Test Step 1
+      run: echo "Test Step 1"
+    - name: Create installfile replacement
+      run: |
+        echo "=== Creating installfile replacement ==="
+        mkdir -p test-dir
+        echo "test content" > test-dir/installfile
+        chmod +x test-dir/installfile
+        echo "Created installfile replacement"
+        ls -la test-dir/
+    - name: Test Step 2
+      run: echo "Test Step 2"
