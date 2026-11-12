@@ -200,18 +200,21 @@ jobs:
         | head -5 || echo "No more /makedefs references found"
 
         '
-    - name: Remove doconf rules from iokit/conf Makefile
+    - name: Remove doconf rules from all component conf Makefiles
       run: |
         cd xnu-source
-        echo "=== Removing doconf rules from iokit/conf Makefile ==="
-        # Remove the doconf dependency line
-        sed -i '' '/\$(TARGET)\/\$(CURRENT_KERNEL_CONFIG)\/Makefile: \$(SRCROOT)\/SETUP\/config\/doconf \$(OBJROOT)\/SETUP\/config \$(DOCONFDEPS)/d' iokit/conf/Makefile
-        # Remove the doconf command line
-        sed -i '' '/\$(_v)\$(SRCROOT)\/SETUP\/config\/doconf -c -cpu \$(DOCONF_ARCH_CONFIG_LC) -soc \$(CURRENT_MACHINE_CONFIG_LC) -platform \$(PLATFORM) -d \$(TARGET)\/\$(CURRENT_KERNEL_CONFIG) -s \$(SOURCE) -m \$(MASTERCONFDIR) \$(DOCONF_SEED) \$(CURRENT_KERNEL_CONFIG)/d' iokit/conf/Makefile
-        # Remove the MKDIR line for doconf
-        sed -i '' '/\$(_v)\$(MKDIR) \$(TARGET)\/\$(CURRENT_KERNEL_CONFIG)/d' iokit/conf/Makefile
-        echo "Removed doconf rules from iokit/conf/Makefile"
-        grep -A 3 "Makefile.valid" iokit/conf/Makefile || echo "Pattern not found"
+        echo "=== Removing doconf rules from all component conf Makefiles ==="
+        for comp in bsd iokit osfmk pexpert libkern libsa san security; do
+          echo "Processing $comp/conf/Makefile..."
+          # Remove the doconf dependency line
+          sed -i '' '/\$(TARGET)\/\$(CURRENT_KERNEL_CONFIG)\/Makefile: \$(SRCROOT)\/SETUP\/config\/doconf \$(OBJROOT)\/SETUP\/config \$(DOCONFDEPS)/d' "$comp/conf/Makefile"
+          # Remove the doconf command line
+          sed -i '' '/\$(_v)\$(SRCROOT)\/SETUP\/config\/doconf -c -cpu \$(DOCONF_ARCH_CONFIG_LC) -soc \$(CURRENT_MACHINE_CONFIG_LC) -platform \$(PLATFORM) -d \$(TARGET)\/\$(CURRENT_KERNEL_CONFIG) -s \$(SOURCE) -m \$(MASTERCONFDIR) \$(DOCONF_SEED) \$(CURRENT_KERNEL_CONFIG)/d' "$comp/conf/Makefile"
+          # Remove the MKDIR line for doconf
+          sed -i '' '/\$(_v)\$(MKDIR) \$(TARGET)\/\$(CURRENT_KERNEL_CONFIG)/d' "$comp/conf/Makefile"
+          echo "Removed doconf rules from $comp/conf/Makefile"
+          grep -A 3 "Makefile.valid" "$comp/conf/Makefile" || echo "Pattern not found in $comp/conf/Makefile"
+        done
     - name: Force patch proc_reg.h for M30LTE
       run: "cd xnu-source\necho \"=== Force patching proc_reg.h for M30LTE ===\"\n\
         if ! grep -q \"M30LTE\" osfmk/arm64/proc_reg.h; then\n  echo \"M30LTE not\
