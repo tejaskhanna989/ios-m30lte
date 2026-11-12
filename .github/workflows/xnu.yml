@@ -178,9 +178,11 @@ jobs:
         cd xnu-source
         echo "=== Building SETUP tools for doconf (host platform) ==="
         # Build SETUP tools on host platform (macOS x86_64) - needed for doconf
-        # Use a separate host build directory to avoid target contamination
+        # Use a completely separate host build directory with clean environment
         HOST_OBJROOT="$PWD/BUILD/obj/host"
         mkdir -p "$HOST_OBJROOT"
+        # Unset target build variables to avoid contamination
+        unset OBJROOT TARGET SYMROOT DSTROOT CURRENT_KERNEL_CONFIG CURRENT_ARCH_CONFIG CURRENT_MACHINE_CONFIG
         make -C SETUP \
           RC_ProjectName=SETUP \
           RC_ARCHS="x86_64" \
