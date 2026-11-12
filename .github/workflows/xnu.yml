@@ -111,7 +111,6 @@ jobs:
         ls -la /Library/Developer/KDKs/
     - name: Clone XNU
       run: |
-        cd xnu-source
         git clone --branch xnu-8796.141.3 --depth 1 https://github.com/apple-oss-distributions/xnu.git xnu-source
         cd xnu-source
         git describe --tags --always
