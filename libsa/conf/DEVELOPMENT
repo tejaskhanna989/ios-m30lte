@@ -1,0 +1,19 @@
+# config file for libsa/conf
+# Generated manually to bypass doconf failure
+
+# Build directory
+builddir	"."
+
+# Object directory
+objectdir	"../../../../../../../BUILD/obj"
+
+# Source directory
+sourcedir	"../../../../../../.."
+
+# libsa files for M30LTE (ARM64)
+libsa/arm64/arm64_mem.c
+libsa/arm64/atc.c
+libsa/arm64/locore.s
+libsa/arm64/machdep.c
+libsa/arm64/pmap.c
+libsa/arm64/startup.s

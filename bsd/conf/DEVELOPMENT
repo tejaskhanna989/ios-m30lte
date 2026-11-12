@@ -1,0 +1,106 @@
+# config file for bsd/conf
+# Generated manually to bypass doconf failure
+
+# Build directory
+builddir	"."
+
+# Object directory
+objectdir	"../../../../../../../BUILD/obj"
+
+# Source directory
+sourcedir	"../../../../../../.."
+
+# bsd files for M30LTE (ARM64)
+sys/kern/kern_clock.c
+sys/kern/kern_descrip.c
+sys/kern/kern_env.c
+sys/kern/kern_exec.c
+sys/kern/kern_exit.c
+sys/kern/kern_fork.c
+sys/kern/kern_init.c
+sys/kern/kern_jail.c
+sys/kern/kern_lock.c
+sys/kern/kern_malloc.c
+sys/kern/kern_man.c
+sys/kern/kern_module.c
+sys/kern/kern_monotonic.c
+sys/kern/kern_mutex.c
+sys/kern/kern_ntptime.c
+sys/kern/kern_pax.c
+sys/kern/kern_pgrp.c
+sys/kern/kern_proc.c
+sys/kern/kern_prot.c
+sys/kern/kern_prot2.c
+sys/kern/kern_pset.c
+sys/kern/kern_resource.c
+sys/kern/kern_rwlock.c
+sys/kern/kern_sched.c
+sys/kern/kern_sig.c
+sys/kern/kern_subr.c
+sys/kern/kern_syscall.c
+sys/kern/kern_sysctl.c
+sys/kern/kern_thread.c
+sys/kern/kern_time.c
+sys/kern/kern_timeout.c
+sys/kern/kern_umtx.c
+sys/kern/kern_xucred.c
+sys/kern/subr_autoconf.c
+sys/kern/subr_blist.c
+sys/kern/subr_bus.c
+sys/kern/subr_cpufreq.c
+sys/kern/subr_counter.c
+sys/kern/subr_cpuset.c
+sys/kern/subr_devicestat.c
+sys/kern/subr_disk.c
+sys/kern/subr_eventhandler.c
+sys/kern/subr_firmware.c
+sys/kern/subr_gtaskqueue.c
+sys/kern/subr_hhook.c
+sys/kern/subr_knote.c
+sys/kern/subr_kqueue.c
+sys/kern/subr_kobj.c
+sys/kern/subr_kthread.c
+sys/kern/subr_log.c
+sys/kern/subr_lro.c
+sys/kern/subr_mem.c
+sys/kern/subr_module.c
+sys/kern/subr_msgbuf.c
+sys/kern/subr_param.c
+sys/kern/subr_pcpu.c
+sys/kern/subr_power.c
+sys/kern/subr_prf.c
+sys/kern/subr_prof.c
+sys/kern/subr_rman.c
+sys/kern/subr_sbuf.c
+sys/kern/subr_sdt.c
+sys/kern/subr_sleepqueue.c
+sys/kern/subr_smp.c
+sys/kern/subr_turnstile.c
+sys/kern/subr_unit.c
+sys/kern/subr_witness.c
+sys/kern/sys_generic.c
+sys/kern/sys_process.c
+sys/kern/vfs_acl.c
+sys/kern/vfs_aio.c
+sys/kern/vfs_bio.c
+sys/kern/vfs_cache.c
+sys/kern/vfs_default.c
+sys/kern/vfs_export.c
+sys/kern/vfs_hash.c
+sys/kern/vfs_init.c
+sys/kern/vfs_lockf.c
+sys/kern/vfs_lookup.c
+sys/kern/vfs_mount.c
+sys/kern/vfs_mountroot.c
+sys/kern/vfs_subr.c
+sys/kern/vfs_syscalls.c
+sys/kern/vfs_vnops.c
+arm64/arm64_mem.c
+arm64/atc.c
+arm64/locore.s
+arm64/machdep.c
+arm64/pmap.c
+arm64/pmap_data.c
+arm64/pmap_ppl.c
+arm64/sigtramp.s
+arm64/board_config.c

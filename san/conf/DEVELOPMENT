@@ -1,0 +1,15 @@
+# config file for san/conf
+# Generated manually to bypass doconf failure
+
+# Build directory
+builddir	"."
+
+# Object directory
+objectdir	"../../../../../../../BUILD/obj"
+
+# Source directory
+sourcedir	"../../../../../../.."
+
+# san files for M30LTE (ARM64)
+san/san.c
+san/san_policy.c

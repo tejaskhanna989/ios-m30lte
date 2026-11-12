@@ -1,0 +1,19 @@
+# config file for pexpert/conf
+# Generated manually to bypass doconf failure
+
+# Build directory
+builddir	"."
+
+# Object directory
+objectdir	"../../../../../../../BUILD/obj"
+
+# Source directory
+sourcedir	"../../../../../../.."
+
+# pexpert files for M30LTE (ARM64)
+pexpert/arm64/board_config.c
+pexpert/arm64/m30lte/board_config.c
+pexpert/arm64/machdep.c
+pexpert/arm64/pmap.c
+pexpert/arm64/startup.c
+pexpert/arm64/m30lte/machdep.c

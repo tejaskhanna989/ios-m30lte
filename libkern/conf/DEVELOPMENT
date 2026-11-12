@@ -1,0 +1,80 @@
+# config file for libkern/conf
+# Generated manually to bypass doconf failure
+
+# Build directory
+builddir	"."
+
+# Object directory
+objectdir	"../../../../../../../BUILD/obj"
+
+# Source directory
+sourcedir	"../../../../../../.."
+
+# libkern files for M30LTE (ARM64)
+libkern/kern_bcops.c
+libkern/kern_kalloc.c
+libkern/kern_kalloc_vm.c
+libkern/kern_ktrace.c
+libkern/kern_lock.c
+libkern/kern_malloc.c
+libkern/kern_pcpu.c
+libkern/kern_pmap.c
+libkern/kern_quantize.c
+libkern/kern_sched.c
+libkern/kern_semaphore.c
+libkern/kern_turnstile.c
+libkern/kern_xmm.c
+libkern/libkern_c++abi.cpp
+libkern/libkern_c++.cpp
+libkern/libkern_exception.cpp
+libkern/libkern_init.cpp
+libkern/libkern_i386.cpp
+libkern/libkern_new.cpp
+libkern/libkern_os.cpp
+libkern/libkern_string.cpp
+libkern/libkern_time.cpp
+libkern/libkern_vm.cpp
+libkern/libkern_zalloc.c
+libkern/mach_vm.c
+libkern/obj.cpp
+libkern/os/atomic.c
+libkern/os/atomic_arm.c
+libkern/os/atomic_arm64.c
+libkern/os/block.c
+libkern/os/byte_order.c
+libkern/os/checksum.c
+libkern/os/contigmem.c
+libkern/os/cputype.c
+libkern/os/dispatch_queue.c
+libkern/os/fastpath.c
+libkern/os/fastpath_locks.c
+libkern/os/locks.c
+libkern/os/locks_cond.c
+libkern/os/locks_lck.c
+libkern/os/locks_mtx.c
+libkern/os/locks_rw.c
+libkern/os/malloc.c
+libkern/os/OSAtomic.c
+libkern/os/OSCompareAndSwap.c
+libkern/os/OSNumber.c
+libkern/os/OSObject.cpp
+libkern/os/OSQueue.cpp
+libkern/os/OSRuntime.cpp
+libkern/os/OSString.cpp
+libkern/os/refcnt.c
+libkern/os/thread_call.c
+libkern/os/tsd.c
+libkern/pool.c
+libkern/queue.c
+libkern/random.c
+libkern/section_data.c
+libkern/slab.c
+libkern/string.c
+libkern/vm/vm_map.c
+libkern/vm/vm_page.c
+libkern/vm/vm_pageout.c
+libkern/zalloc.c
+libkern/arm64/atomic.s
+libkern/arm64/libkern.s
+libkern/arm64/locore.s
+libkern/arm64/startup.s

@@ -1,0 +1,95 @@
+# config file for osfmk/conf
+# Generated manually to bypass doconf failure
+
+# Build directory
+builddir	"."
+
+# Object directory
+objectdir	"../../../../../../../BUILD/obj"
+
+# Source directory
+sourcedir	"../../../../../../.."
+
+# osfmk files for M30LTE (ARM64)
+osfmk/kern/kern_clock.c
+osfmk/kern/kern_descrip.c
+osfmk/kern/kern_env.c
+osfmk/kern/kern_exec.c
+osfmk/kern/kern_exit.c
+osfmk/kern/kern_fork.c
+osfmk/kern/kern_init.c
+osfmk/kern/kern_jail.c
+osfmk/kern/kern_lock.c
+osfmk/kern/kern_malloc.c
+osfmk/kern/kern_man.c
+osfmk/kern/kern_module.c
+osfmk/kern/kern_monotonic.c
+osfmk/kern/kern_mutex.c
+osfmk/kern/kern_ntptime.c
+osfmk/kern/kern_pax.c
+osfmk/kern/kern_pgrp.c
+osfmk/kern/kern_proc.c
+osfmk/kern/kern_prot.c
+osfmk/kern/kern_prot2.c
+osfmk/kern/kern_pset.c
+osfmk/kern/kern_resource.c
+osfmk/kern/kern_rwlock.c
+osfmk/kern/kern_sched.c
+osfmk/kern/kern_sig.c
+osfmk/kern/kern_subr.c
+osfmk/kern/kern_syscall.c
+osfmk/kern/kern_sysctl.c
+osfmk/kern/kern_thread.c
+osfmk/kern/kern_time.c
+osfmk/kern/kern_timeout.c
+osfmk/kern/kern_umtx.c
+osfmk/kern/kern_xucred.c
+osfmk/kern/subr_autoconf.c
+osfmk/kern/subr_blist.c
+osfmk/kern/subr_bus.c
+osfmk/kern/subr_cpufreq.c
+osfmk/kern/subr_counter.c
+osfmk/kern/subr_cpuset.c
+osfmk/kern/subr_devicestat.c
+osfmk/kern/subr_disk.c
+osfmk/kern/subr_eventhandler.c
+osfmk/kern/subr_firmware.c
+osfmk/kern/subr_gtaskqueue.c
+osfmk/kern/subr_hhook.c
+osfmk/kern/subr_knote.c
+osfmk/kern/subr_kqueue.c
+osfmk/kern/subr_kobj.c
+osfmk/kern/subr_kthread.c
+osfmk/kern/subr_log.c
+osfmk/kern/subr_lro.c
+osfmk/kern/subr_mem.c
+osfmk/kern/subr_module.c
+osfmk/kern/subr_msgbuf.c
+osfmk/kern/subr_param.c
+osfmk/kern/subr_pcpu.c
+osfmk/kern/subr_power.c
+osfmk/kern/subr_prf.c
+osfmk/kern/subr_prof.c
+osfmk/kern/subr_rman.c
+osfmk/kern/subr_sbuf.c
+osfmk/kern/subr_sdt.c
+osfmk/kern/subr_sleepqueue.c
+osfmk/kern/subr_smp.c
+osfmk/kern/subr_turnstile.c
+osfmk/kern/subr_unit.c
+osfmk/kern/subr_witness.c
+osfmk/kern/sys_generic.c
+osfmk/kern/sys_process.c
+osfmk/kern/vfs_acl.c
+osfmk/kern/vfs_aio.c
+osfmk/kern/vfs_bio.c
+osfmk/kern/vfs_cache.c
+osfmk/kern/vfs_default.c
+osfmk/kern/vfs_export.c
+osfmk/kern/vfs_hash.c
+osfmk/kern/vfs_init.c
+osfmk/kern/vfs_lockf.c
+osfmk/kern/vfs_lookup.c
+osfmk/kern/vfs_mount.c
+osfmk/kern/vfs_mountroot.c
+osfmk/kern/vfs_subr.c
