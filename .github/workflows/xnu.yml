@@ -212,6 +212,8 @@ jobs:
       run: "cd xnu-source\necho \"=== Creating manual libkern/conf config to bypass doconf ===\"\nif [ -f libkern/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_libkern_conf_manual_config.py\nelse\n  echo \"libkern/conf/Makefile not found, skipping fix\"\nfi\n"
     - name: Create manual libsa/conf config to bypass doconf
       run: "cd xnu-source\necho \"=== Creating manual libsa/conf config to bypass doconf ===\"\nif [ -f libsa/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_libsa_conf_manual_config.py\nelse\n  echo \"libsa/conf/Makefile not found, skipping fix\"\nfi\n"
+    - name: Create manual san/conf config to bypass doconf
+      run: "cd xnu-source\necho \"=== Creating manual san/conf config to bypass doconf ===\"\nif [ -f san/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_san_conf_manual_config.py\nelse\n  echo \"san/conf/Makefile not found, skipping fix\"\nfi\n"
     - name: Remove doconf rules from iokit/conf Makefile
       run: |
         cd xnu-source
