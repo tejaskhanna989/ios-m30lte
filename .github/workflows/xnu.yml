@@ -204,14 +204,6 @@ jobs:
         chmod +x BUILD/obj/SETUP/installfile/installfile
         echo "Created installfile replacement"
         ls -la BUILD/obj/SETUP/installfile/
-    - name: Create installfile replacement
-      run: |
-        echo "=== Creating installfile replacement ==="
-        mkdir -p BUILD/obj/SETUP/installfile
-        cp ../xnu/patches/create_installfile.sh BUILD/obj/SETUP/installfile/installfile
-        chmod +x BUILD/obj/SETUP/installfile/installfile
-        echo "Created installfile replacement"
-        ls -la BUILD/obj/SETUP/installfile/
     - name: Build XNU kernel
       id: build_kernel
       run: |
