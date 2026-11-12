@@ -767,41 +767,41 @@ MACHDEP =
 # -Wno-sign-conversion
 
 # Rebuild if per-file overrides change
-$$(OBJS): $$(firstword $$(MAKEFILE_LIST))
+$(OBJS): $(firstword $(MAKEFILE_LIST))
 
 # Rebuild if global compile flags change
-$$(COBJS): .CFLAGS
+$(COBJS): .CFLAGS
 .CFLAGS: ALWAYS
-\t$$(_v)$$(REPLACECONTENTS) $$@ $$(KCC) $$(CFLAGS) $$(INCFLAGS)
-$$(CXXOBJS): .CXXFLAGS
+\t$(_v)$(REPLACECONTENTS) $@ $(KCC) $(CFLAGS) $(INCFLAGS)
+$(CXXOBJS): .CXXFLAGS
 .CXXFLAGS: ALWAYS
-\t$$(_v)$$(REPLACECONTENTS) $$@ $$(KC++) $$(CXXFLAGS) $$(INCFLAGS)
-$$(SOBJS): .SFLAGS
+\t$(_v)$(REPLACECONTENTS) $@ $(KC++) $(CXXFLAGS) $(INCFLAGS)
+$(SOBJS): .SFLAGS
 .SFLAGS: ALWAYS
-\t$$(_v)$$(REPLACECONTENTS) $$@ $$(S_KCC) $$(SFLAGS) $$(INCFLAGS)
+\t$(_v)$(REPLACECONTENTS) $@ $(S_KCC) $(SFLAGS) $(INCFLAGS)
 
-$$(COMPONENT).filelist: $$(OBJS)
-\t@$$(LOG_LDFILELIST) "$$(COMPONENT)"
-\t$$(_v)for obj in $$$$(OBJS); do \\
-\t\t $$(ECHO) $$(TARGET)/$$(CURRENT_KERNEL_CONFIG)/$$$$(obj); \\
-\tdone > $$(COMPONENT).filelist
+$(COMPONENT).filelist: $(OBJS)
+\t@$(LOG_LDFILELIST) "$(COMPONENT)"
+\t$(_v)for obj in $$(OBJS); do \\
+\t\t $(ECHO) $(TARGET)/$(CURRENT_KERNEL_CONFIG)/$$(obj); \\
+\tdone > $(COMPONENT).filelist
 
-$$(COMPONENT).libfilelist: $$(LIBOBJS)
-\t@$$(LOG_LDFILELIST) "lib$$(COMPONENT)"
-\t$$(_v)for obj in $$$$(LIBOBJS); do \\
-\t\t $$(ECHO) $$(TARGET)/$$(CURRENT_KERNEL_CONFIG)/$$$$(obj); \\
-\tdone > $$(COMPONENT).libfilelist
+$(COMPONENT).libfilelist: $(LIBOBJS)
+\t@$(LOG_LDFILELIST) "lib$(COMPONENT)"
+\t$(_v)for obj in $$(LIBOBJS); do \\
+\t\t $(ECHO) $(TARGET)/$(CURRENT_KERNEL_CONFIG)/$$(obj); \\
+\tdone > $(COMPONENT).libfilelist
 
-ifeq ($$(RC_ProjectName),xnu_libraries)
-do_all: $$(COMPONENT).libfilelist
+ifeq ($(RC_ProjectName),xnu_libraries)
+do_all: $(COMPONENT).libfilelist
 else
-do_all: $$(COMPONENT).filelist
+do_all: $(COMPONENT).filelist
 endif
 
 do_build_all:: do_all
 
-include $$(MakeInc_rule)
-include $$(MakeInc_dir)
+include $(MakeInc_rule)
+include $(MakeInc_dir)
 """
     return makefile
 
