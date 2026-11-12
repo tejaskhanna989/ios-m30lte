@@ -12,6 +12,7 @@ import sys
 # ============================================================
 # COMPONENT DEFINITIONS
 # Each component defines its source files relative to xnu-source root
+# Based on XNU 8796.141.3 source tree structure
 # ============================================================
 
 COMPONENTS = {
@@ -104,23 +105,17 @@ COMPONENTS = {
             'sys/kern/vfs_subr.c',
             'sys/kern/vfs_syscalls.c',
             'sys/kern/vfs_vnops.c',
-            # net
+            # net (essential for networking symbols)
             'net/if.c',
             'net/if_arp.c',
             'net/if_dl.c',
             'net/if_ether.c',
-            'net/if_gif.c',
-            'net/if_loop.c',
             'net/if_media.c',
-            'net/if_mib.c',
             'net/if_types.c',
-            'net/if_vlan_var.c',
             'net/netisr.c',
             'net/radix.c',
-            'net/radix_mpath.c',
             'net/route.c',
             'net/rtsock.c',
-            'net/raw_cb.c',
             'netinet/in.c',
             'netinet/in_pcb.c',
             'netinet/in_proto.c',
@@ -134,31 +129,13 @@ COMPONENTS = {
             'netinet/tcp_timer.c',
             'netinet/tcp_var.c',
             'netinet/udp_usrreq.c',
-            'netinet/igmp.c',
-            'netinet/if_ether.c',
-            'netinet6/in6.c',
-            'netinet6/in6_pcb.c',
-            'netinet6/ip6_input.c',
-            'netinet6/ip6_output.c',
-            'netinet6/ip6_var.c',
-            'netinet6/nd6.c',
-            'netinet6/nd6_nbr.c',
-            'netinet6/nd6_rtr.c',
-            'netinet6/icmp6.c',
-            'netinet6/scope6.c',
-            'netinet6/ipcomp.c',
-            'netinet6/ip6_mroute.c',
-            'netinet6/mld6.c',
-            # kern_mbuf
+            # mbuf (essential for mbuf symbols)
             'sys/kern/mbuf.c',
             'sys/kern/mbuf_ml.c',
             'sys/kern/mbuf_pkthdr.c',
-            'sys/kern/mbuf_tags.c',
-            # ufs/ubc
+            # ufs/ubc (for ubc_create_upl)
             'ufs/ubc_subr.c',
             'ufs/ubc_alloc.c',
-            'ufs/ubc_io.c',
-            'ufs/ubc_map.c',
             # arm64
             'arm64/arm64_mem.c',
             'arm64/atc.c',
@@ -195,7 +172,7 @@ COMPONENTS = {
             'iokit/IOInterruptController.cpp',
             'iokit/IOInterruptEventSource.cpp',
             'iokit/IOIterator.cpp',
-            # IOKit/ subdirectories
+            # IOKit/ subdirectories (essential)
             'iokit/IOKit/IOLib.cpp',
             'iokit/IOKit/IOLog.cpp',
             'iokit/IOKit/IOPanic.cpp',
@@ -212,161 +189,27 @@ COMPONENTS = {
             'iokit/IOKit/notification/IONotificationRegistrar.cpp',
             'iokit/IOKit/notification/IONotifier.cpp',
             'iokit/IOKit/notification/IONotifierRegistry.cpp',
-            'iokit/IOKit/pci/IOPCIDevice.cpp',
-            'iokit/IOKit/pci/IOPCIFunction.cpp',
-            'iokit/IOKit/pci/IOPCIMessage.cpp',
-            'iokit/IOKit/pci/IOPCIPrimaryMatch.cpp',
-            'iokit/IOKit/pci/IOPCIResource.cpp',
-            'iokit/IOKit/pci/IOPCITunnelCompatible.cpp',
-            'iokit/IOKit/pwr_mgt/IOPMPowerSource.cpp',
-            'iokit/IOKit/pwr_mgt/IOPMrootDomain.cpp',
-            'iokit/IOKit/pwr_mgt/IOPMScheduler.cpp',
-            'iokit/IOKit/pwr_mgt/RootDomainUserClient.cpp',
-            'iokit/IOKit/storage/IOBlockStorageDevice.cpp',
-            'iokit/IOKit/storage/IOBlockStorageDriver.cpp',
-            'iokit/IOKit/storage/IOCDMedia.cpp',
-            'iokit/IOKit/storage/IOCDMediaBSDClient.cpp',
-            'iokit/IOKit/storage/IOCompactFlash.cpp',
-            'iokit/IOKit/storage/IOCoreStorage.cpp',
-            'iokit/IOKit/storage/IOCoreStorageAES.cpp',
-            'iokit/IOKit/storage/IOCoreStorageGroup.cpp',
-            'iokit/IOKit/storage/IOCoreStoragePhysical.cpp',
-            'iokit/IOKit/storage/IOCoreStorageUserClient.cpp',
-            'iokit/IOKit/storage/IODVDMedia.cpp',
-            'iokit/IOKit/storage/IODVDMediaBSDClient.cpp',
-            'iokit/IOKit/storage/IOFDMedia.cpp',
-            'iokit/IOKit/storage/IOFDMediaBSDClient.cpp',
-            'iokit/IOKit/storage/IOHDIXController.cpp',
-            'iokit/IOKit/storage/IOHDIXMedia.cpp',
-            'iokit/IOKit/storage/IOKernelMemoryDescriptor.cpp',
-            'iokit/IOKit/storage/IOMedia.cpp',
-            'iokit/IOKit/storage/IOMediaBSDClient.cpp',
-            'iokit/IOKit/storage/IOSCSIBlockCommandsDevice.cpp',
-            'iokit/IOKit/storage/IOSCSIDevice.cpp',
-            'iokit/IOKit/storage/IOSCSIMultimediaCommandsDevice.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType00.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType01.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType02.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType03.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType04.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType05.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType06.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType07.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType08.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType09.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType0A.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType0B.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType0C.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType0D.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType0E.cpp',
-            'iokit/IOKit/storage/IOSCSIPeripheralDeviceType0F.cpp',
-            'iokit/IOKit/storage/IOSCSIReducedBlockCommandsDevice.cpp',
-            'iokit/IOKit/storage/IOStorage.cpp',
-            'iokit/IOKit/storage/IOStorageController.cpp',
-            'iokit/IOKit/storage/IOStorageFamily.cpp',
-            'iokit/IOKit/storage/IOStorageRedundancyController.cpp',
-            'iokit/IOKit/usb/IOUSBController.cpp',
-            'iokit/IOKit/usb/IOUSBControllerV2.cpp',
-            'iokit/IOKit/usb/IOUSBControllerV3.cpp',
-            'iokit/IOKit/usb/IOUSBDevice.cpp',
-            'iokit/IOKit/usb/IOUSBEndpoint.cpp',
-            'iokit/IOKit/usb/IOUSBHostDevice.cpp',
-            'iokit/IOKit/usb/IOUSBHostEndpoint.cpp',
-            'iokit/IOKit/usb/IOUSBHostInterface.cpp',
-            'iokit/IOKit/usb/IOUSBHostPipe.cpp',
-            'iokit/IOKit/usb/IOUSBHostPipeLog.cpp',
-            'iokit/IOKit/usb/IOUSBInterface.cpp',
-            'iokit/IOKit/usb/IOUSBLog.cpp',
-            'iokit/IOKit/usb/IOUSBMassStorageClass.cpp',
-            'iokit/IOKit/usb/IOUSBMassStorageClassExtras.cpp',
-            'iokit/IOKit/usb/IOUSBPipe.cpp',
-            'iokit/IOKit/usb/IOUSBUserClient.cpp',
-            'iokit/IOKit/watchdog/IOWatchDogTimer.cpp',
-            # iokit/ root level
+            # iokit/ root level (essential)
             'iokit/IOKitServer.cpp',
-            'iokit/IOInterruptEventSource.cpp',
             'iokit/IOKitDiagnostics.cpp',
             'iokit/IOKitKeys.cpp',
             'iokit/IOLog.cpp',
+            'iokit/IOMemoryDescriptor.cpp',
             'iokit/IOMapper.cpp',
             'iokit/IOMapperEndpoint.cpp',
             'iokit/IOMapperMemoryDescriptor.cpp',
             'iokit/IOMapperSpec.cpp',
             'iokit/IOMapperSpecArray.cpp',
-            'iokit/IOMemoryDescriptor.cpp',
             'iokit/IOMPAccess.cpp',
             'iokit/IOMPContainer.cpp',
             'iokit/IOMPDevice.cpp',
             'iokit/IOMPSDevice.cpp',
             'iokit/IOMPT.cpp',
-            # IONetwork
-            'iokit/IONetwork/IO80211Interface.cpp',
-            'iokit/IONetwork/IO80211Peer.cpp',
-            'iokit/IONetwork/IO80211ScanManager.cpp',
-            'iokit/IONetwork/IO80211VirtualInterface.cpp',
-            'iokit/IONetwork/IOBluetoothDevice.cpp',
-            'iokit/IONetwork/IOBluetoothHCIController.cpp',
-            'iokit/IONetwork/IOBluetoothHCIControllerTransport.cpp',
-            'iokit/IONetwork/IOBluetoothHostControllerUSBTransport.cpp',
-            'iokit/IONetwork/IOBluetoothL2CAPChannel.cpp',
-            'iokit/IONetwork/IOBluetoothRFCOMMChannel.cpp',
-            'iokit/IONetwork/IOBluetoothSDPClient.cpp',
-            'iokit/IONetwork/IOBluetoothSDPServer.cpp',
-            'iokit/IONetwork/IOBluetoothService.cpp',
-            'iokit/IONetwork/IOBluetoothSDPSession.cpp',
-            'iokit/IONetwork/IOBluetoothSDPTransaction.cpp',
-            'iokit/IONetwork/IOBluetoothServiceRecord.cpp',
-            'iokit/IONetwork/IOBluetoothUtility.cpp',
-            'iokit/IONetwork/IOEthernetController.cpp',
-            'iokit/IONetwork/IOEthernetInterface.cpp',
-            'iokit/IONetwork/IONetworkController.cpp',
-            'iokit/IONetwork/IONetworkData.cpp',
-            'iokit/IONetwork/IONetworkInterface.cpp',
-            'iokit/IONetwork/IONetworkMedium.cpp',
-            'iokit/IONetwork/IONetworkStats.cpp',
-            'iokit/IONetwork/IONetworkUserClient.cpp',
-            'iokit/IONetwork/IOPacketFilter.cpp',
-            'iokit/IONetwork/IOPacketFilterMonitor.cpp',
-            'iokit/IONetwork/IOPacketFilterProvider.cpp',
-            'iokit/IONetwork/IOPacketFilterRule.cpp',
-            'iokit/IONetwork/IOPacketFilterRuleTable.cpp',
-            'iokit/IONetwork/IOPacketFilterRuleTable6.cpp',
-            'iokit/IONetwork/IOPacketFilterStats.cpp',
-            'iokit/IONetwork/IOPacketFilterUserClient.cpp',
-            'iokit/IONetwork/IOPacketFilterUserClient6.cpp',
-            'iokit/IONetwork/IOService.cpp',
-            'iokit/IONetwork/IOVirtualInterface.cpp',
-            # iokit/ root level (duplicates in original removed)
-            'iokit/IONetworkController.cpp',
-            'iokit/IONetworkData.cpp',
-            'iokit/IONetworkInterface.cpp',
-            'iokit/IONetworkMedium.cpp',
-            'iokit/IONetworkStats.cpp',
-            'iokit/IONetworkUserClient.cpp',
-            'iokit/IOPacketFilter.cpp',
-            'iokit/IOPacketFilterMonitor.cpp',
-            'iokit/IOPacketFilterProvider.cpp',
-            'iokit/IOPacketFilterRule.cpp',
-            'iokit/IOPacketFilterRuleTable.cpp',
-            'iokit/IOPacketFilterRuleTable6.cpp',
-            'iokit/IOPacketFilterStats.cpp',
-            'iokit/IOPacketFilterUserClient.cpp',
-            'iokit/IOPacketFilterUserClient6.cpp',
-            # PCI
-            'iokit/IOPCIDevice.cpp',
-            'iokit/IOPCIFunction.cpp',
-            'iokit/IOPCIMessage.cpp',
-            'iokit/IOPCIPrimaryMatch.cpp',
-            'iokit/IOPCIResource.cpp',
-            'iokit/IOPCITunnelCompatible.cpp',
-            # Platform
             'iokit/IOPlatformDevice.cpp',
             'iokit/IOPlatformExpert.cpp',
-            # Power management
             'iokit/IOPMPowerSource.cpp',
             'iokit/IOPMrootDomain.cpp',
             'iokit/IOPMScheduler.cpp',
-            # Other
             'iokit/IOPoller.cpp',
             'iokit/IOPolicy.cpp',
             'iokit/IOReport.cpp',
@@ -383,12 +226,10 @@ COMPONENTS = {
             'iokit/IOServiceOrdering.cpp',
             'iokit/IOSharedDataQueue.cpp',
             'iokit/IOSharedDataQueueClient.cpp',
-            # Storage
             'iokit/IOStorage.cpp',
             'iokit/IOStorageController.cpp',
             'iokit/IOStorageFamily.cpp',
             'iokit/IOStorageRedundancyController.cpp',
-            # Stream
             'iokit/IOStream.cpp',
             'iokit/IOStreamUserClient.cpp',
             'iokit/IOStreamUserClientInterface.cpp',
@@ -396,41 +237,19 @@ COMPONENTS = {
             'iokit/IOTime.cpp',
             'iokit/IOTimeStamp.cpp',
             'iokit/IOTransfer.cpp',
-            # UserClient
             'iokit/IOUserClient.cpp',
             'iokit/IOUserClientClass.cpp',
             'iokit/IOUserClientMethod.cpp',
             'iokit/IOUserClientNotification.cpp',
             'iokit/IOUserClientProperty.cpp',
-            'iokit/IOUserClientRegistry.cpp',
-            'iokit/IOUserClientService.cpp',
-            'iokit/IOUserClientTask.cpp',
-            'iokit/IOUserClientThread.cpp',
-            # WorkLoop
             'iokit/IOWorkLoop.cpp',
             'iokit/IOWorkQueue.cpp',
-            # RootDomainUserClient
-            'iokit/RootDomainUserClient.cpp',
-            # IOBluetooth (separate from IONetwork)
-            'iokit/IOBluetooth/IOBluetoothDevice.cpp',
-            'iokit/IOBluetooth/IOBluetoothHCIController.cpp',
-            'iokit/IOBluetooth/IOBluetoothHCIControllerTransport.cpp',
-            'iokit/IOBluetooth/IOBluetoothHostControllerUSBTransport.cpp',
-            'iokit/IOBluetooth/IOBluetoothL2CAPChannel.cpp',
-            'iokit/IOBluetooth/IOBluetoothRFCOMMChannel.cpp',
-            'iokit/IOBluetooth/IOBluetoothSDPClient.cpp',
-            'iokit/IOBluetooth/IOBluetoothSDPServer.cpp',
-            'iokit/IOBluetooth/IOBluetoothService.cpp',
-            'iokit/IOBluetooth/IOBluetoothSDPSession.cpp',
-            'iokit/IOBluetooth/IOBluetoothSDPTransaction.cpp',
-            'iokit/IOBluetooth/IOBluetoothServiceRecord.cpp',
-            'iokit/IOBluetooth/IOBluetoothUtility.cpp',
         ]
     },
     'osfmk': {
         'config_dir': 'osfmk/conf',
         'source_files': [
-            # kern
+            # kern (essential)
             'osfmk/kern/kern_clock.c',
             'osfmk/kern/kern_descrip.c',
             'osfmk/kern/kern_env.c',
@@ -500,37 +319,19 @@ COMPONENTS = {
             'osfmk/kern/subr_witness.c',
             'osfmk/kern/sys_generic.c',
             'osfmk/kern/sys_process.c',
-            # vfs
-            'osfmk/kern/vfs_acl.c',
-            'osfmk/kern/vfs_aio.c',
-            'osfmk/kern/vfs_bio.c',
-            'osfmk/kern/vfs_cache.c',
-            'osfmk/kern/vfs_default.c',
-            'osfmk/kern/vfs_export.c',
-            'osfmk/kern/vfs_hash.c',
-            'osfmk/kern/vfs_init.c',
-            'osfmk/kern/vfs_lockf.c',
-            'osfmk/kern/vfs_lookup.c',
-            'osfmk/kern/vfs_mount.c',
-            'osfmk/kern/vfs_mountroot.c',
-            'osfmk/kern/vfs_subr.c',
-            # locks
+            # locks (essential for lck_mtx, lck_rw, lck_spin symbols)
             'osfmk/kern/lock.c',
             'osfmk/kern/lock_mtx.c',
             'osfmk/kern/lock_rw.c',
             'osfmk/kern/lock_spin.c',
-            # vm
+            # vm (essential for vm_* symbols)
             'osfmk/vm/vm_map.c',
             'osfmk/vm/vm_page.c',
             'osfmk/vm/vm_pageout.c',
             'osfmk/vm/vm_object.c',
             'osfmk/vm/vm_kern.c',
-            'osfmk/vm/vm_user.c',
             'osfmk/vm/vm_fault.c',
-            'osfmk/vm/vm_resident.c',
-            'osfmk/vm/vm_compressor.c',
-            'osfmk/vm/vm_pageout_scan.c',
-            # ipc
+            # ipc (essential for task/port symbols)
             'osfmk/kern/ipc_kobject.c',
             'osfmk/kern/ipc_mqueue.c',
             'osfmk/kern/ipc_port.c',
@@ -541,42 +342,21 @@ COMPONENTS = {
             'osfmk/kern/ipc_kmsg.c',
             'osfmk/kern/ipc_notify.c',
             'osfmk/kern/ipc_right.c',
-            # task
+            # task/thread (essential for task/port symbols)
             'osfmk/kern/task.c',
             'osfmk/kern/thread.c',
             'osfmk/kern/sched_prim.c',
-            'osfmk/kern/sched.c',
             'osfmk/kern/turnstile.c',
-            'osfmk/kern/sync_lock.c',
-            'osfmk/kern/sync_rwlock.c',
-            'osfmk/kern/sync_mtx.c',
-            'osfmk/kern/sync_sema.c',
-            'osfmk/kern/sync_thread.c',
-            # clock
+            # clock/timer
             'osfmk/kern/clock.c',
             'osfmk/kern/clock_prim.c',
-            # timer
             'osfmk/kern/timer.c',
-            # host
+            # host/processor
             'osfmk/kern/host.c',
             'osfmk/kern/host_priv.c',
             'osfmk/kern/processor.c',
             'osfmk/kern/processor_set.c',
-            'osfmk/kern/processor_info.c',
             'osfmk/kern/ledger.c',
-            'osfmk/kern/coalition.c',
-            'osfmk/kern/pset.c',
-            'osfmk/kern/act.c',
-            'osfmk/kern/act_policy.c',
-            'osfmk/kern/thread_act.c',
-            'osfmk/kern/mach_time.c',
-            'osfmk/kern/mach_timer.c',
-            'osfmk/kern/mach_voucher.c',
-            'osfmk/kern/voucher.c',
-            'osfmk/kern/voucher_attr.c',
-            'osfmk/kern/voucher_mach.c',
-            'osfmk/kern/voucher_mach_port.c',
-            'osfmk/kern/queue.c',
         ]
     },
     'pexpert': {
@@ -656,11 +436,9 @@ COMPONENTS = {
             'libkern/vm/vm_page.c',
             'libkern/vm/vm_pageout.c',
             'libkern/zalloc.c',
-            # crypto
+            # crypto (for SHA1 symbols)
             'libkern/crypto/sha1.c',
             'libkern/crypto/sha2.c',
-            'libkern/crypto/md5.c',
-            'libkern/crypto/hmac.c',
             # ARM64 assembly
             'libkern/arm64/atomic.s',
             'libkern/arm64/libkern.s',
@@ -741,20 +519,13 @@ def extract_vpath_dirs(source_files):
     """Extract unique directories from source file paths for VPATH."""
     dirs = set()
     for src in source_files:
-        # Get directory part (everything before last /)
         if '/' in src:
             dir_part = src.rsplit('/', 1)[0]
-            # Only add if it's not the component root (e.g., "iokit" vs "iokit/IOKit")
-            # We need the parent directory of the source file
             dirs.add(dir_part)
-    # Sort for deterministic output
     return sorted(dirs)
 
 def generate_vpath(component_name, vpath_dirs):
     """Generate VPATH Makefile variable."""
-    # VPATH entries are relative to $(SOURCE)/.. which is xnu-source/
-    # Source files are listed as e.g. "iokit/IOKit/IOService.cpp"
-    # So we need $(SOURCE)/../iokit/IOKit etc.
     entries = []
     for d in vpath_dirs:
         entries.append(f"$(SOURCE)/../{d}")
@@ -765,7 +536,6 @@ def generate_objs(source_files):
     objs = []
     seen = set()
     for src in source_files:
-        # Get basename without extension
         base = os.path.basename(src)
         obj = base.rsplit('.', 1)[0] + '.o'
         if obj not in seen:
@@ -799,19 +569,16 @@ def format_list(items, indent="\t"):
             lines.append(f"{indent}{item} \\")
     return "\n".join(lines)
 
-def generate_makefile_content(component_name, source_files, srcroot=None):
+def generate_makefile_content(component_name, source_files):
     """Generate the complete Makefile content."""
     vpath_dirs = extract_vpath_dirs(source_files)
     vpath = generate_vpath(component_name, vpath_dirs)
     objs = generate_objs(source_files)
     cfiles, cxxfiles, sfiles = split_source_files(source_files)
-    
-    # CFILES, CXXFILES, SFILES should use the same paths as in config
-    # (relative to xnu-source root)
-    
+
     # Hardcode the CI source root path for reliability
     srcroot_path = '/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source'
-    
+
     makefile = f"""#
 # This Makefile was generated by config
 #
@@ -819,7 +586,7 @@ def generate_makefile_content(component_name, source_files, srcroot=None):
 #
 
 # SRCROOT is the absolute path to the XNU source root (hardcoded for CI)
-SRCROOT := /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
+SRCROOT := {srcroot_path}
 export SRCROOT
 
 # makedefs is at $(SRCROOT)/makedefs
@@ -861,6 +628,7 @@ COMP_SUBDIRS =
 #  time.
 #
 .PRECIOUS: Makefile
+
 
 #
 #  Theses macros are filled in by the config program depending on the
@@ -939,10 +707,10 @@ def write_component(component_name, info, dry_run=False):
     """Write config and Makefile for a component."""
     config_dir = info['config_dir']
     source_files = info['source_files']
-    
+
     config_content = generate_config_content(component_name, source_files)
     makefile_content = generate_makefile_content(component_name, source_files)
-    
+
     if dry_run:
         print(f"=== {component_name} ===")
         print(f"Config dir: {config_dir}")
@@ -953,14 +721,14 @@ def write_component(component_name, info, dry_run=False):
         print(f"C: {len(cfiles)}, C++: {len(cxxfiles)}, S: {len(sfiles)}")
         print()
         return
-    
+
     # Write config file
     os.makedirs(config_dir, exist_ok=True)
     config_path = os.path.join(config_dir, 'DEVELOPMENT')
     with open(config_path, 'w') as f:
         f.write(config_content)
     print(f"Created {config_path}")
-    
+
     # Write Makefile.valid
     makefile_path = os.path.join(config_dir, 'Makefile.valid')
     with open(makefile_path, 'w') as f:
@@ -973,7 +741,7 @@ def main():
         for name, info in COMPONENTS.items():
             write_component(name, info, dry_run=True)
         return
-    
+
     # Write all components
     for name, info in COMPONENTS.items():
         print(f"\n=== Processing {name} ===")

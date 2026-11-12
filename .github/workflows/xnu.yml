@@ -187,19 +187,6 @@ jobs:
             exit 1
           fi
         done
-    - name: Fix makedefs path in Makefiles
-      run: 'echo "=== Fixing /makedefs paths in Makefiles ==="
-
-        cd xnu-source
-
-        python3 ../xnu/fix_makedefs.py .
-
-        # Verify the changes
-
-        grep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak"
-        | head -5 || echo "No more /makedefs references found"
-
-        '
     - name: Replace all component conf Makefiles with generated versions
       run: |
         cd xnu-source
@@ -217,6 +204,19 @@ jobs:
           head -20 "$comp/conf/Makefile"
           echo "---"
         done
+    - name: Fix makedefs path in Makefiles
+      run: 'echo "=== Fixing /makedefs paths in Makefiles ==="
+
+        cd xnu-source
+
+        python3 ../xnu/fix_makedefs.py .
+
+        # Verify the changes
+
+        grep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak"
+        | head -5 || echo "No more /makedefs references found"
+
+        '
     - name: Force patch proc_reg.h for M30LTE
       run: "cd xnu-source\necho \"=== Force patching proc_reg.h for M30LTE ===\"\n\
         if ! grep -q \"M30LTE\" osfmk/arm64/proc_reg.h; then\n  echo \"M30LTE not\
