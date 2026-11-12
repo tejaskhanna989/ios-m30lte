@@ -208,6 +208,8 @@ jobs:
       run: "cd xnu-source\necho \"=== Creating manual osfmk/conf config to bypass doconf ===\"\nif [ -f osfmk/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_osfmk_conf_manual_config.py\nelse\n  echo \"osfmk/conf/Makefile not found, skipping fix\"\nfi\n"
     - name: Create manual pexpert/conf config to bypass doconf
       run: "cd xnu-source\necho \"=== Creating manual pexpert/conf config to bypass doconf ===\"\nif [ -f pexpert/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_pexpert_conf_manual_config.py\nelse\n  echo \"pexpert/conf/Makefile not found, skipping fix\"\nfi\n"
+    - name: Create manual libkern/conf config to bypass doconf
+      run: "cd xnu-source\necho \"=== Creating manual libkern/conf config to bypass doconf ===\"\nif [ -f libkern/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_libkern_conf_manual_config.py\nelse\n  echo \"libkern/conf/Makefile not found, skipping fix\"\nfi\n"
     - name: Remove doconf rules from iokit/conf Makefile
       run: |
         cd xnu-source
