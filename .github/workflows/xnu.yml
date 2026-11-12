@@ -1,6 +1,7 @@
 name: XNU Kernel Build for M30LTE
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
