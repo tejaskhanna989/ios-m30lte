@@ -121,13 +121,48 @@ jobs:
     - name: Apply M30LTE patches
       run: "cd xnu-source\nfor patch in ../xnu/patches/00*.patch; do\n  name=$(basename \"$patch\")\n  echo \"Applying: $name\"\n  patch -p1 --no-backup-if-mismatch < \"$patch\" 2>&1 || true\ndone\nls -la pexpert/pexpert/arm64/M30LTE.h 2>&1 || echo \"M30LTE.h NOT FOUND - creating from patch\"\ncat ../xnu/patches/0000-m30lte-machine-config.patch | grep -A 50 \"M30LTE.h\" | head -60 || true\n"
     - name: Fix MASTER.arm64.m30lte config
-      run: "cd xnu-source\necho \"=== Fixing MASTER.arm64.m30lte config ===\"\nif [ -f config/MASTER.arm64.m30lte ]; then\n  python3 ../xnu/patches/fix_master_m30lte.py\n  echo \"=== MASTER.arm64.m30lte after fix ===\"\n  cat config/MASTER.arm64.m30lte\nelse\n  echo \"MASTER.arm64.m30lte not found, skipping fix\"\nfi\n"
+      run: |
+        cd xnu-source
+        echo "=== Fixing MASTER.arm64.m30lte config ==="
+        if [ -f config/MASTER.arm64.m30lte ]; then
+          python3 ../xnu/patches/fix_master_m30lte.py
+          echo "=== MASTER.arm64.m30lte after fix ==="
+          cat config/MASTER.arm64.m30lte
+        else
+          echo "MASTER.arm64.m30lte not found, skipping fix"
+        fi
     - name: Fix makedefs path in Makefiles
-      run: 'cd xnu-source\n\necho "=== Fixing /makedefs paths in Makefiles ==="\npython3 ../xnu/fix_makedefs.py .\ngrep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found"\n'
+      run: |
+        cd xnu-source
+        echo "=== Fixing /makedefs paths in Makefiles ==="
+        python3 ../xnu/fix_makedefs.py .
+        grep -r "/makedefs" . --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found"
     - name: Patch security/Makefile for kernel source includes
-      run: 'cd xnu-source\n\necho "=== Patching security/Makefile for kernel source includes ==="\npython3 ../xnu/patches/patch_security_makefile.py\necho "Patched successfully"\n'
+      run: |
+        cd xnu-source
+        echo "=== Patching security/Makefile for kernel source includes ==="
+        python3 ../xnu/patches/patch_security_makefile.py
+        echo "Patched successfully"
     - name: Bypass conf subdirectories and create build files
-      run: "cd xnu-source\necho \"=== Bypassing conf subdirectories ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  if [ -f $comp/Makefile ]; then\n    sed -i 's/^COMP_SUBDIRS.*/COMP_SUBDIRS =/' $comp/Makefile\n    echo \"Patched COMP_SUBDIRS in $comp/Makefile\"\n  fi\ndone\necho \"=== Creating empty .filelist files ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\n  echo \"Created $comp.filelist\"\ndone\necho \"=== Copying export files to build config directory ===\"\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\ntouch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp\necho \"Created all export files\"\n"
+      run: |
+        cd xnu-source
+        echo "=== Bypassing conf subdirectories ==="
+        for comp in security bsd osfmk libkern iokit pexpert libsa san security; do
+          if [ -f $comp/Makefile ]; then
+            sed -i 's/^COMP_SUBDIRS.*/COMP_SUBDIRS =/' $comp/Makefile
+            echo "Patched COMP_SUBDIRS in $comp/Makefile"
+          fi
+        done
+        echo "=== Creating empty .filelist files ==="
+        for comp in security bsd osfmk libkern iokit pexpert libsa san security; do
+          mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT
+          touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist
+          echo "Created $comp.filelist"
+        done
+        echo "=== Copying export files to build config directory ==="
+        cp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true
+        touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp
+        echo "Created all export files"
     - name: Copy export files to each component's DEVELOPMENT directory
       run: |
         cd xnu-source
