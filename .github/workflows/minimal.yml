@@ -1,0 +1,16 @@
+name: Minimal Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Test Step 1
+      run: echo "Test Step 1"
+    - name: Test Step 2
+      run: echo "Test Step 2"
+    - name: Test Step 3
+      run: echo "Test Step 3"
