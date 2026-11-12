@@ -173,20 +173,20 @@ jobs:
       run: "cd xnu-source\necho \"=== Fixing MASTER.arm64.m30lte config ===\"\nif [ -f config/MASTER.arm64.m30lte ]; then\n  python3 ../xnu/patches/fix_master_m30lte.py\n  echo \"=== MASTER.arm64.m30lte after fix ===\"\n  cat config/MASTER.arm64.m30lte\nelse\n  echo \"MASTER.arm64.m30lte not found, skipping fix\"\nfi\n"
     - name: Create bsd/conf/files.m30lte for M30LTE
       run: "cd xnu-source\necho \"=== Creating bsd/conf/files.m30lte for M30LTE ===\"\npython3 ../xnu/patches/create_bsd_files_m30lte.py\nls -la bsd/conf/files.m30lte\n"
-    - name: Create manual bsd/conf config to bypass doconf
+    - name: Create manual configs for all components to bypass doconf
       run: |
         cd xnu-source
-        echo "=== Creating manual bsd/conf config to bypass doconf ==="
-        python3 ../xnu/patches/patch_bsd_conf_manual_config.py
-        # Use sed to completely remove the doconf rule and keep only the Makefile.valid rule
-        # First, remove the doconf command line
-        sed -i '' '/\$(_v)\$(SRCROOT)\/SETUP\/config\/doconf -c -cpu \$(DOCONF_ARCH_CONFIG_LC) -soc \$(CURRENT_MACHINE_CONFIG_LC) -platform \$(PLATFORM) -d \$(TARGET)\/\$(CURRENT_KERNEL_CONFIG) -s \$(SOURCE) -m \$(MASTERCONFDIR) \$(DOCONF_SEED) \$(CURRENT_KERNEL_CONFIG)/d' bsd/conf/Makefile
-        # Remove the doconf dependency line
-        sed -i '' '/\$(TARGET)\/\$(CURRENT_KERNEL_CONFIG)\/Makefile: \$(SRCROOT)\/SETUP\/config\/doconf \$(OBJROOT)\/SETUP\/config \$(DOCONFDEPS)/d' bsd/conf/Makefile
-        # Remove the MKDIR line for doconf
-        sed -i '' '/\$(_v)\$(MKDIR) \$(TARGET)\/\$(CURRENT_KERNEL_CONFIG)/d' bsd/conf/Makefile
-        echo "Removed doconf rules from bsd/conf/Makefile"
-        grep -A 3 "Makefile.valid" bsd/conf/Makefile || echo "Pattern not found"
+        echo "=== Generating manual configs for all components ==="
+        python3 ../xnu/patches/generate_manual_config.py
+        # Verify all configs created
+        for comp in bsd iokit osfmk pexpert libkern libsa san security; do
+          if [ -f "$comp/conf/DEVELOPMENT" ] && [ -f "$comp/conf/Makefile.valid" ]; then
+            echo "OK: $comp/conf"
+          else
+            echo "ERROR: $comp/conf missing files"
+            exit 1
+          fi
+        done
     - name: Fix makedefs path in Makefiles
       run: 'echo "=== Fixing /makedefs paths in Makefiles ==="
 
@@ -200,20 +200,6 @@ jobs:
         | head -5 || echo "No more /makedefs references found"
 
         '
-    - name: Create manual security/conf config to bypass doconf
-      run: "cd xnu-source\necho \"=== Creating manual security/conf config ===\"\nif [ -f security/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_security_conf_manual_config.py\nelse\n  echo \"security/conf/Makefile not found, skipping fix\"\nfi\n"
-    - name: Create manual iokit/conf config to bypass doconf
-      run: "cd xnu-source\necho \"=== Creating manual iokit/conf config to bypass doconf ===\"\nif [ -f iokit/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_iokit_conf_manual_config.py\nelse\n  echo \"iokit/conf/Makefile not found, skipping fix\"\nfi\n"
-    - name: Create manual osfmk/conf config to bypass doconf
-      run: "cd xnu-source\necho \"=== Creating manual osfmk/conf config to bypass doconf ===\"\nif [ -f osfmk/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_osfmk_conf_manual_config.py\nelse\n  echo \"osfmk/conf/Makefile not found, skipping fix\"\nfi\n"
-    - name: Create manual pexpert/conf config to bypass doconf
-      run: "cd xnu-source\necho \"=== Creating manual pexpert/conf config to bypass doconf ===\"\nif [ -f pexpert/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_pexpert_conf_manual_config.py\nelse\n  echo \"pexpert/conf/Makefile not found, skipping fix\"\nfi\n"
-    - name: Create manual libkern/conf config to bypass doconf
-      run: "cd xnu-source\necho \"=== Creating manual libkern/conf config to bypass doconf ===\"\nif [ -f libkern/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_libkern_conf_manual_config.py\nelse\n  echo \"libkern/conf/Makefile not found, skipping fix\"\nfi\n"
-    - name: Create manual libsa/conf config to bypass doconf
-      run: "cd xnu-source\necho \"=== Creating manual libsa/conf config to bypass doconf ===\"\nif [ -f libsa/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_libsa_conf_manual_config.py\nelse\n  echo \"libsa/conf/Makefile not found, skipping fix\"\nfi\n"
-    - name: Create manual san/conf config to bypass doconf
-      run: "cd xnu-source\necho \"=== Creating manual san/conf config to bypass doconf ===\"\nif [ -f san/conf/Makefile ]; then\n  python3 ../xnu/patches/patch_san_conf_manual_config.py\nelse\n  echo \"san/conf/Makefile not found, skipping fix\"\nfi\n"
     - name: Remove doconf rules from iokit/conf Makefile
       run: |
         cd xnu-source
