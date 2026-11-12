@@ -264,9 +264,9 @@ jobs:
         python3 ../xnu/patches/patch_security_makefile.py
 
         echo "Patched successfully"'
-    - name: Create all export files and filelists for kernel build
-      run: "cd xnu-source\necho \"=== Creating all export files and filelists ===\"\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\n  echo \"Created $comp.filelist\"\ndone\n# Create empty all-kpi.exp\ntouch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp\necho \"Created all-kpi.exp\"\n"
-    - name: Patch libkern/os/atomic_private_impl.h for memory_order
+    - name: Bypass conf subdirectories and create build files
+      run: "cd xnu-source\necho \"=== Bypassing conf subdirectories ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  if [ -f $comp/Makefile ]; then\n    sed -i '' 's/^COMP_SUBDIRS.*/COMP_SUBDIRS =/' $comp/Makefile\n    echo \"Patched COMP_SUBDIRS in $comp/Makefile\"\n  fi\ndone\necho \"=== Creating empty .filelist files ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\n  echo \"Created $comp.filelist\"\ndone\necho \"=== Copying export files to build config directory ===\"\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\ntouch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp\necho \"Created all export files\"
+"\n    - name: Patch libkern/os/atomic_private_impl.h for memory_order
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
       run: 'cd xnu-source
 
