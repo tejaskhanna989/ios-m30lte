@@ -635,6 +635,14 @@ jobs:
             head -25 "$comp/conf/Makefile"
           fi
         done
+    - name: Debug generated Makefile OBJS
+      run: |
+        cd xnu-source
+        echo "=== Debug: Generated Makefile OBJS ==="
+        for comp in bsd iokit osfmk pexpert libkern libsa san security; do
+          echo "--- $comp/conf/Makefile OBJS ---"
+          grep -A 100 "^OBJS" "$comp/conf/Makefile" | head -120
+        done
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\n\
