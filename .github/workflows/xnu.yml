@@ -122,7 +122,15 @@ jobs:
       run: |
         cd xnu-source && MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-bearssl.sh || true
     - name: Apply M30LTE patches
-      run: "cd xnu-source\nfor patch in ../xnu/patches/00*.patch; do\n  name=$(basename \"$patch\")\n  echo \"Applying: $name\"\n  patch -p1 --no-backup-if-mismatch < \"$patch\" 2>&1 || true\ndone\nls -la pexpert/pexpert/arm64/M30LTE.h 2>&1 || echo \"M30LTE.h NOT FOUND - creating from patch\"\ncat ../xnu/patches/0000-m30lte-machine-config.patch | grep -A 50 \"M30LTE.h\" | head -60 || true\n"
+      run: |
+        cd xnu-source
+        for patch in ../xnu/patches/00*.patch; do
+          name=$(basename "$patch")
+          echo "Applying: $name"
+          patch -p1 --no-backup-if-mismatch < "$patch" 2>&1 || true
+        done
+        ls -la pexpert/pexpert/arm64/M30LTE.h 2>&1 || echo "M30LTE.h NOT FOUND - creating from patch"
+        cat ../xnu/patches/0000-m30lte-machine-config.patch | grep -A 50 "M30LTE.h" | head -60 || true
     - name: Fix MASTER.arm64.m30lte config
       run: |
         cd xnu-source
