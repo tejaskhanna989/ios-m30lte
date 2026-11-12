@@ -42,7 +42,6 @@ sys/kern/kern_rwlock.c
 sys/kern/kern_sched.c
 sys/kern/kern_sig.c
 sys/kern/kern_subr.c
-sys/kern/kern_synch.c
 sys/kern/kern_syscall.c
 sys/kern/kern_sysctl.c
 sys/kern/kern_thread.c
@@ -328,31 +327,31 @@ CFILES = \\
 	subr_power.c \\
 	subr_prf.c \\
 	subr_prof.c \\
-	subr_rman.c \\
-	subr_sbuf.c \\
-	subr_sdt.c \\
-	subr_sleepqueue.c \\
-	subr_smp.c \\
-	subr_turnstile.c \\
-	subr_unit.c \\
-	subr_witness.c \\
-	sys_generic.c \\
-	sys_process.c \\
-	vfs_acl.c \\
-	vfs_aio.c \\
-	vfs_bio.c \\
-	vfs_cache.c \\
-	vfs_default.c \\
-	vfs_export.c \\
-	vfs_hash.c \\
-	vfs_init.c \\
-	vfs_lockf.c \\
-	vfs_lookup.c \\
-	vfs_mount.c \\
-	vfs_mountroot.c \\
-	vfs_subr.c \\
-	vfs_syscalls.c \\
-	vfs_vnops.c \\
+	subr_rman.o \\
+	subr_sbuf.o \\
+	subr_sdt.o \\
+	subr_sleepqueue.o \\
+	subr_smp.o \\
+	subr_turnstile.o \\
+	subr_unit.o \\
+	subr_witness.o \\
+	sys_generic.o \\
+	sys_process.o \\
+	vfs_acl.o \\
+	vfs_aio.o \\
+	vfs_bio.o \\
+	vfs_cache.o \\
+	vfs_default.o \\
+	vfs_export.o \\
+	vfs_hash.o \\
+	vfs_init.o \\
+	vfs_lockf.o \\
+	vfs_lookup.o \\
+	vfs_mount.o \\
+	vfs_mountroot.o \\
+	vfs_subr.o \\
+	vfs_syscalls.o \\
+	vfs_vnops.o \\
 	arm64/arm64/arm64_mem.c \\
 	arm64/arm64/atc.c \\
 	arm64/arm64/machdep.c \\
@@ -614,28 +613,42 @@ print("Created bsd/conf/Makefile.valid")
 with open('bsd/conf/Makefile', 'r') as f:
     content = f.read()
 
-# Replace the doconf rule with a copy of the valid Makefile
-old_rule = '''$(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile: $(SRCROOT)/SETUP/config/doconf $(OBJROOT)/SETUP/config $(DOCONFDEPS)
-	$(_v)$(MKDIR) $(TARGET)/$(CURRENT_KERNEL_CONFIG)
-	$(_v)$(SRCROOT)/SETUP/config/doconf -c -cpu $(DOCONF_ARCH_CONFIG_LC) -soc $(CURRENT_MACHINE_CONFIG_LC) -platform $(PLATFORM) -d $(TARGET)/$(CURRENT_KERNEL_CONFIG) -s $(SOURCE) -m $(MASTERCONFDIR) $(DOCONF_SEEF) $(CURRENT_KERNEL_CONFIG)'''
+# Find and replace the doconf rule - use a more flexible pattern
+import re
+
+# Pattern to match the doconf rule
+old_rule_pattern = r'\$\(TARGET\)/\$\(CURRENT_KERNEL_CONFIG\)/Makefile: \$\(SRCROOT\)/SETUP/config/doconf \$\(OBJROOT\)/SETUP/config \$\(DOCONFDEPS\)\n\t\$\(_v\)\$\(MKDIR\) \$\(TARGET\)/\$\(CURRENT_KERNEL_CONFIG\)\n\t\$\(_v\)\$\(SRCROOT\)/SETUP/config/doconf -c -cpu \$\(DOCONF_ARCH_CONFIG_LC\) -soc \$\(CURRENT_MACHINE_CONFIG_LC\) -platform \$\(PLATFORM\) -d \$\(TARGET\)/\$\(CURRENT_KERNEL_CONFIG\) -s \$\(SOURCE\) -m \$\(MASTERCONFDIR\) \$\(DOCONF_SEEF\) \$\(CURRENT_KERNEL_CONFIG\)'
 
 new_rule = '''$(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile: $(SOURCE)/Makefile.valid $(SOURCE)/$(CURRENT_KERNEL_CONFIG)
 	$(_v)$(MKDIR) $(TARGET)/$(CURRENT_KERNEL_CONFIG)
 	$(_v)$(CP) $(SOURCE)/Makefile.valid $(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile'''
 
-if old_rule not in content:
-    print("WARNING: Could not find doconf rule to replace in bsd/conf/Makefile")
-    print("Searching for doconf...")
-    import re
-    matches = list(re.finditer(r'doconf', content))
-    for m in matches[:5]:
-        start = max(0, m.start()-200)
-        end = min(len(content), m.end()+200)
-        print(f"Found at {m.start()}: ...{content[start:end]}...")
-else:
-    content = content.replace(old_rule, new_rule)
-    with open('bsd/conf/Makefile', 'w') as f:
-        f.write(content)
-    print("Patched bsd/conf/Makefile to use hand-crafted valid Makefile")
+# Use regex to replace
+new_content = re.sub(old_rule_pattern, new_rule, content, flags=re.MULTILINE)
+
+if new_content == content:
+    print("WARNING: Regex didn't match, trying alternative pattern...")
+    # Try a simpler approach - find the line with doconf and replace the whole rule
+    lines = content.split('\n')
+    new_lines = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if '$(SRCROOT)/SETUP/config/doconf' in line and '$(OBJROOT)/SETUP/config' in line:
+            # Found the dependency line, now skip to the end of the rule
+            new_lines.append('$(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile: $(SOURCE)/Makefile.valid $(SOURCE)/$(CURRENT_KERNEL_CONFIG)')
+            new_lines.append('\t$(_v)$(MKDIR) $(TARGET)/$(CURRENT_KERNEL_CONFIG)')
+            new_lines.append('\t$(_v)$(CP) $(SOURCE)/Makefile.valid $(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile')
+            # Skip the next line (the doconf command)
+            i += 1
+            print("Found and replaced doconf rule!")
+            continue
+        new_lines.append(line)
+        i += 1
+    new_content = '\n'.join(new_lines)
+
+with open('bsd/conf/Makefile', 'w') as f:
+    f.write(new_content)
+print("Patched bsd/conf/Makefile to use hand-crafted valid Makefile")
 
 print("Done")
