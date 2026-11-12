@@ -690,7 +690,7 @@ def generate_makefile_content(component_name, source_files):
 # SRCROOT should be /path/to/xnu-source
 ifndef SRCROOT
   ifdef SOURCE
-    SRCROOT := $(shell dirname $(shell dirname $(shell dirname $(SOURCE))))
+    SRCROOT := $(shell dirname $(shell dirname $(SOURCE)))
   else
     SRCROOT := $(shell printenv SRCROOT 2>/dev/null)
   endif
