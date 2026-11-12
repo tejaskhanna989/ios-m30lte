@@ -177,7 +177,6 @@ jobs:
       run: |
         cd xnu-source
         echo "=== Generating manual configs for all components ==="
-        export SRCROOT="$PWD"
         python3 ../xnu/patches/generate_manual_config.py
         # Verify all configs created
         for comp in bsd iokit osfmk pexpert libkern libsa san security; do
