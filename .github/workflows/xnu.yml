@@ -8,8 +8,6 @@ jobs:
     runs-on: macos-26
     steps:
     - uses: actions/checkout@v4
-    - name: Test Step
-      run: echo "Test Step"
     - name: Create installfile replacement
       run: |
         echo "=== Creating installfile replacement ==="
