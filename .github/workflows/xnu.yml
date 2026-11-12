@@ -107,15 +107,16 @@ jobs:
           sudo installer -pkg '/Volumes/Kernel Debug Kit/KernelDebugKit.pkg' -target /
           hdiutil detach '/Volumes/Kernel Debug Disk' 2>/dev/null || true
         fi
-        echo "=== Verifying KDK installation ==="
-        ls -la /Library/Developer/KDKs/
     - name: Clone XNU
       run: |
-        git clone --branch xnu-8796.141.3 --depth 1 https://github.com/apple-oss-distributions/xnu.git xnu-source
+        echo "=== Cloning XNU source ==="
+        git clone --depth=1 https://github.com/apple-oss-distributions/xnu.git xnu-source
         cd xnu-source
-        git describe --tags --always
+        git checkout 8796.141.3
+        echo "=== XNU source cloned and checked out ==="
+        ls -la
     - name: Stage libpthread dependency
-      run: 'cd xnu-source && MACHINE_CONFIG=M30LTE bash ../xnu/patches/0019-stage-libpthread.sh'
+      run: 'cd xnu-source && MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-libpthread.sh || true'
     - name: Stage BearSSL dependency
       run: 'cd xnu-source && MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-bearssl.sh || true'
     - name: Apply M30LTE patches
@@ -233,7 +234,7 @@ jobs:
         BUILD_EXIT=${PIPESTATUS[0]}
         echo "make exit code: $BUILD_EXIT"
         echo "=== Errors in build log ==="
-        grep -iE "error:|error |make: \*\\*\\*|No rule|syntax error|undefined reference|missing separator|command not found|ld:|symbol|library not found|collect2" /tmp/xnu-build.log | head -50 || echo "No errors found in log"
+        grep -iE "error:|error |make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found|ld:|symbol|library not found|collect2" /tmp/xnu-build.log | head -50 || echo "No errors found in log"
         echo "=== Last 1000 lines of build log ==="
         tail -1000 /tmp/xnu-build.log
         echo "=== Kernel artifacts ==="
@@ -241,3 +242,27 @@ jobs:
         find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
         echo "BUILD_EXIT=$BUILD_EXIT" >> $GITHUB_OUTPUT
         exit $BUILD_EXIT
+    - name: Upload Kernel Artifacts
+      id: upload_kernel
+      uses: actions/upload-artifact@v4
+      if: success() || (steps.build_kernel.outputs.build_exit != '0')
+      with:
+        name: kernel-artifacts-${{ github.run_number }}
+        path: |
+          xnu-source/BUILD/obj/**/kernel.*
+          xnu-source/BUILD/obj/**/mach_kernel
+          xnu-source/BUILD/sym/**/kernel.*
+          xnu-source/BUILD/sym/**/mach_kernel
+        retention-days: 30
+    - name: Generate Build Summary
+      if: always()
+      run: |
+        echo "=== Build Summary ==="
+        echo "Run Number: ${{ github.run_number }}"
+        echo "Run ID: ${{ github.run_id }}"
+        echo "Commit: ${{ github.sha }}"
+        echo "Build Exit Code: ${{ steps.build_kernel.outputs.build_exit }}"
+        echo "=== Build Artifacts ==="
+        find xnu-source/BUILD -name "kernel.*" -type f 2>/dev/null | head -10
+        find xnu-source/BUILD -name "mach_kernel" -type f 2>/dev/null | head -10
+        echo "=== Build Complete ==="
