@@ -624,7 +624,7 @@ jobs:
         \ \\\n  HOST_OS_VERSION=26.0 \\\n  TARGET_CONFIGS=\"DEVELOPMENT ARM64 M30LTE\"\
         \ \\\n  CURRENT_KERNEL_CONFIG=DEVELOPMENT \\\n  CURRENT_ARCH_CONFIG=ARM64\
         \ \\\n  CURRENT_MACHINE_CONFIG=M30LTE \\\n  CURRENT_MACHINE_CONFIG_LC=m30lte\
-        \ \\\n  OBJROOT=\"$PWD/BUILD/obj\" \\\n  SYMROOT=\"$PWD/BUILD/sym\" \\\n \
+        \ \\\n  SRCROOT=\"$PWD\" \\\n  OBJROOT=\"$PWD/BUILD/obj\" \\\n  SYMROOT=\"$PWD/BUILD/sym\" \\\n \
         \ DSTROOT=\"$PWD/fakeroot\" \\\n  FAKEROOT_DIR=\"$PWD/fakeroot\" \\\n  KDKROOT=\"\
         /Library/Developer/KDKs\" \\\n  TIGHTBEAMC=\"\" \\\n  RC_DARWIN_KERNEL_VERSION=\"\
         22.6.0\" \\\n  MEMORY_SIZE=\"${MEMORY_SIZE}\" \\\n  SYSCTL_HW_PHYSICALCPU=\"\
