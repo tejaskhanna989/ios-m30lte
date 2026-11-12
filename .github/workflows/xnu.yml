@@ -149,7 +149,7 @@ jobs:
         echo "=== Bypassing conf subdirectories ==="
         for comp in security bsd osfmk libkern iokit pexpert libsa san security; do
           if [ -f $comp/Makefile ]; then
-            sed -i 's/^COMP_SUBDIRS.*/COMP_SUBDIRS =/' $comp/Makefile
+            sed -i '' 's/^COMP_SUBDIRS.*/COMP_SUBDIRS =/' $comp/Makefile
             echo "Patched COMP_SUBDIRS in $comp/Makefile"
           fi
         done
