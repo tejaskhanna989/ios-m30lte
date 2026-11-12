@@ -171,8 +171,28 @@ jobs:
       run: 'cd xnu-source\n\necho "=== Patching security/mac_audit.c for kernel includes and ptrauth ==="\npython3 ../xnu/patches/patch_mac_audit.py\necho "Patched successfully"\n'
     - name: Copy and patch kernel-private headers to EXPORT_HDRS
       run: 'cd xnu-source\n\necho "=== Copying and patching kernel-private headers to EXPORT_HDRS ==="\npython3 ../xnu/patches/copy_export_headers.py\necho "Copied and patched kernel-private headers"\n'
-    - name: Create all export files and filelists for kernel build
-      run: "cd xnu-source\necho \"=== Copying all export files to build config directory ===\"\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\necho \"=== Creating empty .filelist files ===\"\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\n  echo \"Created $comp.filelist\"\ndone\necho \"=== Creating empty all-kpi.exp ===\"\ntouch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp\necho \"Created all-kpi.exp\"\n"
+    - name: Copy export files to each component's DEVELOPMENT directory
+      run: "cd xnu-source
+echo "=== Copying export files to each component's DEVELOPMENT directory ==="
+# Copy export files to config directory first
+mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config
+cp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true
+echo "=== Copying export files to each component's DEVELOPMENT directory ==="
+for comp in security bsd osfmk libkern iokit pexpert libsa san security; do
+  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT
+  # Copy export files to each component's DEVELOPMENT directory
+  if [ -f config/$comp.exports ]; then
+    cp config/$comp.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/
+    echo "Copied $comp.exports to $comp/DEVELOPMENT/"
+  fi
+  # Create empty .filelist for each component
+  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist
+  echo "Created $comp.filelist"
+done
+echo "=== Creating empty all-kpi.exp ==="
+touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp
+echo "Created all-kpi.exp"
+"
     - name: Build XNU kernel
       id: build_kernel
       run: "cd xnu-source\nSYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)\nSYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)\nMEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)\necho \"SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE\"\necho \"=== Building XNU kernel (default target) ===\"\nexport DRIVERKIT=0\nmake -e VERBOSE=YES \\\n  SDKROOT=iphoneos \\\n  HOST_SDKROOT=macosx \\\n  HOST_OS_VERSION=26.0 \\\n  TARGET_CONFIGS=\"DEVELOPMENT ARM64 M30LTE\" \\\n  CURRENT_KERNEL_CONFIG=DEVELOPMENT \\\n  CURRENT_ARCH_CONFIG=ARM64 \\\n  CURRENT_MACHINE_CONFIG=M30LTE \\\n  CURRENT_MACHINE_CONFIG_LC=m30lte \\\n  OBJROOT=\"$PWD/BUILD/obj\" \\\n  SYMROOT=\"$PWD/BUILD/sym\" \\\n  DSTROOT=\"$PWD/fakeroot\" \\\n  FAKEROOT_DIR=\"$PWD/fakeroot\" \\\n  KDKROOT=\"/Library/Developer/KDKs\" \\\n  TIGHTBEAMC=\"\" \\\n  RC_DARWIN_KERNEL_VERSION=\"22.6.0\" \\\n  MEMORY_SIZE=\"${MEMORY_SIZE}\" \\\n  SYSCTL_HW_PHYSICALCPU=\"${SYSCTL_PHYSICALCPU}\" \\\n  SYSCTL_HW_LOGICALCPU=\"${SYSCTL_LOGICALCPU}\" \\\n  KERNEL_BUILDS_IN_PARALLEL=1 \\\n  BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 \\\n  LOGCOLORS=y \\\n  DRIVERKIT=0 \\\n  SETUP_SUBDIRS=\"\" \\\n  MACH_KERNEL_PRIVATE=1 \\\n  RC_NONARCH_CFLAGS=\"-DKERNEL -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DXNU_KERNEL_PRIVATE -DPRIVATE\" \\\n  2>&1 | tee /tmp/xnu-build.log\nBUILD_EXIT=${PIPESTATUS[0]}\necho \"make exit code: $BUILD_EXIT\"\necho \"=== Errors in build log ===\"\ngrep -iE \"error:|error |make: \\*\\*\\*|No rule|syntax error|undefined reference|missing separator|command not found|ld:|symbol|library not found|collect2\" /tmp/xnu-build.log | head -50 || echo \"No errors found in log\"\necho \"=== Last 1000 lines of build log ===\"\ntail -1000 /tmp/xnu-build.log\necho \"=== Kernel artifacts ===\"\nfind BUILD/obj -name \"kernel.*\" -type f 2>/dev/null | head -10\nfind BUILD/obj -maxdepth 3 \( -name \"kernel.development.m30lte\" -o -name \"mach_kernel\" \) 2>/dev/null | head-10\necho \"BUILD_EXIT=$BUILD_EXIT\" >> $GITHUB_OUTPUT\nexit $BUILD_EXIT\n"
