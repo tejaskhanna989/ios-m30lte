@@ -174,7 +174,15 @@ jobs:
     - name: Create bsd/conf/files.m30lte for M30LTE
       run: "cd xnu-source\necho \"=== Creating bsd/conf/files.m30lte for M30LTE ===\"\npython3 ../xnu/patches/create_bsd_files_m30lte.py\nls -la bsd/conf/files.m30lte\n"
     - name: Create manual bsd/conf config to bypass doconf
-      run: "cd xnu-source\necho \"=== Creating manual bsd/conf config to bypass doconf ===\"\npython3 ../xnu/patches/patch_bsd_conf_manual_config.py\n"
+      run: |
+        cd xnu-source
+        echo "=== Creating manual bsd/conf config to bypass doconf ==="
+        python3 ../xnu/patches/patch_bsd_conf_manual_config.py
+        # Also use sed to ensure doconf rule is replaced
+        sed -i '' 's|\$(TARGET)/\$(CURRENT_KERNEL_CONFIG)/Makefile: \$(SRCROOT)/SETUP/config/doconf \$(OBJROOT)/SETUP/config \$(DOCONFDEPS)|$(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile: $(SOURCE)/Makefile.valid $(SOURCE)/$(CURRENT_KERNEL_CONFIG)|' bsd/conf/Makefile
+        sed -i '' 's|$(_v)$(SRCROOT)/SETUP/config/doconf -c -cpu $(DOCONF_ARCH_CONFIG_LC) -soc $(CURRENT_MACHINE_CONFIG_LC) -platform $(PLATFORM) -d $(TARGET)/$(CURRENT_KERNEL_CONFIG) -s $(SOURCE) -m $(MASTERCONFDIR) $(DOCONF_SEEF) $(CURRENT_KERNEL_CONFIG)|$(_v)$(CP) $(SOURCE)/Makefile.valid $(TARGET)/$(CURRENT_KERNEL_CONFIG)/Makefile|' bsd/conf/Makefile
+        echo "Patched bsd/conf/Makefile with sed"
+        grep -A 3 "Makefile.valid" bsd/conf/Makefile || echo "Pattern not found with sed"
     - name: Fix makedefs path in Makefiles
       run: 'echo "=== Fixing /makedefs paths in Makefiles ==="
 
