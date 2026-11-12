@@ -181,20 +181,23 @@ jobs:
         # Use a completely separate host build directory with clean environment
         HOST_OBJROOT="$PWD/BUILD/obj/host"
         mkdir -p "$HOST_OBJROOT"
-        # Unset target build variables to avoid contamination
-        unset OBJROOT TARGET SYMROOT DSTROOT CURRENT_KERNEL_CONFIG CURRENT_ARCH_CONFIG CURRENT_MACHINE_CONFIG
-        make -C SETUP \
-          RC_ProjectName=SETUP \
-          RC_ARCHS="x86_64" \
-          RC_CFLAGS="" \
-          RC_CXXFLAGS="" \
-          RC_OSFLAGS="" \
-          RC_RELEASE=1 \
-          RC_DEBUG=0 \
-          OBJROOT="$HOST_OBJROOT" \
-          SYMROOT="$HOST_OBJROOT" \
-          DSTROOT="$HOST_OBJROOT" \
-          2>&1 | tail -100
+        # Use env -i to start with completely clean environment
+        env -i \
+          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
+          HOME="$HOME" \
+          HOST_OBJROOT="$HOST_OBJROOT" \
+          make -C SETUP \
+            RC_ProjectName=SETUP \
+            RC_ARCHS="x86_64" \
+            RC_CFLAGS="" \
+            RC_CXXFLAGS="" \
+            RC_OSFLAGS="" \
+            RC_RELEASE=1 \
+            RC_DEBUG=0 \
+            OBJROOT="$HOST_OBJROOT" \
+            SYMROOT="$HOST_OBJROOT" \
+            DSTROOT="$HOST_OBJROOT" \
+            2>&1 | tail -100
         # Verify doconf was built
         if [ -f "$HOST_OBJROOT/SETUP/config/doconf" ]; then
           echo "doconf built successfully at $HOST_OBJROOT/SETUP/config/doconf"
