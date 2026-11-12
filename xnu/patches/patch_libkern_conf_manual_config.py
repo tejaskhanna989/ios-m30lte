@@ -123,6 +123,11 @@ SFLAGS+= -include meta_features.h
 INCFLAGS_MAKEFILE= -I$(SOURCE)/..
 
 #
+# VPATH to find source files
+#
+VPATH = $(SOURCE)/../libkern:$(SOURCE)/../libkern/os:$(SOURCE)/../libkern/vm:$(SOURCE)/../libkern/arm64
+
+#
 # Directories for mig generated files
 #
 COMP_SUBDIRS =

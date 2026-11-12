@@ -56,6 +56,11 @@ SFLAGS+= -include meta_features.h
 INCFLAGS_MAKEFILE= -I$(SOURCE)/..
 
 #
+# VPATH to find source files
+#
+VPATH = $(SOURCE)/../san
+
+#
 # Directories for mig generated files
 #
 COMP_SUBDIRS =

@@ -283,6 +283,11 @@ SFLAGS+= -include meta_features.h
 INCFLAGS_MAKEFILE= -I$(SOURCE)/..
 
 #
+# VPATH to find source files
+#
+VPATH = $(SOURCE)/../iokit:$(SOURCE)/../iokit/IOKit:$(SOURCE)/../iokit/kern:$(SOURCE)/../iokit/drivers:$(SOURCE)/../iokit/family:$(SOURCE)/../iokit/serial:$(SOURCE)/../iokit/usb:$(SOURCE)/../iokit/firewire:$(SOURCE)/../iokit/pci:$(SOURCE)/../iokit/hid:$(SOURCE)/../iokit/network:$(SOURCE)/../iokit/storage:$(SOURCE)/../iokit/graphics:$(SOURCE)/../iokit/audio:$(SOURCE)/../iokit/power:$(SOURCE)/../iokit/bluetooth:$(SOURCE)/../iokit/80211:$(SOURCE)/../iokit/crypto:$(SOURCE)/../iokit/video:$(SOURCE)/../iokit/ndrv:$(SOURCE)/../iokit/scsi:$(SOURCE)/../iokit/ata:$(SOURCE)/../iokit/sbp2:$(SOURCE)/../iokit/isdn:$(SOURCE)/../iokit/irda:$(SOURCE)/../iokit/atm:$(SOURCE)/../iokit/fibrechannel
+
+#
 # Directories for mig generated files
 #
 COMP_SUBDIRS =
