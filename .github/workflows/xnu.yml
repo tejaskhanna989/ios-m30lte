@@ -196,14 +196,13 @@ jobs:
         echo "=== Creating empty all-kpi.exp ==="
         touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp
         echo "Created all-kpi.exp"
-    - name: Create installfile replacement
+    - name: Test Step
       run: |
-        echo "=== Creating installfile replacement ==="
-        mkdir -p BUILD/obj/SETUP/installfile
-        cp ../xnu/patches/create_installfile.sh BUILD/obj/SETUP/installfile/installfile
-        chmod +x BUILD/obj/SETUP/installfile/installfile
-        echo "Created installfile replacement"
-        ls -la BUILD/obj/SETUP/installfile/
+        echo "=== Test Step ==="
+        mkdir -p test-dir
+        echo "test content" > test-dir/test-file
+        echo "Created test file"
+        ls -la test-dir/
     - name: Build XNU kernel
       id: build_kernel
       run: |
