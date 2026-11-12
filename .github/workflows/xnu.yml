@@ -176,22 +176,41 @@ jobs:
     - name: Build SETUP tools (including doconf)
       run: |
         cd xnu-source
-        echo "=== Building SETUP tools for doconf ==="
-        # Build SETUP tools on host platform (macOS) - needed for doconf
-        make -C SETUP RC_ProjectName=SETUP RC_ARCHS="x86_64" RC_CFLAGS="" RC_CXXFLAGS="" RC_OSFLAGS="" RC_RELEASE=1 RC_DEBUG=0 2>&1 | tail -100
+        echo "=== Building SETUP tools for doconf (host platform) ==="
+        # Build SETUP tools on host platform (macOS x86_64) - needed for doconf
+        # Use a separate host build directory to avoid target contamination
+        HOST_OBJROOT="$PWD/BUILD/obj/host"
+        mkdir -p "$HOST_OBJROOT"
+        make -C SETUP \
+          RC_ProjectName=SETUP \
+          RC_ARCHS="x86_64" \
+          RC_CFLAGS="" \
+          RC_CXXFLAGS="" \
+          RC_OSFLAGS="" \
+          RC_RELEASE=1 \
+          RC_DEBUG=0 \
+          OBJROOT="$HOST_OBJROOT" \
+          SYMROOT="$HOST_OBJROOT" \
+          DSTROOT="$HOST_OBJROOT" \
+          2>&1 | tail -100
         # Verify doconf was built
-        if [ -f BUILD/obj/SETUP/config/doconf ]; then
-          echo "doconf built successfully at BUILD/obj/SETUP/config/doconf"
+        if [ -f "$HOST_OBJROOT/SETUP/config/doconf" ]; then
+          echo "doconf built successfully at $HOST_OBJROOT/SETUP/config/doconf"
+          DOCOFN_CMD="$HOST_OBJROOT/SETUP/config/doconf"
+        elif [ -f BUILD/obj/SETUP/config/doconf ]; then
+          echo "doconf built at default location"
+          DOCOFN_CMD="BUILD/obj/SETUP/config/doconf"
         else
-          echo "doconf not found at expected location, searching..."
+          echo "doconf not found at expected locations, searching..."
           find BUILD/obj -name "doconf" -type f 2>/dev/null
           exit 1
         fi
+        echo "DOCOFN_CMD=$DOCOFN_CMD" >> $GITHUB_ENV
     - name: Generate component configs with doconf
       run: |
         cd xnu-source
         echo "=== Generating component configs with doconf ==="
-        DOCOFN_CMD="BUILD/obj/SETUP/config/doconf"
+        DOCOFN_CMD="${DOCOFN_CMD:-BUILD/obj/SETUP/config/doconf}"
         if [ ! -f "$DOCOFN_CMD" ]; then
           echo "doconf not found at $DOCOFN_CMD"
           exit 1
