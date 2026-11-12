@@ -171,6 +171,8 @@ jobs:
         \ | grep -A 50 \"M30LTE.h\" | head -60 || true\n"
     - name: Fix MASTER.arm64.m30lte config
       run: "cd xnu-source\necho \"=== Fixing MASTER.arm64.m30lte config ===\"\nif [ -f config/MASTER.arm64.m30lte ]; then\n  python3 ../xnu/patches/fix_master_m30lte.py\n  echo \"=== MASTER.arm64.m30lte after fix ===\"\n  cat config/MASTER.arm64.m30lte\nelse\n  echo \"MASTER.arm64.m30lte not found, skipping fix\"\nfi\n"
+    - name: Create bsd/conf/files.m30lte for M30LTE
+      run: "cd xnu-source\necho \"=== Creating bsd/conf/files.m30lte for M30LTE ===\"\npython3 ../xnu/patches/create_bsd_files_m30lte.py\nls -la bsd/conf/files.m30lte\n"
     - name: Fix makedefs path in Makefiles
       run: 'echo "=== Fixing /makedefs paths in Makefiles ==="
 
