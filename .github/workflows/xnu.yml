@@ -182,7 +182,8 @@ jobs:
         HOST_OBJROOT="$PWD/BUILD/obj/host"
         mkdir -p "$HOST_OBJROOT"
         # Unset target build variables to avoid contamination
-        unset OBJROOT TARGET SYMROOT DSTROOT CURRENT_KERNEL_CONFIG CURRENT_ARCH_CONFIG CURRENT_MACHINE_CONFIG
+        # CRITICAL: Must unset SDKROOT to avoid using iPhoneOS SDK for host tools
+        unset OBJROOT TARGET SYMROOT DSTROOT CURRENT_KERNEL_CONFIG CURRENT_ARCH_CONFIG CURRENT_MACHINE_CONFIG SDKROOT
         # Build the SETUP project (this builds the main SETUP tools)
         make -C SETUP \
           RC_ProjectName=SETUP \
@@ -192,6 +193,9 @@ jobs:
           RC_OSFLAGS="" \
           RC_RELEASE=1 \
           RC_DEBUG=0 \
+          SDKROOT=macosx \
+          HOST_SDKROOT=macosx \
+          HOST_OS_VERSION=26.0 \
           OBJROOT="$HOST_OBJROOT" \
           SYMROOT="$HOST_OBJROOT" \
           DSTROOT="$HOST_OBJROOT" \
@@ -207,6 +211,9 @@ jobs:
           RC_OSFLAGS="" \
           RC_RELEASE=1 \
           RC_DEBUG=0 \
+          SDKROOT=macosx \
+          HOST_SDKROOT=macosx \
+          HOST_OS_VERSION=26.0 \
           OBJROOT="$HOST_OBJROOT" \
           SYMROOT="$HOST_OBJROOT" \
           DSTROOT="$HOST_OBJROOT" \
