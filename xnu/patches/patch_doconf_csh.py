@@ -14,26 +14,22 @@ while i < len(lines):
     # Check if this line is a set VAR="$argv[2]" line
     if 'set ' in line and '="$argv[2]"' in line:
         # Look ahead to find the next 'shift' followed by 'breaksw'
-        # There might be intermediate lines (like if/else blocks)
         j = i + 1
         shift_found = False
-        while j < len(lines) and j < i + 20:  # Look ahead up to 20 lines
+        while j < len(lines) and j < i + 20:
             if 'shift' in lines[j] and 'breaksw' not in lines[j]:
                 shift_found = True
                 break
             j += 1
         if shift_found:
-            # Found the pattern - add extra shift after the first shift
             print(f"Patching line {i+1}: {line.strip()}")
             new_lines.append(line)
-            # Add all lines up to and including the first shift
             k = i + 1
             while k <= j:
                 new_lines.append(lines[k])
                 k += 1
             # Add extra shift
             new_lines.append(lines[j])
-            # Add remaining lines
             i = j + 1
             continue
     new_lines.append(line)
@@ -41,9 +37,25 @@ while i < len(lines):
 
 content = ''.join(new_lines)
 
-# Initialize MASTER_CPU to prevent "Undefined variable" error
-content = content.replace('unset PLATFORM', 'unset PLATFORM\nunset MASTER_CPU')
-content = content.replace('unset SOC_CONFIG', 'unset SOC_CONFIG\nunset MASTER_CPU')
+# Initialize variables to empty string instead of unsetting them
+# This prevents "Undefined variable" errors when referenced in foreach loops
+content = content.replace('unset MASTER_CPU', '')
+content = content.replace('unset SOC_CONFIG', '')
+content = content.replace('unset PLATFORM', '')
+content = content.replace('unset MACHINE', '')
+content = content.replace('unset profile', '')
+
+# Add initialization at the beginning after the other variable sets
+# Find a good place to add the initialization
+init_block = '''set MASTER_CPU = ""
+set SOC_CONFIG = ""
+set PLATFORM = ""
+set MACHINE = ""
+set profile = ""
+'''
+# Insert after the existing variable initializations
+if 'set OBJDIR=../BUILD' in content:
+    content = content.replace('set OBJDIR=../BUILD', init_block + 'set OBJDIR=../BUILD')
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
