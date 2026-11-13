@@ -313,16 +313,17 @@ jobs:
           find BUILD/obj -name "config" -type f 2>/dev/null
           exit 1
         fi
-        # Create output directory for doconf
-        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE
-        # Copy config binary to where doconf expects it (OBJROOT/SETUP/config/config)
-        # doconf uses $OBJROOT which is the base BUILD/obj, not the machine-specific subdir
-        mkdir -p BUILD/obj/SETUP/config
-        cp "$HOST_OBJROOT/SETUP/config/config" "BUILD/obj/SETUP/config/config"
-        chmod +x "BUILD/obj/SETUP/config/config"
+        # Create output directory for doconf (machine-specific)
+        # doconf uses $OBJROOT which is the -d parameter (machine-specific build dir)
+        # and expects config binary at $OBJROOT/SETUP/config/config
+        OBJROOT="BUILD/obj/DEVELOPMENT_ARM64_M30LTE"
+        mkdir -p "$OBJROOT/SETUP/config"
+        # Copy config binary to where doconf expects it (machine-specific OBJROOT/SETUP/config/config)
+        cp "$CONFIG_BINARY" "$OBJROOT/SETUP/config/config"
+        chmod +x "$OBJROOT/SETUP/config/config"
         # Run doconf for DEVELOPMENT ARM64 M30LTE
         # doconf reads MASTER.arm64.m30lte and generates DEVELOPMENT configs for each component
-        ./SETUP/config/doconf -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d BUILD/obj/DEVELOPMENT_ARM64_M30LTE -s "$PWD" -m config DEVELOPMENT 2>&1
+        ./SETUP/config/doconf -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d "$OBJROOT" -s "$PWD" -m config DEVELOPMENT 2>&1
         # Verify configs were generated
         for comp in bsd iokit osfmk pexpert libkern libsa san security; do
           if [ -f "$comp/conf/DEVELOPMENT" ]; then
