@@ -56,9 +56,9 @@ if 'set OBJDIR=../BUILD' in content:
 else:
     print("WARNING: Could not find 'set OBJDIR=../BUILD' to insert initialization")
 
-# Also fix the MASTER file path - the script uses ${MASTER_DIR}/MASTER but 
-# it should use ${MASTER_DIR}/MASTER.${cpu} etc.
-# Let's check if there's an issue with MASTER_DIR
+# Also fix the MASTER_DIR usage - the script uses ${MASTER_DIR}/MASTER but 
+# the -m flag should point to the directory containing MASTER files
+# The doconf script expects MASTER_CONF_DIR to be a directory, not a file
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
