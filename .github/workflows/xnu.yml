@@ -335,9 +335,9 @@ jobs:
           mv "config/MASTER.arm64.m30lte" "config/MASTER.arm64.m30lte.bak"
           echo "Moved MASTER.arm64.m30lte aside to fall back to MASTER.arm64"
         fi
-        # The config binary expects "files" and "files.arm64" files at the source root.
+        # The config binary expects "files", "files.arm64", and "Makefile.template" at the source root.
         # Create empty ones if they don't exist.
-        for f in files files.arm64; do
+        for f in files files.arm64 Makefile.template; do
           if [ ! -f "$f" ]; then
             touch "$f"
             echo "Created empty $f file at source root"
