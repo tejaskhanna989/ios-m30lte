@@ -271,26 +271,20 @@ jobs:
         find SETUP/config -name "config" -type f 2>/dev/null
         if [ -f "$HOST_OBJROOT/SETUP/config/config" ]; then
           echo "doconf (config) built successfully at $HOST_OBJROOT/SETUP/config/config"
-          ln -sf config "$HOST_OBJROOT/SETUP/config/doconf"
-          DOCOFN_CMD="$HOST_OBJROOT/SETUP/config/doconf"
         elif [ -f BUILD/obj/SETUP/config/config ]; then
           echo "doconf (config) built at default location"
-          ln -sf config BUILD/obj/SETUP/config/doconf
-          DOCOFN_CMD="BUILD/obj/SETUP/config/doconf"
         elif [ -f SETUP/config/config ]; then
           echo "doconf (config) built in source directory"
           # Copy to expected location
           mkdir -p "$HOST_OBJROOT/SETUP/config"
           cp SETUP/config/config "$HOST_OBJROOT/SETUP/config/config"
-          ln -sf config "$HOST_OBJROOT/SETUP/config/doconf"
-          DOCOFN_CMD="$HOST_OBJROOT/SETUP/config/doconf"
         else
           echo "doconf not found at expected locations, searching..."
           find BUILD/obj -name "config" -type f 2>/dev/null
           find SETUP/config -name "config" -type f 2>/dev/null
           exit 1
         fi
-        echo "DOCOFN_CMD=$DOCOFN_CMD" >> $GITHUB_ENV
+        echo "Config binary verified successfully"
     - name: Fix doconf.csh argument parsing bug
       run: |
         cd xnu-source
@@ -301,14 +295,25 @@ jobs:
       run: |
         cd xnu-source
         echo "=== Generating component configs with doconf ==="
-        DOCOFN_CMD="${DOCOFN_CMD:-BUILD/obj/SETUP/config/doconf}"
-        if [ ! -f "$DOCOFN_CMD" ]; then
-          echo "doconf not found at $DOCOFN_CMD"
+        # Use the csh script doconf (not the C binary config)
+        # The doconf csh script wraps the config binary
+        DOCOFN_SCRIPT="SETUP/config/doconf"
+        if [ ! -f "$DOCOFN_SCRIPT" ]; then
+          echo "doconf script not found at $DOCOFN_SCRIPT"
           exit 1
         fi
+        # Make sure the config binary is accessible (copy to same dir as script or add to PATH)
+        CONFIG_BINARY="$HOST_OBJROOT/SETUP/config/config"
+        if [ ! -f "$CONFIG_BINARY" ]; then
+          echo "config binary not found at $CONFIG_BINARY"
+          exit 1
+        fi
+        # Copy config binary next to doconf script so it can find it
+        cp "$CONFIG_BINARY" "SETUP/config/config"
+        chmod +x "SETUP/config/config"
         # Run doconf for DEVELOPMENT ARM64 M30LTE
         # doconf reads MASTER.arm64.m30lte and generates DEVELOPMENT configs for each component
-        $DOCOFN_CMD -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d BUILD/obj/DEVELOPMENT_ARM64_M30LTE -s "$PWD" -m config/MASTER.arm64.m30lte DEVELOPMENT 2>&1
+        ./SETUP/config/doconf -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d BUILD/obj/DEVELOPMENT_ARM64_M30LTE -s "$PWD" -m config/MASTER.arm64.m30lte DEVELOPMENT 2>&1
         # Verify configs were generated
         for comp in bsd iokit osfmk pexpert libkern libsa san security; do
           if [ -f "$comp/conf/DEVELOPMENT" ]; then
@@ -577,26 +582,20 @@ jobs:
         find SETUP/config -name "config" -type f 2>/dev/null
         if [ -f "$HOST_OBJROOT/SETUP/config/config" ]; then
           echo "doconf (config) built successfully at $HOST_OBJROOT/SETUP/config/config"
-          ln -sf config "$HOST_OBJROOT/SETUP/config/doconf"
-          DOCOFN_CMD="$HOST_OBJROOT/SETUP/config/doconf"
         elif [ -f BUILD/obj/SETUP/config/config ]; then
           echo "doconf (config) built at default location"
-          ln -sf config BUILD/obj/SETUP/config/doconf
-          DOCOFN_CMD="BUILD/obj/SETUP/config/doconf"
         elif [ -f SETUP/config/config ]; then
           echo "doconf (config) built in source directory"
           # Copy to expected location
           mkdir -p "$HOST_OBJROOT/SETUP/config"
           cp SETUP/config/config "$HOST_OBJROOT/SETUP/config/config"
-          ln -sf config "$HOST_OBJROOT/SETUP/config/doconf"
-          DOCOFN_CMD="$HOST_OBJROOT/SETUP/config/doconf"
         else
           echo "doconf not found at expected locations, searching..."
           find BUILD/obj -name "config" -type f 2>/dev/null
           find SETUP/config -name "config" -type f 2>/dev/null
           exit 1
         fi
-        echo "DOCOFN_CMD=$DOCOFN_CMD" >> $GITHUB_ENV
+        echo "Config binary verified successfully"
     - name: Patch SETUP/config/Makefile to skip rebuild
       run: |
         cd xnu-source
