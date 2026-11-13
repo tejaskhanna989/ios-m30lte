@@ -187,6 +187,7 @@ jobs:
           PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
           HOME="$HOME" \
           HOST_OBJROOT="$HOST_OBJROOT" \
+          SRCROOT="$PWD" \
           make -C SETUP \
             RC_ProjectName=SETUP \
             RC_ARCHS="x86_64" \
@@ -208,6 +209,7 @@ jobs:
           PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
           HOME="$HOME" \
           HOST_OBJROOT="$HOST_OBJROOT" \
+          SRCROOT="$PWD" \
           make -C SETUP/config \
             RC_ProjectName=config \
             RC_ARCHS="x86_64" \
