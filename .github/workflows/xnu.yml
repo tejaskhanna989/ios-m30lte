@@ -195,6 +195,7 @@ jobs:
           OBJROOT="$HOST_OBJROOT" \
           SYMROOT="$HOST_OBJROOT" \
           DSTROOT="$HOST_OBJROOT" \
+          do_build_setup \
           2>&1 | tail -100
         # Now explicitly build the config tool (doconf)
         echo "=== Building doconf (config tool) ==="
@@ -209,6 +210,7 @@ jobs:
           OBJROOT="$HOST_OBJROOT" \
           SYMROOT="$HOST_OBJROOT" \
           DSTROOT="$HOST_OBJROOT" \
+          do_build_setup \
           2>&1 | tail -100
         # Verify doconf was built
         if [ -f "$HOST_OBJROOT/SETUP/config/doconf" ]; then
