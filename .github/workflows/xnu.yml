@@ -277,6 +277,12 @@ jobs:
         echo "=== Fixing doconf.csh argument parsing bug ==="
         python3 ../xnu/patches/patch_doconf_csh.py
         echo "doconf.csh patched successfully"
+    - name: Patch SETUP/config/Makefile for VPATH (must run before doconf build)
+      run: |
+        cd xnu-source
+        echo "=== Patching SETUP/config/Makefile for VPATH ==="
+        python3 ../xnu/patches/patch_setup_config_vpath.py
+        echo "Patched successfully"
     - name: Generate component configs with doconf
       run: |
         cd xnu-source
@@ -473,12 +479,6 @@ jobs:
         cd xnu-source
         echo "=== Pre-build IORPC patch for DriverKit ==="
         python3 ../xnu/patches/patch_all_iorpc.py
-    - name: Patch SETUP/config/Makefile for VPATH
-      run: |
-        cd xnu-source
-        echo "=== Patching SETUP/config/Makefile for VPATH ==="
-        python3 ../xnu/patches/patch_setup_config_vpath.py
-        echo "Patched successfully"
     - name: Fix SETUP tool include paths
       run: |
         cd xnu-source
