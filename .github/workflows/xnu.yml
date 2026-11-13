@@ -302,10 +302,15 @@ jobs:
           echo "doconf script not found at $DOCOFN_SCRIPT"
           exit 1
         fi
-        # Make sure the config binary is accessible (copy to same dir as script or add to PATH)
+        # Find the config binary (built in previous step)
+        # HOST_OBJROOT was $PWD/BUILD/obj/host in the previous step
+        HOST_OBJROOT="$PWD/BUILD/obj/host"
         CONFIG_BINARY="$HOST_OBJROOT/SETUP/config/config"
         if [ ! -f "$CONFIG_BINARY" ]; then
           echo "config binary not found at $CONFIG_BINARY"
+          # Try alternative locations
+          find "$HOST_OBJROOT" -name "config" -type f 2>/dev/null
+          find BUILD/obj -name "config" -type f 2>/dev/null
           exit 1
         fi
         # Copy config binary next to doconf script so it can find it
