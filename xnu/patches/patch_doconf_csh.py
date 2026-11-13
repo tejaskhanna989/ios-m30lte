@@ -34,15 +34,14 @@ while i < len(lines):
 
 content = ''.join(new_lines)
 
-# Initialize all variables that might be referenced to prevent "Undefined variable" errors
-# Remove all unset commands for these variables
+# Initialize all variables that might be referenced
 content = content.replace('unset MASTER_CPU', '')
 content = content.replace('unset SOC_CONFIG', '')
 content = content.replace('unset PLATFORM', '')
 content = content.replace('unset MACHINE', '')
 content = content.replace('unset profile', '')
 
-# Initialize all variables that might be referenced
+# Add initialization block
 init_block = '''set MASTER_CPU = ""
 set SOC_CONFIG = ""
 set PLATFORM = ""
@@ -51,12 +50,15 @@ set profile = ""
 set DEF_AVP = ""
 '''
 # Insert after the existing variable initializations
-# Find the line with 'set OBJDIR=../BUILD' and insert before it
 if 'set OBJDIR=../BUILD' in content:
     content = content.replace('set OBJDIR=../BUILD', 'set MASTER_CPU = ""\nset SOC_CONFIG = ""\nset PLATFORM = ""\nset MACHINE = ""\nset profile = ""\nset DEF_AVP = ""\nset OBJDIR=../BUILD')
     print("Added variable initialization block")
 else:
     print("WARNING: Could not find 'set OBJDIR=../BUILD' to insert initialization")
+
+# Also fix the MASTER file path - the script uses ${MASTER_DIR}/MASTER but 
+# it should use ${MASTER_DIR}/MASTER.${cpu} etc.
+# Let's check if there's an issue with MASTER_DIR
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
