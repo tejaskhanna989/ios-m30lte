@@ -313,6 +313,9 @@ jobs:
           find BUILD/obj -name "config" -type f 2>/dev/null
           exit 1
         fi
+        # Verify the config binary is a Mach-O binary, not a shell script
+        echo "=== Verifying config binary type ==="
+        file "$CONFIG_BINARY"
         # Create output directory for doconf (machine-specific)
         # doconf uses $OBJROOT which is the -d parameter (machine-specific build dir)
         # and expects config binary at $OBJROOT/SETUP/config/config
@@ -321,6 +324,9 @@ jobs:
         # Copy config binary to where doconf expects it (machine-specific OBJROOT/SETUP/config/config)
         cp "$CONFIG_BINARY" "$OBJROOT/SETUP/config/config"
         chmod +x "$OBJROOT/SETUP/config/config"
+        # Verify the copied binary
+        echo "=== Verifying copied config binary type ==="
+        file "$OBJROOT/SETUP/config/config"
         # Run doconf for DEVELOPMENT ARM64 M30LTE
         # doconf reads MASTER.arm64.m30lte and generates DEVELOPMENT configs for each component
         ./SETUP/config/doconf -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d "$OBJROOT" -s "$PWD" -m config DEVELOPMENT 2>&1
