@@ -181,44 +181,49 @@ jobs:
         # Use a completely separate host build directory with clean environment
         HOST_OBJROOT="$PWD/BUILD/obj/host"
         mkdir -p "$HOST_OBJROOT"
-        # Unset target build variables to avoid contamination
-        # CRITICAL: Must unset SDKROOT to avoid using iPhoneOS SDK for host tools
-        unset OBJROOT TARGET SYMROOT DSTROOT CURRENT_KERNEL_CONFIG CURRENT_ARCH_CONFIG CURRENT_MACHINE_CONFIG SDKROOT
-        # Build the SETUP project (this builds the main SETUP tools)
-        make -C SETUP \
-          RC_ProjectName=SETUP \
-          RC_ARCHS="x86_64" \
-          RC_CFLAGS="" \
-          RC_CXXFLAGS="" \
-          RC_OSFLAGS="" \
-          RC_RELEASE=1 \
-          RC_DEBUG=0 \
-          SDKROOT=macosx \
-          HOST_SDKROOT=macosx \
-          HOST_OS_VERSION=26.0 \
-          OBJROOT="$HOST_OBJROOT" \
-          SYMROOT="$HOST_OBJROOT" \
-          DSTROOT="$HOST_OBJROOT" \
-          do_build_setup \
-          2>&1 | tail -100
-        # Now explicitly build the config tool (doconf)
+        # CRITICAL: Must use env -i to start with clean environment to avoid SDKROOT=iphoneos from job env
+        # The MAKEFLAGS=-e flag causes environment variables to override makefile variables
+        env -i \
+          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
+          HOME="$HOME" \
+          HOST_OBJROOT="$HOST_OBJROOT" \
+          make -C SETUP \
+            RC_ProjectName=SETUP \
+            RC_ARCHS="x86_64" \
+            RC_CFLAGS="" \
+            RC_CXXFLAGS="" \
+            RC_OSFLAGS="" \
+            RC_RELEASE=1 \
+            RC_DEBUG=0 \
+            SDKROOT=macosx \
+            HOST_SDKROOT=macosx \
+            HOST_OS_VERSION=26.0 \
+            OBJROOT="$HOST_OBJROOT" \
+            SYMROOT="$HOST_OBJROOT" \
+            DSTROOT="$HOST_OBJROOT" \
+            2>&1 | tail -100
+        # Now explicitly build the config tool (doconf) using the do_build_setup target
         echo "=== Building doconf (config tool) ==="
-        make -C SETUP/config \
-          RC_ProjectName=config \
-          RC_ARCHS="x86_64" \
-          RC_CFLAGS="" \
-          RC_CXXFLAGS="" \
-          RC_OSFLAGS="" \
-          RC_RELEASE=1 \
-          RC_DEBUG=0 \
-          SDKROOT=macosx \
-          HOST_SDKROOT=macosx \
-          HOST_OS_VERSION=26.0 \
-          OBJROOT="$HOST_OBJROOT" \
-          SYMROOT="$HOST_OBJROOT" \
-          DSTROOT="$HOST_OBJROOT" \
-          do_build_setup \
-          2>&1 | tail -100
+        env -i \
+          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
+          HOME="$HOME" \
+          HOST_OBJROOT="$HOST_OBJROOT" \
+          make -C SETUP/config \
+            RC_ProjectName=config \
+            RC_ARCHS="x86_64" \
+            RC_CFLAGS="" \
+            RC_CXXFLAGS="" \
+            RC_OSFLAGS="" \
+            RC_RELEASE=1 \
+            RC_DEBUG=0 \
+            SDKROOT=macosx \
+            HOST_SDKROOT=macosx \
+            HOST_OS_VERSION=26.0 \
+            OBJROOT="$HOST_OBJROOT" \
+            SYMROOT="$HOST_OBJROOT" \
+            DSTROOT="$HOST_OBJROOT" \
+            do_build_setup \
+            2>&1 | tail -100
         # Verify doconf was built
         if [ -f "$HOST_OBJROOT/SETUP/config/doconf" ]; then
           echo "doconf built successfully at $HOST_OBJROOT/SETUP/config/doconf"
@@ -522,19 +527,49 @@ jobs:
         HOST_OBJROOT="$PWD/BUILD/obj/host"
         mkdir -p "$HOST_OBJROOT"
         # Unset target build variables to avoid contamination
-        unset OBJROOT TARGET SYMROOT DSTROOT CURRENT_KERNEL_CONFIG CURRENT_ARCH_CONFIG CURRENT_MACHINE_CONFIG
-        make -C SETUP \
-          RC_ProjectName=SETUP \
-          RC_ARCHS="x86_64" \
-          RC_CFLAGS="" \
-          RC_CXXFLAGS="" \
-          RC_OSFLAGS="" \
-          RC_RELEASE=1 \
-          RC_DEBUG=0 \
-          OBJROOT="$HOST_OBJROOT" \
-          SYMROOT="$HOST_OBJROOT" \
-          DSTROOT="$HOST_OBJROOT" \
-          2>&1 | tail -100
+        # CRITICAL: Must use env -i to start with clean environment to avoid SDKROOT=iphoneos from job env
+        # The MAKEFLAGS=-e flag causes environment variables to override makefile variables
+        env -i \
+          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
+          HOME="$HOME" \
+          HOST_OBJROOT="$HOST_OBJROOT" \
+          make -C SETUP \
+            RC_ProjectName=SETUP \
+            RC_ARCHS="x86_64" \
+            RC_CFLAGS="" \
+            RC_CXXFLAGS="" \
+            RC_OSFLAGS="" \
+            RC_RELEASE=1 \
+            RC_DEBUG=0 \
+            SDKROOT=macosx \
+            HOST_SDKROOT=macosx \
+            HOST_OS_VERSION=26.0 \
+            OBJROOT="$HOST_OBJROOT" \
+            SYMROOT="$HOST_OBJROOT" \
+            DSTROOT="$HOST_OBJROOT" \
+            2>&1 | tail -100
+        # Now explicitly build the config tool (doconf) using the do_build_setup target
+        echo "=== Building doconf (config tool) ==="
+        env -i \
+          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
+          HOME="$HOME" \
+          HOST_OBJROOT="$HOST_OBJROOT" \
+          make -C SETUP/config \
+            RC_ProjectName=config \
+            RC_ARCHS="x86_64" \
+            RC_CFLAGS="" \
+            RC_CXXFLAGS="" \
+            RC_OSFLAGS="" \
+            RC_RELEASE=1 \
+            RC_DEBUG=0 \
+            SDKROOT=macosx \
+            HOST_SDKROOT=macosx \
+            HOST_OS_VERSION=26.0 \
+            OBJROOT="$HOST_OBJROOT" \
+            SYMROOT="$HOST_OBJROOT" \
+            DSTROOT="$HOST_OBJROOT" \
+            do_build_setup \
+            2>&1 | tail -100
         # Verify doconf was built
         if [ -f "$HOST_OBJROOT/SETUP/config/doconf" ]; then
           echo "doconf built successfully at $HOST_OBJROOT/SETUP/config/doconf"
