@@ -6,48 +6,91 @@ leaving arm64 in $argv. The while loop then breaks because arm64 doesn't start
 with '-'. All subsequent flag values remain in $argv, causing SYS to be wrong.
 
 Fix: shift twice for each flag that takes an argument (flag + value).
+Also initialize MASTER_CPU to prevent "Undefined variable" error.
 """
 import os
-import re
 
 with open('SETUP/config/doconf', 'r') as f:
     content = f.read()
 
 # Fix each case that takes an argument by adding an extra shift
-# The pattern is: case "-X": ... set VAR="$argv[2]" ... shift; breaksw
+# The pattern is: set VAR="$argv[2]" followed by shift then breaksw
 # We need to change "shift" to "shift; shift" for these cases
 
-# Actual variable names in the doconf.csh script:
-cases_to_fix = [
-    ('-cpu', 'set MACHINE="$argv[2]"'),      # NOT MASTER_CPU!
-    ('-soc', 'set SOC_CONFIG="$argv[2]"'),
-    ('-platform', 'set PLATFORM="$argv[2]"'),
-    ('-d', 'set OBJDIR="$argv[2]"'),
-    ('-s', 'set SOURCEDIR="$argv[2]"'),
-    ('-m', 'set MASTER_CONF_DIR="$argv[2]"'),
+# Actual patterns from the doconf.csh source:
+fixes = [
+    # -cpu case
+    ('set MACHINE="$argv[2]"
+    shift
+    breaksw', 'set MACHINE="$argv[2]"
+    shift
+    shift
+    breaksw'),
+    # -soc case
+    ('set SOC_CONFIG="$argv[2]"
+    shift
+    breaksw', 'set SOC_CONFIG="$argv[2]"
+    shift
+    shift
+    breaksw'),
+    # -platform case
+    ('set PLATFORM="$argv[2]"
+    shift
+    breaksw', 'set PLATFORM="$argv[2]"
+    shift
+    shift
+    breaksw'),
+    # -d case
+    ('set OBJDIR="$argv[2]"
+    shift
+    breaksw', 'set OBJDIR="$argv[2]"
+    shift
+    shift
+    breaksw'),
+    # -s case
+    ('set SOURCEDIR="$argv[2]"
+    shift
+    breaksw', 'set SOURCEDIR="$argv[2]"
+    shift
+    shift
+    breaksw'),
+    # -m case
+    ('set MASTER_CONF_DIR="$argv[2]"
+    shift
+    breaksw', 'set MASTER_CONF_DIR="$argv[2]"
+    shift
+    shift
+    breaksw'),
 ]
 
-for flag, set_line in cases_to_fix:
-    # Use regex to find the pattern with flexible whitespace
-    # Pattern: set_line followed by shift then breaksw
-    pattern = re.escape(set_line) + r'\s+shift\s+breaksw'
-    replacement = set_line + '\n    shift\n    shift\n    breaksw'
-    
-    matches = list(re.finditer(pattern, content))
-    if matches:
-        content = re.sub(pattern, replacement, content)
-        print(f"Patched doconf: {flag} - added extra shift (regex) - {len(matches)} matches")
+for old, new in fixes:
+    if old in content:
+        content = content.replace(old, new)
+        print(f"Patched: {old.split(chr(10))[0]}")
     else:
-        print(f"WARNING: Could not find pattern for {flag} with regex")
-        # Try to find just the set_line
-        if set_line in content:
-            print(f"  But set_line '{set_line}' found in content")
-            idx = content.index(set_line)
-            print(f"  Context: ...{content[max(0,idx-100):idx+100]}...")
+        print(f"WARNING: Pattern not found: {old.split(chr(10))[0]}")
+        # Try with different indentation
+        old2 = old.replace('    ', '  ')
+        new2 = new.replace('    ', '  ')
+        if old2 in content:
+            content = content.replace(old2, new2)
+            print(f"Patched (alt indent): {old2.split(chr(10))[0]}")
         else:
-            print(f"  set_line '{set_line}' NOT found in content")
+            print(f"  Still not found with alt indent")
+
+# Initialize MASTER_CPU to prevent "Undefined variable" error
+# Find where variables are unset and add MASTER_CPU initialization
+init_pattern = 'unset MASTER_CPU'
+if init_pattern not in content:
+    # Add after the other unsets
+    old_unset = 'unset PLATFORM'
+    new_unset = 'unset PLATFORM
+unset MASTER_CPU'
+    if old_unset in content:
+        content = content.replace(old_unset, new_unset)
+        print("Added MASTER_CPU initialization")
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
 
-print("Done")
+print("Done patching doconf.csh")
