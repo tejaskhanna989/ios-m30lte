@@ -4,41 +4,40 @@ import os
 import re
 
 with open('SETUP/config/doconf', 'r') as f:
-    content = f.read()
+    lines = f.readlines()
 
-print("=== Patching doconf.csh ===")
+print("=== Patching doconf.csh (line by line) ===")
 
-# Use regex with flexible whitespace to find and replace
-# Pattern: set VAR="$argv[2]" followed by shift then breaksw
-# We need to add an extra shift
+# Process line by line
+new_lines = []
+i = 0
+while i < len(lines):
+    line = lines[i]
+    # Check if this line is a set VAR="$argv[2]" line
+    # Look for patterns like: set MACHINE="$argv[2]"
+    if 'set ' in line and '="$argv[2]"' in line:
+        # Check if next line is shift and line after is breaksw
+        if i + 2 < len(lines):
+            next_line = lines[i + 1]
+            next_next_line = lines[i + 2]
+            if 'shift' in next_line and 'breaksw' in next_next_line:
+                # Found the pattern - add extra shift
+                print(f"Patching line {i+1}: {line.strip()}")
+                new_lines.append(line)
+                new_lines.append(lines[i + 1])  # first shift
+                new_lines.append(lines[i + 1])  # extra shift
+                new_lines.append(lines[i + 2])  # breaksw
+                i += 3
+                continue
+    new_lines.append(line)
+    i += 1
 
-# Match the pattern with flexible whitespace (spaces or tabs)
-patterns = [
-    (r'(^\s+set MACHINE=\$argv\[2\]"\s+\n\s+shift\s+\n\s+breaksw)', '    set MACHINE="$argv[2]"\n    shift\n    shift\n    breaksw'),
-    (r'(^\s+set SOC_CONFIG=\$argv\[2\]"\s+\n\s+shift\s+\n\s+breaksw)', '    set SOC_CONFIG="$argv[2]"\n    shift\n    shift\n    breaksw'),
-    (r'(^\s+set PLATFORM=\$argv\[2\]"\s+\n\s+shift\s+\n\s+breaksw)', '    set PLATFORM="$argv[2]"\n    shift\n    shift\n    breaksw'),
-    (r'(^\s+set OBJDIR=\$argv\[2\]"\s+\n\s+shift\s+\n\s+breaksw)', '    set OBJDIR="$argv[2]"\n    shift\n    shift\n    breaksw'),
-    (r'(^\s+set SOURCEDIR=\$argv\[2\]"\s+\n\s+shift\s+\n\s+breaksw)', '    set SOURCEDIR="$argv[2]"\n    shift\n    shift\n    breaksw'),
-    (r'(^\s+set MASTER_CONF_DIR=\$argv\[2\]"\s+\n\s+shift\s+\n\s+breaksw)', '    set MASTER_CONF_DIR="$argv[2]"\n    shift\n    shift\n    breaksw'),
-]
-
-for pattern, replacement in patterns:
-    matches = list(re.finditer(pattern, content, re.MULTILINE))
-    if matches:
-        content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
-        print(f"Patched: {pattern}")
-    else:
-        print(f"WARNING: Pattern not found: {pattern}")
+content = ''.join(new_lines)
 
 # Initialize MASTER_CPU to prevent "Undefined variable" error
-if 'unset MASTER_CPU' not in content:
-    if 'unset PLATFORM' in content:
-        content = content.replace('unset PLATFORM', 'unset PLATFORM\nunset MASTER_CPU')
-        print("Added MASTER_CPU initialization")
-    else:
-        print("WARNING: Could not find 'unset PLATFORM' to add MASTER_CPU init")
+content = content.replace('unset PLATFORM', 'unset PLATFORM\nunset MASTER_CPU')
 
 with open('SETUP/config/doconf', 'w') as f:
-    f.write(content)
+    f.write(''.join(new_lines))
 
 print("Done patching doconf.csh")
