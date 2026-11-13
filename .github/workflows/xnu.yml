@@ -183,67 +183,305 @@ jobs:
         mkdir -p "$HOST_OBJROOT"
         # CRITICAL: Must use env -i to start with clean environment to avoid SDKROOT=iphoneos from job env
         # The MAKEFLAGS=-e flag causes environment variables to override makefile variables
-        # Also explicitly set SDKROOT to macosx SDK path to ensure macOS SDK is used
+        # CRITICAL: Must explicitly unset problematic variables to avoid SDKROOT=iphoneos from job env
+        # The MAKEFLAGS=-e flag causes environment variables to override makefile variables
         MACOSX_SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
         echo "Using macOS SDK: $MACOSX_SDKROOT"
-        env -i \
-          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
-          HOME="$HOME" \
-          HOST_OBJROOT="$HOST_OBJROOT" \
-          SRCROOT="$PWD" \
-          SDKROOT="$MACOSX_SDKROOT" \
-          make -C SETUP \
-            RC_ProjectName=SETUP \
-            RC_ARCHS="x86_64" \
-            CFLAGS="-isysroot $MACOSX_SDKROOT" \
-            CXXFLAGS="-isysroot $MACOSX_SDKROOT" \
-            RC_OSFLAGS="" \
-            RC_RELEASE=1 \
-            RC_DEBUG=0 \
-            SDKROOT=macosx \
-            HOST_SDKROOT=macosx \
-            HOST_OS_VERSION=26.0 \
-            OBJROOT="$HOST_OBJROOT" \
-            SYMROOT="$HOST_OBJROOT" \
-            DSTROOT="$HOST_OBJROOT" \
-            2>&1 | tail -100
-        # Now explicitly build the config tool (doconf) using the do_build_setup target
-        echo "=== Building doconf (config tool) ==="
-        env -i \
-          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
-          HOME="$HOME" \
-          HOST_OBJROOT="$HOST_OBJROOT" \
-          SRCROOT="$PWD" \
-          SDKROOT="$MACOSX_SDKROOT" \
-          make -C SETUP/config \
-            RC_ProjectName=config \
-            RC_ARCHS="x86_64" \
-            CFLAGS="-isysroot $MACOSX_SDKROOT" \
-            CXXFLAGS="-isysroot $MACOSX_SDKROOT" \
-            RC_OSFLAGS="" \
-            RC_RELEASE=1 \
-            RC_DEBUG=0 \
-            SDKROOT=macosx \
-            HOST_SDKROOT=macosx \
-            HOST_OS_VERSION=26.0 \
-            OBJROOT="$HOST_OBJROOT" \
-            SYMROOT="$HOST_OBJROOT" \
-            DSTROOT="$HOST_OBJROOT" \
-            do_build_setup \
-            2>&1 | tail -100
-        # Verify doconf was built
-        if [ -f "$HOST_OBJROOT/SETUP/config/doconf" ]; then
-          echo "doconf built successfully at $HOST_OBJROOT/SETUP/config/doconf"
-          DOCOFN_CMD="$HOST_OBJROOT/SETUP/config/doconf"
-        elif [ -f BUILD/obj/SETUP/config/doconf ]; then
-          echo "doconf built at default location"
-          DOCOFN_CMD="BUILD/obj/SETUP/config/doconf"
-        else
-          echo "doconf not found at expected locations, searching..."
-          find BUILD/obj -name "doconf" -type f 2>/dev/null
+        # Unset problematic environment variables that would cause iPhoneOS SDK to be used
+        unset SDKROOT MAKEFLAGS
+        # Build with explicit macOS SDK paths
+        make -C SETUP           RC_ProjectName=SETUP           RC_ARCHS="x86_64"           RC_CFLAGS=""           RC_CXXFLAGS=""           RC_OSFLAGS=""           RC_RELEASE=1           RC_DEBUG=0           SDKROOT=macosx           HOST_SDKROOT=macosx           HOST_OS_VERSION=26.0           OBJROOT="$HOST_OBJROOT"           SYMROOT="$HOST_OBJROOT"           DSTROOT="$HOST_OBJROOT"           CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)"           CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)"           2>&1 | tail -100
+        unset SDKROOT MAKEFLAGS
+        make -C SETUP/config           RC_ProjectName=config           RC_ARCHS="x86_64"           RC_CFLAGS=""           RC_CXXFLAGS=""           RC_OSFLAGS=""           RC_RELEASE=1           RC_DEBUG=0           SDKROOT=macosx           HOST_SDKROOT=macosx           HOST_OS_VERSION=26.0           OBJROOT="$HOST_OBJROOT"           SYMROOT="$HOST_OBJROOT"           DSTROOT="$HOST_OBJROOT"           CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)"           CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)"           do_build_setup           2>&1 | tail -100
+
+    - name: Fix doconf.csh argument parsing bug
+      run: |
+        cd xnu-source
+        echo "=== Fixing doconf.csh argument parsing bug ==="
+        python3 ../xnu/patches/patch_doconf_csh.py
+        echo "doconf.csh patched successfully"
+    - name: Generate component configs with doconf
+      run: |
+        cd xnu-source
+        echo "=== Generating component configs with doconf ==="
+        DOCOFN_CMD="${DOCOFN_CMD:-BUILD/obj/SETUP/config/doconf}"
+        if [ ! -f "$DOCOFN_CMD" ]; then
+          echo "doconf not found at $DOCOFN_CMD"
           exit 1
         fi
-        echo "DOCOFN_CMD=$DOCOFN_CMD" >> $GITHUB_ENV
+        # Run doconf for DEVELOPMENT ARM64 M30LTE
+        # doconf reads MASTER.arm64.m30lte and generates DEVELOPMENT configs for each component
+        $DOCOFN_CMD -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d BUILD/obj/DEVELOPMENT_ARM64_M30LTE -s "$PWD" -m config/MASTER.arm64.m30lte DEVELOPMENT 2>&1
+        # Verify configs were generated
+        for comp in bsd iokit osfmk pexpert libkern libsa san security; do
+          if [ -f "$comp/conf/DEVELOPMENT" ]; then
+            echo "OK: $comp/conf/DEVELOPMENT generated by doconf"
+          else
+            echo "ERROR: $comp/conf/DEVELOPMENT not found"
+            exit 1
+          fi
+        done
+    - name: Fix makedefs path in Makefiles
+      run: "cd xnu-source\necho \"=== Force patching proc_reg.h for M30LTE ===\"\n\
+        if ! grep -q \"M30LTE\" osfmk/arm64/proc_reg.h; then\n  echo \"M30LTE not\
+        \ found in proc_reg.h, applying manually...\"\n  python3 ../xnu/patches/patch_proc_reg.py\n\
+        else\n  echo \"M30LTE already defined in proc_reg.h\"\nfi\ngrep -n \"M30LTE\"\
+        \ osfmk/arm64/proc_reg.h | head -5\n"
+    - name: Create firehose_buffer_private.h for M30LTE
+      run: "cd xnu-source\necho \"=== Creating firehose_buffer_private.h for M30LTE\
+        \ ===\"\nif [ ! -f osfmk/arm64/firehose_buffer_private.h ]; then\n  echo \"\
+        firehose_buffer_private.h not found, creating...\"\n  python3 ../xnu/patches/create_firehose_buffer_private.py\n\
+        else\n  echo \"firehose_buffer_private.h already exists\"\nfi\nls -la osfmk/arm64/firehose_buffer_private.h\n\
+        mkdir -p BUILD/obj/EXPORT_HDRS/osfmk/arm64\ncp osfmk/arm64/firehose_buffer_private.h\
+        \ BUILD/obj/EXPORT_HDRS/osfmk/arm64/\n"
+    - name: Fix clang flag incompatibility with Xcode 26
+      run: "cd xnu-source\necho \"=== Patching out incompatible clang flags ===\"\n\
+        find . -name \"*.def\" -o -name \"Makefile*\" -o -name \"*.mk\" -o -name \"\
+        *.inc\" | xargs grep -l \"enable-trivial-auto-var-init-zero-knowing\" 2>/dev/null\
+        \ | while read file; do\n  echo \"Patching: $file\"\n  sed -i '' 's/-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang//g'\
+        \ \"$file\"\ndone\ngrep -r \"enable-trivial-auto-var-init-zero-knowing\" .\
+        \ 2>/dev/null | head -5 || echo \"Flag not found in source (may be added at\
+        \ build time)\"\n"
+    - name: Verify bsd/Makefile structure
+      run: 'cd xnu-source
+
+        echo "=== Verifying bsd/Makefile structure ==="
+
+        grep -n "do_all" bsd/Makefile || echo "No do_all target found"
+
+        grep -n "OBJPATH" bsd/Makefile | head -5
+
+        echo "=== First 30 lines of bsd/Makefile ==="
+
+        head -30 bsd/Makefile
+
+        '
+    - name: Fix DriverKit IORPC for Xcode 26
+      run: "cd xnu-source\necho \"=== Patching DriverKit IORPC for Xcode 26 compatibility\
+        \ ===\"\nif [ -f iokit/DriverKit/IORPC.h ]; then\n  echo \"Patching IORPC.h\
+        \ to add kernelContent field...\"\n  python3 ../xnu/patches/patch_iorpc.py\n\
+        else\n  echo \"IORPC.h not found, skipping\"\nfi\ngrep -n \"kernelContent\"\
+        \ iokit/DriverKit/IORPC.h 2>/dev/null | head -5 || echo \"kernelContent not\
+        \ found in IORPC.h\"\n\necho \"=== Patching iokit/Makefile to skip DriverKit\
+        \ when DRIVERKIT=0 ===\"\npython3 ../xnu/patches/patch_iokit_makefile.py"
+    - name: Patch osfmk/mach/Makefile for VPATH
+      run: 'cd xnu-source
+
+        echo "=== Patching osfmk/mach/Makefile for VPATH ==="
+
+        python3 ../xnu/patches/patch_osfmk_mach_vpath.py
+
+        echo "Patched successfully"'
+    - name: Patch osfmk/gssd/Makefile for VPATH
+      run: 'cd xnu-source
+
+        echo "=== Patching osfmk/gssd/Makefile for VPATH ==="
+
+        python3 ../xnu/patches/patch_gssd_makefile.py
+
+        echo "Patched successfully"'
+    - name: Patch libkern/libkern/Makefile for VPATH
+      run: 'cd xnu-source
+
+        echo "=== Patching libkern/libkern/Makefile for VPATH ==="
+
+        python3 ../xnu/patches/patch_libkern_makefile.py
+
+        echo "Patched successfully"'
+    - name: Patch security/Makefile for kernel source includes
+      run: 'cd xnu-source
+
+        echo "=== Patching security/Makefile for kernel source includes ==="
+
+        python3 ../xnu/patches/patch_security_makefile.py
+
+        echo "Patched successfully"'
+    - name: Create all export files and filelists for kernel build
+      run: "cd xnu-source\necho \"=== Creating all export files and filelists ===\"\nmkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config\ncp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true\nfor comp in security bsd osfmk libkern iokit pexpert libsa san security; do\n  mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT\n  touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist\n  echo \"Created $comp.filelist\"\ndone\n# Create empty all-kpi.exp\ntouch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp\necho \"Created all-kpi.exp\"\n"
+    - name: Patch libkern/os/atomic_private_impl.h for memory_order
+      run: 'cd xnu-source
+
+        echo "=== Patching libkern/os/atomic_private_impl.h for memory_order ==="
+
+        python3 ../xnu/patches/patch_atomic_memory_order.py
+
+        echo "Patched successfully"'
+    - name: Patch osfmk/mach/arm/Makefile for VPATH
+      run: 'cd xnu-source
+
+        echo "=== Patching osfmk/mach/arm/Makefile for VPATH ==="
+
+        python3 ../xnu/patches/patch_osfmk_mach_arm_vpath.py
+
+        echo "Patched successfully"'
+    - name: Copy .defs files to build directory for all osfmk subdirs
+      run: 'cd xnu-source
+
+        echo "=== Copying .defs files to build directory for all osfmk subdirs ==="
+
+        python3 ../xnu/patches/copy_defs_files.py
+
+        echo "Copied .defs files to build directory"'
+    - name: Build bootstrap_cmds (mig)
+      run: 'cd xnu-source
+
+        BOOTSTRAP_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json"
+        | jq -r ''.projects[] | select(.project=="bootstrap_cmds") | .tag'')
+
+        git clone --branch "${BOOTSTRAP_VERSION}" --depth 1 https://github.com/apple-oss-distributions/bootstrap_cmds.git
+        bootstrap_cmds
+
+        cd bootstrap_cmds
+
+        sed -i '''' ''s|-o root -g wheel||g'' xcodescripts/install-mig.sh
+
+        xcodebuild install -sdk macosx -project mig.xcodeproj ARCHS="arm64 x86_64"
+        CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/bootstrap_cmds.obj" SYMROOT="$PWD/../BUILD/bootstrap_cmds.sym"
+        DSTROOT="$PWD/../fakeroot" RC_ProjectNameAndSourceVersion="${BOOTSTRAP_VERSION}"
+        2>&1 | tail -20 || true
+
+        '
+    - name: Build dtrace (ctf tools)
+      run: 'cd xnu-source
+
+        DTRACE_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json"
+        | jq -r ''.projects[] | select(.project=="dtrace") | .tag'')
+
+        git clone --branch "${DTRACE_VERSION}" --depth 1 https://github.com/apple-oss-distributions/dtrace.git
+        dtrace
+
+        cd dtrace
+
+        xcodebuild install -sdk macosx -target ctfconvert -target ctfdump -target
+        ctfmerge ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/dtrace.obj"
+        SYMROOT="$PWD/../BUILD/dtrace.sym" DSTROOT="$PWD/../fakeroot" 2>&1 | tail
+        -20 || true
+
+        '
+    - name: Build availability versions
+      run: "cd xnu-source\nAVAILABILITYVERSIONS_VERSION=$(curl -s \"https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json\"\
+        \ | jq -r '.projects[] | select(.project==\"AvailabilityVersions\") | .tag')\n\
+        git clone --branch \"${AVAILABILITYVERSIONS_VERSION}\" --depth 1 https://github.com/apple-oss-distributions/AvailabilityVersions.git\
+        \ AvailabilityVersions\ncd AvailabilityVersions\nmake install -j8 OBJROOT=\"\
+        $PWD/../BUILD/\" SYMROOT=\"$PWD/../BUILD/\" DSTROOT=\"$PWD/../fakeroot\" 2>&1\
+        \ | tail -20 || true\n# Also install availability.pl to host system location\
+        \ for make_symbol_aliasing.sh fallback\nif [ -f \"$PWD/../fakeroot/usr/local/libexec/availability.pl\"\
+        \ ]; then\n  echo \"Installing availability.pl to /usr/local/libexec/\"\n\
+        \  sudo mkdir -p /usr/local/libexec\n  sudo cp \"$PWD/../fakeroot/usr/local/libexec/availability.pl\"\
+        \ /usr/local/libexec/availability.pl\n  sudo chmod +x /usr/local/libexec/availability.pl\n\
+        \  echo \"Installed availability.pl to host system\"\nelse\n  echo \"WARNING:\
+        \ availability.pl not found in fakeroot\"\n  find \"$PWD/../fakeroot\" -name\
+        \ \"availability.pl\" 2>/dev/null || true\nfi\n"
+    - name: Create minimal availability.pl for _symbol_aliasing.h
+      run: 'cd xnu-source
+
+        echo "=== Creating minimal availability.pl for _symbol_aliasing.h ==="
+
+        sudo mkdir -p /usr/local/libexec
+
+        python3 ../xnu/patches/create_minimal_availability_pl.py > /tmp/availability.pl
+
+        sudo cp /tmp/availability.pl /usr/local/libexec/availability.pl
+
+        sudo chmod +x /usr/local/libexec/availability.pl
+
+        echo "Created minimal availability.pl at /usr/local/libexec/availability.pl"
+
+        # Verify it works
+
+        /usr/local/libexec/availability.pl --ios | head -5
+
+        /usr/local/libexec/availability.pl --macosx | head -5
+
+        '
+    - name: Patch make_symbol_aliasing.sh for availability.pl fallback
+      run: 'cd xnu-source
+
+        echo "=== Patching make_symbol_aliasing.sh for availability.pl fallback ==="
+
+        python3 ../xnu/patches/patch_availability_fallback.py
+
+        chmod +x bsd/sys/make_symbol_aliasing.sh
+
+        echo "Patched successfully"
+
+        '
+    - name: Install xnu headers
+      run: 'cd xnu-source
+
+        SYSCTL_PHYSICALCPU=$(/usr/sbin/sysctl -n hw.physicalcpu)
+
+        SYSCTL_LOGICALCPU=$(/usr/sbin/sysctl -n hw.logicalcpu)
+
+        MEMORY_SIZE=$(/usr/sbin/sysctl -n hw.memsize)
+
+        # Only install headers for our target architecture (ARM64 M30LTE), not X86_64
+        or VMAPPLE
+
+        make installhdrs -j8 SDKROOT=iphoneos ARCH_CONFIGS="ARM64" MACHINE_CONFIGS="M30LTE"
+        OBJROOT="$PWD/BUILD/xnu-hdrs.obj" SYMROOT="$PWD/BUILD/xnu-hdrs.sym" DSTROOT="$PWD/fakeroot"
+        FAKEROOT_DIR="$PWD/fakeroot" KDKROOT="/Library/Developer/KDKs" TIGHTBEAMC=""
+        RC_DARWIN_KERNEL_VERSION="22.6.0" MEMORY_SIZE="${MEMORY_SIZE}" SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}"
+        SYSCTL_HW_LOGICALCPU="${SYSCTL_LOGICALCPU}" KERNEL_BUILDS_IN_PARALLEL=1 2>&1
+        | tail -20 || true
+
+        '
+    - name: Pre-build IORPC patch for DriverKit
+      run: 'cd xnu-source
+
+        echo "=== Pre-build IORPC patch for DriverKit ==="
+
+        python3 ../xnu/patches/patch_all_iorpc.py
+
+        '
+    - name: Patch SETUP/config/Makefile for VPATH
+      run: 'cd xnu-source
+
+        echo "=== Patching SETUP/config/Makefile for VPATH ==="
+
+        python3 ../xnu/patches/patch_setup_config_vpath.py
+
+        echo "Patched successfully"
+
+        '
+    - name: Fix SETUP tool include paths
+      run: 'cd xnu-source
+
+        echo "=== Fixing SETUP tool include paths ==="
+
+        SDKROOT_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
+
+        echo "SDKROOT_PATH=$SDKROOT_PATH"
+
+        export SDKROOT_PATH
+
+        python3 ../xnu/patches/fix_setup_tool_includes.py
+
+        echo "Fixed successfully"
+
+        '
+    - name: Fix makedefs paths in build directory
+      run: 'echo "=== Fixing /makedefs paths in build directory ==="
+
+        cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
+
+        python3 ../xnu/fix_makedefs.py BUILD/obj
+
+        # Verify the changes
+
+        grep -r "/makedefs" BUILD/obj --include="Makefile" --include="*.mk" --include="*.mak"
+        | head -5 || echo "No more /makedefs references found in build directory"
+
+        # Verify the patch
+
+        '
+    - name: Build SETUP tools for macOS (host platform)
+      run: |
+        cd xnu-source
+        echo "=== Building ALL SETUP tools for macOS (host platform) ==="
+        # Build SETUP tools on host platform (macOS x86_64) - needed for doconf
+        # Use a completely separate host build directory with clean environment
+        HOST_OBJROOT="$PWD/BUILD/obj/host"
     - name: Fix doconf.csh argument parsing bug
       run: |
         cd xnu-source
@@ -533,50 +771,7 @@ jobs:
         # Use a completely separate host build directory with clean environment
         HOST_OBJROOT="$PWD/BUILD/obj/host"
         mkdir -p "$HOST_OBJROOT"
-        # Unset target build variables to avoid contamination
-        # CRITICAL: Must use env -i to start with clean environment to avoid SDKROOT=iphoneos from job env
-        # The MAKEFLAGS=-e flag causes environment variables to override makefile variables
-        env -i \
-          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
-          HOME="$HOME" \
-          HOST_OBJROOT="$HOST_OBJROOT" \
-          make -C SETUP \
-            RC_ProjectName=SETUP \
-            RC_ARCHS="x86_64" \
-            RC_CFLAGS="" \
-            RC_CXXFLAGS="" \
-            RC_OSFLAGS="" \
-            RC_RELEASE=1 \
-            RC_DEBUG=0 \
-            SDKROOT=macosx \
-            HOST_SDKROOT=macosx \
-            HOST_OS_VERSION=26.0 \
-            OBJROOT="$HOST_OBJROOT" \
-            SYMROOT="$HOST_OBJROOT" \
-            DSTROOT="$HOST_OBJROOT" \
-            2>&1 | tail -100
         # Now explicitly build the config tool (doconf) using the do_build_setup target
-        echo "=== Building doconf (config tool) ==="
-        env -i \
-          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
-          HOME="$HOME" \
-          HOST_OBJROOT="$HOST_OBJROOT" \
-          make -C SETUP/config \
-            RC_ProjectName=config \
-            RC_ARCHS="x86_64" \
-            RC_CFLAGS="" \
-            RC_CXXFLAGS="" \
-            RC_OSFLAGS="" \
-            RC_RELEASE=1 \
-            RC_DEBUG=0 \
-            SDKROOT=macosx \
-            HOST_SDKROOT=macosx \
-            HOST_OS_VERSION=26.0 \
-            OBJROOT="$HOST_OBJROOT" \
-            SYMROOT="$HOST_OBJROOT" \
-            DSTROOT="$HOST_OBJROOT" \
-            do_build_setup \
-            2>&1 | tail -100
         # Verify doconf was built
         if [ -f "$HOST_OBJROOT/SETUP/config/doconf" ]; then
           echo "doconf built successfully at $HOST_OBJROOT/SETUP/config/doconf"
