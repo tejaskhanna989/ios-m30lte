@@ -13,9 +13,19 @@ import re
 with open('SETUP/config/doconf', 'r') as f:
     content = f.read()
 
-print("=== DOCONF.CSH CONTENT ===")
-print(content[:2000])
-print("=== END DOCONF.CSH CONTENT (first 2000 chars) ===")
+print("=== DOCONF.CSH CONTENT (first 5000 chars) ===")
+print(content[:5000])
+print("=== END DOCONF.CSH CONTENT ===")
+
+# Let's search for the argument parsing loop
+print("\n=== SEARCHING FOR ARGUMENT PARSING ===")
+# Look for while loop and case statements
+for keyword in ['while', 'case', 'shift', 'breaksw', '-cpu', '-soc', '-platform', '-d', '-s', '-m']:
+    matches = [(m.start(), content[max(0,m.start()-50):m.end()+50]) for m in re.finditer(keyword, content)]
+    if matches:
+        print(f"\n=== Found '{keyword}' ({len(matches)} matches) ===")
+        for i, (pos, ctx) in enumerate(matches[:5]):
+            print(f"  Match {i+1} at pos {pos}: ...{ctx}...")
 
 # Fix each case that takes an argument by adding an extra shift
 # The pattern is: case "-X": ... set VAR="$argv[2]" ... shift; breaksw
@@ -33,7 +43,6 @@ cases_to_fix = [
 
 for flag, set_line in cases_to_fix:
     # Use regex to find the pattern with flexible whitespace
-    # Pattern: set_line followed by shift then breaksw
     pattern = re.escape(set_line) + r'\s+shift\s+breaksw'
     replacement = set_line + '\n    shift\n    shift\n    breaksw'
     
@@ -46,18 +55,16 @@ for flag, set_line in cases_to_fix:
         # Try to find just the set_line
         if set_line in content:
             print(f"  But set_line '{set_line}' found in content")
-            # Show context around it
             idx = content.index(set_line)
-            print(f"  Context: ...{content[max(0,idx-50):idx+100]}...")
+            print(f"  Context: ...{content[max(0,idx-100):idx+100]}...")
         else:
             print(f"  set_line '{set_line}' NOT found in content")
             # Search for similar patterns
-            # Try to find the variable name
             var_name = set_line.split('=')[0].replace('set ', '').strip()
             if var_name in content:
                 print(f"  But variable '{var_name}' found in content")
                 idx = content.index(var_name)
-                print(f"  Context: ...{content[max(0,idx-50):idx+100]}...")
+                print(f"  Context: ...{content[max(0,idx-100):idx+100]}...")
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
