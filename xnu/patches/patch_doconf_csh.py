@@ -11,9 +11,7 @@ new_lines = []
 i = 0
 while i < len(lines):
     line = lines[i]
-    # Check if this line is a set VAR="$argv[2]" line
     if 'set ' in line and '="$argv[2]"' in line:
-        # Look ahead to find the next 'shift' followed by 'breaksw'
         j = i + 1
         shift_found = False
         while j < len(lines) and j < i + 20:
@@ -28,7 +26,6 @@ while i < len(lines):
             while k <= j:
                 new_lines.append(lines[k])
                 k += 1
-            # Add extra shift
             new_lines.append(lines[j])
             i = j + 1
             continue
@@ -37,7 +34,7 @@ while i < len(lines):
 
 content = ''.join(new_lines)
 
-# Initialize variables to empty string instead of unsetting them
+# Remove all unset commands for these variables and initialize them to empty string
 # This prevents "Undefined variable" errors when referenced in foreach loops
 content = content.replace('unset MASTER_CPU', '')
 content = content.replace('unset SOC_CONFIG', '')
@@ -45,7 +42,7 @@ content = content.replace('unset PLATFORM', '')
 content = content.replace('unset MACHINE', '')
 content = content.replace('unset profile', '')
 
-# Add initialization at the beginning after the other variable sets
+# Add initialization block after the existing variable initializations
 # Find a good place to add the initialization
 init_block = '''set MASTER_CPU = ""
 set SOC_CONFIG = ""
@@ -54,8 +51,12 @@ set MACHINE = ""
 set profile = ""
 '''
 # Insert after the existing variable initializations
+# Find the line with 'set OBJDIR=../BUILD' and insert before it
 if 'set OBJDIR=../BUILD' in content:
-    content = content.replace('set OBJDIR=../BUILD', init_block + 'set OBJDIR=../BUILD')
+    content = content.replace('set OBJDIR=../BUILD', 'set MASTER_CPU = ""\nset SOC_CONFIG = ""\nset PLATFORM = ""\nset MACHINE = ""\nset profile = ""\nset OBJDIR=../BUILD')
+    print("Added variable initialization block")
+else:
+    print("WARNING: Could not find 'set OBJDIR=../BUILD' to insert initialization")
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
