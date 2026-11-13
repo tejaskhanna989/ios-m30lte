@@ -198,6 +198,12 @@ jobs:
         echo "=== Creating bsd/conf/files.m30lte for M30LTE ==="
         python3 ../xnu/patches/create_bsd_files_m30lte.py
         ls -la bsd/conf/files.m30lte
+    - name: Patch SETUP/config/Makefile for VPATH (must run before doconf build)
+      run: |
+        cd xnu-source
+        echo "=== Patching SETUP/config/Makefile for VPATH ==="
+        python3 ../xnu/patches/patch_setup_config_vpath.py
+        echo "Patched successfully"
     - name: Build SETUP tools (including doconf) for macOS host platform
       run: |
         cd xnu-source
@@ -277,12 +283,6 @@ jobs:
         echo "=== Fixing doconf.csh argument parsing bug ==="
         python3 ../xnu/patches/patch_doconf_csh.py
         echo "doconf.csh patched successfully"
-    - name: Patch SETUP/config/Makefile for VPATH (must run before doconf build)
-      run: |
-        cd xnu-source
-        echo "=== Patching SETUP/config/Makefile for VPATH ==="
-        python3 ../xnu/patches/patch_setup_config_vpath.py
-        echo "Patched successfully"
     - name: Generate component configs with doconf
       run: |
         cd xnu-source
