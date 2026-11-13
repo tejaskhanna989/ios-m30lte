@@ -16,8 +16,9 @@ with open('SETUP/config/doconf', 'r') as f:
 # The pattern is: case "-X": ... set VAR="$argv[2]" ... shift; breaksw
 # We need to change "shift" to "shift; shift" for these cases
 
+# Note: The script uses MASTER_CPU not MACHINE for -cpu flag
 cases_to_fix = [
-    ('-cpu', 'set MACHINE="$argv[2]"'),
+    ('-cpu', 'set MASTER_CPU="$argv[2]"'),
     ('-soc', 'set SOC_CONFIG="$argv[2]"'),
     ('-platform', 'set PLATFORM="$argv[2]"'),
     ('-d', 'set OBJDIR="$argv[2]"'),
@@ -34,6 +35,14 @@ for flag, set_line in cases_to_fix:
         print(f"Patched doconf: {flag} - added extra shift")
     else:
         print(f"WARNING: Could not find pattern for {flag}")
+        # Try alternative pattern with different spacing
+        old2 = f'{set_line}\n  shift\n  breaksw'
+        new2 = f'{set_line}\n  shift\n  shift\n  breaksw'
+        if old2 in content:
+            content = content.replace(old2, new2)
+            print(f"Patched doconf (alt spacing): {flag} - added extra shift")
+        else:
+            print(f"  Could not find alternative pattern either")
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
