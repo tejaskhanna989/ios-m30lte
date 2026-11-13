@@ -8,7 +8,7 @@ with open('SETUP/config/doconf', 'r') as f:
 print("=== Patching doconf.csh ===")
 
 # Fix 1: Initialize all variables that might be referenced but not set
-# The script uses MASTER_CPU, SOC_CONFIG, PLATFORM, MACHINE, profile, DEF_AVP, DEF_SEED
+# The script uses MASTER_CPU, SOC_CONFIG, PLATFORM, MACHINE, profile, DEF_AVP, DEF_SEED, SOURCE
 # but they might not be set if the corresponding flags are not provided
 
 # Add initialization after the existing unset commands
@@ -19,6 +19,7 @@ set MACHINE = ""
 set profile = ""
 set DEF_AVP = ""
 set DEF_SEED = ""
+set SOURCE = ""
 '''
 
 # Insert after the existing unset commands
@@ -71,11 +72,13 @@ else:
     else:
         print("Could not find pattern with regex either")
 
-# Fix 3: Initialize DEF_SEED if not already set (it's set to "" but might be unset)
-# The script uses $DEF_SEED in the unifdef command
-
-# Fix 4: Initialize DEF_AVP (it's set in -soc case but might be unset if -soc not provided)
-# Already handled by initialization block above
+# Fix 3: Also map SOURCEDIR to SOURCE since the script uses $SOURCE but -s sets SOURCEDIR
+# Add after the SOURCEDIR is set
+if 'set SOURCEDIR' in content:
+    # Find where SOURCEDIR is set and add SOURCE = $SOURCEDIR after it
+    # The pattern is: set SOURCEDIR=... followed by shift breaksw
+    content = content.replace('set SOURCEDIR="$argv[2]"\n    shift\n    shift\n    breaksw', 'set SOURCEDIR="$argv[2]"\n    set SOURCE="$argv[2]"\n    shift\n    shift\n    breaksw')
+    print("Added SOURCE = SOURCEDIR mapping")
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
