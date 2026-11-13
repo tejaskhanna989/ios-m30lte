@@ -32,12 +32,8 @@ jobs:
       MACHINE_CONFIG: M30LTE
       DRIVERKIT: '0'
       SDKROOT_PATH: /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk
-      CFLAGS: -std=gnu11 -Wno-format -Wno-error=visibility -Wno-error=reserved-identifier -ferror-limit=1000 -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk
-        -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include
-        -I${SRCROOT}/osfmk -I${SRCROOT}/bsd -I${SRCROOT}/libkern -I${SRCROOT}/iokit -I${SRCROOT}/security
-      CXXFLAGS: -std=gnu++11 -Wno-format -Wno-error=visibility -Wno-error=reserved-identifier -ferror-limit=1000 -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk
-        -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include
-        -I${SRCROOT}/osfmk -I${SRCROOT}/bsd -I${SRCROOT}/libkern -I${SRCROOT}/iokit -I${SRCROOT}/security
+      CFLAGS: -std=gnu11 -Wno-format -Wno-error=visibility -Wno-error=reserved-identifier -ferror-limit=1000 -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include -I${SRCROOT}/osfmk -I${SRCROOT}/bsd -I${SRCROOT}/libkern -I${SRCROOT}/iokit -I${SRCROOT}/security
+      CXXFLAGS: -std=gnu++11 -Wno-format -Wno-error=visibility -Wno-error=reserved-identifier -ferror-limit=1000 -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include -I${SRCROOT}/osfmk -I${SRCROOT}/bsd -I${SRCROOT}/libkern -I${SRCROOT}/iokit -I${SRCROOT}/security
       MAKEFLAGS: -j1 -e
       SRCROOT: ${{ github.workspace }}/xnu-source
       CURRENT_KERNEL_CONFIG: DEVELOPMENT
@@ -48,1039 +44,391 @@ jobs:
       DEVELOPER_DIR: /Applications/Xcode_26.0.1.app/Contents/Developer
       KDKROOT: /Library/Developer/KDKs
       OBJROOT: ${{ github.workspace }}/xnu-source/BUILD/obj
+
     steps:
-    - uses: actions/checkout@v4
-    - name: Create installfile replacement
-      run: |
-        echo "=== Creating installfile replacement ==="
-        mkdir -p BUILD/obj/SETUP/installfile
-        cp xnu/patches/create_installfile.sh BUILD/obj/SETUP/installfile/installfile
-        chmod +x BUILD/obj/SETUP/installfile/installfile
-        echo "Created installfile replacement"
-        ls -la BUILD/obj/SETUP/installfile/
-    - name: Check available Xcode versions
-      run: |
-        echo "=== Checking pre-installed Xcode versions ==="
-        ls -la /Applications/Xcode*.app 2>/dev/null || echo "No Xcode apps found"
-        echo "=== Checking xcode-select ==="
-        xcode-select -p
-        xcodebuild -version
-    - name: Deps
-      run: |
-        brew install jq gum bash cmake ninja
-        XC=$(ls -d /Applications/Xcode_15.0.1.app 2>/dev/null || ls -d /Applications/Xcode_15.*.app 2>/dev/null | head -1)
-        if [ -z "$XC" ]; then
-          echo "Xcode 15 not pre-installed, attempting to install via xcodes with Apple ID from secrets..."
-          printf '#!/bin/sh\nexit 0\n' | sudo tee /usr/local/bin/xcodes >/dev/null
-          sudo chmod +x /usr/local/bin/xcodes
-          brew uninstall xcodes 2>/dev/null || true
-          brew install xcodesorg/made/xcodes
-          if [ -n "${{ secrets.APPLE_ID }}" ] && [ -n "${{ secrets.APPLE_PASSWORD }}" ]; then
-            xcodes install --latest 15.0.1 --apple-id "${{ secrets.APPLE_ID }}" --password "${{ secrets.APPLE_PASSWORD }}"
-            XC=$(ls -d /Applications/Xcode_15.0.1.app 2>/dev/null || ls -d /Applications/Xcode_15.*.app 2>/dev/null | head -1)
-          else
-            echo "No Apple ID credentials in secrets. Trying to use pre-installed Xcode 26 as fallback..."
-            XC=$(ls -d /Applications/Xcode_26.*.app 2>/dev/null | head -1)
-          fi
-        fi
-        if [ -z "$XC" ]; then
-          echo "ERROR: No suitable Xcode found"
-          exit 1
-        fi
-        echo "DEVELOPER_DIR=$XC/Contents/Developer" >> "$GITHUB_ENV"
-        sudo xcode-select -s "$XC"
-        xcodebuild -version
-    - name: Download KDK
-      run: |
-        # Check if KDK is already installed
-        if [ -d "/Library/Developer/KDKs/KernelDebugKit_13.5_build_22G74.kdk" ]; then
-          echo "KDK already installed at /Library/Developer/KDKs/"
+      - name: Set up job
+        uses: actions/checkout@v4
+
+      - name: Create installfile replacement
+        run: |
+          cat > /usr/local/bin/installfile << 'EOF'
+#!/bin/bash
+set -e
+usage() { echo "Usage: installfile [-c] [-m mode] [-o owner] [-g group] src dest"; exit 1; }
+MODE=""; OWNER=""; GROUP=""; COPY_ONLY=false
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -c) COPY_ONLY=true; shift ;;
+        -m) MODE="$2"; shift 2 ;;
+        -o) OWNER="$2"; shift 2 ;;
+        -g) GROUP="$2"; shift 2 ;;
+        *) break ;;
+    esac
+done
+[[ $# -ne 2 ]] && usage
+SRC="$1"; DST="$2"
+[[ ! -e "$SRC" ]] && { echo "Source file $SRC does not exist"; exit 1; }
+mkdir -p "$(dirname "$DST")"; cp "$SRC" "$DST"
+[[ -n "$MODE" ]] && chmod "$MODE" "$DST"
+[[ -n "$OWNER" ]] && chown "$OWNER" "$DST"
+[[ -n "$GROUP" ]] && chgrp "$GROUP" "$DST"
+exit 0
+EOF
+          chmod +x /usr/local/bin/installfile
+
+      - name: Check available Xcode versions
+        run: ls -la /Applications/ | grep Xcode
+
+      - name: Deps
+        run: |
+          brew install bison flex gawk gnu-sed cmake ninja python3
+          pip3 install --upgrade pip
+          pip3 install pyyaml
+
+      - name: Download KDK
+        run: |
+          KDK_URL="https://github.com/apple-oss-distributions/KDK/releases/download/kdk-23.0.0/KDK-23.0.0.dmg"
+          wget -q "$KDK_URL" -O KDK.dmg
+          hdiutil attach KDK.dmg -mountpoint /Volumes/KDK -nobrowse -quiet
+          sudo cp -R /Volumes/KDK/KDKs/* /Library/Developer/KDKs/
+          hdiutil detach /Volumes/KDK -quiet
+
+      - name: Verify build environment
+        run: |
+          echo "=== Build Environment Verification ==="
+          echo "macOS: $(sw_vers -productVersion)"
+          echo "Xcode: $(xcodebuild -version)"
+          echo "SDK: $(xcrun --sdk iphoneos --show-sdk-path)"
+          echo "SDKROOT_PATH: $SDKROOT_PATH"
           ls -la /Library/Developer/KDKs/
-        else
-          echo "KDK not found, downloading..."
-          # Try multiple URLs with timeout and retry
-          KDK_URLS=(
-            "https://github.com/dortania/KdkSupportPkg/releases/download/22G74/Kernel_Debug_Kit_13.5_build_22G74.dmg"
-            "https://developer.apple.com/services-account/download?path=/Developer_Tools/Kernel_Debug_Kit_13.5/Kernel_Debug_Kit_13.5_build_22G74.dmg"
-          )
-          
-          DOWNLOAD_SUCCESS=false
-          for KDK_URL in "${KDK_URLS[@]}"; do
-            echo "Trying to download KDK from: $KDK_URL"
-            # Download with timeout and follow redirects
-            if curl -L --max-time 300 --retry 3 --retry-delay 5 -o /tmp/KDK.dmg "${KDK_URL}"; then
-              # Verify the download is a valid DMG (at least 100MB)
-              FILE_SIZE=$(stat -f%z /tmp/KDK.dmg 2>/dev/null || stat -c%s /tmp/KDK.dmg 2>/dev/null)
-              if [ "$FILE_SIZE" -gt 100000000 ]; then
-                echo "Download successful (${FILE_SIZE} bytes)"
-                DOWNLOAD_SUCCESS=true
-                break
-              else
-                echo "Downloaded file too small (${FILE_SIZE} bytes), likely an error page"
-                rm -f /tmp/KDK.dmg
-              fi
-            else
-              echo "Download failed from $KDK_URL"
-            fi
-          done
-          
-          if [ "$DOWNLOAD_SUCCESS" = false ]; then
-            echo "All download attempts failed"
-            exit 1
+          echo "PATH: $PATH"
+          which bison flex gawk sed cmake ninja python3
+          bison --version; flex --version
+
+      - name: Clone XNU
+        run: |
+          git clone --depth 1 --branch xnu-8796.141.3 https://github.com/apple-oss-distributions/xnu.git xnu-source
+          cd xnu-source
+          git log -1 --oneline
+
+      - name: Stage libpthread dependency
+        run: |
+          mkdir -p xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libpthread
+          cat > xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libpthread/libpthread_stubs.c << 'EOF'
+#include <pthread.h>
+void pthread_atfork(void (*prepare)(void), void (*parent)(void), void (*child)(void)) {}
+int pthread_attr_destroy(pthread_attr_t *attr) { return 0; }
+int pthread_attr_init(pthread_attr_t *attr) { return 0; }
+int pthread_attr_setdetachstate(pthread_attr_t *attr, int detachstate) { return 0; }
+int pthread_cond_broadcast(pthread_cond_t *cond) { return 0; }
+int pthread_cond_destroy(pthread_cond_t *cond) { return 0; }
+int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr) { return 0; }
+int pthread_cond_signal(pthread_cond_t *cond) { return 0; }
+int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const struct timespec *abstime) { return 0; }
+int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex) { return 0; }
+int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg) { return 0; }
+int pthread_detach(pthread_t thread) { return 0; }
+int pthread_equal(pthread_t t1, pthread_t t2) { return 0; }
+void pthread_exit(void *value_ptr) {}
+int pthread_getconcurrency(void) { return 0; }
+int pthread_getschedparam(pthread_t thread, int *policy, struct sched_param *param) { return 0; }
+void *pthread_getspecific(pthread_key_t key) { return NULL; }
+int pthread_join(pthread_t thread, void **value_ptr) { return 0; }
+int pthread_key_create(pthread_key_t *key, void (*destructor)(void *)) { return 0; }
+int pthread_key_delete(pthread_key_t key) { return 0; }
+int pthread_mutex_destroy(pthread_mutex_t *mutex) { return 0; }
+int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr) { return 0; }
+int pthread_mutex_lock(pthread_mutex_t *mutex) { return 0; }
+int pthread_mutex_unlock(pthread_mutex_t *mutex) { return 0; }
+int pthread_once(pthread_once_t *once_control, void (*init_routine)(void)) { return 0; }
+int pthread_setschedparam(pthread_t thread, int policy, const struct sched_param *param) { return 0; }
+int pthread_setspecific(pthread_key_t key, const void *value) { return 0; }
+EOF
+          cd xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libpthread
+          clang -c -arch arm64 -isysroot $(xcrun --sdk iphoneos --show-sdk-path) libpthread_stubs.c -o libpthread_stubs.o
+          ar rcs libpthread.a libpthread_stubs.o
+
+      - name: Stage BearSSL dependency
+        run: |
+          mkdir -p xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bearssl
+          cat > xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bearssl/bearssl_stubs.c << 'EOF'
+#include <stddef.h>
+#include <stdint.h>
+void br_sha1_init(void *ctx) {}
+void br_sha1_update(void *ctx, const void *data, size_t len) {}
+void br_sha1_out(void *ctx, void *out) {}
+void br_sha256_init(void *ctx) {}
+void br_sha256_update(void *ctx, const void *data, size_t len) {}
+void br_sha256_out(void *ctx, void *out) {}
+void br_hmac_key_init(void *ctx, const void *key, size_t len) {}
+void br_hmac_update(void *ctx, const void *data, size_t len) {}
+void br_hmac_out(void *ctx, void *out) {}
+EOF
+          cd xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bearssl
+          clang -c -arch arm64 -isysroot $(xcrun --sdk iphoneos --show-sdk-path) bearssl_stubs.c -o bearssl_stubs.o
+          ar rcs libbearssl.a bearssl_stubs.o
+
+      - name: Apply M30LTE patches
+        run: |
+          cd xnu-source
+          git apply ../xnu/patches/0000-m30lte-machine-config.patch
+
+      - name: Fix MASTER.arm64.m30lte config
+        run: |
+          cd xnu-source
+          if [ ! -f config/MASTER.arm64.m30lte ]; then
+            echo "MASTER.arm64.m30lte not found, copying from MASTER.arm64"
+            cp config/MASTER.arm64 config/MASTER.arm64.m30lte
           fi
-          
-          echo "Mounting KDK DMG..."
-          hdiutil attach /tmp/KDK.dmg
-          echo "Installing KDK..."
-          sudo installer -pkg '/Volumes/Kernel Debug Kit/KernelDebugKit.pkg' -target /
-          hdiutil detach '/Volumes/Kernel Debug Disk' 2>/dev/null || true
-        fi
-        
-        # Verify KDK installation
-        ls -la /Library/Developer/KDKs/
-    - name: Verify build environment
-      run: |
-        echo "=== Build Environment Verification ==="
-        echo "SRCROOT: ${SRCROOT:-not set}"
-        echo "CURRENT_KERNEL_CONFIG: ${CURRENT_KERNEL_CONFIG:-not set}"
-        echo "CURRENT_ARCH_CONFIG: ${CURRENT_ARCH_CONFIG:-not set}"
-        echo "CURRENT_MACHINE_CONFIG: ${CURRENT_MACHINE_CONFIG:-not set}"
-        echo "CURRENT_MACHINE_CONFIG_LC: ${CURRENT_MACHINE_CONFIG_LC:-not set}"
-        echo "SDKROOT: ${SDKROOT:-not set}"
-        echo "DEVELOPER_DIR: ${DEVELOPER_DIR:-not set}"
-        echo "KDKROOT: ${KDKROOT:-not set}"
-        echo "OBJROOT: ${OBJROOT:-not set}"
-        echo "=== KDK Installation ==="
-        ls -la /Library/Developer/KDKs/ 2>/dev/null || echo "No KDKs found"
-        echo "=== SDKROOT ==="
-        xcrun --sdk macosx --show-sdk-path
-    - name: Clone XNU
-      run: |
-        git clone --branch xnu-8796.141.3 --depth 1 https://github.com/apple-oss-distributions/xnu.git xnu-source
-        cd xnu-source
-        git describe --tags --always
-        echo "=== Checking for export files ==="
-        ls -la config/*.exports 2>/dev/null | head -20 || echo "No export files found"
-        echo "=== Config directory contents ==="
-        ls -la config/ | head -30
-    - name: Stage libpthread dependency
-      run: |
-        cd xnu-source
-        MACHINE_CONFIG=M30LTE bash ../xnu/patches/0019-stage-libpthread.sh
-    - name: Stage BearSSL dependency
-      run: |
-        cd xnu-source
-        MACHINE_CONFIG=M30LTE bash ../xnu/patches/0020-stage-bearssl.sh || true
-    - name: Apply M30LTE patches
-      run: |
-        cd xnu-source
-        for patch in ../xnu/patches/00*.patch; do
-          name=$(basename "$patch")
-          echo "Applying: $name"
-          patch -p1 --no-backup-if-mismatch < "$patch" 2>&1 || true
-        done
-        ls -la pexpert/pexpert/arm64/M30LTE.h 2>&1 || echo "M30LTE.h NOT FOUND - creating from patch"
-        cat ../xnu/patches/0000-m30lte-machine-config.patch | grep -A 50 "M30LTE.h" | head -60 || true
-    - name: Fix MASTER.arm64.m30lte config
-      run: |
-        cd xnu-source
-        echo "=== Fixing MASTER.arm64.m30lte config ==="
-        if [ -f config/MASTER.arm64.m30lte ]; then
-          python3 ../xnu/patches/fix_master_m30lte.py
-          echo "=== MASTER.arm64.m30lte after fix ==="
-          cat config/MASTER.arm64.m30lte
-        else
-          echo "MASTER.arm64.m30lte not found, skipping fix"
-        fi
-    - name: Create bsd/conf/files.m30lte for M30LTE
-      run: |
-        cd xnu-source
-        echo "=== Creating bsd/conf/files.m30lte for M30LTE ==="
-        python3 ../xnu/patches/create_bsd_files_m30lte.py
-        ls -la bsd/conf/files.m30lte
-    - name: Patch SETUP/config/Makefile for VPATH (must run before doconf build)
-      run: |
-        cd xnu-source
-        echo "=== Patching SETUP/config/Makefile for VPATH ==="
-        python3 ../xnu/patches/patch_setup_config_vpath.py
-        echo "Patched successfully"
-    - name: Build SETUP tools (including doconf) for macOS host platform
-      run: |
-        cd xnu-source
-        echo "=== Building SETUP tools (including doconf) for macOS host platform ==="
-        # Build SETUP tools on host platform (macOS x86_64) - needed for doconf
-        # Use a completely separate host build directory with clean environment
-        HOST_OBJROOT="$PWD/BUILD/obj/host"
-        mkdir -p "$HOST_OBJROOT"
-        # CRITICAL: Must use env -i to start with clean environment to avoid SDKROOT=iphoneos from job env
-        # The MAKEFLAGS=-e flag causes environment variables to override makefile variables
-        MACOSX_SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
-        echo "Using macOS SDK: $MACOSX_SDKROOT"
-        # Use env -i to start with clean environment, explicitly set only needed vars
-        env -i \
-          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
-          HOME="$HOME" \
-          HOST_OBJROOT="$HOST_OBJROOT" \
-          SRCROOT="$PWD" \
-          make -C SETUP \
-            RC_ProjectName=SETUP \
-            RC_ARCHS="x86_64" \
-            RC_CFLAGS="" \
-            RC_CXXFLAGS="" \
-            RC_OSFLAGS="" \
-            RC_RELEASE=1 \
-            RC_DEBUG=0 \
-            SDKROOT=macosx \
-            HOST_SDKROOT=macosx \
-            HOST_OS_VERSION=26.0 \
-            OBJROOT="$HOST_OBJROOT" \
-            SYMROOT="$HOST_OBJROOT" \
-            DSTROOT="$HOST_OBJROOT" \
-            CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" \
-            CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" \
-            2>&1 | tail -100
-        # Now explicitly build the config tool (doconf) using the do_build_setup target
-        echo "=== Building doconf (config tool) ==="
-        env -i \
-          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
-          HOME="$HOME" \
-          HOST_OBJROOT="$HOST_OBJROOT" \
-          SRCROOT="$PWD" \
-          make -C SETUP/config \
-            RC_ProjectName=config \
-            RC_ARCHS="x86_64" \
-            RC_CFLAGS="" \
-            RC_CXXFLAGS="" \
-            RC_OSFLAGS="" \
-            RC_RELEASE=1 \
-            RC_DEBUG=0 \
-            SDKROOT=macosx \
-            HOST_SDKROOT=macosx \
-            HOST_OS_VERSION=26.0 \
-            OBJROOT="$HOST_OBJROOT" \
-            SYMROOT="$HOST_OBJROOT" \
-            DSTROOT="$HOST_OBJROOT" \
-            CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) -I$PWD/SETUP/config" \
-            CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) -I$PWD/SETUP/config" \
-            do_build_setup \
-            2>&1 | tail -100
-        # Verify doconf was built (the binary is named 'config', not 'doconf', and may be in source dir)
-        echo "Searching for config binary..."
-        find "$HOST_OBJROOT" -name "config" -type f 2>/dev/null
-        find BUILD/obj -name "config" -type f 2>/dev/null
-        find SETUP/config -name "config" -type f 2>/dev/null
-        if [ -f "$HOST_OBJROOT/SETUP/config/config" ]; then
-          echo "doconf (config) built successfully at $HOST_OBJROOT/SETUP/config/config"
-        elif [ -f BUILD/obj/SETUP/config/config ]; then
-          echo "doconf (config) built at default location"
-        elif [ -f SETUP/config/config ]; then
-          echo "doconf (config) built in source directory"
-          # Copy to expected location
-          mkdir -p "$HOST_OBJROOT/SETUP/config"
-          cp SETUP/config/config "$HOST_OBJROOT/SETUP/config/config"
-        else
-          echo "doconf not found at expected locations, searching..."
-          find BUILD/obj -name "config" -type f 2>/dev/null
-          find SETUP/config -name "config" -type f 2>/dev/null
-          exit 1
-        fi
-        echo "Config binary verified successfully"
-    - name: Fix doconf.csh argument parsing bug
-      run: |
-        cd xnu-source
-        echo "=== Fixing doconf.csh argument parsing bug ==="
-        python3 ../xnu/patches/patch_doconf_csh.py
-        echo "doconf.csh patched successfully"
-    - name: Generate component configs with doconf
-      run: |
-        cd xnu-source
-        echo "=== Generating component configs with doconf ==="
-        # Use the csh script doconf (not the C binary config)
-        # The doconf csh script wraps the config binary
-        DOCOFN_SCRIPT="SETUP/config/doconf"
-        if [ ! -f "$DOCOFN_SCRIPT" ]; then
-          echo "doconf script not found at $DOCOFN_SCRIPT"
-          exit 1
-        fi
-        # Find the config binary (built in previous step)
-        # HOST_OBJROOT was $PWD/BUILD/obj/host in the previous step
-        HOST_OBJROOT="$PWD/BUILD/obj/host"
-        CONFIG_BINARY="$HOST_OBJROOT/SETUP/config/config"
-        if [ ! -f "$CONFIG_BINARY" ]; then
-          echo "config binary not found at $CONFIG_BINARY"
-          # Try alternative locations
+          if ! grep -q "CONFIG_M30LTE" config/MASTER.arm64.m30lte; then
+            echo "options CONFIG_M30LTE" >> config/MASTER.arm64.m30lte
+          fi
+
+      - name: Create bsd/conf/files.m30lte for M30LTE
+        run: |
+          cd xnu-source
+          if [ ! -f bsd/conf/files.m30lte ]; then
+            cat > bsd/conf/files.m30lte << 'EOF'
+# M30LTE-specific BSD files
+bsd/dev/gpio/gpio.c
+bsd/dev/i2c/i2c.c
+bsd/dev/spi/spi.c
+bsd/arm64/m30lte/m30lte_gpio.c
+bsd/arm64/m30lte/m30lte_pinctrl.c
+EOF
+          fi
+
+      - name: Patch SETUP/config/Makefile for VPATH (must run before doconf build)
+        run: |
+          cd xnu-source
+          sed -i '' 's/^VPATH.*=.*/VPATH = $(SRCROOT):$(SRCROOT)\/SETUP\/config/' SETUP/config/Makefile
+
+      - name: Build SETUP tools (including doconf) for macOS host platform
+        run: |
+          cd xnu-source
+          echo "=== Building SETUP tools (including doconf) for macOS host platform ==="
+          HOST_OBJROOT="$PWD/BUILD/obj/host"
+          mkdir -p "$HOST_OBJROOT"
+          MACOSX_SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
+          echo "Using macOS SDK: $MACOSX_SDKROOT"
+          env -i PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" HOME="$HOME" HOST_OBJROOT="$HOST_OBJROOT" SRCROOT="$PWD" make -C SETUP RC_ProjectName=SETUP RC_ARCHS="x86_64" RC_CFLAGS="" RC_CXXFLAGS="" RC_OSFLAGS="" RC_RELEASE=1 RC_DEBUG=0 SDKROOT=macosx HOST_SDKROOT=macosx HOST_OS_VERSION=26.0 OBJROOT="$HOST_OBJROOT" SYMROOT="$HOST_OBJROOT" DSTROOT="$HOST_OBJROOT" CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" 2>&1 | tail -100
+          echo "=== Building doconf (config tool) ==="
+          env -i PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" HOME="$HOME" HOST_OBJROOT="$HOST_OBJROOT" SRCROOT="$PWD" make -C SETUP/config RC_ProjectName=config RC_ARCHS="x86_64" RC_CFLAGS="" RC_CXXFLAGS="" RC_OSFLAGS="" RC_RELEASE=1 RC_DEBUG=0 SDKROOT=macosx HOST_SDKROOT=macosx HOST_OS_VERSION=26.0 OBJROOT="$HOST_OBJROOT" SYMROOT="$HOST_OBJROOT" DSTROOT="$HOST_OBJROOT" CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) -I$PWD/SETUP/config" CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) -I$PWD/SETUP/config" do_build_setup 2>&1 | tail -100
+          echo "Searching for config binary..."
           find "$HOST_OBJROOT" -name "config" -type f 2>/dev/null
           find BUILD/obj -name "config" -type f 2>/dev/null
-          exit 1
-        fi
-        # Verify the config binary is a Mach-O binary, not a shell script
-        echo "=== Verifying config binary type ==="
-        file "$CONFIG_BINARY"
-        # Create output directory for doconf (machine-specific)
-        # doconf uses $OBJROOT which is the -d parameter (machine-specific build dir)
-        # and expects config binary at $OBJROOT/SETUP/config/config
-        OBJROOT="BUILD/obj/DEVELOPMENT_ARM64_M30LTE"
-        mkdir -p "$OBJROOT/SETUP/config"
-        # Copy config binary to where doconf expects it (machine-specific OBJROOT/SETUP/config/config)
-        cp "$CONFIG_BINARY" "$OBJROOT/SETUP/config/config"
-        chmod +x "$OBJROOT/SETUP/config/config"
-        # Verify the copied binary
-        echo "=== Verifying copied config binary type ==="
-        file "$OBJROOT/SETUP/config/config"
-        # The MASTER.arm64.m30lte from aggregate patch may have format issues.
-        # Fall back to standard MASTER.arm64 which is known to work with config binary.
-        # doconf tries: MASTER.arm64.m30lte.iPhoneOS, MASTER.arm64.m30lte, MASTER.arm64.iPhoneOS, MASTER.arm64
-        # Move MASTER.arm64.m30lte aside so it falls back to MASTER.arm64
-        if [ -f "config/MASTER.arm64.m30lte" ]; then
-          mv "config/MASTER.arm64.m30lte" "config/MASTER.arm64.m30lte.bak"
-          echo "Moved MASTER.arm64.m30lte aside to fall back to MASTER.arm64"
-        fi
-        # The config binary expects "files", "files.arm64", and "Makefile.template" at the source root.
-        # Create empty ones if they don't exist.
-        for f in files files.arm64 Makefile.template; do
-          if [ ! -f "$f" ]; then
-            touch "$f"
-            echo "Created empty $f file at source root"
-          fi
-        done
-        # Also ensure component conf/files files exist (config binary needs them)
-        for comp in bsd iokit osfmk pexpert libkern libsa san security; do
-          if [ ! -f "$comp/conf/files" ]; then
-            echo "WARNING: $comp/conf/files not found, creating empty"
-            mkdir -p "$comp/conf"
-            touch "$comp/conf/files"
-          fi
-        done
-        # Run config binary directly instead of doconf wrapper
-        # doconf calls: $CONFIG_DIR/config -c $SOURCEDIR $SYSCONF
-        # We'll generate the SYSCONF file and call config binary directly
-        echo "=== Generating SYSCONF and running config binary directly ==="
-        OBJROOT="BUILD/obj/DEVELOPMENT_ARM64_M30LTE"
-        mkdir -p "$OBJROOT"
-        SYSCONF="$OBJROOT/DEVELOPMENT.sysconf"
-        SOURCEDIR="$PWD"
-        # Generate SYSCONF file (similar to what doconf does)
-        cat > "$SYSCONF" << 'EOF'
-builddir	"."
-objectdir	"BUILD/obj/DEVELOPMENT_ARM64_M30LTE"
-sourcedir	"/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source"
-options		INET
-options 	MACH
-options		VLAN
-options		IF_FAKE
-options		IF_HEADLESS
-options		AH_ALL_CRYPTO
-options		PF
-options		PFLOG
-options		DUMMYNET
-options		TRAFFIC_MGT
-options		MULTICAST
-options		MULTIPATH
-options		MPTCP
-options		PSYNCH
-options		FLOW_DIVERT
-options		NECP
-options		CONTENT_FILTER
-options 	PACKET_MANGLER
-options		SKYWALK
-options		CONFIG_NEXUS_USER_PIPE
-options		CONFIG_NEXUS_KERNEL_PIPE
-options		CONFIG_NEXUS_MONITOR
-options		CONFIG_NEXUS_FLOWSWITCH
-options		CONFIG_NEXUS_NETIF
-options		SOCKETS
-options		NETWORKING
-options		CONFIG_FSE
-options		CONFIG_IMAGEBOOT
-options		CONFIG_IMAGEBOOT_IMG4
-options		FIFO
-options		FDESC
-options		DEVFS
-options		ROUTEFS
-options		BINDFS
-options		FS_COMPRESSION
-options		NAMEDSTREAMS
-options		CONFIG_IMGSRC_ACCESS
-options		CONFIG_TRIGGERS
-options		CONFIG_MNT_ROOTSNAP
-options		CONFIG_DATALESS_FILES
-options		CONFIG_UNION_MOUNTS
-options		NFSSERVER
-options		CONFIG_NETBOOT
-options         IPSEC
-options         IPSEC_ESP
-options			CRYPTO
-options			CRYPTO_SHA2
-options			CONFIG_IMG4
-options		ZLIB
-options		IF_BRIDGE
-options   CONFIG_KN_HASHSIZE=48
-options   CONFIG_NC_HASH=2048
-options   CONFIG_VFS_NAMES=3072
-options   CONFIG_MAX_CLUSTERS=4
-options   CONFIG_MIN_NBUF=80
-options   CONFIG_MIN_NIOBUF=64
-options        CONFIG_NMBCLUSTERS="((1024 * 256) / MCLBYTES)"
-options CONFIG_TCBHASHSIZE=128
-options   CONFIG_AIO_MAX=20
-options   CONFIG_AIO_PROCESS_MAX=8
-options   CONFIG_AIO_THREAD_COUNT=2
-options   CONFIG_MAXVIFS=16
-options   CONFIG_MFCTBLSIZ=128
-options   CONFIG_MSG_BSIZE_REL=16384
-options   CONFIG_MSG_BSIZE_DEV=131072
-options   CONFIG_MSG_BSIZE=CONFIG_MSG_BSIZE_DEV
-options   CONFIG_IPC_TABLE_ENTRIES_SIZE_MAX=3145728
-options   CONFIG_IPC_TABLE_REQUEST_SIZE_MAX=1048576
-options CONFIG_IPC_KERNEL_MAP_SIZE=32
-options   CONFIG_EMBEDDED
-options   CONFIG_PMAP_PPL
-options		CONFIG_DYNAMIC_CODE_SIGNING
-options		CONFIG_ENFORCE_LIBRARY_VALIDATION
-options		CONFIG_CODE_DECRYPTION
-options		CONFIG_PROTECT
-options		CONFIG_VPS_DYNAMIC_PRIO
-options		CONFIG_MEMORYSTATUS
-options		CONFIG_DEFERRED_RECLAIM
-options		CONFIG_JETSAM
-options		CONFIG_FREEZE
-options		CHECK_CS_VALIDATION_BITMAP
-options		CONFIG_PHYS_WRITE_ACCT
-options		CONFIG_PHANTOM_CACHE
-options		VM_PRESSURE_EVENTS
-options		CONFIG_SECLUDED_MEMORY
-options		CONFIG_LEDGER_INTERVAL_MAX
-options		CONFIG_IOSCHED
-options 	CONFIG_IO_ACCOUNTING
-options		IMPORTANCE_INHERITANCE
-options		IMPORTANCE_TRACE
-options		CONFIG_TELEMETRY
-options		CONFIG_PROC_UUID_POLICY
-options		CONFIG_ECC_LOGGING
-options		CONFIG_COREDUMP
-options		CONFIG_VNGUARD
-options     CONFIG_MAP_RANGES
-pseudo-device	ether
-pseudo-device	loop
-pseudo-device  pty      16 init pty_init
-pseudo-device	ptmx	1 init ptmx_init
-pseudo-device	mdevdevice	1	init	mdevinit
-pseudo-device	bpfilter	4	init	bpf_init
-pseudo-device	fsevents	1	init	fsevents_init
-pseudo-device	random		1	init	random_init
-pseudo-device	dtrace		1	init	dtrace_init
-pseudo-device	helper		1	init	helper_init
-pseudo-device	lockstat	1	init	lockstat_init
-pseudo-device	lockprof	1	init	lockprof_init
-pseudo-device	sdt		1	init	sdt_init
-pseudo-device	systrace	1	init	systrace_init
-pseudo-device	fbt		1	init	fbt_init
-pseudo-device	profile_prvd	1	init	profile_init
-options		IOKITCPP
-options		IOKITSTATS
-options		IOTRACKING
-options		CONFIG_SLEEP
-options		CONFIG_MAX_THREADS=500
-options         NO_KERNEL_HID
-options		LIBKERNCPP
-options		CONFIG_BLOCKS
-options		CONFIG_KEC_FIPS
-options		CONFIG_PERSONAS
-options		CONFIG_MACF
-options		CONFIG_MACF_SOCKET_SUBSET
-options		CONFIG_SETUID
-options		CONFIG_SECURE_BSD_ROOT
-options		CONFIG_KAS_INFO
-options		CONFIG_PROC_RESOURCE_LIMITS
-options		MACH_ASSERT
-options		CONFIG_ZLEAKS
-options		CONFIG_DTRACE
-options		LOCK_STATS
-options     KPERF
-options     KPC
-options     CONFIG_PERVASIVE_ENERGY
-options     CONFIG_IOTRACE
-options     PGO
-options		DEVELOPMENT
-options		MACH_BSD
-options         IOKIT
-options   CONFIG_THREAD_MAX=1536
-options   CONFIG_TASK_MAX=512
-options   CONFIG_ZONE_MAP_MIN=120586240
-options	  CONFIG_VC_PROGRESS_WHITE
-options		CONFIG_SCHED_TRADITIONAL
-options		CONFIG_SCHED_MULTIQ
-options		CONFIG_SCHED_TIMESHARE_CORE
-options		CONFIG_CLUTCH
-options		CONFIG_SCHED_SFI
-options		CONFIG_PROB_GZALLOC
-options		CONFIG_SCHED_DEFERRED_AST
-options		CONFIG_PREADOPT_TG
-options		MACH_KDP
-options		CONFIG_SERIAL_KDP
-options		CONFIG_KDP_INTERACTIVE_DEBUGGING
-options		CONFIG_KDP_COREDUMP_ENCRYPTION
-options 	CONFIG_TASKWATCH
-options		CONFIG_XNUPOST
-options PROC_REF_DEBUG
-options 	CONFIG_ATM
-options		CONFIG_COALITIONS
-options		CONFIG_SYSDIAGNOSE
-options		CONFIG_IO_COMPRESSION_STATS
-options		SERIAL_CONSOLE
-options		VIDEO_CONSOLE
-options		CONFIG_REQUIRES_U32_MUNGING
-options		CONFIG_MACH_BRIDGE_RECV_TIME
-options		CONFIG_QUIESCE_COUNTER
-options		CONFIG_DARKBOOT
-options		CONFIG_SERVICE_PORT_INFO
-options		SCHED_HYGIENE_DEBUG
-options		CONFIG_DEBUG_SYSCALL_REJECTION
-machine		"arm64"
-makeoptions	OSFMK_MACHINE = "arm64"
-options		ALTERNATE_DEBUGGER
-options   CONFIG_VNODES=1024
-options   CONFIG_FREEZE_SUSPENDED_MIN=4
-options	  CONFIG_MACH_APPROXIMATE_TIME
-options   CONFIG_KERNEL_INTEGRITY
-options   CONFIG_RESLIDE_SHARED_CACHE
-options   CONFIG_UBSAN_MINIMAL
-builddir	"."
-objectdir	"BUILD/obj/DEVELOPMENT_ARM64_M30LTE"
-sourcedir	"/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source"
-EOF
-        echo "=== Running config binary directly ==="
-        ./BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP/config/config -c "$SOURCEDIR" "$SYSCONF" 2>&1
-        # Verify configs were generated
-        for comp in bsd iokit osfmk pexpert libkern libsa san security; do
-          if [ -f "$comp/conf/DEVELOPMENT" ]; then
-            echo "OK: $comp/conf/DEVELOPMENT generated by config binary"
-          else
-            echo "ERROR: $comp/conf/DEVELOPMENT not found"
-            if [ -d "$comp/conf" ]; then
-              echo "Contents of $comp/conf:"
-              ls -la "$comp/conf/"
-            else
-              echo "$comp/conf directory does not exist"
-            fi
-            exit 1
-          fi
-        done
-    - name: Fix makedefs path in Makefiles
-      run: |
-        cd xnu-source
-        echo "=== Force patching proc_reg.h for M30LTE ==="
-        if ! grep -q "M30LTE" osfmk/arm64/proc_reg.h; then
-          echo "M30LTE not found in proc_reg.h, applying manually..."
-          python3 ../xnu/patches/patch_proc_reg.py
-        else
-          echo "M30LTE already defined in proc_reg.h"
-        fi
-        grep -n "M30LTE" osfmk/arm64/proc_reg.h | head -5
-    - name: Create firehose_buffer_private.h for M30LTE
-      run: |
-        cd xnu-source
-        echo "=== Creating firehose_buffer_private.h for M30LTE ==="
-        if [ ! -f osfmk/arm64/firehose_buffer_private.h ]; then
-          echo "firehose_buffer_private.h not found, creating..."
-          python3 ../xnu/patches/create_firehose_buffer_private.py
-        else
-          echo "firehose_buffer_private.h already exists"
-        fi
-        ls -la osfmk/arm64/firehose_buffer_private.h
-        mkdir -p BUILD/obj/EXPORT_HDRS/osfmk/arm64
-        cp osfmk/arm64/firehose_buffer_private.h BUILD/obj/EXPORT_HDRS/osfmk/arm64/
-    - name: Fix clang flag incompatibility with Xcode 26
-      run: |
-        cd xnu-source
-        echo "=== Patching out incompatible clang flags ==="
-        find . -name "*.def" -o -name "Makefile*" -o -name "*.mk" -o -name "*.inc" | xargs grep -l "enable-trivial-auto-var-init-zero-knowing" 2>/dev/null | while read file; do
-          echo "Patching: $file"
-          sed -i '' 's/-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang//g' "$file"
-        done
-        grep -r "enable-trivial-auto-var-init-zero-knowing" . 2>/dev/null | head -5 || echo "Flag not found in source (may be added at build time)"
-    - name: Verify bsd/Makefile structure
-      run: |
-        cd xnu-source
-        echo "=== Verifying bsd/Makefile structure ==="
-        grep -n "do_all" bsd/Makefile || echo "No do_all target found"
-        grep -n "OBJPATH" bsd/Makefile | head -5
-        echo "=== First 30 lines of bsd/Makefile ==="
-        head -30 bsd/Makefile
-    - name: Fix DriverKit IORPC for Xcode 26
-      run: |
-        cd xnu-source
-        echo "=== Patching DriverKit IORPC for Xcode 26 compatibility ==="
-        if [ -f iokit/DriverKit/IORPC.h ]; then
-          echo "Patching IORPC.h to add kernelContent field..."
-          python3 ../xnu/patches/patch_iorpc.py
-        else
-          echo "IORPC.h not found, skipping"
-        fi
-        grep -n "kernelContent" iokit/DriverKit/IORPC.h 2>/dev/null | head -5 || echo "kernelContent not found in IORPC.h"
-        echo "=== Patching iokit/Makefile to skip DriverKit when DRIVERKIT=0 ==="
-        python3 ../xnu/patches/patch_iokit_makefile.py
-    - name: Patch osfmk/mach/Makefile for VPATH
-      run: |
-        cd xnu-source
-        echo "=== Patching osfmk/mach/Makefile for VPATH ==="
-        python3 ../xnu/patches/patch_osfmk_mach_vpath.py
-        echo "Patched successfully"
-    - name: Patch osfmk/gssd/Makefile for VPATH
-      run: |
-        cd xnu-source
-        echo "=== Patching osfmk/gssd/Makefile for VPATH ==="
-        python3 ../xnu/patches/patch_gssd_makefile.py
-        echo "Patched successfully"
-    - name: Patch libkern/libkern/Makefile for VPATH
-      run: |
-        cd xnu-source
-        echo "=== Patching libkern/libkern/Makefile for VPATH ==="
-        python3 ../xnu/patches/patch_libkern_makefile.py
-        echo "Patched successfully"
-    - name: Patch security/Makefile for kernel source includes
-      run: |
-        cd xnu-source
-        echo "=== Patching security/Makefile for kernel source includes ==="
-        python3 ../xnu/patches/patch_security_makefile.py
-        echo "Patched successfully"
-    - name: Create all export files and filelists for kernel build
-      run: |
-        cd xnu-source
-        echo "=== Creating all export files and filelists ==="
-        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config
-        cp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true
-        for comp in security bsd osfmk libkern iokit pexpert libsa san security; do
-          mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT
-          touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist
-          echo "Created $comp.filelist"
-        done
-        # Create empty all-kpi.exp
-        touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp
-        echo "Created all-kpi.exp"
-    - name: Patch libkern/os/atomic_private_impl.h for memory_order
-      run: |
-        cd xnu-source
-        echo "=== Patching libkern/os/atomic_private_impl.h for memory_order ==="
-        python3 ../xnu/patches/patch_atomic_memory_order.py
-        echo "Patched successfully"
-    - name: Patch osfmk/mach/arm/Makefile for VPATH
-      run: |
-        cd xnu-source
-        echo "=== Patching osfmk/mach/arm/Makefile for VPATH ==="
-        python3 ../xnu/patches/patch_osfmk_mach_arm_vpath.py
-        echo "Patched successfully"
-    - name: Copy .defs files to build directory for all osfmk subdirs
-      run: |
-        cd xnu-source
-        echo "=== Copying .defs files to build directory for all osfmk subdirs ==="
-        python3 ../xnu/patches/copy_defs_files.py
-        echo "Copied .defs files to build directory"
-    - name: Build bootstrap_cmds (mig)
-      run: |
-        cd xnu-source
-        BOOTSTRAP_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json" | jq -r '.projects[] | select(.project=="bootstrap_cmds") | .tag')
-        git clone --branch "${BOOTSTRAP_VERSION}" --depth 1 https://github.com/apple-oss-distributions/bootstrap_cmds.git bootstrap_cmds
-        cd bootstrap_cmds
-        sed -i '' 's|-o root -g wheel||g' xcodescripts/install-mig.sh
-        xcodebuild install -sdk macosx -project mig.xcodeproj ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/bootstrap_cmds.obj" SYMROOT="$PWD/../BUILD/bootstrap_cmds.sym" DSTROOT="$PWD/../fakeroot" RC_ProjectNameAndSourceVersion="${BOOTSTRAP_VERSION}" 2>&1 | tail -20 || true
-    - name: Build dtrace (ctf tools)
-      run: |
-        cd xnu-source
-        DTRACE_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json" | jq -r '.projects[] | select(.project=="dtrace") | .tag')
-        git clone --branch "${DTRACE_VERSION}" --depth 1 https://github.com/apple-oss-distributions/dtrace.git dtrace
-        cd dtrace
-        xcodebuild install -sdk macosx -target ctfconvert -target ctfdump -target ctfmerge ARCHS="arm64 x86_64" CODE_SIGN_IDENTITY="-" OBJROOT="$PWD/../BUILD/dtrace.obj" SYMROOT="$PWD/../BUILD/dtrace.sym" DSTROOT="$PWD/../fakeroot" 2>&1 | tail -20 || true
-    - name: Build availability versions
-      run: |
-        cd xnu-source
-        AVAILABILITYVERSIONS_VERSION=$(curl -s "https://raw.githubusercontent.com/apple-oss-distributions/distribution-macOS/macos-135/release.json" | jq -r '.projects[] | select(.project=="AvailabilityVersions") | .tag')
-        git clone --branch "${AVAILABILITYVERSIONS_VERSION}" --depth 1 https://github.com/apple-oss-distributions/AvailabilityVersions.git AvailabilityVersions
-        cd AvailabilityVersions
-        make install -j8 OBJROOT="$PWD/../BUILD/" SYMROOT="$PWD/../BUILD/" DSTROOT="$PWD/../fakeroot" 2>&1 | tail -20 || true
-        # Also install availability.pl to host system location for make_symbol_aliasing.sh fallback
-        if [ -f "$PWD/../fakeroot/usr/local/libexec/availability.pl" ]; then
-          echo "Installing availability.pl to /usr/local/libexec/"
-          sudo mkdir -p /usr/local/libexec
-          sudo cp "$PWD/../fakeroot/usr/local/libexec/availability.pl" /usr/local/libexec/availability.pl
-          sudo chmod +x /usr/local/libexec/availability.pl
-          echo "Installed availability.pl to host system"
-        else
-          echo "WARNING: availability.pl not found in fakeroot"
-          find "$PWD/../fakeroot" -name "availability.pl" 2>/dev/null || true
-        fi
-    - name: Create minimal availability.pl for _symbol_aliasing.h
-      run: |
-        cd xnu-source
-        echo "=== Creating minimal availability.pl for _symbol_aliasing.h ==="
-        sudo mkdir -p /usr/local/libexec
-        python3 ../xnu/patches/create_minimal_availability_pl.py > /tmp/availability.pl
-        sudo cp /tmp/availability.pl /usr/local/libexec/availability.pl
-        sudo chmod +x /usr/local_libexec/availability.pl
-        echo "Created minimal availability.pl at /usr/local_libexec/availability.pl"
-        # Verify it works
-        /usr/local_libexec/availability.pl --ios | head -5
-        /usr/local_libexec/availability.pl --macosx | head -5
-    - name: Patch make_symbol_aliasing.sh for availability.pl fallback
-      run: |
-        cd xnu-source
-        echo "=== Patching make_symbol_aliasing.sh for availability.pl fallback ==="
-        python3 ../xnu/patches/patch_availability_fallback.py
-        chmod +x bsd/sys/make_symbol_aliasing.sh
-        echo "Patched successfully"
-    - name: Install xnu headers
-      run: |
-        cd xnu-source
-        SYSCTL_PHYSICALCPU=$( /usr/sbin/sysctl -n hw.physicalcpu )
-        SYSCTL_LOGICALCPU=$( /usr/sbin/sysctl -n hw.logicalcpu )
-        MEMORY_SIZE=$( /usr/sbin/sysctl -n hw.memsize )
-        # Only install headers for our target architecture (ARM64 M30LTE), not X86_64 or VMAPPLE
-        make installhdrs -j8 SDKROOT=iphoneos ARCH_CONFIGS="ARM64" MACHINE_CONFIGS="M30LTE" OBJROOT="$PWD/BUILD/xnu-hdrs.obj" SYMROOT="$PWD/BUILD/xnu-hdrs.sym" DSTROOT="$PWD/fakeroot" FAKEROOT_DIR="$PWD/fakeroot" KDKROOT="/Library/Developer/KDKs" TIGHTBEAMC="" RC_DARWIN_KERNEL_VERSION="22.6.0" MEMORY_SIZE="${MEMORY_SIZE}" SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" SYSCTL_HW_LOGICALCPU="${SYSCTL_HW_LOGICALCPU}" KERNEL_BUILDS_IN_PARALLEL=1 2>&1 | tail -20 || true
-    - name: Pre-build IORPC patch for DriverKit
-      run: |
-        cd xnu-source
-        echo "=== Pre-build IORPC patch for DriverKit ==="
-        python3 ../xnu/patches/patch_all_iorpc.py
-    - name: Fix SETUP tool include paths
-      run: |
-        cd xnu-source
-        echo "=== Fixing SETUP tool include paths ==="
-        SDKROOT_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
-        echo "SDKROOT_PATH=$SDKROOT_PATH"
-        export SDKROOT_PATH
-        python3 ../xnu/patches/fix_setup_tool_includes.py
-        echo "Fixed successfully"
-    - name: Fix makedefs paths in build directory
-      run: |
-        echo "=== Fixing /makedefs paths in build directory ==="
-        cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
-        python3 ../xnu/fix_makedefs.py BUILD/obj
-        # Verify the changes
-        grep -r "/makedefs" BUILD/obj --include="Makefile" --include="*.mk" --include="*.mak" | head -5 || echo "No more /makedefs references found in build directory"
-    - name: Build SETUP tools for macOS (host platform)
-      run: |
-        cd xnu-source
-        echo "=== Building ALL SETUP tools for macOS (host platform) ==="
-        # Build SETUP tools on host platform (macOS x86_64) - needed for doconf
-        # Use a completely separate host build directory with clean environment
-        HOST_OBJROOT="$PWD/BUILD/obj/host"
-        mkdir -p "$HOST_OBJROOT"
-        # Unset target build variables to avoid contamination
-        # CRITICAL: Must use env -i to start with clean environment to avoid SDKROOT=iphoneos from job env
-        # The MAKEFLAGS=-e flag causes environment variables to override makefile variables
-        MACOSX_SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
-        echo "Using macOS SDK: $MACOSX_SDKROOT"
-        # Use env -i to start with clean environment, explicitly set only needed vars
-        env -i \
-          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
-          HOME="$HOME" \
-          HOST_OBJROOT="$HOST_OBJROOT" \
-          SRCROOT="$PWD" \
-          make -C SETUP \
-            RC_ProjectName=SETUP \
-            RC_ARCHS="x86_64" \
-            RC_CFLAGS="" \
-            RC_CXXFLAGS="" \
-            RC_OSFLAGS="" \
-            RC_RELEASE=1 \
-            RC_DEBUG=0 \
-            SDKROOT=macosx \
-            HOST_SDKROOT=macosx \
-            HOST_OS_VERSION=26.0 \
-            OBJROOT="$HOST_OBJROOT" \
-            SYMROOT="$HOST_OBJROOT" \
-            DSTROOT="$HOST_OBJROOT" \
-            CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" \
-            CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" \
-            2>&1 | tail -100
-        # Now explicitly build the config tool (doconf) using the do_build_setup target
-        echo "=== Building doconf (config tool) ==="
-        env -i \
-          PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
-          HOME="$HOME" \
-          HOST_OBJROOT="$HOST_OBJROOT" \
-          SRCROOT="$PWD" \
-          make -C SETUP/config \
-            RC_ProjectName=config \
-            RC_ARCHS="x86_64" \
-            RC_CFLAGS="" \
-            RC_CXXFLAGS="" \
-            RC_OSFLAGS="" \
-            RC_RELEASE=1 \
-            RC_DEBUG=0 \
-            SDKROOT=macosx \
-            HOST_SDKROOT=macosx \
-            HOST_OS_VERSION=26.0 \
-            OBJROOT="$HOST_OBJROOT" \
-            SYMROOT="$HOST_OBJROOT" \
-            DSTROOT="$HOST_OBJROOT" \
-            CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) -I$PWD/SETUP/config" \
-            CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) -I$PWD/SETUP/config" \
-            do_build_setup \
-            2>&1 | tail -100
-        # Verify doconf was built (the binary is named 'config', not 'doconf', and may be in source dir)
-        echo "Searching for config binary..."
-        find "$HOST_OBJROOT" -name "config" -type f 2>/dev/null
-        find BUILD/obj -name "config" -type f 2>/dev/null
-        find SETUP/config -name "config" -type f 2>/dev/null
-        if [ -f "$HOST_OBJROOT/SETUP/config/config" ]; then
-          echo "doconf (config) built successfully at $HOST_OBJROOT/SETUP/config/config"
-        elif [ -f BUILD/obj/SETUP/config/config ]; then
-          echo "doconf (config) built at default location"
-        elif [ -f SETUP/config/config ]; then
-          echo "doconf (config) built in source directory"
-          # Copy to expected location
-          mkdir -p "$HOST_OBJROOT/SETUP/config"
-          cp SETUP/config/config "$HOST_OBJROOT/SETUP/config/config"
-        else
-          echo "doconf not found at expected locations, searching..."
-          find BUILD/obj -name "config" -type f 2>/dev/null
           find SETUP/config -name "config" -type f 2>/dev/null
-          exit 1
-        fi
-        echo "Config binary verified successfully"
-    - name: Patch SETUP/config/Makefile to skip rebuild
-      run: |
-        cd xnu-source
-        echo "=== Patching SETUP/config/Makefile to skip rebuild if tools exist ==="
-        python3 ../xnu/patches/patch_setup_config_skip_build.py
-        echo "Patched successfully"
-    - name: Copy version.h.template to build directory
-      run: |
-        cd xnu-source
-        echo "=== Copying version.h.template to build directory ==="
-        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libkern/libkern
-        cp -v libkern/libkern/version.h.template BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libkern/libkern/
-        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/libkern/libkern/version.h.template
-        echo "Copied version.h.template"
-    - name: Copy asm.h to build directory
-      run: |
-        cd xnu-source
-        echo "=== Copying asm.h to build directory ==="
-        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm
-        cp -v osfmk/arm/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm/
-        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm/asm.h
-        echo "Copied arm asm.h"
-        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64
-        cp -v osfmk/arm64/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64/
-        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/mach/arm64/asm.h
-        echo "Copied arm64 asm.h"
-    - name: Copy full kernel private headers to build directory
-      run: |
-        cd xnu-source
-        echo "=== Copying full kernel private headers to build directory ==="
-        # Get absolute paths
-        SRCROOT=$(pwd)
-        OBJROOT="${SRCROOT}/BUILD/obj"
-        EXPORT_HDRS="${OBJROOT}/EXPORT_HDRS"
-        echo "SRCROOT=${SRCROOT}"
-        echo "OBJROOT=${OBJROOT}"
-        echo "EXPORT_HDRS=${EXPORT_HDRS}"
-        # Ensure directories exist
-        mkdir -p "${EXPORT_HDRS}/osfmk/arm"
-        mkdir -p "${EXPORT_HDRS}/osfmk/arm64"
-        mkdir -p "${EXPORT_HDRS}/osfmk/machine"
-        mkdir -p "${EXPORT_HDRS}/osfmk/kern"
-        echo "Checking source files:"
-        ls -la "${SRCROOT}/osfmk/arm/locks.h" 2>/dev/null || echo "osfmk/arm/locks.h NOT FOUND"
-        ls -la "${SRCROOT}/osfmk/arm64/locks.h" 2>/dev/null || echo "osfmk/arm64/locks.h NOT FOUND"
-        ls -la "${SRCROOT}/osfmk/machine/locks.h" 2>/dev/null || echo "osfmk/machine/locks.h NOT FOUND"
-        ls -la "${SRCROOT}/osfmk/kern/lock_mtx.h" 2>/dev/null || echo "osfmk/kern/lock_mtx.h NOT FOUND"
-        # Copy full locks.h with complete lck_mtx_t definition
-        cp -v "${SRCROOT}/osfmk/arm/locks.h" "${EXPORT_HDRS}/osfmk/arm/locks.h"
-        ls -la "${EXPORT_HDRS}/osfmk/arm/locks.h"
-        # Copy full locks.h for arm64
-        cp -v "${SRCROOT}/osfmk/arm64/locks.h" "${EXPORT_HDRS}/osfmk/arm64/locks.h" 2>/dev/null || echo "arm64/locks.h not found, using arm version"
-        # Copy full locks.h for machine
-        cp -v "${SRCROOT}/osfmk/machine/locks.h" "${EXPORT_HDRS}/osfmk/machine/locks.h" 2>/dev/null || echo "machine/locks.h not found"
-        # Copy full lock_mtx.h
-        cp -v "${SRCROOT}/osfmk/kern/lock_mtx.h" "${EXPORT_HDRS}/osfmk/kern/lock_mtx.h"
-        ls -la "${EXPORT_HDRS}/osfmk/kern/lock_mtx.h"
-        echo "Verifying copied files:"
-        ls -la "${EXPORT_HDRS}/osfmk/arm/"
-        ls -la "${EXPORT_HDRS}/osfmk/kern/"
-        echo "Copied full kernel private headers"
-    - name: Patch EXPORT_HDRS/osfmk/arm/locks.h for full lck_mtx_t definition
-      run: |
-        cd xnu-source
-        echo "=== Patching EXPORT_HDRS/osfmk/arm/locks.h for full lck_mtx_t definition ==="
-        python3 ../xnu/patches/patch_export_locks.py
-        echo "Patched successfully"
-    - name: Patch security/mac_audit.c for kernel includes and ptrauth
-      run: |
-        cd xnu-source
-        echo "=== Patching security/mac_audit.c for kernel includes and ptrauth ==="
-        python3 ../xnu/patches/patch_mac_audit_includes.py
-        echo "Patched successfully"
-    - name: Copy and patch kernel-private headers to EXPORT_HDRS
-      run: |
-        cd xnu-source
-        echo "=== Copying and patching kernel-private headers to EXPORT_HDRS ==="
-        python3 ../xnu/patches/copy_export_headers.py
-        echo "Copied and patched kernel-private headers"
-    - name: Copy config files to build directory
-      run: |
-        cd xnu-source
-        echo "=== Copying config files to build directory ==="
-        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config
-        cp config/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true
-        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/*.exports 2>/dev/null | head -20 || echo "No export files copied"
-        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null | head -30 || echo "No files copied"
-    - name: Generate component .filelist files
-      run: |
-        cd xnu-source
-        echo "=== Generating .filelist files for all components ==="
-        for comp in osfmk bsd libkern iokit pexpert libsa san security; do
-          mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT
-          touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist
-          echo "Created empty $comp.filelist"
-        done
-    - name: Create all export files and filelists for kernel build
-      run: |
-        cd xnu-source
-        echo "=== Creating all export and filelist files ==="
-        # Copy all export files to build config directory
-        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config
-        cp config/*.exports BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/ 2>/dev/null || true
-        # Create empty .filelist files for all components
-        for comp in osfmk bsd libkern iokit pexpert libsa san security; do
-          mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT
-          touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/$comp/DEVELOPMENT/$comp.filelist
-          echo "Created $comp.filelist"
-        done
-        # Create empty all-kpi.exp
-        touch BUILD/obj/DEVELOPMENT_ARM64_M30LTE/all-kpi.exp
-        echo "Created all-kpi.exp"
-    - name: Build XNU kernel
-      id: build_kernel
-      run: |
-        cd xnu-source
-        SYSCTL_PHYSICALCPU=$( /usr/sbin/sysctl -n hw.physicalcpu )
-        SYSCTL_LOGICALCPU=$( /usr/sbin/sysctl -n hw.logicalcpu )
-        MEMORY_SIZE=$( /usr/sbin/sysctl -n hw.memsize )
-        echo "SYSCTL_PHYSICALCPU=$SYSCTL_PHYSICALCPU SYSCTL_LOGICALCPU=$SYSCTL_LOGICALCPU MEMORY_SIZE=$MEMORY_SIZE"
-        echo "=== Building XNU kernel (default target) ==="
-        # Build with explicit linker verbose output, capture all sub-make output
-        # Do NOT use set -o pipefail - it kills the script before we capture PIPESTATUS
-        # Environment variables are now set at job level for all steps
-        export DRIVERKIT=0
-        make -e VERBOSE=YES \
-          SDKROOT=iphoneos \
-          HOST_SDKROOT=macosx \
-          HOST_OS_VERSION=26.0 \
-          TARGET_CONFIGS="DEVELOPMENT ARM64 M30LTE" \
-          CURRENT_KERNEL_CONFIG=DEVELOPMENT \
-          CURRENT_ARCH_CONFIG=ARM64 \
-          CURRENT_MACHINE_CONFIG=M30LTE \
-          CURRENT_MACHINE_CONFIG_LC=m30lte \
-          SRCROOT="$PWD" \
-          OBJROOT="$PWD/BUILD/obj" \
-          SYMROOT="$PWD/BUILD/sym" \
-          DSTROOT="$PWD/fakeroot" \
-          FAKEROOT_DIR="$PWD/fakeroot" \
-          KDKROOT="/Library/Developer/KDKs" \
-          TIGHTBEAMC="" \
-          RC_DARWIN_KERNEL_VERSION="22.6.0" \
-          MEMORY_SIZE="${MEMORY_SIZE}" \
-          SYSCTL_HW_PHYSICALCPU="${SYSCTL_PHYSICALCPU}" \
-          SYSCTL_HW_LOGICALCPU="${SYSCTL_HW_LOGICALCPU}" \
-          KERNEL_BUILDS_IN_PARALLEL=1 \
-          BUILD_WERROR=0 BUILD_LTO=0 CONCISE=0 LOGCOLORS=y \
-          DRIVERKIT=0 \
-          SETUP_SUBDIRS="" \
-          MACH_KERNEL_PRIVATE=1 \
-          RC_NONARCH_CFLAGS="-DKERNEL -DMACH_KERNEL_PRIVATE -DKERNEL_PRIVATE -DXNU_KERNEL_PRIVATE -DPRIVATE" \
-          2>&1 | tee /tmp/xnu-build.log
-        BUILD_EXIT=${PIPESTATUS[0]}
-        echo "make exit code: $BUILD_EXIT"
-        echo "=== Errors in build log ==="
-        grep -iE "error:|error|make: \*\*\*|No rule|syntax error|undefined reference|missing separator|command not found|ld:|symbol|library not found|collect2" /tmp/xnu-build.log | head -50 || echo "No errors found in log"
-        echo "=== Last 1000 lines of build log ==="
-        tail -1000 /tmp/xnu-build.log
-        echo "=== Kernel artifacts ==="
-        find BUILD/obj -name "kernel.*" -type f 2>/dev/null | head -10
-        find BUILD/obj -maxdepth 3 \( -name "kernel.development.m30lte" -o -name "mach_kernel" \) 2>/dev/null | head -10
-        echo "BUILD_EXIT=$BUILD_EXIT" >> $GITHUB_OUTPUT
-        exit $BUILD_EXIT
-    - name: Run bsd build to capture linker error
-      if: failure()
-      run: |
-        echo "=== Main build failed, running bsd link step to capture linker error ==="
-        # Re-apply makedefs fix to source directory to ensure it's current
-        cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
-        python3 ../xnu/fix_makedefs.py .
-        # VERIFY: Print the bsd/Makefile lines that are failing
-        echo "=== VERIFICATION: bsd/Makefile lines 1-10 ==="
-        head -10 bsd/Makefile
-        echo "=== VERIFICATION: bsd/Makefile lines 90-100 ==="
-        sed -n '90,100p' bsd/Makefile
-        echo "=== VERIFICATION: Checking for any remaining /makedefs/ ==="
-        grep -n "/makedefs" bsd/Makefile || echo "No /makedefs/ found in bsd/Makefile"
-        # Run the EXACT sub-make command from the parent build (with -C to build obj dir)
-        # CRITICAL: Export SRCROOT to environment AND use -e so it propagates to ALL sub-makes (bsd/conf, SETUP, etc.)
-        # DO NOT pass SRCROOT on command line - it overrides env var and doesn't propagate to sub-makes
-        export SRCROOT="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source"
-        /Applications/Xcode_26.0.1.app/Contents/Developer/usr/bin/make -e \
-          -C "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd" \
-          -f "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/Makefile" \
-          CURRENT_KERNEL_CONFIG=DEVELOPMENT \
-          CURRENT_ARCH_CONFIG=ARM64 \
-          CURRENT_MACHINE_CONFIG=M30LTE \
-          CURRENT_BUILD_CONFIG=DEVELOPMENT^ARM64^M30LTE \
-          SOURCE="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/" \
-          RELATIVE_SOURCE_PATH="./bsd" \
-          TARGET=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/. \
-          OBJPATH=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE \
-          VERBOSE=YES \
-          build_all 2>&1 | tee /tmp/bsd-build.log
-        BSD_EXIT=${PIPESTATUS[0]}
-        echo "bsd build exit code: ${BSD_EXIT}"
-        echo "=== Full bsd build log ==="
-        cat /tmp/bsd-build.log
-        # Copy to workspace for artifact upload
-        cp /tmp/bsd-build.log /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
-        ls -la /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
-        echo "BSD_EXIT=$BSD_EXIT" >> $GITHUB_OUTPUT
-    - name: Upload bsd build log
-      if: always()
-      run: |
-        cp /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log bsd-build.log 2>/dev/null || true
-        ls -la bsd-build.log 2>/dev/null || echo "bsd-build.log not found"
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: bsd-build-log
-        path: bsd-build.log
-        if-no-files-found: warn
-    - name: Upload build log
-      if: always()
-      run: |
-        cp /tmp/xnu-build.log xnu-build.log 2>/dev/null || true
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: xnu-build-log
-        path: xnu-build.log
-        if-no-files-found: warn
-    - name: Collect kernel artifact
-      if: always()
-      run: |
-        mkdir -p out
-        echo "=== Searching for kernel binary ==="
-        find xnu-source/BUILD/obj -name "*kernel*" -type f 2>/dev/null | head -20
-        echo "=== Checking for any kernel binary ==="
-        KERNEL_PATH=$(find xnu-source/BUILD/obj -maxdepth 5 -name "kernel.development.m30lte" -o -name "mach_kernel" -o -name "kernel" 2>/dev/null | head -1)
-        if [ -n "$KERNEL_PATH" ]; then
-          echo "Found kernel at: $KERNEL_PATH"
-          cp "$KERNEL_PATH" out/kernel.development.m30lte
-        fi
-        ls -la out
-        if [ -f out/kernel.development.m30lte ]; then
-          (cd out && shasum -a 256 kernel.development.m30lte > SHA256SUMS)
-        fi
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: xnu-kernel
-        path: out/
-        if-no-files-found: warn
+          if [ -f "$HOST_OBJROOT/SETUP/config/config" ]; then echo "doconf (config) built successfully at $HOST_OBJROOT/SETUP/config/config"; elif [ -f BUILD/obj/SETUP/config/config ]; then echo "doconf (config) built at default location"; elif [ -f SETUP/config/config ]; then echo "doconf (config) built in source directory"; mkdir -p "$HOST_OBJROOT/SETUP/config"; cp SETUP/config/config "$HOST_OBJROOT/SETUP/config/config"; else echo "doconf not found at expected locations, searching..."; find BUILD/obj -name "config" -type f 2>/dev/null; find SETUP/config -name "config" -type f 2>/dev/null; exit 1; fi
+          echo "Config binary verified successfully"
+
+      - name: Fix doconf.csh argument parsing bug
+        run: |
+          cd xnu-source
+          echo "=== Fixing doconf.csh argument parsing bug ==="
+          python3 ../xnu/patches/patch_doconf_csh.py
+          echo "doconf.csh patched successfully"
+
+      - name: Generate component configs with doconf
+        run: |
+          cd xnu-source
+          echo "=== Generating component configs with doconf ==="
+          DOCOFN_SCRIPT="SETUP/config/doconf"
+          if [ ! -f "$DOCOFN_SCRIPT" ]; then echo "doconf script not found at $DOCOFN_SCRIPT"; exit 1; fi
+          HOST_OBJROOT="$PWD/BUILD/obj/host"
+          CONFIG_BINARY="$HOST_OBJROOT/SETUP/config/config"
+          if [ ! -f "$CONFIG_BINARY" ]; then echo "config binary not found at $CONFIG_BINARY"; find "$HOST_OBJROOT" -name "config" -type f 2>/dev/null; find BUILD/obj -name "config" -type f 2>/dev/null; exit 1; fi
+          echo "=== Verifying config binary type ==="; file "$CONFIG_BINARY"
+          OBJROOT="BUILD/obj/DEVELOPMENT_ARM64_M30LTE"
+          mkdir -p "$OBJROOT/SETUP/config"
+          cp "$CONFIG_BINARY" "$OBJROOT/SETUP/config/config"; chmod +x "$OBJROOT/SETUP/config/config"
+          echo "=== Verifying copied config binary type ==="; file "$OBJROOT/SETUP/config/config"
+          if [ -f "config/MASTER.arm64.m30lte" ]; then mv "config/MASTER.arm64.m30lte" "config/MASTER.arm64.m30lte.bak"; echo "Moved MASTER.arm64.m30lte aside to fall back to MASTER.arm64"; fi
+          for f in files files.arm64 Makefile.template; do if [ ! -f "$f" ]; then touch "$f"; echo "Created empty $f file at source root"; fi; done
+          for comp in bsd iokit osfmk pexpert libkern libsa san security; do if [ ! -f "$comp/conf/files" ]; then echo "WARNING: $comp/conf/files not found, creating empty"; mkdir -p "$comp/conf"; touch "$comp/conf/files"; fi; done
+          echo "=== Running doconf with verbose output ==="
+          ./SETUP/config/doconf -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d "$OBJROOT" -s "$PWD" -m config DEVELOPMENT 2>&1
+          for comp in bsd iokit osfmk pexpert libkern libsa san security; do if [ -f "$comp/conf/DEVELOPMENT" ]; then echo "OK: $comp/conf/DEVELOPMENT generated by doconf"; else echo "ERROR: $comp/conf/DEVELOPMENT not found"; if [ -d "$comp/conf" ]; then echo "Contents of $comp/conf:"; ls -la "$comp/conf/"; else echo "$comp/conf directory does not exist"; fi; exit 1; fi; done
+
+      - name: Fix makedefs path in Makefiles
+        run: | cd xnu-source; python3 ../xnu/fix_makedefs.py .
+
+      - name: Create firehose_buffer_private.h for M30LTE
+        run: | cd xnu-source; mkdir -p bsd/sys; if [ ! -f bsd/sys/firehose_buffer_private.h ]; then cat > bsd/sys/firehose_buffer_private.h << 'EOF'; #ifndef _SYS_FIREHOSE_BUFFER_PRIVATE_H_; #define _SYS_FIREHOSE_BUFFER_PRIVATE_H_; #include <sys/firehose_buffer.h>; struct firehose_buffer_private { uint64_t fhb_private[8]; }; #endif; EOF; fi
+
+      - name: Fix clang flag incompatibility with Xcode 26
+        run: | cd xnu-source; find . -name "*.mk" -o -name "Makefile" | xargs sed -i '' 's/-Wno-error=visibility/-Wno-visibility/g'; find . -name "*.mk" -o -name "Makefile" | xargs sed -i '' 's/-Wno-error=reserved-identifier/-Wno-reserved-identifier/g'
+
+      - name: Verify bsd/Makefile structure
+        run: | cd xnu-source; head -20 bsd/Makefile
+
+      - name: Fix DriverKit IORPC for Xcode 26
+        run: | cd xnu-source; find . -name "IORPC.h" | xargs sed -i '' 's/__attribute__((availability(macosx,introduced=10.15)))//g'
+
+      - name: Patch osfmk/mach/Makefile for VPATH
+        run: | cd xnu-source; sed -i '' 's/^VPATH.*=.*/VPATH = $(SRCROOT):$(SRCROOT)\/osfmk\/mach/' osfmk/mach/Makefile
+
+      - name: Patch osfmk/gssd/Makefile for VPATH
+        run: | cd xnu-source; sed -i '' 's/^VPATH.*=.*/VPATH = $(SRCROOT):$(SRCROOT)\/osfmk\/gssd/' osfmk/gssd/Makefile
+
+      - name: Patch libkern/libkern/Makefile for VPATH
+        run: | cd xnu-source; sed -i '' 's/^VPATH.*=.*/VPATH = $(SRCROOT):$(SRCROOT)\/libkern\/libkern/' libkern/libkern/Makefile
+
+      - name: Patch security/Makefile for kernel source includes
+        run: | cd xnu-source; sed -i '' 's|-I\$(SRCROOT)/bsd|-I$(SRCROOT)/bsd -I$(SRCROOT)/osfmk|g' security/Makefile
+
+      - name: Create all export files and filelists for kernel build
+        run: | cd xnu-source; python3 ../xnu/create_export_files.py .
+
+      - name: Patch libkern/os/atomic_private_impl.h for memory_order
+        run: | cd xnu-source; sed -i '' 's/memory_order_relaxed/__ATOMIC_RELAXED/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_acquire/__ATOMIC_ACQUIRE/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_release/__ATOMIC_RELEASE/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_acq_rel/__ATOMIC_ACQ_REL/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_seq_cst/__ATOMIC_SEQ_CST/g' libkern/os/atomic_private_impl.h
+
+      - name: Patch osfmk/mach/arm/Makefile for VPATH
+        run: | cd xnu-source; sed -i '' 's/^VPATH.*=.*/VPATH = $(SRCROOT):$(SRCROOT)\/osfmk\/mach\/arm/' osfmk/mach/arm/Makefile
+
+      - name: Copy .defs files to build directory for all osfmk subdirs
+        run: | cd xnu-source; for dir in osfmk/mach osfmk/kern osfmk/vm osfmk/ipc osfmk/kdp; do if [ -d "$dir" ]; then find "$dir" -name "*.defs" -exec cp {} BUILD/obj/DEVELOPMENT_ARM64_M30LTE/{} \;; fi; done
+
+      - name: Build bootstrap_cmds (mig)
+        run: | cd xnu-source; export SRCROOT="$PWD"; export OBJROOT="$PWD/BUILD/obj"; export SYMROOT="$PWD/BUILD/obj"; export DSTROOT="$PWD/BUILD/obj"; export SDKROOT=iphoneos; export MACHINE_CONFIG=M30LTE; export CURRENT_KERNEL_CONFIG=DEVELOPMENT; export CURRENT_ARCH_CONFIG=ARM64; export CURRENT_MACHINE_CONFIG=M30LTE; export RC_ARCHS="arm64"; export RC_CFLAGS=""; export RC_CXXFLAGS=""; export RC_OSFLAGS=""; export RC_RELEASE=1; export RC_DEBUG=0; export MAKEFLAGS="-j1 -e"; make -C bootstrap_cmds OBJROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SYMROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" DSTROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SDKROOT=iphoneos 2>&1 | tail -50
+
+      - name: Build dtrace (ctf tools)
+        run: | cd xnu-source; export SRCROOT="$PWD"; export OBJROOT="$PWD/BUILD/obj"; export SYMROOT="$PWD/BUILD/obj"; export DSTROOT="$PWD/BUILD/obj"; export SDKROOT=iphoneos; export MACHINE_CONFIG=M30LTE; export CURRENT_KERNEL_CONFIG=DEVELOPMENT; export CURRENT_ARCH_CONFIG=ARM64; export CURRENT_MACHINE_CONFIG=M30LTE; export RC_ARCHS="arm64"; export RC_CFLAGS=""; export RC_CXXFLAGS=""; export RC_OSFLAGS=""; export RC_RELEASE=1; export RC_DEBUG=0; export MAKEFLAGS="-j1 -e"; make -C dtrace OBJROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SYMROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" DSTROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SDKROOT=iphoneos 2>&1 | tail -50
+
+      - name: Build availability versions
+        run: | cd xnu-source; export SRCROOT="$PWD"; export OBJROOT="$PWD/BUILD/obj"; export SYMROOT="$PWD/BUILD/obj"; export DSTROOT="$PWD/BUILD/obj"; export SDKROOT=iphoneos; export MACHINE_CONFIG=M30LTE; export CURRENT_KERNEL_CONFIG=DEVELOPMENT; export CURRENT_ARCH_CONFIG=ARM64; export CURRENT_MACHINE_CONFIG=M30LTE; export RC_ARCHS="arm64"; export RC_CFLAGS=""; export RC_CXXFLAGS=""; export RC_OSFLAGS=""; export RC_RELEASE=1; export RC_DEBUG=0; export MAKEFLAGS="-j1 -e"; make -C availability OBJROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SYMROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" DSTROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SDKROOT=iphoneos 2>&1 | tail -50
+
+      - name: Create minimal availability.pl for _symbol_aliasing.h
+        run: | cd xnu-source; if [ ! -f availability.pl ]; then cat > availability.pl << 'EOF'; #!/usr/bin/perl; print "13.5\n"; EOF; chmod +x availability.pl; fi
+
+      - name: Patch make_symbol_aliasing.sh for availability.pl fallback
+        run: | cd xnu-source; if [ -f "make_symbol_aliasing.sh" ]; then sed -i '' 's|/usr/bin/perl.*availability\.pl|perl $(SRCROOT)/availability.pl|g' make_symbol_aliasing.sh; fi
+
+      - name: Install xnu headers
+        run: | cd xnu-source; export SRCROOT="$PWD"; export OBJROOT="$PWD/BUILD/obj"; export SYMROOT="$PWD/BUILD/obj"; export DSTROOT="$PWD/BUILD/obj"; export SDKROOT=iphoneos; export MACHINE_CONFIG=M30LTE; export CURRENT_KERNEL_CONFIG=DEVELOPMENT; export CURRENT_ARCH_CONFIG=ARM64; export CURRENT_MACHINE_CONFIG=M30LTE; export RC_ARCHS="arm64"; export RC_CFLAGS=""; export RC_CXXFLAGS=""; export RC_OSFLAGS=""; export RC_RELEASE=1; export RC_DEBUG=0; export MAKEFLAGS="-j1 -e"; make -C osfmk installhdrs OBJROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SYMROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" DSTROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SDKROOT=iphoneos 2>&1 | tail -50
+
+      - name: Pre-build IORPC patch for DriverKit
+        run: | cd xnu-source; if [ -f "iokit/IOKit/IORPC.h" ]; then sed -i '' 's/__attribute__((availability(macosx,introduced=10.15)))//g' iokit/IOKit/IORPC.h; fi
+
+      - name: Fix SETUP tool include paths
+        run: | cd xnu-source; sed -i '' 's|-I\$(SRCROOT)/bsd|-I$(SRCROOT)/bsd -I$(SRCROOT)/osfmk|g' SETUP/config/Makefile
+
+      - name: Fix makedefs paths in build directory
+        run: | cd xnu-source; python3 ../xnu/fix_makedefs.py .
+
+      - name: Fix SETUP tool include paths
+        run: | cd xnu-source; sed -i '' 's|-I\$(SRCROOT)/bsd|-I$(SRCROOT)/bsd -I$(SRCROOT)/osfmk|g' SETUP/config/Makefile
+
+      - name: Build SETUP tools for macOS (host platform)
+        run: |
+          cd xnu-source
+          echo "=== Building SETUP tools for macOS (host platform) ==="
+          HOST_OBJROOT="$PWD/BUILD/obj/host"
+          mkdir -p "$HOST_OBJROOT"
+          env -i PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" HOME="$HOME" HOST_OBJROOT="$HOST_OBJROOT" SRCROOT="$PWD" make -C SETUP RC_ProjectName=SETUP RC_ARCHS="x86_64" RC_CFLAGS="" RC_CXXFLAGS="" RC_OSFLAGS="" RC_RELEASE=1 RC_DEBUG=0 SDKROOT=macosx HOST_SDKROOT=macosx HOST_OS_VERSION=26.0 OBJROOT="$HOST_OBJROOT" SYMROOT="$HOST_OBJROOT" DSTROOT="$HOST_OBJROOT" CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" 2>&1 | tail -100
+
+      - name: Patch SETUP/config/Makefile to skip rebuild
+        run: | cd xnu-source; sed -i '' '/^all:/s/all:/all: config/' SETUP/config/Makefile
+
+      - name: Copy version.h.template to build directory
+        run: | cd xnu-source; cp osfmk/kern/version.h.template BUILD/obj/DEVELOPMENT_ARM64_M30LTE/version.h.template
+
+      - name: Copy asm.h to build directory
+        run: | cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/arm; cp osfmk/mach/arm/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/arm/asm.h
+
+      - name: Copy full kernel private headers to build directory
+        run: | cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/kern; cp -r osfmk/kern/*.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/kern/
+
+      - name: Patch EXPORT_HDRS/osfmk/arm/locks.h for full lck_mtx_t definition
+        run: | cd xnu-source; if [ -f EXPORT_HDRS/osfmk/arm/locks.h ]; then sed -i '' 's/struct lck_mtx_t;/struct lck_mtx_t { uint32_t lck_mtx_type; uint32_t lck_mtx_attr; uint32_t lck_mtx_grp; uint32_t lck_mtx_pad1; uint32_t lck_mtx_pad2; struct lck_mtx_deb *lck_mtx_deb; };/' EXPORT_HDRS/osfmk/arm/locks.h; fi
+
+      - name: Patch security/mac_audit.c for kernel includes and ptrauth
+        run: | cd xnu-source; sed -i '' '1i#include <sys/param.h>\n#include <sys/systm.h>\n#include <sys/kernel.h>\n#include <sys/proc.h>\n#include <security/audit/audit.h>\n#include <sys/ptrauth.h>' security/mac_audit.c
+
+      - name: Copy and patch kernel-private headers to EXPORT_HDRS
+        run: | cd xnu-source; mkdir -p EXPORT_HDRS/osfmk/kern; cp -r osfmk/kern/*.h EXPORT_HDRS/osfmk/kern/; mkdir -p EXPORT_HDRS/osfmk/vm; cp -r osfmk/vm/*.h EXPORT_HDRS/osfmk/vm/; mkdir -p EXPORT_HDRS/osfmk/ipc; cp -r osfmk/ipc/*.h EXPORT_HDRS/osfmk/ipc/
+
+      - name: Copy config files to build directory
+        run: | cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config; cp -r config/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/
+
+      - name: Generate component .filelist files
+        run: | cd xnu-source; python3 ../xnu/create_filelists.py .
+
+      - name: Create all export files and filelists for kernel build
+        run: | cd xnu-source; python3 ../xnu/create_export_files.py .
+
+      - name: Build XNU kernel
+        run: |
+          cd xnu-source
+          export SRCROOT="$PWD"
+          export OBJROOT="$PWD/BUILD/obj"
+          export SYMROOT="$PWD/BUILD/obj"
+          export DSTROOT="$PWD/BUILD/obj"
+          export SDKROOT=iphoneos
+          export MACHINE_CONFIG=M30LTE
+          export CURRENT_KERNEL_CONFIG=DEVELOPMENT
+          export CURRENT_ARCH_CONFIG=ARM64
+          export CURRENT_MACHINE_CONFIG=M30LTE
+          export RC_ARCHS="arm64"
+          export RC_CFLAGS=""
+          export RC_CXXFLAGS=""
+          export RC_OSFLAGS=""
+          export RC_RELEASE=1
+          export RC_DEBUG=0
+          export MAKEFLAGS="-j1 -e"
+          env -i PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" HOME="$HOME" SRCROOT="$PWD" OBJROOT="$PWD/BUILD/obj" SYMROOT="$PWD/BUILD/obj" DSTROOT="$PWD/BUILD/obj" SDKROOT=iphoneos MACHINE_CONFIG=M30LTE CURRENT_KERNEL_CONFIG=DEVELOPMENT CURRENT_ARCH_CONFIG=ARM64 CURRENT_MACHINE_CONFIG=M30LTE RC_ARCHS="arm64" RC_CFLAGS="" RC_CXXFLAGS="" RC_OSFLAGS="" RC_RELEASE=1 RC_DEBUG=0 MAKEFLAGS="-j1 -e" make OBJROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SYMROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" DSTROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SDKROOT=iphoneos MACHINE_CONFIG=M30LTE CURRENT_KERNEL_CONFIG=DEVELOPMENT CURRENT_ARCH_CONFIG=ARM64 CURRENT_MACHINE_CONFIG=M30LTE RC_ARCHS="arm64" RC_CFLAGS="" RC_CXXFLAGS="" RC_OSFLAGS="" RC_RELEASE=1 RC_DEBUG=0 MAKEFLAGS="-j1 -e" build_all 2>&1 | tee xnu-build.log
+
+      - name: Run bsd build to capture linker error
+        run: |
+          echo "=== Main build failed, running bsd link step to capture linker error ==="
+          cd /Users/runner/work/ios-m30lte/ios-m30lte/xnu-source
+          python3 ../xnu/fix_makedefs.py .
+          echo "=== VERIFICATION: bsd/Makefile lines 1-10 ==="
+          head -10 bsd/Makefile
+          echo "=== VERIFICATION: bsd/Makefile lines 90-100 ==="
+          sed -n '90,100p' bsd/Makefile
+          echo "=== VERIFICATION: Checking for any remaining /makedefs/ ==="
+          grep -n "/makedefs" bsd/Makefile || echo "No /makedefs/ found in bsd/Makefile"
+          export SRCROOT="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source"
+          /Applications/Xcode_26.0.1.app/Contents/Developer/usr/bin/make -e -C "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/bsd" -f "/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/Makefile" CURRENT_KERNEL_CONFIG=DEVELOPMENT CURRENT_ARCH_CONFIG=ARM64 CURRENT_MACHINE_CONFIG=M30LTE CURRENT_BUILD_CONFIG=DEVELOPMENT^ARM64^M30LTE SOURCE="/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/bsd/" RELATIVE_SOURCE_PATH="./bsd" TARGET=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE/. OBJPATH=/Users/runner/work/ios-m30lte/ios-m30lte/xnu-source/BUILD/obj/DEVELOPMENT_ARM64_M30LTE VERBOSE=YES build_all 2>&1 | tee /tmp/bsd-build.log
+          BSD_EXIT=${PIPESTATUS[0]}
+          echo "bsd build exit code: ${BSD_EXIT}"
+          echo "=== Full bsd build log ==="
+          cat /tmp/bsd-build.log
+          cp /tmp/bsd-build.log /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
+          ls -la /Users/runner/work/ios-m30lte/ios-m30lte/bsd-build.log
+          echo "BSD_EXIT=$BSD_EXIT" >> $GITHUB_OUTPUT
+
+      - name: Upload bsd build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bsd-build-log
+          path: bsd-build.log
+          if-no-files-found: warn
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xnu-build-log
+          path: xnu-source/xnu-build.log
+          if-no-files-found: warn
+
+      - name: Collect kernel artifact
+        run: |
+          mkdir -p out
+          echo "=== Searching for kernel binary ==="
+          find xnu-source/BUILD/obj -name "*kernel*" -type f 2>/dev/null | head -20
+          echo "=== Checking for any kernel binary ==="
+          KERNEL_PATH=$(find xnu-source/BUILD/obj -maxdepth 5 -name "kernel.development.m30lte" -o -name "mach_kernel" -o -name "kernel" 2>/dev/null | head -1)
+          if [ -n "$KERNEL_PATH" ]; then echo "Found kernel at: $KERNEL_PATH"; cp "$KERNEL_PATH" out/kernel.development.m30lte; fi
+          ls -la out
+          if [ -f out/kernel.development.m30lte ]; then (cd out && shasum -a 256 kernel.development.m30lte > SHA256SUMS); fi
+
+      - name: Upload kernel artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xnu-kernel
+          path: out/
+          if-no-files-found: warn
