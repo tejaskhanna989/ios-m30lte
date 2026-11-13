@@ -34,26 +34,26 @@ while i < len(lines):
 
 content = ''.join(new_lines)
 
-# Remove all unset commands for these variables and initialize them to empty string
-# This prevents "Undefined variable" errors when referenced in foreach loops
+# Initialize all variables that might be referenced to prevent "Undefined variable" errors
+# Remove all unset commands for these variables
 content = content.replace('unset MASTER_CPU', '')
 content = content.replace('unset SOC_CONFIG', '')
 content = content.replace('unset PLATFORM', '')
 content = content.replace('unset MACHINE', '')
 content = content.replace('unset profile', '')
 
-# Add initialization block after the existing variable initializations
-# Find a good place to add the initialization
+# Initialize all variables that might be referenced
 init_block = '''set MASTER_CPU = ""
 set SOC_CONFIG = ""
 set PLATFORM = ""
 set MACHINE = ""
 set profile = ""
+set DEF_AVP = ""
 '''
 # Insert after the existing variable initializations
 # Find the line with 'set OBJDIR=../BUILD' and insert before it
 if 'set OBJDIR=../BUILD' in content:
-    content = content.replace('set OBJDIR=../BUILD', 'set MASTER_CPU = ""\nset SOC_CONFIG = ""\nset PLATFORM = ""\nset MACHINE = ""\nset profile = ""\nset OBJDIR=../BUILD')
+    content = content.replace('set OBJDIR=../BUILD', 'set MASTER_CPU = ""\nset SOC_CONFIG = ""\nset PLATFORM = ""\nset MACHINE = ""\nset profile = ""\nset DEF_AVP = ""\nset OBJDIR=../BUILD')
     print("Added variable initialization block")
 else:
     print("WARNING: Could not find 'set OBJDIR=../BUILD' to insert initialization")
