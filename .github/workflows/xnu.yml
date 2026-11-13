@@ -316,6 +316,8 @@ jobs:
         # Copy config binary next to doconf script so it can find it
         cp "$CONFIG_BINARY" "SETUP/config/config"
         chmod +x "SETUP/config/config"
+        # Create output directory for doconf
+        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE
         # Run doconf for DEVELOPMENT ARM64 M30LTE
         # doconf reads MASTER.arm64.m30lte and generates DEVELOPMENT configs for each component
         ./SETUP/config/doconf -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d BUILD/obj/DEVELOPMENT_ARM64_M30LTE -s "$PWD" -m config DEVELOPMENT 2>&1
