@@ -1,64 +1,81 @@
 #!/usr/bin/env python3
-"""Patch doconf.csh to fix argument parsing for flags that take arguments."""
+"""Patch doconf.csh to fix variable initialization and MASTER file handling."""
 import os
 
 with open('SETUP/config/doconf', 'r') as f:
-    lines = f.readlines()
+    content = f.read()
 
-print("=== Patching doconf.csh (line by line) ===")
+print("=== Patching doconf.csh ===")
 
-new_lines = []
-i = 0
-while i < len(lines):
-    line = lines[i]
-    if 'set ' in line and '="$argv[2]"' in line:
-        j = i + 1
-        shift_found = False
-        while j < len(lines) and j < i + 20:
-            if 'shift' in lines[j] and 'breaksw' not in lines[j]:
-                shift_found = True
-                break
-            j += 1
-        if shift_found:
-            print(f"Patching line {i+1}: {line.strip()}")
-            new_lines.append(line)
-            k = i + 1
-            while k <= j:
-                new_lines.append(lines[k])
-                k += 1
-            new_lines.append(lines[j])
-            i = j + 1
-            continue
-    new_lines.append(line)
-    i += 1
+# Fix 1: Initialize all variables that might be referenced but not set
+# The script uses MASTER_CPU, SOC_CONFIG, PLATFORM, MACHINE, profile, DEF_AVP, DEF_SEED
+# but they might not be set if the corresponding flags are not provided
 
-content = ''.join(new_lines)
-
-# Initialize all variables that might be referenced
-content = content.replace('unset MASTER_CPU', '')
-content = content.replace('unset SOC_CONFIG', '')
-content = content.replace('unset PLATFORM', '')
-content = content.replace('unset MACHINE', '')
-content = content.replace('unset profile', '')
-
-# Add initialization block
+# Add initialization after the existing unset commands
 init_block = '''set MASTER_CPU = ""
 set SOC_CONFIG = ""
 set PLATFORM = ""
 set MACHINE = ""
 set profile = ""
 set DEF_AVP = ""
+set DEF_SEED = ""
 '''
-# Insert after the existing variable initializations
-if 'set OBJDIR=../BUILD' in content:
-    content = content.replace('set OBJDIR=../BUILD', 'set MASTER_CPU = ""\nset SOC_CONFIG = ""\nset PLATFORM = ""\nset MACHINE = ""\nset profile = ""\nset DEF_AVP = ""\nset OBJDIR=../BUILD')
+
+# Insert after the existing unset commands
+if 'unset PLATFORM' in content:
+    content = content.replace('unset PLATFORM', 'unset PLATFORM\n' + init_block)
     print("Added variable initialization block")
 else:
-    print("WARNING: Could not find 'set OBJDIR=../BUILD' to insert initialization")
+    print("WARNING: Could not find 'unset PLATFORM' to insert initialization")
 
-# Also fix the MASTER_DIR usage - the script uses ${MASTER_DIR}/MASTER but 
-# the -m flag should point to the directory containing MASTER files
-# The doconf script expects MASTER_CONF_DIR to be a directory, not a file
+# Fix 2: Ensure MASTER file exists by copying the appropriate file
+# The doconf script expects a base MASTER file in the MASTER_CONF_DIR
+# We'll add a step to copy MASTER.arm64 to MASTER if MASTER doesn't exist
+# This should be done after MASTER_DIR is set but before the foreach loop
+
+# Find the location where MASTER is set and add the copy command
+master_block = '''set MASTER_DIR=${MASTER_CONF_DIR}
+set MASTER =   ${MASTER_DIR}/MASTER
+
+# Ensure base MASTER file exists (copy from architecture-specific if needed)
+if (! -f $MASTER) then
+    if (-f ${MASTER_DIR}/MASTER.${cpu}) then
+        cp ${MASTER_DIR}/MASTER.${cpu} $MASTER
+    else if (-f ${MASTER_DIR}/MASTER.${cpu}.${SOC_CONFIG}) then
+        cp ${MASTER_DIR}/MASTER.${cpu}.${SOC_CONFIG} $MASTER
+    else
+        echo "${prog}: no base MASTER file found in $MASTER_DIR"
+        exit 1
+    endif
+endif
+
+foreach master_file (${MASTER}.${cpu}.${SOC_CONFIG}.${PLATFORM} ${MASTER}.${cpu}.${SOC_CONFIG} ${MASTER}.${cpu}.${PLATFORM} ${MASTER}.${cpu})
+'''
+
+old_master_block = '''set MASTER_DIR=${MASTER_CONF_DIR}
+set MASTER =   ${MASTER_DIR}/MASTER
+
+foreach master_file (${MASTER}.${cpu}.${SOC_CONFIG}.${PLATFORM} ${MASTER}.${cpu}.${SOC_CONFIG} ${MASTER}.${cpu}.${PLATFORM} ${MASTER}.${cpu})'''
+
+if old_master_block in content:
+    content = content.replace(old_master_block, master_block)
+    print("Added MASTER file existence check and copy")
+else:
+    print("WARNING: Could not find MASTER block to patch")
+    # Try with different whitespace
+    import re
+    pattern = re.escape('set MASTER_DIR=${MASTER_CONF_DIR}') + r'\s+' + re.escape('set MASTER =   ${MASTER_DIR}/MASTER') + r'\s*\n' + re.escape('foreach master_file (${MASTER}.${cpu}.${SOC_CONFIG}.${PLATFORM} ${MASTER}.${cpu}.${SOC_CONFIG} ${MASTER}.${cpu}.${PLATFORM} ${MASTER}.${cpu})')
+    if re.search(pattern, content):
+        content = re.sub(pattern, master_block, content)
+        print("Patched with regex")
+    else:
+        print("Could not find pattern with regex either")
+
+# Fix 3: Initialize DEF_SEED if not already set (it's set to "" but might be unset)
+# The script uses $DEF_SEED in the unifdef command
+
+# Fix 4: Initialize DEF_AVP (it's set in -soc case but might be unset if -soc not provided)
+# Already handled by initialization block above
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
