@@ -8,6 +8,7 @@ with '-'. All subsequent flag values remain in $argv, causing SYS to be wrong.
 Fix: shift twice for each flag that takes an argument (flag + value).
 """
 import os
+import re
 
 with open('SETUP/config/doconf', 'r') as f:
     content = f.read()
@@ -27,22 +28,24 @@ cases_to_fix = [
 ]
 
 for flag, set_line in cases_to_fix:
-    # Find the pattern: set VAR="$argv[2]" followed by shift
-    old = f'{set_line}\n    shift\n    breaksw'
-    new = f'{set_line}\n    shift\n    shift\n    breaksw'
-    if old in content:
-        content = content.replace(old, new)
-        print(f"Patched doconf: {flag} - added extra shift")
+    # Use regex to find the pattern with flexible whitespace
+    # Pattern: set_line followed by shift then breaksw
+    pattern = re.escape(set_line) + r'\s+shift\s+breaksw'
+    replacement = set_line + '\n    shift\n    shift\n    breaksw'
+    
+    if re.search(pattern, content):
+        content = re.sub(pattern, replacement, content)
+        print(f"Patched doconf: {flag} - added extra shift (regex)")
     else:
-        print(f"WARNING: Could not find pattern for {flag}")
-        # Try alternative pattern with different spacing
-        old2 = f'{set_line}\n  shift\n  breaksw'
-        new2 = f'{set_line}\n  shift\n  shift\n  breaksw'
-        if old2 in content:
-            content = content.replace(old2, new2)
-            print(f"Patched doconf (alt spacing): {flag} - added extra shift")
+        print(f"WARNING: Could not find pattern for {flag} with regex")
+        # Try to find just the set_line
+        if set_line in content:
+            print(f"  But set_line '{set_line}' found in content")
+            # Show context around it
+            idx = content.index(set_line)
+            print(f"  Context: ...{content[max(0,idx-50):idx+100]}...")
         else:
-            print(f"  Could not find alternative pattern either")
+            print(f"  set_line '{set_line}' NOT found in content")
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
