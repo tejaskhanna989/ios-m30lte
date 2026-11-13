@@ -183,16 +183,20 @@ jobs:
         mkdir -p "$HOST_OBJROOT"
         # CRITICAL: Must use env -i to start with clean environment to avoid SDKROOT=iphoneos from job env
         # The MAKEFLAGS=-e flag causes environment variables to override makefile variables
+        # Also explicitly set SDKROOT to macosx SDK path to ensure macOS SDK is used
+        MACOSX_SDKROOT=$(xcrun --sdk macosx --show-sdk-path)
+        echo "Using macOS SDK: $MACOSX_SDKROOT"
         env -i \
           PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" \
           HOME="$HOME" \
           HOST_OBJROOT="$HOST_OBJROOT" \
           SRCROOT="$PWD" \
+          SDKROOT="$MACOSX_SDKROOT" \
           make -C SETUP \
             RC_ProjectName=SETUP \
             RC_ARCHS="x86_64" \
-            RC_CFLAGS="" \
-            RC_CXXFLAGS="" \
+            RC_CFLAGS="-isysroot $MACOSX_SDKROOT" \
+            RC_CXXFLAGS="-isysroot $MACOSX_SDKROOT" \
             RC_OSFLAGS="" \
             RC_RELEASE=1 \
             RC_DEBUG=0 \
@@ -210,11 +214,12 @@ jobs:
           HOME="$HOME" \
           HOST_OBJROOT="$HOST_OBJROOT" \
           SRCROOT="$PWD" \
+          SDKROOT="$MACOSX_SDKROOT" \
           make -C SETUP/config \
             RC_ProjectName=config \
             RC_ARCHS="x86_64" \
-            RC_CFLAGS="" \
-            RC_CXXFLAGS="" \
+            RC_CFLAGS="-isysroot $MACOSX_SDKROOT" \
+            RC_CXXFLAGS="-isysroot $MACOSX_SDKROOT" \
             RC_OSFLAGS="" \
             RC_RELEASE=1 \
             RC_DEBUG=0 \
