@@ -327,8 +327,16 @@ jobs:
         # Verify the copied binary
         echo "=== Verifying copied config binary type ==="
         file "$OBJROOT/SETUP/config/config"
+        # The MASTER.arm64.m30lte from aggregate patch may have format issues.
+        # Fall back to standard MASTER.arm64 which is known to work with config binary.
+        # doconf tries: MASTER.arm64.m30lte.iPhoneOS, MASTER.arm64.m30lte, MASTER.arm64.iPhoneOS, MASTER.arm64
+        # Move MASTER.arm64.m30lte aside so it falls back to MASTER.arm64
+        if [ -f "config/MASTER.arm64.m30lte" ]; then
+          mv "config/MASTER.arm64.m30lte" "config/MASTER.arm64.m30lte.bak"
+          echo "Moved MASTER.arm64.m30lte aside to fall back to MASTER.arm64"
+        fi
         # Run doconf for DEVELOPMENT ARM64 M30LTE
-        # doconf reads MASTER.arm64.m30lte and generates DEVELOPMENT configs for each component
+        # doconf reads MASTER.arm64 and generates DEVELOPMENT configs for each component
         ./SETUP/config/doconf -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d "$OBJROOT" -s "$PWD" -m config DEVELOPMENT 2>&1
         # Verify configs were generated
         for comp in bsd iokit osfmk pexpert libkern libsa san security; do
