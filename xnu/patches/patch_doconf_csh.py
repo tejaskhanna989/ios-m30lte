@@ -13,6 +13,10 @@ import re
 with open('SETUP/config/doconf', 'r') as f:
     content = f.read()
 
+print("=== DOCONF.CSH CONTENT ===")
+print(content[:2000])
+print("=== END DOCONF.CSH CONTENT (first 2000 chars) ===")
+
 # Fix each case that takes an argument by adding an extra shift
 # The pattern is: case "-X": ... set VAR="$argv[2]" ... shift; breaksw
 # We need to change "shift" to "shift; shift" for these cases
@@ -33,9 +37,10 @@ for flag, set_line in cases_to_fix:
     pattern = re.escape(set_line) + r'\s+shift\s+breaksw'
     replacement = set_line + '\n    shift\n    shift\n    breaksw'
     
-    if re.search(pattern, content):
+    matches = list(re.finditer(pattern, content))
+    if matches:
         content = re.sub(pattern, replacement, content)
-        print(f"Patched doconf: {flag} - added extra shift (regex)")
+        print(f"Patched doconf: {flag} - added extra shift (regex) - {len(matches)} matches")
     else:
         print(f"WARNING: Could not find pattern for {flag} with regex")
         # Try to find just the set_line
@@ -46,6 +51,13 @@ for flag, set_line in cases_to_fix:
             print(f"  Context: ...{content[max(0,idx-50):idx+100]}...")
         else:
             print(f"  set_line '{set_line}' NOT found in content")
+            # Search for similar patterns
+            # Try to find the variable name
+            var_name = set_line.split('=')[0].replace('set ', '').strip()
+            if var_name in content:
+                print(f"  But variable '{var_name}' found in content")
+                idx = content.index(var_name)
+                print(f"  Context: ...{content[max(0,idx-50):idx+100]}...")
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
