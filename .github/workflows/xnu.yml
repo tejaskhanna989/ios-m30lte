@@ -264,16 +264,19 @@ jobs:
             CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) -I$PWD/SETUP/config" \
             do_build_setup \
             2>&1 | tail -100
-        # Verify doconf was built
-        if [ -f "$HOST_OBJROOT/SETUP/config/doconf" ]; then
-          echo "doconf built successfully at $HOST_OBJROOT/SETUP/config/doconf"
+        # Verify doconf was built (the binary is named 'config', not 'doconf')
+        if [ -f "$HOST_OBJROOT/SETUP/config/config" ]; then
+          echo "doconf (config) built successfully at $HOST_OBJROOT/SETUP/config/config"
+          # Create a symlink named doconf for convenience
+          ln -sf config "$HOST_OBJROOT/SETUP/config/doconf"
           DOCOFN_CMD="$HOST_OBJROOT/SETUP/config/doconf"
-        elif [ -f BUILD/obj/SETUP/config/doconf ]; then
-          echo "doconf built at default location"
+        elif [ -f BUILD/obj/SETUP/config/config ]; then
+          echo "doconf (config) built at default location"
+          ln -sf config BUILD/obj/SETUP/config/doconf
           DOCOFN_CMD="BUILD/obj/SETUP/config/doconf"
         else
           echo "doconf not found at expected locations, searching..."
-          find BUILD/obj -name "doconf" -type f 2>/dev/null
+          find BUILD/obj -name "config" -type f 2>/dev/null
           exit 1
         fi
         echo "DOCOFN_CMD=$DOCOFN_CMD" >> $GITHUB_ENV
@@ -556,16 +559,19 @@ jobs:
             CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) -I$PWD/SETUP/config" \
             do_build_setup \
             2>&1 | tail -100
-        # Verify doconf was built
-        if [ -f "$HOST_OBJROOT/SETUP/config/doconf" ]; then
-          echo "doconf built successfully at $HOST_OBJROOT/SETUP/config/doconf"
+        # Verify doconf was built (the binary is named 'config', not 'doconf')
+        if [ -f "$HOST_OBJROOT/SETUP/config/config" ]; then
+          echo "doconf (config) built successfully at $HOST_OBJROOT/SETUP/config/config"
+          # Create a symlink named doconf for convenience
+          ln -sf config "$HOST_OBJROOT/SETUP/config/doconf"
           DOCOFN_CMD="$HOST_OBJROOT/SETUP/config/doconf"
-        elif [ -f BUILD/obj/SETUP/config/doconf ]; then
-          echo "doconf built at default location"
+        elif [ -f BUILD/obj/SETUP/config/config ]; then
+          echo "doconf (config) built at default location"
+          ln -sf config BUILD/obj/SETUP/config/doconf
           DOCOFN_CMD="BUILD/obj/SETUP/config/doconf"
         else
           echo "doconf not found at expected locations, searching..."
-          find BUILD/obj -name "doconf" -type f 2>/dev/null
+          find BUILD/obj -name "config" -type f 2>/dev/null
           exit 1
         fi
         echo "DOCOFN_CMD=$DOCOFN_CMD" >> $GITHUB_ENV
