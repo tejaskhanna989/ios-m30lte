@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Patch doconf.csh to fix variable initialization and add debug output."""
+"""Patch doconf.csh to fix variable initialization issues."""
 import os
 
 with open('SETUP/config/doconf', 'r') as f:
@@ -8,16 +8,23 @@ with open('SETUP/config/doconf', 'r') as f:
 print("=== Patching doconf.csh ===")
 
 # Fix 1: Initialize all variables that might be referenced but not set
+# The script uses MASTER_CPU, SOC_CONFIG, PLATFORM, MACHINE, profile, DEF_AVP, DEF_SEED, SOURCE
+# but they might not be set if the corresponding flags are not provided
+
+# Add initialization after the existing unset commands
+# For profile, we should UNSET it (not initialize to empty) so that $?profile returns false
+# and the config binary is called without -p flag
 init_block = '''set MASTER_CPU = ""
 set SOC_CONFIG = ""
 set PLATFORM = ""
 set MACHINE = ""
-set profile = ""
 set DEF_AVP = ""
 set DEF_SEED = ""
 set SOURCE = ""
+unset profile
 '''
 
+# Insert after the existing unset commands
 if 'unset PLATFORM' in content:
     content = content.replace('unset PLATFORM', 'unset PLATFORM\n' + init_block)
     print("Added variable initialization block")
@@ -61,49 +68,10 @@ else:
     else:
         print("Could not find pattern with regex either")
 
-# Fix 3: Map SOURCEDIR to SOURCE
+# Fix 3: Also map SOURCEDIR to SOURCE since the script uses $SOURCE but -s sets SOURCEDIR
 if 'set SOURCEDIR' in content:
     content = content.replace('set SOURCEDIR="$argv[2]"\n    shift\n    shift\n    breaksw', 'set SOURCEDIR="$argv[2]"\n    set SOURCE="$argv[2]"\n    shift\n    shift\n    breaksw')
     print("Added SOURCE = SOURCEDIR mapping")
-
-# Fix 4: Add debug output before calling config binary
-# Find the line that calls the config binary and add debug before it
-debug_block = '''    echo "=== DEBUG: SYSCONF file content ==="
-    cat $SYSCONF
-    echo "=== END SYSCONF ==="
-'''
-
-# Find the config binary call pattern
-config_call_pattern = '''if ($?profile) then
-	    $CONFIG_DIR/config -c $SOURCEDIR -p $SYSCONF
-	else
-	    $CONFIG_DIR/config -c $SOURCEDIR $SYSCONF
-	endif'''
-
-new_config_call = '''if ($?profile) then
-    echo "=== DEBUG: Calling config binary with profile ==="
-    cat $SYSCONF
-    echo "=== END SYSCONF ==="
-	    $CONFIG_DIR/config -c $SOURCEDIR -p $SYSCONF
-	else
-    echo "=== DEBUG: Calling config binary without profile ==="
-    cat $SYSCONF
-    echo "=== END SYSCONF ==="
-	    $CONFIG_DIR/config -c $SOURCEDIR $SYSCONF
-	endif'''
-
-if config_call_pattern in content:
-    content = content.replace(config_call_pattern, new_config_call)
-    print("Added debug output before config binary call")
-else:
-    print("WARNING: Could not find config binary call pattern")
-    # Try with different indentation
-    alt_pattern = config_call_pattern.replace('\t', '    ')
-    if alt_pattern in content:
-        content = content.replace(alt_pattern, new_config_call.replace('\t', '    '))
-        print("Patched with alt indentation")
-    else:
-        print("Could not find with alt indentation either")
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
