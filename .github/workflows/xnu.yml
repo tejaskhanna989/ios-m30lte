@@ -195,8 +195,8 @@ jobs:
           make -C SETUP \
             RC_ProjectName=SETUP \
             RC_ARCHS="x86_64" \
-            RC_CFLAGS="-isysroot $MACOSX_SDKROOT" \
-            RC_CXXFLAGS="-isysroot $MACOSX_SDKROOT" \
+            CFLAGS="-isysroot $MACOSX_SDKROOT" \
+            CXXFLAGS="-isysroot $MACOSX_SDKROOT" \
             RC_OSFLAGS="" \
             RC_RELEASE=1 \
             RC_DEBUG=0 \
@@ -218,8 +218,8 @@ jobs:
           make -C SETUP/config \
             RC_ProjectName=config \
             RC_ARCHS="x86_64" \
-            RC_CFLAGS="-isysroot $MACOSX_SDKROOT" \
-            RC_CXXFLAGS="-isysroot $MACOSX_SDKROOT" \
+            CFLAGS="-isysroot $MACOSX_SDKROOT" \
+            CXXFLAGS="-isysroot $MACOSX_SDKROOT" \
             RC_OSFLAGS="" \
             RC_RELEASE=1 \
             RC_DEBUG=0 \
