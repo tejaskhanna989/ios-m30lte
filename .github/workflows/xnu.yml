@@ -254,8 +254,8 @@ jobs:
             OBJROOT="$HOST_OBJROOT" \
             SYMROOT="$HOST_OBJROOT" \
             DSTROOT="$HOST_OBJROOT" \
-            CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" \
-            CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" \
+            CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) -I$PWD/SETUP/config" \
+            CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) -I$PWD/SETUP/config" \
             do_build_setup \
             2>&1 | tail -100
         # Verify doconf was built
@@ -552,8 +552,8 @@ jobs:
             OBJROOT="$HOST_OBJROOT" \
             SYMROOT="$HOST_OBJROOT" \
             DSTROOT="$HOST_OBJROOT" \
-            CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" \
-            CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" \
+            CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) -I$PWD/SETUP/config" \
+            CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) -I$PWD/SETUP/config" \
             do_build_setup \
             2>&1 | tail -100
         # Verify doconf was built
