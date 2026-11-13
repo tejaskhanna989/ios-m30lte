@@ -313,11 +313,13 @@ jobs:
           find BUILD/obj -name "config" -type f 2>/dev/null
           exit 1
         fi
-        # Copy config binary next to doconf script so it can find it
-        cp "$CONFIG_BINARY" "SETUP/config/config"
-        chmod +x "SETUP/config/config"
         # Create output directory for doconf
         mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE
+        # Copy config binary to where doconf expects it (OBJROOT/SETUP/config/config)
+        # doconf uses $OBJROOT which is the base BUILD/obj, not the machine-specific subdir
+        mkdir -p BUILD/obj/SETUP/config
+        cp "$HOST_OBJROOT/SETUP/config/config" "BUILD/obj/SETUP/config/config"
+        chmod +x "BUILD/obj/SETUP/config/config"
         # Run doconf for DEVELOPMENT ARM64 M30LTE
         # doconf reads MASTER.arm64.m30lte and generates DEVELOPMENT configs for each component
         ./SETUP/config/doconf -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d BUILD/obj/DEVELOPMENT_ARM64_M30LTE -s "$PWD" -m config DEVELOPMENT 2>&1
