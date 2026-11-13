@@ -318,7 +318,7 @@ jobs:
         chmod +x "SETUP/config/config"
         # Run doconf for DEVELOPMENT ARM64 M30LTE
         # doconf reads MASTER.arm64.m30lte and generates DEVELOPMENT configs for each component
-        ./SETUP/config/doconf -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d BUILD/obj/DEVELOPMENT_ARM64_M30LTE -s "$PWD" -m config/MASTER.arm64.m30lte DEVELOPMENT 2>&1
+        ./SETUP/config/doconf -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d BUILD/obj/DEVELOPMENT_ARM64_M30LTE -s "$PWD" -m config DEVELOPMENT 2>&1
         # Verify configs were generated
         for comp in bsd iokit osfmk pexpert libkern libsa san security; do
           if [ -f "$comp/conf/DEVELOPMENT" ]; then
