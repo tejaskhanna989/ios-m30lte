@@ -335,12 +335,14 @@ jobs:
           mv "config/MASTER.arm64.m30lte" "config/MASTER.arm64.m30lte.bak"
           echo "Moved MASTER.arm64.m30lte aside to fall back to MASTER.arm64"
         fi
-        # The config binary expects a "files" file at the source root.
-        # Create an empty one if it doesn't exist.
-        if [ ! -f "files" ]; then
-          touch files
-          echo "Created empty files file at source root"
-        fi
+        # The config binary expects "files" and "files.arm64" files at the source root.
+        # Create empty ones if they don't exist.
+        for f in files files.arm64; do
+          if [ ! -f "$f" ]; then
+            touch "$f"
+            echo "Created empty $f file at source root"
+          fi
+        done
         # Run doconf for DEVELOPMENT ARM64 M30LTE
         # doconf reads MASTER.arm64 and generates DEVELOPMENT configs for each component
         ./SETUP/config/doconf -c -cpu ARM64 -soc m30lte -platform iPhoneOS -d "$OBJROOT" -s "$PWD" -m config DEVELOPMENT 2>&1
