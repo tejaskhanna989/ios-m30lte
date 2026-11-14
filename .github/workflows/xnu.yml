@@ -97,7 +97,7 @@ jobs:
     - name: Create firehose_buffer_private.h for M30LTE
       run: cd xnu-source; mkdir -p bsd/sys; if [ ! -f bsd/sys/firehose_buffer_private.h ]; then printf '#ifndef _SYS_FIREHOSE_BUFFER_PRIVATE_H_\n#define _SYS_FIREHOSE_BUFFER_PRIVATE_H_\n#include <sys/firehose_buffer.h>\nstruct firehose_buffer_private { uint64_t fhb_private[8]; }\n#endif\n' > bsd/sys/firehose_buffer_private.h; fi
     - name: Fix clang flag incompatibility with Xcode 26
-      run: cd xnu-source; find . -name "*.mk" -o -name "Makefile" | xargs sed -i '' 's/-Wno-error=visibility/-Wno-visibility/g'; find . -name "*.mk" -o -name "Makefile" | xargs sed -i '' 's/-Wno-error=reserved-identifier/-Wno-reserved-identifier/g'
+      run: cd xnu-source; find . -name "*.mk" -o -name "Makefile" | xargs sed -i '' 's/-Wno-error=visibility/-Wno-visibility/g'; find . -name "*.mk" -o -name "Makefile" | xargs sed -i '' 's/-Wno-error=reserved-identifier/-Wno-reserved-identifier/g'; find . -name "*.mk" -o -name "Makefile" -o -name "*.def" -o -name "*.inc" | xargs sed -i '' 's/-enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang//g'
     - name: Verify bsd/Makefile structure
       run: cd xnu-source; head -20 bsd/Makefile
     - name: Fix DriverKit IORPC for Xcode 26
