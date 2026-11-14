@@ -291,8 +291,9 @@ jobs:
         # Copy asm.h to build directory's EXPORT_HDRS where build_exporthdrs_md runs
         # Source file is at osfmk/arm/asm.h (not osfmk/mach/arm/asm.h)
         mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/osfmk/mach/arm
-        cp osfmk/arm/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/osfmk/mach/arm/asm.h 2>/dev/null || true
+        cp osfmk/arm/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/osfmk/mach/arm/asm.h
         echo "Copied asm.h to build directory EXPORT_HDRS"
+        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/osfmk/mach/arm/asm.h
     - name: Fix DriverKit Makefile in build directory for IIG generation
       run: |
         cd xnu-source
