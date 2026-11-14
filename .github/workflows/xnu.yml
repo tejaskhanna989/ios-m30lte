@@ -51,8 +51,6 @@ jobs:
       run: ls -la /Applications/ | grep Xcode
     - name: Deps
       run: brew install bison flex gawk gnu-sed cmake ninja python3 && pip3 install pyyaml --break-system-packages
-    - name: Download KDK
-      run: KDK_URL="https://github.com/apple-oss-distributions/KDK/releases/download/kdk-23.0.0/KDK-23.0.0.dmg" && wget -q "$KDK_URL" -O KDK.dmg && hdiutil attach KDK.dmg -mountpoint /Volumes/KDK -nobrowse -quiet && sudo cp -R /Volumes/KDK/KDKs/* /Library/Developer/KDKs/ && hdiutil detach /Volumes/KDK -quiet
     - name: Verify build environment
       run: 'echo "=== Build Environment Verification ===" && echo "macOS: $(sw_vers -productVersion)" && echo "Xcode: $(xcodebuild -version)" && echo "SDK: $(xcrun --sdk iphoneos --show-sdk-path)" && echo "SDKROOT_PATH: $SDKROOT_PATH" && ls -la /Library/Developer/KDKs/ && echo "PATH: $PATH" && which bison flex gawk sed cmake ninja python3 && bison --version && flex --version'
     - name: Clone XNU
