@@ -116,7 +116,9 @@ jobs:
         if ! grep -q "^VPATH" iokit/DriverKit/Makefile; then
           awk -v src="$SRCPATH" '/include.*MakeInc_def/ {print; print "VPATH = " src ":" src "/iokit/DriverKit"; next} 1' iokit/DriverKit/Makefile > iokit/DriverKit/Makefile.tmp && mv iokit/DriverKit/Makefile.tmp iokit/DriverKit/Makefile
         fi
-        # Debug: print the modified Makefile sections
+        # Debug: verify .iig files exist and VPATH is set
+        echo "=== Checking .iig files in source ==="
+        ls -la iokit/DriverKit/*.iig | head -20
         echo "=== Modified DriverKit Makefile ==="
         grep -A 2 -B 2 "GENERATED_IMPL" iokit/DriverKit/Makefile
         grep -A 2 -B 2 "COMP_FILES" iokit/DriverKit/Makefile
