@@ -197,6 +197,13 @@ jobs:
         cp iokit/DriverKit/IOReturn.h ./IOReturn.h
         cp iokit/IOKit/IOReturn.h ./IOReturn.h.iokit 2>/dev/null || true
         echo "Copied IOReturn.h to source root"
+    - name: Copy IORPC.h to source root for build_exporthdrs_mi
+      run: |
+        cd xnu-source
+        # Copy IORPC.h to source root where build runs
+        cp iokit/DriverKit/IORPC.h ./IORPC.h
+        cp iokit/IOKit/IORPC.h ./IORPC.h.iokit 2>/dev/null || true
+        echo "Copied IORPC.h to source root"
     - name: Fix DriverKit Makefile in build directory for IIG generation
       run: |
         cd xnu-source

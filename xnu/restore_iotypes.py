@@ -351,4 +351,186 @@ typedef int32_t IOReturn;
 
 #endif /* _DRIVERKIT_IOR_RETURN_H */""")
 
+# IOKit IORPC.h
+restore_file('iokit/IOKit/IORPC.h', """/*
+ * Copyright (c) 1998-2000 Apple Computer, Inc. All rights reserved.
+ *
+ * @APPLE_LICENSE_HEADER_START@
+ * 
+ * This file contains Original Code and/or Modifications of Original Code
+ * as defined in and that are subject to the Apple Public Source License
+ * Version 2.0 (the 'License'). You may not use this file except in
+ * compliance with the License. Please obtain a copy of the License at
+ * http://www.opensource.apple.com/apsl/ and read it before using this file.
+ * 
+ * @APPLE_LICENSE_HEADER_END@
+ */
+#ifndef _IOKIT_IORPC_H
+#define _IOKIT_IORPC_H
+
+#include <IOKit/IOReturn.h>
+#include <mach/mach_types.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef mach_port_t io_object_t;
+typedef mach_port_t io_service_t;
+typedef mach_port_t io_connect_t;
+typedef mach_port_t io_iterator_t;
+typedef mach_port_t io_enumerator_t;
+typedef mach_port_t io_registry_entry_t;
+
+typedef enum {
+    kIOMessageServiceIsRequestingClose = 0,
+    kIOMessageServiceIsTerminated = 1,
+    kIOMessageServiceIsRequestingOpen = 2,
+    kIOMessageServiceIsTerminating = 3,
+    kIOMessageServiceIsRequestingPower = 4,
+    kIOMessageServiceIsRequestingClose = 5,
+    kIOMessageServiceIsTerminated = 6,
+    kIOMessageServiceIsRequestingOpen = 7,
+    kIOMessageServiceIsTerminating = 8,
+} IOMessageCategory;
+
+typedef struct {
+    io_object_t object;
+    uint32_t flavor;
+    uint32_t count;
+    uint32_t data[1];
+} IOServiceInterestContent;
+
+typedef IOServiceInterestContent *IOServiceInterestRef;
+
+kern_return_t io_service_open(io_service_t service, task_port_t owningTask, uint32_t type, io_connect_t *connect);
+kern_return_t io_service_close(io_connect_t connect);
+kern_return_t io_service_add_interest_notification(io_service_t service, io_iterator_t *notification, uint32_t interestType, uint32_t *matching);
+kern_return_t io_service_remove_interest_notification(io_iterator_t notification);
+kern_return_t io_registry_entry_create_iterator(io_registry_entry_t entry, io_iterator_t *iterator);
+kern_return_t io_registry_entry_get_child_entry(io_registry_entry_t entry, io_iterator_t *iterator);
+kern_return_t io_registry_entry_get_parent_entry(io_registry_entry_t entry, io_registry_entry_t *parent);
+kern_return_t io_registry_entry_get_name(io_registry_entry_t entry, io_name_t name);
+kern_return_t io_registry_entry_get_name_in_plane(io_registry_entry_t entry, const io_name_t plane, io_name_t name);
+kern_return_t io_registry_entry_get_path(io_registry_entry_t entry, const io_name_t plane, io_string_t path);
+kern_return_t io_registry_entry_get_location_in_plane(io_registry_entry_t entry, const io_name_t plane, io_string_t location);
+kern_return_t io_registry_entry_search_cf_property(io_registry_entry_t entry, CFStringRef key, CFTypeRef *property);
+kern_return_t io_registry_entry_set_cf_property(io_registry_entry_t entry, CFStringRef key, CFTypeRef property);
+kern_return_t io_registry_entry_get_property(io_registry_entry_t entry, CFStringRef key, CFTypeRef *property);
+kern_return_t io_registry_entry_set_property(io_registry_entry_t entry, CFStringRef key, CFTypeRef property);
+kern_return_t io_service_get_matching_services(mach_port_t masterPort, CFDictionaryRef matching, io_iterator_t *existing);
+kern_return_t io_service_get_matching_services_with_options(mach_port_t masterPort, uint32_t options, CFDictionaryRef matching, io_iterator_t *existing);
+kern_return_t io_iterator_next(io_iterator_t iterator, io_object_t *object);
+kern_return_t io_iterator_reset(io_iterator_t iterator);
+kern_return_t io_object_conforms_to(io_object_t object, const char *className);
+kern_return_t io_object_copy_class(io_object_t object, io_name_t className);
+kern_return_t io_object_copy_superclass_for_class(io_name_t className, io_name_t superclassName);
+kern_return_t io_object_get_class(io_object_t object, io_name_t className);
+kern_return_t io_object_copy_bundle_identifier_for_class(io_name_t className, CFStringRef *bundleIdentifier);
+kern_return_t io_object_get_kernel_retained_memory(io_object_t object, uint64_t *memory);
+kern_return_t io_object_get_kernel_retained_memory_with_options(io_object_t object, uint32_t options, uint64_t *memory);
+kern_return_t io_connect_map_memory(io_connect_t connect, uint32_t memoryType, task_port_t intoTask, mach_vm_address_t *atAddress, mach_vm_size_t *ofSize, uint32_t options);
+kern_return_t io_connect_unmap_memory(io_connect_t connect, uint32_t memoryType, task_port_t fromTask, mach_vm_address_t atAddress);
+kern_return_t io_connect_method_structureI_structureO(io_connect_t connect, uint32_t selector, const void *inputStruct, size_t inputStructCnt, void *outputStruct, size_t *outputStructCnt);
+kern_return_t io_connect_method_scalarI_scalarO(io_connect_t connect, uint32_t selector, const uint64_t *input, uint32_t inputCnt, uint64_t *output, uint32_t *outputCnt);
+kern_return_t io_connect_method_scalarI_structureO(io_connect_t connect, uint32_t selector, const uint64_t *input, uint32_t inputCnt, void *outputStruct, size_t *outputStructCnt);
+kern_return_t io_connect_method_structureI_scalarO(io_connect_t connect, uint32_t selector, const void *inputStruct, size_t inputStructCnt, uint64_t *output, uint32_t *outputCnt);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _IOKIT_IORPC_H */""")
+
+# DriverKit IORPC.h
+restore_file('iokit/DriverKit/IORPC.h', """/*
+ * Copyright (c) 2018-2020 Apple Inc. All rights reserved.
+ *
+ * @APPLE_LICENSE_HEADER_START@
+ * 
+ * This file contains Original Code and/or Modifications of Original Code
+ * as defined in and that are subject to the Apple Public Source License
+ * Version 2.0 (the 'License'). You may not use this file except in
+ * compliance with the License. Please obtain a copy of the License at
+ * http://www.opensource.apple.com/apsl/ and read it before using this file.
+ * 
+ * @APPLE_LICENSE_HEADER_END@
+ */
+#ifndef _DRIVERKIT_IORPC_H
+#define _DRIVERKIT_IORPC_H
+
+#include <DriverKit/IOReturn.h>
+#include <mach/mach_types.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef mach_port_t io_object_t;
+typedef mach_port_t io_service_t;
+typedef mach_port_t io_connect_t;
+typedef mach_port_t io_iterator_t;
+typedef mach_port_t io_enumerator_t;
+typedef mach_port_t io_registry_entry_t;
+
+typedef enum {
+    kIOMessageServiceIsRequestingClose = 0,
+    kIOMessageServiceIsTerminated = 1,
+    kIOMessageServiceIsRequestingOpen = 2,
+    kIOMessageServiceIsTerminating = 3,
+    kIOMessageServiceIsRequestingPower = 4,
+    kIOMessageServiceIsRequestingClose = 5,
+    kIOMessageServiceIsTerminated = 6,
+    kIOMessageServiceIsRequestingOpen = 7,
+    kIOMessageServiceIsTerminating = 8,
+} IOMessageCategory;
+
+typedef struct {
+    io_object_t object;
+    uint32_t flavor;
+    uint32_t count;
+    uint32_t data[1];
+} IOServiceInterestContent;
+
+typedef IOServiceInterestContent *IOServiceInterestRef;
+
+kern_return_t io_service_open(io_service_t service, task_port_t owningTask, uint32_t type, io_connect_t *connect);
+kern_return_t io_service_close(io_connect_t connect);
+kern_return_t io_service_add_interest_notification(io_service_t service, io_iterator_t *notification, uint32_t interestType, uint32_t *matching);
+kern_return_t io_service_remove_interest_notification(io_iterator_t notification);
+kern_return_t io_registry_entry_create_iterator(io_registry_entry_t entry, io_iterator_t *iterator);
+kern_return_t io_registry_entry_get_child_entry(io_registry_entry_t entry, io_iterator_t *iterator);
+kern_return_t io_registry_entry_get_parent_entry(io_registry_entry_t entry, io_registry_entry_t *parent);
+kern_return_t io_registry_entry_get_name(io_registry_entry_t entry, io_name_t name);
+kern_return_t io_registry_entry_get_name_in_plane(io_registry_entry_t entry, const io_name_t plane, io_name_t name);
+kern_return_t io_registry_entry_get_path(io_registry_entry_t entry, const io_name_t plane, io_string_t path);
+kern_return_t io_registry_entry_get_location_in_plane(io_registry_entry_t entry, const io_name_t plane, io_string_t location);
+kern_return_t io_registry_entry_search_cf_property(io_registry_entry_t entry, CFStringRef key, CFTypeRef *property);
+kern_return_t io_registry_entry_set_cf_property(io_registry_entry_t entry, CFStringRef key, CFTypeRef property);
+kern_return_t io_registry_entry_get_property(io_registry_entry_t entry, CFStringRef key, CFTypeRef *property);
+kern_return_t io_registry_entry_set_property(io_registry_entry_t entry, CFStringRef key, CFTypeRef property);
+kern_return_t io_service_get_matching_services(mach_port_t masterPort, CFDictionaryRef matching, io_iterator_t *existing);
+kern_return_t io_service_get_matching_services_with_options(mach_port_t masterPort, uint32_t options, CFDictionaryRef matching, io_iterator_t *existing);
+kern_return_t io_iterator_next(io_iterator_t iterator, io_object_t *object);
+kern_return_t io_iterator_reset(io_iterator_t iterator);
+kern_return_t io_object_conforms_to(io_object_t object, const char *className);
+kern_return_t io_object_copy_class(io_object_t object, io_name_t className);
+kern_return_t io_object_copy_superclass_for_class(io_name_t className, io_name_t superclassName);
+kern_return_t io_object_get_class(io_object_t object, io_name_t className);
+kern_return_t io_object_copy_bundle_identifier_for_class(io_name_t className, CFStringRef *bundleIdentifier);
+kern_return_t io_object_get_kernel_retained_memory(io_object_t object, uint64_t *memory);
+kern_return_t io_object_get_kernel_retained_memory_with_options(io_object_t object, uint32_t options, uint64_t *memory);
+kern_return_t io_connect_map_memory(io_connect_t connect, uint32_t memoryType, task_port_t intoTask, mach_vm_address_t *atAddress, mach_vm_size_t *ofSize, uint32_t options);
+kern_return_t io_connect_unmap_memory(io_connect_t connect, uint32_t memoryType, task_port_t fromTask, mach_vm_address_t atAddress);
+kern_return_t io_connect_method_structureI_structureO(io_connect_t connect, uint32_t selector, const void *inputStruct, size_t inputStructCnt, void *outputStruct, size_t *outputStructCnt);
+kern_return_t io_connect_method_scalarI_scalarO(io_connect_t connect, uint32_t selector, const uint64_t *input, uint32_t inputCnt, uint64_t *output, uint32_t *outputCnt);
+kern_return_t io_connect_method_scalarI_structureO(io_connect_t connect, uint32_t selector, const uint64_t *input, uint32_t inputCnt, void *outputStruct, size_t *outputStructCnt);
+kern_return_t io_connect_method_structureI_scalarO(io_connect_t connect, uint32_t selector, const void *inputStruct, size_t inputStructCnt, uint64_t *output, uint32_t *outputCnt);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _DRIVERKIT_IORPC_H */""")
+
 print('Headers restored')
