@@ -183,6 +183,13 @@ jobs:
         cp iokit/DriverKit/IOTypes.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/IOTypes.h
         cp iokit/IOKit/IOTypes.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/IOTypes.h.iokit 2>/dev/null || true
         echo "Copied IOTypes.h to OBJROOT"
+    - name: Copy IOTypes.h to source root for build_exporthdrs_mi
+      run: |
+        cd xnu-source
+        # Copy IOTypes.h to source root where build runs
+        cp iokit/DriverKit/IOTypes.h ./IOTypes.h
+        cp iokit/IOKit/IOTypes.h ./IOTypes.h.iokit 2>/dev/null || true
+        echo "Copied IOTypes.h to source root"
     - name: Fix DriverKit Makefile in build directory for IIG generation
       run: |
         cd xnu-source
