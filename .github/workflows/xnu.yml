@@ -100,6 +100,13 @@ jobs:
       run: cd xnu-source; head -20 bsd/Makefile
     - name: Fix DriverKit IORPC for Xcode 26
       run: cd xnu-source; find . -name "IORPC.h" | xargs sed -i '' 's/__attribute__((availability(macosx,introduced=10.15)))//g'
+    - name: Fix DriverKit Makefile circular dependency for IIG generation
+      run: |
+        cd xnu-source
+        # Fix circular dependency in DriverKit Makefile: change GENERATED_IMPL dependency from GENERATED_HEADERS to order-only
+        sed -i '' 's/^$(GENERATED_IMPL) : $(GENERATED_HEADERS)$/$(GENERATED_IMPL) : | $(GENERATED_HEADERS)/' iokit/DriverKit/Makefile
+        # Also ensure the IIG tool uses the macOS SDK for host-side generation
+        sed -i '' 's/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(SDKROOT)/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(shell xcrun --sdk macosx --show-sdk-path)/' iokit/DriverKit/Makefile
     - name: Patch osfmk/mach/Makefile for VPATH
       run: cd xnu-source; sed -i '' 's/^VPATH.*=.*/VPATH = $(SRCROOT):$(SRCROOT)\/osfmk\/mach/' osfmk/mach/Makefile
     - name: Patch osfmk/gssd/Makefile for VPATH
