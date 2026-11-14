@@ -160,6 +160,15 @@ jobs:
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP; cp -r SETUP/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP/
     - name: Copy iokit/DriverKit source to build directory for IIG generation
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit; cp -r iokit/DriverKit/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/
+    - name: Verify IOTypes.h files exist in source and build directories
+      run: |
+        cd xnu-source
+        echo "=== Checking IOTypes.h in source ==="
+        ls -la iokit/IOKit/IOTypes.h iokit/DriverKit/IOTypes.h 2>/dev/null || echo "NOT FOUND in source"
+        echo "=== Checking IOTypes.h in build directory ==="
+        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/IOTypes.h 2>/dev/null || echo "NOT FOUND in build"
+        echo "=== Checking IOTypes.h in EXPORT_HDRS ==="
+        ls -la EXPORT_HDRS/iokit/DriverKit/IOTypes.h 2>/dev/null || echo "NOT FOUND in EXPORT_HDRS"
     - name: Fix DriverKit Makefile in build directory for IIG generation
       run: |
         cd xnu-source
