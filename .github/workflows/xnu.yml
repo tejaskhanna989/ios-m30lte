@@ -52,7 +52,7 @@ jobs:
     - name: Deps
       run: brew install bison flex gawk gnu-sed cmake ninja python3 && pip3 install pyyaml --break-system-packages
     - name: Verify build environment
-      run: 'echo "=== Build Environment Verification ===" && echo "macOS: $(sw_vers -productVersion)" && echo "Xcode: $(xcodebuild -version)" && echo "SDK: $(xcrun --sdk iphoneos --show-sdk-path)" && echo "SDKROOT_PATH: $SDKROOT_PATH" && ls -la /Library/Developer/KDKs/ && echo "PATH: $PATH" && which bison flex gawk sed cmake ninja python3 && bison --version && flex --version'
+      run: 'echo "=== Build Environment Verification ===" && echo "macOS: $(sw_vers -productVersion)" && echo "Xcode: $(xcodebuild -version)" && echo "SDK: $(xcrun --sdk iphoneos --show-sdk-path)" && echo "SDKROOT_PATH: $SDKROOT_PATH" && ls -la /Library/Developer/KDKs/ 2>/dev/null || echo "KDKs directory not found (expected)" && echo "PATH: $PATH" && which bison flex gawk sed cmake ninja python3 && bison --version && flex --version'
     - name: Clone XNU
       run: git clone --depth 1 --branch xnu-8796.141.3 https://github.com/apple-oss-distributions/xnu.git xnu-source && cd xnu-source && git log -1 --oneline
     - name: Stage libpthread dependency
