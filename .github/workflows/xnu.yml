@@ -294,6 +294,13 @@ jobs:
         cp osfmk/arm/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/osfmk/mach/arm/asm.h
         echo "Copied asm.h to build directory EXPORT_HDRS"
         ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/osfmk/mach/arm/asm.h
+    - name: Copy asm.h to source root for build_exporthdrs_md VPATH
+      run: |
+        cd xnu-source
+        # Also copy to source root so VPATH can find it
+        cp osfmk/arm/asm.h ./asm.h
+        echo "Copied asm.h to source root for VPATH"
+        ls -la ./asm.h
     - name: Fix DriverKit Makefile in build directory for IIG generation
       run: |
         cd xnu-source
