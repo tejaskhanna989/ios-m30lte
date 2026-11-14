@@ -169,6 +169,9 @@ jobs:
         sed -i '' 's/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(SDKROOT)/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(shell xcrun --sdk macosx --show-sdk-path)/' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
         # Remove GENERATED_IMPL from COMP_FILES since .iig.cpp files are generated as side effect
         sed -i '' 's/COMP_FILES = \${GENERATED_HEADERS} \$(GENERATED_IMPL)/COMP_FILES = ${GENERATED_HEADERS}/' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
+        # Fix the pattern rule to declare BOTH .h and .iig.cpp as outputs
+        # This eliminates the circular dependency warnings
+        sed -i '' 's/^%.h : %.iig$/%.h %.iig.cpp : %.iig/' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
         # Add VPATH with absolute paths to find source .iig files
         SRCPATH="$(realpath .)"
         if ! grep -q "^VPATH" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile; then
@@ -182,6 +185,7 @@ jobs:
         grep -A 2 -B 2 "COMP_FILES" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
         grep -A 2 -B 2 "OTHER_IIG_CFLAGS" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
         grep -A 1 "VPATH" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
+        grep -A 1 "%.h" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
     - name: Verify IIG tool availability
       run: |
         echo "=== Checking IIG tool availability ==="
