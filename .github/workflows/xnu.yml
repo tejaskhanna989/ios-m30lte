@@ -228,6 +228,18 @@ jobs:
             cp "$f" "./$base"
             echo "Copied $f to ./$base"
         done
+        # Copy .defs files from osfmk/gssd
+        for f in osfmk/gssd/*.defs; do
+            base=$(basename "$f")
+            cp "$f" "./$base"
+            echo "Copied $f to ./$base"
+        done
+        # Copy .defs files from osfmk/kdp
+        for f in osfmk/kdp/*.defs; do
+            base=$(basename "$f")
+            cp "$f" "./$base" 2>/dev/null || true
+            echo "Copied $f to ./$base"
+        done
         echo "Copied all .defs files to source root"
     - name: Fix DriverKit Makefile in build directory for IIG generation
       run: |
