@@ -143,6 +143,8 @@ jobs:
         # Verify the change
         grep -A 2 "^CWARNFLAGS_STD" makedefs/MakeInc.def
         echo "Added -std=c11 for _Atomic support and verified warning flags"
+    - name: Patch EXTERNAL_HEADERS/stdatomic.h to guard _Atomic with C11 check
+      run: cd xnu-source && python3 ../xnu/patches/patch_stdatomic.py
     - name: Copy ptrauth.h to sys/ptrauth.h for build
       run: |
         cd xnu-source
