@@ -109,6 +109,8 @@ jobs:
         sed -i '' '/^\$(GENERATED_IMPL) : \$(GENERATED_HEADERS)$/d' iokit/DriverKit/Makefile
         # Also ensure the IIG tool uses the macOS SDK for host-side generation
         sed -i '' 's/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(SDKROOT)/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(shell xcrun --sdk macosx --show-sdk-path)/' iokit/DriverKit/Makefile
+        # Remove GENERATED_IMPL from COMP_FILES since .iig.cpp files are generated as side effect
+        sed -i '' 's/COMP_FILES = \${GENERATED_HEADERS} \$(GENERATED_IMPL)/COMP_FILES = ${GENERATED_HEADERS}/' iokit/DriverKit/Makefile
         # Add VPATH to find source .iig files in the source directory
         if ! grep -q "^VPATH" iokit/DriverKit/Makefile; then
           awk '/include.*MakeInc_def/ {print; print "VPATH = $(SRCROOT):$(SRCROOT)/iokit/DriverKit"; next} 1' iokit/DriverKit/Makefile > iokit/DriverKit/Makefile.tmp && mv iokit/DriverKit/Makefile.tmp iokit/DriverKit/Makefile
@@ -116,6 +118,7 @@ jobs:
         # Debug: print the modified Makefile sections
         echo "=== Modified DriverKit Makefile ==="
         grep -A 2 -B 2 "GENERATED_IMPL" iokit/DriverKit/Makefile
+        grep -A 2 -B 2 "COMP_FILES" iokit/DriverKit/Makefile
         grep -A 2 -B 2 "OTHER_IIG_CFLAGS" iokit/DriverKit/Makefile
         grep -A 1 "VPATH" iokit/DriverKit/Makefile
     - name: Patch osfmk/mach/Makefile for VPATH
