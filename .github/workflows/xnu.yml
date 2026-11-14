@@ -219,6 +219,16 @@ jobs:
             echo "Copied $h to ./$base.iokit"
         done
         echo "Copied all IOKit/DriverKit headers to source root"
+    - name: Copy all .defs files to source root for build_exporthdrs_mi
+      run: |
+        cd xnu-source
+        # Copy all required .defs files from osfmk/mach to source root
+        for f in osfmk/mach/*.defs; do
+            base=$(basename "$f")
+            cp "$f" "./$base"
+            echo "Copied $f to ./$base"
+        done
+        echo "Copied all .defs files to source root"
     - name: Fix DriverKit Makefile in build directory for IIG generation
       run: |
         cd xnu-source
