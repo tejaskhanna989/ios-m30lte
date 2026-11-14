@@ -173,10 +173,11 @@ jobs:
         # This eliminates the circular dependency warnings
         # Note: Makefile rules start with a tab, so match that
         sed -i '' 's/^	%.h : %.iig$/	%.h %.iig.cpp : %.iig/' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
-        # Add VPATH with absolute paths to find source .iig files
+        # Add VPATH with absolute paths to find source .iig files (including build directory)
         SRCPATH="$(realpath .)"
+        BUILDPATH="$(realpath BUILD/obj/DEVELOPMENT_ARM64_M30LTE)"
         if ! grep -q "^VPATH" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile; then
-          awk -v src="$SRCPATH" '/include.*MakeInc_def/ {print; print "VPATH = " src ":" src "/iokit/DriverKit"; next} 1' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile > BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile.tmp && mv BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile.tmp BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
+          awk -v src="$SRCPATH" -v build="$BUILDPATH" '/include.*MakeInc_def/ {print; print "VPATH = " build "/iokit/DriverKit:" src ":" src "/iokit/DriverKit"; next} 1' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile > BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile.tmp && mv BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile.tmp BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
         fi
         # Debug: verify .iig files exist and VPATH is set
         echo "=== Checking .iig files in build directory ==="
@@ -187,6 +188,22 @@ jobs:
         grep -A 2 -B 2 "OTHER_IIG_CFLAGS" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
         grep -A 1 "VPATH" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
         grep -A 1 "%.h" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
+    - name: Fix DriverKit Makefile in source directory for IIG generation
+      run: |
+        cd xnu-source
+        # Apply same fixes to source directory Makefile (used by main build)
+        sed -i '' '/^\$(GENERATED_IMPL) : \$(GENERATED_HEADERS)$/d' iokit/DriverKit/Makefile
+        sed -i '' 's/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(SDKROOT)/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(shell xcrun --sdk macosx --show-sdk-path)/' iokit/DriverKit/Makefile
+        sed -i '' 's/COMP_FILES = \${GENERATED_HEADERS} \$(GENERATED_IMPL)/COMP_FILES = ${GENERATED_HEADERS}/' iokit/DriverKit/Makefile
+        sed -i '' 's/^	%.h : %.iig$/	%.h %.iig.cpp : %.iig/' iokit/DriverKit/Makefile
+        SRCPATH="$(realpath .)"
+        BUILDPATH="$(realpath BUILD/obj/DEVELOPMENT_ARM64_M30LTE)"
+        if ! grep -q "^VPATH" iokit/DriverKit/Makefile; then
+          awk -v src="$SRCPATH" -v build="$BUILDPATH" '/include.*MakeInc_def/ {print; print "VPATH = " build "/iokit/DriverKit:" src ":" src "/iokit/DriverKit"; next} 1' iokit/DriverKit/Makefile > iokit/DriverKit/Makefile.tmp && mv iokit/DriverKit/Makefile.tmp iokit/DriverKit/Makefile
+        fi
+        echo "=== Modified DriverKit Makefile in source directory ==="
+        grep -A 1 "VPATH" iokit/DriverKit/Makefile
+        grep -A 1 "%.h" iokit/DriverKit/Makefile
     - name: Verify IIG tool availability
       run: |
         echo "=== Checking IIG tool availability ==="
