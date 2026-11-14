@@ -277,6 +277,13 @@ jobs:
         # Copy asm.h from osfmk/mach/arm to source root
         cp osfmk/mach/arm/asm.h ./asm.h 2>/dev/null || true
         echo "Copied asm.h to source root"
+    - name: Copy asm.h to EXPORT_HDRS for build_exporthdrs_md
+      run: |
+        cd xnu-source
+        # Copy asm.h to EXPORT_HDRS for build_exporthdrs_md
+        mkdir -p EXPORT_HDRS/osfmk/mach/arm
+        cp osfmk/mach/arm/asm.h EXPORT_HDRS/osfmk/mach/arm/asm.h 2>/dev/null || true
+        echo "Copied asm.h to EXPORT_HDRS"
     - name: Fix DriverKit Makefile in build directory for IIG generation
       run: |
         cd xnu-source
