@@ -171,7 +171,8 @@ jobs:
         sed -i '' 's/COMP_FILES = \${GENERATED_HEADERS} \$(GENERATED_IMPL)/COMP_FILES = ${GENERATED_HEADERS}/' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
         # Fix the pattern rule to declare BOTH .h and .iig.cpp as outputs
         # This eliminates the circular dependency warnings
-        sed -i '' 's/^%.h : %.iig$/%.h %.iig.cpp : %.iig/' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
+        # Note: Makefile rules start with a tab, so match that
+        sed -i '' 's/^	%.h : %.iig$/	%.h %.iig.cpp : %.iig/' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
         # Add VPATH with absolute paths to find source .iig files
         SRCPATH="$(realpath .)"
         if ! grep -q "^VPATH" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile; then
