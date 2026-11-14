@@ -108,7 +108,7 @@ jobs:
     - name: Patch security/Makefile for kernel source includes
       run: cd xnu-source; sed -i '' 's|-I\$(SRCROOT)/bsd|-I$(SRCROOT)/bsd -I$(SRCROOT)/osfmk|g' security/Makefile
     - name: Create all export files and filelists for kernel build
-      run: cd xnu-source; python3 ../../xnu/create_export_files.py .
+      run: cd xnu-source; python3 ../xnu/create_export_files.py .
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
       run: cd xnu-source; sed -i '' 's/memory_order_relaxed/__ATOMIC_RELAXED/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_acquire/__ATOMIC_ACQUIRE/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_release/__ATOMIC_RELEASE/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_acq_rel/__ATOMIC_ACQ_REL/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_seq_cst/__ATOMIC_SEQ_CST/g' libkern/os/atomic_private_impl.h
     - name: Patch osfmk/mach/arm/Makefile for VPATH
@@ -154,9 +154,9 @@ jobs:
     - name: Copy config files to build directory
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config; cp -r config/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/
     - name: Generate component .filelist files
-      run: cd xnu-source; python3 ../../xnu/create_filelists.py .
+      run: cd xnu-source; python3 ../xnu/create_filelists.py .
     - name: Create all export files and filelists for kernel build
-      run: cd xnu-source; python3 ../../xnu/create_export_files.py .
+      run: cd xnu-source; python3 ../xnu/create_export_files.py .
     - name: Build XNU kernel
       run: cd xnu-source && export SRCROOT="$PWD" && export OBJROOT="$PWD/BUILD/obj" && export SYMROOT="$PWD/BUILD/obj" && export DSTROOT="$PWD/BUILD/obj" && export SDKROOT=iphoneos && export MACHINE_CONFIG=M30LTE && export CURRENT_KERNEL_CONFIG=DEVELOPMENT && export CURRENT_ARCH_CONFIG=ARM64 && export CURRENT_MACHINE_CONFIG=M30LTE && export RC_ARCHS="arm64" && export RC_CFLAGS="" && export RC_CXXFLAGS="" && export RC_OSFLAGS="" && export RC_RELEASE=1 && export RC_DEBUG=0 && export MAKEFLAGS="-j1 -e" && env -i PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" HOME="$HOME" SRCROOT="$PWD" OBJROOT="$PWD/BUILD/obj" SYMROOT="$PWD/BUILD/obj" DSTROOT="$PWD/BUILD/obj" SDKROOT=iphoneos MACHINE_CONFIG=M30LTE CURRENT_KERNEL_CONFIG=DEVELOPMENT CURRENT_ARCH_CONFIG=ARM64 CURRENT_MACHINE_CONFIG=M30LTE RC_ARCHS="arm64" RC_CFLAGS="" RC_CXXFLAGS="" RC_OSFLAGS="" RC_RELEASE=1 RC_DEBUG=0 MAKEFLAGS="-j1 -e" make OBJROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SYMROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE"
         DSTROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SDKROOT=iphoneos MACHINE_CONFIG=M30LTE CURRENT_KERNEL_CONFIG=DEVELOPMENT CURRENT_ARCH_CONFIG=ARM64 CURRENT_MACHINE_CONFIG=M30LTE RC_ARCHS="arm64" RC_CFLAGS="" RC_CXXFLAGS="" RC_OSFLAGS="" RC_RELEASE=1 RC_DEBUG=0 MAKEFLAGS="-j1 -e" build_all 2>&1 | tee xnu-build.log
