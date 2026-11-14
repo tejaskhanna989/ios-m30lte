@@ -132,7 +132,9 @@ jobs:
         # Remove INCFLAGS_SDK and INCFLAGS_PLATFORM for iOS builds as these paths don't exist in iPhoneOS SDK
         sed -i '' 's/INCFLAGS_SDK	= -I$(SDKROOT)\/usr\/local\/include\/kernel/INCFLAGS_SDK	= /' makedefs/MakeInc.def
         sed -i '' 's/INCFLAGS_PLATFORM = -I$(SDKROOT)\/$(KPINCDIR)\/platform/INCFLAGS_PLATFORM = /' makedefs/MakeInc.def
-        echo "Patched MakeInc.def to remove invalid SDK include paths"
+        # Add EXPORT_HDRS/sys to include path for sys/ptrauth.h
+        sed -i '' 's/INCFLAGS	= $(INCFLAGS_LOCAL) $(INCFLAGS_GEN) $(INCFLAGS_IMPORT) $(INCFLAGS_EXTERN) $(INCFLAGS_MAKEFILE) $(INCFLAGS_SDK) $(INCFLAGS_PLATFORM)/INCFLAGS	= $(INCFLAGS_LOCAL) $(INCFLAGS_GEN) $(INCFLAGS_IMPORT) $(INCFLAGS_EXTERN) $(INCFLAGS_MAKEFILE) $(INCFLAGS_SDK) $(INCFLAGS_PLATFORM) -I$(OBJROOT)\/EXPORT_HDRS\/sys/' makedefs/MakeInc.def
+        echo "Patched MakeInc.def to remove invalid SDK include paths and add EXPORT_HDRS/sys"
     - name: Add C11 standard flag for _Atomic support
       run: |
         cd xnu-source
@@ -147,6 +149,7 @@ jobs:
         cp EXTERNAL_HEADERS/ptrauth.h EXPORT_HDRS/sys/ptrauth.h
         cp EXTERNAL_HEADERS/ptrauth.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/sys/ptrauth.h
         echo "Copied ptrauth.h to sys/ptrauth.h"
+        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/sys/ptrauth.h
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
       run: cd xnu-source; sed -i '' 's/memory_order_relaxed/__ATOMIC_RELAXED/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_acquire/__ATOMIC_ACQUIRE/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_release/__ATOMIC_RELEASE/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_acq_rel/__ATOMIC_ACQ_REL/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_seq_cst/__ATOMIC_SEQ_CST/g' libkern/os/atomic_private_impl.h
     - name: Patch osfmk/mach/arm/Makefile for VPATH
