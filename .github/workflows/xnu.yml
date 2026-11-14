@@ -258,6 +258,12 @@ jobs:
             cp "$f" "./$base" 2>/dev/null || true
             echo "Copied $f to ./$base"
         done
+        # Copy .defs files from osfmk/lockd
+        for f in osfmk/lockd/*.defs; do
+            base=$(basename "$f")
+            cp "$f" "./$base" 2>/dev/null || true
+            echo "Copied $f to ./$base"
+        done
         echo "Copied all .defs files to source root"
     - name: Fix DriverKit Makefile in build directory for IIG generation
       run: |
