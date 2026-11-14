@@ -112,6 +112,27 @@ jobs:
       run: cd xnu-source; sed -i '' 's|-I\$(SRCROOT)/bsd|-I$(SRCROOT)/bsd -I$(SRCROOT)/osfmk|g' security/Makefile
     - name: Create all export files and filelists for kernel build
       run: cd xnu-source; python3 ../xnu/create_export_files.py .
+    - name: Copy libsa headers to EXPORT_HDRS for build
+      run: |
+        cd xnu-source
+        mkdir -p EXPORT_HDRS/libsa
+        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/libsa
+        cp osfmk/libsa/*.h EXPORT_HDRS/libsa/ 2>/dev/null || true
+        cp osfmk/libsa/*.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/libsa/ 2>/dev/null || true
+        cp -r osfmk/libsa/arm EXPORT_HDRS/libsa/ 2>/dev/null || true
+        cp -r osfmk/libsa/arm BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/libsa/ 2>/dev/null || true
+        cp -r osfmk/libsa/machine EXPORT_HDRS/libsa/ 2>/dev/null || true
+        cp -r osfmk/libsa/machine BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/libsa/ 2>/dev/null || true
+        cp -r osfmk/libsa/sys EXPORT_HDRS/libsa/ 2>/dev/null || true
+        cp -r osfmk/libsa/sys BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/libsa/ 2>/dev/null || true
+        echo "Copied libsa headers to EXPORT_HDRS"
+    - name: Patch MakeInc.def to remove invalid SDK include paths for iOS
+      run: |
+        cd xnu-source
+        # Remove INCFLAGS_SDK and INCFLAGS_PLATFORM for iOS builds as these paths don't exist in iPhoneOS SDK
+        sed -i '' 's/INCFLAGS_SDK	= -I$(SDKROOT)\/usr\/local\/include\/kernel/INCFLAGS_SDK	= /' makedefs/MakeInc.def
+        sed -i '' 's/INCFLAGS_PLATFORM = -I$(SDKROOT)\/$(KPINCDIR)\/platform/INCFLAGS_PLATFORM = /' makedefs/MakeInc.def
+        echo "Patched MakeInc.def to remove invalid SDK include paths"
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
       run: cd xnu-source; sed -i '' 's/memory_order_relaxed/__ATOMIC_RELAXED/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_acquire/__ATOMIC_ACQUIRE/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_release/__ATOMIC_RELEASE/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_acq_rel/__ATOMIC_ACQ_REL/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_seq_cst/__ATOMIC_SEQ_CST/g' libkern/os/atomic_private_impl.h
     - name: Patch osfmk/mach/arm/Makefile for VPATH
