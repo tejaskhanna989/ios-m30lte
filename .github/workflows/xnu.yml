@@ -169,6 +169,13 @@ jobs:
         ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/IOTypes.h 2>/dev/null || echo "NOT FOUND in build"
         echo "=== Checking IOTypes.h in EXPORT_HDRS ==="
         ls -la EXPORT_HDRS/iokit/DriverKit/IOTypes.h 2>/dev/null || echo "NOT FOUND in EXPORT_HDRS"
+    - name: Pre-populate EXPORT_HDRS with IOTypes.h for build_exporthdrs_mi
+      run: |
+        cd xnu-source
+        mkdir -p EXPORT_HDRS/iokit/DriverKit
+        cp iokit/DriverKit/IOTypes.h EXPORT_HDRS/iokit/DriverKit/IOTypes.h
+        cp iokit/IOKit/IOTypes.h EXPORT_HDRS/iokit/IOKit/IOTypes.h 2>/dev/null || true
+        echo "Pre-populated EXPORT_HDRS with IOTypes.h"
     - name: Fix DriverKit Makefile in build directory for IIG generation
       run: |
         cd xnu-source
