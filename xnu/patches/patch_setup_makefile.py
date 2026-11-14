@@ -40,9 +40,14 @@ if old_subdirs in content:
     print("Patched SETUP/Makefile to skip host tools during kernel build")
 else:
     print("Could not find SETUP_SUBDIRS pattern")
+    print("Current content:")
+    print(content[:2000])
     sys.exit(1)
 
 with open(path, 'w') as f:
     f.write(content)
 
 print("Patched SETUP/Makefile")
+print("New content:")
+with open(path, 'r') as f:
+    print(f.read())
