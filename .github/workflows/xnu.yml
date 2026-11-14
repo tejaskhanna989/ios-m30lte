@@ -125,7 +125,7 @@ jobs:
     - name: Create minimal availability.pl for _symbol_aliasing.h
       run: cd xnu-source; if [ ! -f availability.pl ]; then printf '#!/usr/bin/perl\nprint "13.5\n"\n' > availability.pl; chmod +x availability.pl; fi
     - name: Patch make_symbol_aliasing.sh for availability.pl fallback
-      run: cd xnu-source; if [ -f "make_symbol_aliasing.sh" ]; then sed -i '' 's|/usr/bin/perl.*availability\.pl|perl $(SRCROOT)/availability.pl|g' make_symbol_aliasing.sh; fi
+      run: cd xnu-source; if [ -f "bsd/sys/make_symbol_aliasing.sh" ]; then sed -i '' 's|AVAILABILITY_PL=.*|AVAILABILITY_PL="$(SRCROOT)/availability.pl"|g' bsd/sys/make_symbol_aliasing.sh; fi
     - name: Install xnu headers
       run: cd xnu-source && export SRCROOT="$PWD" && export OBJROOT="$PWD/BUILD/obj" && export SYMROOT="$PWD/BUILD/obj" && export DSTROOT="$PWD/BUILD/obj" && export SDKROOT=iphoneos && export MACHINE_CONFIG=M30LTE && export CURRENT_KERNEL_CONFIG=DEVELOPMENT && export CURRENT_ARCH_CONFIG=ARM64 && export CURRENT_MACHINE_CONFIG=M30LTE && export RC_ARCHS="arm64" && export RC_CFLAGS="" && export RC_CXXFLAGS="" && export RC_OSFLAGS="" && export RC_RELEASE=1 && export RC_DEBUG=0 && export MAKEFLAGS="-j1 -e" && make -C osfmk installhdrs OBJROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SYMROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" DSTROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE" SDKROOT=iphoneos 2>&1 | tail -50
     - name: Pre-build IORPC patch for DriverKit
