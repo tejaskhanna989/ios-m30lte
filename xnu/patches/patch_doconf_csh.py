@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Patch doconf.csh to fix variable initialization issues."""
 import os
+import re
 
 with open('SETUP/config/doconf', 'r') as f:
     content = f.read()
@@ -60,7 +61,6 @@ if old_master_block in content:
     print("Added MASTER file existence check and copy")
 else:
     print("WARNING: Could not find MASTER block to patch")
-    import re
     pattern = re.escape('set MASTER_DIR=${MASTER_CONF_DIR}') + r'\s+' + re.escape('set MASTER =   ${MASTER_DIR}/MASTER') + r'\s*\n' + re.escape('foreach master_file (${MASTER}.${cpu}.${SOC_CONFIG}.${PLATFORM} ${MASTER}.${cpu}.${SOC_CONFIG} ${MASTER}.${cpu}.${PLATFORM} ${MASTER}.${cpu})')
     if re.search(pattern, content):
         content = re.sub(pattern, master_block, content)
@@ -69,9 +69,14 @@ else:
         print("Could not find pattern with regex either")
 
 # Fix 3: Also map SOURCEDIR to SOURCE since the script uses $SOURCE but -s sets SOURCEDIR
-if 'set SOURCEDIR' in content:
-    content = content.replace('set SOURCEDIR="$argv[2]"\n    shift\n    shift\n    breaksw', 'set SOURCEDIR="$argv[2]"\n    set SOURCE="$argv[2]"\n    shift\n    shift\n    breaksw')
-    print("Added SOURCE = SOURCEDIR mapping")
+# The original code has: set SOURCEDIR="$argv[2]"\n    shift\n    breaksw
+# We need to add: set SOURCE="$argv[2]" after it
+content = re.sub(
+    r'(set SOURCEDIR\s*=\s*"\$argv\[2\]")\s*\n\s*shift\s*\n\s*breaksw',
+    r'\1\n    set SOURCE="$argv[2]"\n    shift\n    breaksw',
+    content
+)
+print("Added SOURCE = SOURCEDIR mapping")
 
 with open('SETUP/config/doconf', 'w') as f:
     f.write(content)
