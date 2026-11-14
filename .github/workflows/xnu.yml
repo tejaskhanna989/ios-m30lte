@@ -156,6 +156,15 @@ jobs:
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config; cp -r config/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/
     - name: Copy SETUP source to build directory for build_setup
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP; cp -r SETUP/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP/
+    - name: Copy iokit/DriverKit source to build directory for IIG generation
+      run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit; cp -r iokit/DriverKit/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/
+    - name: Verify IIG tool availability
+      run: |
+        echo "=== Checking IIG tool availability ==="
+        echo "macOS SDK: $(xcrun --sdk macosx --show-sdk-path)"
+        echo "iPhoneOS SDK: $(xcrun --sdk iphoneos --show-sdk-path)"
+        echo "IIG in macOS SDK: $(xcrun -sdk macosx -find iig 2>/dev/null || echo 'NOT FOUND')"
+        echo "IIG in iPhoneOS SDK: $(xcrun -sdk iphoneos -find iig 2>/dev/null || echo 'NOT FOUND')"
     - name: Generate component .filelist files
       run: cd xnu-source; python3 ../xnu/create_filelists.py .
     - name: Create all export files and filelists for kernel build
