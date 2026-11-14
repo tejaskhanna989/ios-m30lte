@@ -50,7 +50,7 @@ jobs:
     - name: Check available Xcode versions
       run: ls -la /Applications/ | grep Xcode
     - name: Deps
-      run: brew install bison flex gawk gnu-sed cmake ninja python3 && pip3 install --upgrade pip --break-system-packages && pip3 install pyyaml --break-system-packages
+      run: brew install bison flex gawk gnu-sed cmake ninja python3 && pip3 install pyyaml --break-system-packages
     - name: Download KDK
       run: KDK_URL="https://github.com/apple-oss-distributions/KDK/releases/download/kdk-23.0.0/KDK-23.0.0.dmg" && wget -q "$KDK_URL" -O KDK.dmg && hdiutil attach KDK.dmg -mountpoint /Volumes/KDK -nobrowse -quiet && sudo cp -R /Volumes/KDK/KDKs/* /Library/Developer/KDKs/ && hdiutil detach /Volumes/KDK -quiet
     - name: Verify build environment
