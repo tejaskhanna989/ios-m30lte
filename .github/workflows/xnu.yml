@@ -142,7 +142,7 @@ jobs:
     - name: Copy version.h.template to build directory
       run: cd xnu-source; cp libkern/libkern/version.h.template BUILD/obj/DEVELOPMENT_ARM64_M30LTE/version.h.template
     - name: Copy asm.h to build directory
-      run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/arm; cp osfmk/mach/arm/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/arm/asm.h
+      run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/arm; cp osfmk/arm/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/arm/asm.h
     - name: Copy full kernel private headers to build directory
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/kern; cp -r osfmk/kern/*.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/osfmk/kern/
     - name: Patch EXPORT_HDRS/osfmk/arm/locks.h for full lck_mtx_t definition
