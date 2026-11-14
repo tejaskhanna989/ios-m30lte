@@ -178,7 +178,7 @@ jobs:
         path: xnu-source/xnu-build.log
         if-no-files-found: warn
     - name: Collect kernel artifact
-      run: 'cd xnu-source; echo "=== Searching for kernel binary ===" && find BUILD/obj -name "*kernel*" -type f 2>/dev/null | head -20 && echo "=== Checking for kernel in various locations ===" && KERNEL_PATH=$(find BUILD/obj -maxdepth 5 \( -name "kernel.development.m30lte" -o -name "mach_kernel" -o -name "kernel" \) -type f 2>/dev/null | head -1) && if [ -n "$KERNEL_PATH" ]; then echo "Found kernel at: $KERNEL_PATH"; mkdir -p out; cp "$KERNEL_PATH" out/kernel.development.m30lte; fi && ls -la out && if [ -f out/kernel.development.m30lte ]; then (cd out && shasum -a 256 kernel.development.m30lte > SHA256SUMS); fi'
+      run: 'cd xnu-source; echo "=== Searching for kernel binary ===" && find BUILD/obj -name "*kernel*" -type f 2>/dev/null | head -20 && echo "=== Checking for any kernel binary ===" && KERNEL_PATH=$(find BUILD/obj -maxdepth 5 \( -name "kernel.development.m30lte" -o -name "mach_kernel" -o -name "kernel" \) -type f 2>/dev/null | head -1) && if [ -n "$KERNEL_PATH" ]; then echo "Found kernel at: $KERNEL_PATH"; mkdir -p out; cp "$KERNEL_PATH" out/kernel.development.m30lte; fi && ls -la out && if [ -f out/kernel.development.m30lte ]; then (cd out && shasum -a 256 kernel.development.m30lte > SHA256SUMS); fi'
     - name: Upload kernel artifact
       if: always()
       uses: actions/upload-artifact@v4
