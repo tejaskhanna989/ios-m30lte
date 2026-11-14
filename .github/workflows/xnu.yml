@@ -140,7 +140,7 @@ jobs:
     - name: Patch SETUP/config/Makefile to skip rebuild
       run: 'cd xnu-source; sed -i '''' ''s/^all:/all: config/'' SETUP/config/Makefile'
     - name: Copy version.h.template to build directory
-      run: cd xnu-source; cp osfmk/kern/version.h.template BUILD/obj/DEVELOPMENT_ARM64_M30LTE/version.h.template
+      run: cd xnu-source; cp libkern/libkern/version.h.template BUILD/obj/DEVELOPMENT_ARM64_M30LTE/version.h.template
     - name: Copy asm.h to build directory
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/arm; cp osfmk/mach/arm/asm.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/arm/asm.h
     - name: Copy full kernel private headers to build directory
