@@ -103,8 +103,10 @@ jobs:
     - name: Fix DriverKit Makefile circular dependency for IIG generation
       run: |
         cd xnu-source
-        # Fix circular dependency in DriverKit Makefile: change GENERATED_IMPL dependency from GENERATED_HEADERS to order-only
-        sed -i '' 's/^$(GENERATED_IMPL) : $(GENERATED_HEADERS)$/$(GENERATED_IMPL) : | $(GENERATED_HEADERS)/' iokit/DriverKit/Makefile
+        # Fix circular dependency: The pattern rule generates both .h and .iig.cpp from .iig
+        # Remove the dependency between GENERATED_IMPL and GENERATED_HEADERS entirely
+        # since they are both generated from .iig by the same IIG command
+        sed -i '' '/^\$(GENERATED_IMPL) : \$(GENERATED_HEADERS)$/d' iokit/DriverKit/Makefile
         # Also ensure the IIG tool uses the macOS SDK for host-side generation
         sed -i '' 's/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(SDKROOT)/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(shell xcrun --sdk macosx --show-sdk-path)/' iokit/DriverKit/Makefile
         # Add VPATH to find source .iig files in the source directory
