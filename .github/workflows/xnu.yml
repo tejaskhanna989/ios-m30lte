@@ -186,8 +186,6 @@ jobs:
       run: cd xnu-source && echo "=== Building SETUP tools for macOS (host platform) ===" && HOST_OBJROOT="$PWD/BUILD/obj/host" && mkdir -p "$HOST_OBJROOT" && env -i PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin" HOME="$HOME" HOST_OBJROOT="$HOST_OBJROOT" SRCROOT="$PWD" MACHINE_CONFIGS=M30LTE make -C SETUP RC_ProjectName=SETUP RC_ARCHS="x86_64" RC_CFLAGS="" RC_CXXFLAGS="" RC_OSFLAGS="" RC_RELEASE=1 RC_DEBUG=0 SDKROOT=macosx HOST_SDKROOT=macosx HOST_OS_VERSION=26.0 OBJROOT="$HOST_OBJROOT" SYMROOT="$HOST_OBJROOT" DSTROOT="$HOST_OBJROOT" CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path)" 2>&1 | tail -100
     - name: Patch SETUP/config/Makefile to skip rebuild
       run: 'cd xnu-source; sed -i '''' ''s/^all:/all: config/'' SETUP/config/Makefile'
-    - name: Patch SETUP/Makefile to skip host tools during kernel build
-      run: cd xnu-source && python3 ../xnu/patches/patch_setup_makefile.py
     - name: Copy version.h.template to build directory
       run: cd xnu-source; cp libkern/libkern/version.h.template BUILD/obj/DEVELOPMENT_ARM64_M30LTE/version.h.template
     - name: Copy asm.h to build directory
@@ -204,6 +202,8 @@ jobs:
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config; cp -r config/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/
     - name: Copy SETUP source to build directory for build_setup
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP; cp -r SETUP/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP/
+    - name: Patch SETUP/Makefile in build directory to skip host tools during kernel build
+      run: cd xnu-source && python3 ../xnu/patches/patch_setup_makefile.py BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP/Makefile
     - name: Copy iokit/DriverKit source to build directory for IIG generation
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit; cp -r iokit/DriverKit/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/
     - name: Verify IOTypes.h files exist in source and build directories

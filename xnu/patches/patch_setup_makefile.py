@@ -3,7 +3,12 @@
 import sys
 import os
 
-path = 'SETUP/Makefile'
+# Accept optional path argument, default to SETUP/Makefile
+if len(sys.argv) > 1:
+    path = sys.argv[1]
+else:
+    path = 'SETUP/Makefile'
+
 if not os.path.exists(path):
     print(f"{path} not found!")
     sys.exit(1)
@@ -37,9 +42,9 @@ endif"""
 
 if old_subdirs in content:
     content = content.replace(old_subdirs, new_subdirs)
-    print("Patched SETUP/Makefile to skip host tools during kernel build")
+    print(f"Patched {path} to skip host tools during kernel build")
 else:
-    print("Could not find SETUP_SUBDIRS pattern")
+    print(f"Could not find SETUP_SUBDIRS pattern in {path}")
     print("Current content:")
     print(content[:2000])
     sys.exit(1)
@@ -47,7 +52,7 @@ else:
 with open(path, 'w') as f:
     f.write(content)
 
-print("Patched SETUP/Makefile")
+print(f"Patched {path}")
 print("New content:")
 with open(path, 'r') as f:
     print(f.read())
