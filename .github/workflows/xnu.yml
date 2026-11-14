@@ -133,6 +133,20 @@ jobs:
         sed -i '' 's/INCFLAGS_SDK	= -I$(SDKROOT)\/usr\/local\/include\/kernel/INCFLAGS_SDK	= /' makedefs/MakeInc.def
         sed -i '' 's/INCFLAGS_PLATFORM = -I$(SDKROOT)\/$(KPINCDIR)\/platform/INCFLAGS_PLATFORM = /' makedefs/MakeInc.def
         echo "Patched MakeInc.def to remove invalid SDK include paths"
+    - name: Add C11 standard flag for _Atomic support
+      run: |
+        cd xnu-source
+        # Add -std=c11 to support _Atomic keyword
+        sed -i '' 's/^CWARNFLAGS_STD :=/CWARNFLAGS_STD := -std=c11 /' makedefs/MakeInc.def
+        echo "Added -std=c11 for _Atomic support"
+    - name: Copy ptrauth.h to sys/ptrauth.h for build
+      run: |
+        cd xnu-source
+        mkdir -p EXPORT_HDRS/sys
+        mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/sys
+        cp EXTERNAL_HEADERS/ptrauth.h EXPORT_HDRS/sys/ptrauth.h
+        cp EXTERNAL_HEADERS/ptrauth.h BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/sys/ptrauth.h
+        echo "Copied ptrauth.h to sys/ptrauth.h"
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
       run: cd xnu-source; sed -i '' 's/memory_order_relaxed/__ATOMIC_RELAXED/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_acquire/__ATOMIC_ACQUIRE/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_release/__ATOMIC_RELEASE/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_acq_rel/__ATOMIC_ACQ_REL/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_seq_cst/__ATOMIC_SEQ_CST/g' libkern/os/atomic_private_impl.h
     - name: Patch osfmk/mach/arm/Makefile for VPATH
