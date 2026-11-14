@@ -111,9 +111,10 @@ jobs:
         sed -i '' 's/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(SDKROOT)/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(shell xcrun --sdk macosx --show-sdk-path)/' iokit/DriverKit/Makefile
         # Remove GENERATED_IMPL from COMP_FILES since .iig.cpp files are generated as side effect
         sed -i '' 's/COMP_FILES = \${GENERATED_HEADERS} \$(GENERATED_IMPL)/COMP_FILES = ${GENERATED_HEADERS}/' iokit/DriverKit/Makefile
-        # Add VPATH to find source .iig files in the source directory
+        # Add VPATH with absolute paths to find source .iig files (SRCROOT may not be passed to sub-makes)
+        SRCPATH="$(realpath .)"
         if ! grep -q "^VPATH" iokit/DriverKit/Makefile; then
-          awk '/include.*MakeInc_def/ {print; print "VPATH = $(SRCROOT):$(SRCROOT)/iokit/DriverKit"; next} 1' iokit/DriverKit/Makefile > iokit/DriverKit/Makefile.tmp && mv iokit/DriverKit/Makefile.tmp iokit/DriverKit/Makefile
+          awk -v src="$SRCPATH" '/include.*MakeInc_def/ {print; print "VPATH = " src ":" src "/iokit/DriverKit"; next} 1' iokit/DriverKit/Makefile > iokit/DriverKit/Makefile.tmp && mv iokit/DriverKit/Makefile.tmp iokit/DriverKit/Makefile
         fi
         # Debug: print the modified Makefile sections
         echo "=== Modified DriverKit Makefile ==="
