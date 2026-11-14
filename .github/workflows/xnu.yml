@@ -31,8 +31,8 @@ jobs:
       MACHINE_CONFIGS: M30LTE
       DRIVERKIT: '0'
       SDKROOT_PATH: /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk
-      CFLAGS: -std=gnu11 -Wno-format -Wno-error=visibility -Wno-error=reserved-identifier -Wno-error=declaration-after-statement -ferror-limit=1000 -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include -I${SRCROOT}/osfmk -I${SRCROOT}/bsd -I${SRCROOT}/libkern -I${SRCROOT}/iokit -I${SRCROOT}/security
-      CXXFLAGS: -std=gnu++11 -Wno-format -Wno-error=visibility -Wno-error=reserved-identifier -ferror-limit=1000 -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include -I${SRCROOT}/osfmk -I${SRCROOT}/bsd -I${SRCROOT}/libkern -I${SRCROOT}/iokit -I${SRCROOT}/security
+      CFLAGS: -std=c11 -Wno-format -Wno-error=visibility -Wno-error=reserved-identifier -Wno-error=declaration-after-statement -ferror-limit=1000 -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include -I${SRCROOT}/osfmk -I${SRCROOT}/bsd -I${SRCROOT}/libkern -I${SRCROOT}/iokit -I${SRCROOT}/security
+      CXXFLAGS: -std=c++11 -Wno-format -Wno-error=visibility -Wno-error=reserved-identifier -ferror-limit=1000 -isysroot /Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk -I/Applications/Xcode_26.0.1.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/usr/include -I${SRCROOT}/osfmk -I${SRCROOT}/bsd -I${SRCROOT}/libkern -I${SRCROOT}/iokit -I${SRCROOT}/security
       MAKEFLAGS: -j1 -e
       SRCROOT: ${{ github.workspace }}/xnu-source
       CURRENT_KERNEL_CONFIG: DEVELOPMENT
@@ -138,10 +138,11 @@ jobs:
     - name: Add C11 standard flag for _Atomic support and disable declaration-after-statement errors
       run: |
         cd xnu-source
-        # Add -std=c11 to support _Atomic keyword (fix pattern to match actual line)
-        sed -i '' 's/^CWARNFLAGS_STD = \\/CWARNFLAGS_STD = -std=c11 \\/' makedefs/MakeInc.def
-        # Also ensure -Wno-error=declaration-after-statement is in WARNFLAGS_STD (should already be there)
-        # Add to environment CFLAGS as backup
+        # Add -std=c11 to CWARNFLAGS_STD to support _Atomic keyword
+        # Use a more robust pattern that matches the actual line
+        sed -i '' 's/^CWARNFLAGS_STD = \\$/CWARNFLAGS_STD = -std=c11 \\/' makedefs/MakeInc.def
+        # Verify the change
+        grep -A 2 "^CWARNFLAGS_STD" makedefs/MakeInc.def
         echo "Added -std=c11 for _Atomic support and verified warning flags"
     - name: Copy ptrauth.h to sys/ptrauth.h for build
       run: |
