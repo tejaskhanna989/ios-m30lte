@@ -271,6 +271,12 @@ jobs:
         # Copy version.h.template from libkern/libkern to source root
         cp libkern/libkern/version.h.template ./version.h.template 2>/dev/null || true
         echo "Copied version.h.template to source root"
+    - name: Copy asm.h to source root for build_exporthdrs_mi
+      run: |
+        cd xnu-source
+        # Copy asm.h from osfmk/mach/arm to source root
+        cp osfmk/mach/arm/asm.h ./asm.h 2>/dev/null || true
+        echo "Copied asm.h to source root"
     - name: Fix DriverKit Makefile in build directory for IIG generation
       run: |
         cd xnu-source
