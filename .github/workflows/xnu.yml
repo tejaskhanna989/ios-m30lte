@@ -204,6 +204,21 @@ jobs:
         cp iokit/DriverKit/IORPC.h ./IORPC.h
         cp iokit/IOKit/IORPC.h ./IORPC.h.iokit 2>/dev/null || true
         echo "Copied IORPC.h to source root"
+    - name: Copy all IOKit/DriverKit headers to source root for build_exporthdrs_mi
+      run: |
+        cd xnu-source
+        # Copy all required headers from iokit/DriverKit and iokit/IOKit to source root
+        for h in iokit/DriverKit/*.h; do
+            base=$(basename "$h")
+            cp "$h" "./$base"
+            echo "Copied $h to ./$base"
+        done
+        for h in iokit/IOKit/*.h; do
+            base=$(basename "$h")
+            cp "$h" "./$base.iokit" 2>/dev/null || true
+            echo "Copied $h to ./$base.iokit"
+        done
+        echo "Copied all IOKit/DriverKit headers to source root"
     - name: Fix DriverKit Makefile in build directory for IIG generation
       run: |
         cd xnu-source
