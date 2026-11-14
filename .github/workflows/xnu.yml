@@ -51,29 +51,7 @@ jobs:
 
       - name: Create installfile replacement
         run: |
-          cat > /usr/local/bin/installfile << 'SCRIPT_EOF'
-#!/bin/bash
-set -e
-usage() { echo "Usage: installfile [-c] [-m mode] [-o owner] [-g group] src dest"; exit 1; }
-MODE=""; OWNER=""; GROUP=""; COPY_ONLY=false
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        -c) COPY_ONLY=true; shift ;;
-        -m) MODE="$2"; shift 2 ;;
-        -o) OWNER="$2"; shift 2 ;;
-        -g) GROUP="$2"; shift 2 ;;
-        *) break ;;
-    esac
-done
-[[ $# -ne 2 ]] && usage
-SRC="$1"; DST="$2"
-[[ ! -e "$SRC" ]] && { echo "Source file $SRC does not exist"; exit 1; }
-mkdir -p "$(dirname "$DST")"; cp "$SRC" "$DST"
-[[ -n "$MODE" ]] && chmod "$MODE" "$DST"
-[[ -n "$OWNER" ]] && chown "$OWNER" "$DST"
-[[ -n "$GROUP" ]] && chgrp "$GROUP" "$DST"
-exit 0
-SCRIPT_EOF
+          printf '#!/bin/bash\nset -e\nusage() { echo "Usage: installfile [-c] [-m mode] [-o owner] [-g group] src dest"; exit 1; }\nMODE=""; OWNER=""; GROUP=""; COPY_ONLY=false\nwhile [[ $# -gt 0 ]]; do\n    case $1 in\n        -c) COPY_ONLY=true; shift ;;\n        -m) MODE="$2"; shift 2 ;;\n        -o) OWNER="$2"; shift 2 ;;\n        -g) GROUP="$2"; shift 2 ;;\n        *) break ;;\n    esac\ndone\n[[ $# -ne 2 ]] && usage\nSRC="$1"; DST="$2"\n[[ ! -e "$SRC" ]] && { echo "Source file $SRC does not exist"; exit 1; }\nmkdir -p "$(dirname "$DST")"; cp "$SRC" "$DST"\n[[ -n "$MODE" ]] && chmod "$MODE" "$DST"\n[[ -n "$OWNER" ]] && chown "$OWNER" "$DST"\n[[ -n "$GROUP" ]] && chgrp "$GROUP" "$DST"\nexit 0\n' > /usr/local/bin/installfile
           chmod +x /usr/local/bin/installfile
 
       - name: Check available Xcode versions
