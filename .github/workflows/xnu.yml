@@ -51,7 +51,7 @@ jobs:
 
       - name: Create installfile replacement
         run: |
-          cat > /usr/local/bin/installfile << 'EOF'
+          cat > /usr/local/bin/installfile << 'SCRIPT_EOF'
 #!/bin/bash
 set -e
 usage() { echo "Usage: installfile [-c] [-m mode] [-o owner] [-g group] src dest"; exit 1; }
@@ -73,7 +73,7 @@ mkdir -p "$(dirname "$DST")"; cp "$SRC" "$DST"
 [[ -n "$OWNER" ]] && chown "$OWNER" "$DST"
 [[ -n "$GROUP" ]] && chgrp "$GROUP" "$DST"
 exit 0
-EOF
+SCRIPT_EOF
           chmod +x /usr/local/bin/installfile
 
       - name: Check available Xcode versions
