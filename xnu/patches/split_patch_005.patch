@@ -1,0 +1,12 @@
+diff -ruN xnu-orig-clean/.git/config xnu-final-patch/.git/config
+--- xnu-orig-clean/.git/config	2026-11-05 21:35:41.456227192 +0530
++++ xnu-final-patch/.git/config	1970-01-01 05:30:00.000000000 +0530
+@@ -1,8 +0,0 @@
+-[core]
+-	repositoryformatversion = 0
+-	filemode = true
+-	bare = false
+-	logallrefupdates = true
+-[remote "origin"]
+-	url = https://github.com/apple-oss-distributions/xnu.git
+-	fetch = +refs/tags/xnu-8796.141.3:refs/tags/xnu-8796.141.3

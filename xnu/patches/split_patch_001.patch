@@ -1,0 +1,12 @@
+diff -ruN xnu-orig-clean/bsd/kern/subr_log.c xnu-final-patch/bsd/kern/subr_log.c
+--- xnu-orig-clean/bsd/kern/subr_log.c	2026-11-05 21:35:46.266324268 +0530
++++ xnu-final-patch/bsd/kern/subr_log.c	2026-11-05 15:43:35.225727432 +0530
+@@ -74,7 +74,7 @@
+ #include <firehose/tracepoint_private.h>
+ #include <firehose/chunk_private.h>
+ #include <firehose/ioctl_private.h>
+-#include <os/firehose_buffer_private.h>
++#include <arm64/firehose_buffer_private.h>
+
+ #include <os/log_private.h>
+ #include <sys/ioctl.h>

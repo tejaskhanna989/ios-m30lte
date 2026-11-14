@@ -1,0 +1,15 @@
+diff -ruN xnu-orig-clean/libkern/os/log.c.rej xnu-final-patch/libkern/os/log.c.rej
+--- xnu-orig-clean/libkern/os/log.c.rej	1970-01-01 05:30:00.000000000 +0530
++++ xnu-final-patch/libkern/os/log.c.rej	2026-11-05 17:20:40.704911018 +0530
+@@ -0,0 +1,11 @@
++--- libkern/os/log.c
+++++ libkern/os/log.c
++@@ -30,7 +30,7 @@
++ #include <firehose/tracepoint_private.h>
++ #include <firehose/chunk_private.h>
++ #include <firehose/ioctl_private.h>
++-#include <os/firehose_buffer_private.h>
+++#include <arm64/firehose_buffer_private.h>
++
++ #include <os/log_private.h>
++ #include <sys/ioctl.h>

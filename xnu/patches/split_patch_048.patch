@@ -1,0 +1,9 @@
+diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines.c xnu-final-patch/osfmk/arm64/machine_routines.c
+--- xnu-orig-clean/osfmk/arm64/machine_routines.c	2026-11-05 21:35:46.655332116 +0530
++++ xnu-final-patch/osfmk/arm64/machine_routines.c	2026-11-05 23:35:23.063152220 +0530
+@@ -2790,3 +2790,5 @@
+
+ 	return get_saved_state_pc(state);
+ }
++
++

@@ -1,0 +1,12 @@
+diff -ruN xnu-orig-clean/.git/logs/HEAD.rej xnu-final-patch/.git/logs/HEAD.rej
+--- xnu-orig-clean/.git/logs/HEAD.rej	1970-01-01 05:30:00.000000000 +0530
++++ xnu-final-patch/.git/logs/HEAD.rej	2026-11-05 15:43:35.226873958 +0530
+@@ -0,0 +1,5 @@
++--- .git/logs/HEAD	2026-11-05 13:00:35.143928892 +0530
+++++ .git/logs/HEAD	2026-11-05 12:59:31.209452484 +0530
++@@ -1 +1 @@
++-0000000000000000000000000000000000000000 1b191cb58250d0705d8a51287127505aa4bc0789 tejaskhanna989 <khannatejas989@gmail.com> 1793863835 +0530	clone: from https://github.com/apple-oss-distributions/xnu.git
+++0000000000000000000000000000000000000000 1b191cb58250d0705d8a51287127505aa4bc0789 tejaskhanna989 <khannatejas989@gmail.com> 1793863771 +0530	clone: from https://github.com/apple-oss-distributions/xnu.git
+Binary files xnu-orig-clean/.git/objects/pack/pack-557d8c3ca90f9c8a39b05cd8848775d06ed20076.idx and xnu-final-patch/.git/objects/pack/pack-557d8c3ca90f9c8a39b05cd8848775d06ed20076.idx differ
+Binary files xnu-orig-clean/.git/objects/pack/pack-557d8c3ca90f9c8a39b05cd8848775d06ed20076.pack and xnu-final-patch/.git/objects/pack/pack-557d8c3ca90f9c8a39b05cd8848775d06ed20076.pack differ
+Binary files xnu-orig-clean/.git/objects/pack/pack-557d8c3ca90f9c8a39b05cd8848775d06ed20076.rev and xnu-final-patch/.git/objects/pack/pack-557d8c3ca90f9c8a39b05cd8848775d06ed20076.rev differ

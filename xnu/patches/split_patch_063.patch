@@ -1,0 +1,13 @@
+diff -ruN xnu-orig-clean/SETUP/config/doconf xnu-final-patch/SETUP/config/doconf
+--- xnu-orig-clean/SETUP/config/doconf	2026-11-05 21:35:46.202723585 +0530
++++ xnu-final-patch/SETUP/config/doconf	2026-11-05 15:43:35.241124699 +0530
+@@ -109,6 +109,9 @@
+ 	    else
+ 	        set DEF_AVP="-USOC_IS_VIRTUALIZED"
+ 	    endif
++	    if ("$SOC_CONFIG" == "m30lte") then
++	        set DEF_AVP="$DEF_AVP -Dnos_arm_asm -Dnos_arm_pmap"
++	    endif
+ 	    shift
+ 	    breaksw
+ 	case "-platform":

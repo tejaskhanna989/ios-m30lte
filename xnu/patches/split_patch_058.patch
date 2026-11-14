@@ -1,0 +1,21 @@
+diff -ruN xnu-orig-clean/pexpert/arm/pe_fiq.c xnu-final-patch/pexpert/arm/pe_fiq.c
+--- xnu-orig-clean/pexpert/arm/pe_fiq.c	2026-11-05 21:35:46.817593061 +0530
++++ xnu-final-patch/pexpert/arm/pe_fiq.c	2026-11-05 15:43:35.235092707 +0530
+@@ -142,6 +142,7 @@
+ 	}
+
+ 	// Configure timers and legacy FIQ to be group 0
++#ifdef GICR_IGROUPR0
+ 	gicr_write32(GICR_IGROUPR0, 0x81FFFFFF);
+
+ 	// Enable PPI 27
+@@ -156,6 +157,9 @@
+ 	// Set priority masks and binary point for group 0
+ 	__builtin_arm_wsr64("ICC_BPR0_EL1", 0);
+ 	__builtin_arm_wsr64("ICC_PMR_EL1", 0xFF);
++#else
++	// TODO: Implement GICv2 FIQ handling for M30LTE
++#endif
+
+ 	// Set EOI mode of this processor
+ 	uint64_t icc_ctlr = __builtin_arm_rsr64("ICC_CTLR_EL1");

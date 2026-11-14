@@ -1,0 +1,20 @@
+diff -ruN xnu-orig-clean/pexpert/pexpert/arm64/board_config.h xnu-final-patch/pexpert/pexpert/arm64/board_config.h
+--- xnu-orig-clean/pexpert/pexpert/arm64/board_config.h	2026-11-05 21:35:46.821465965 +0530
++++ xnu-final-patch/pexpert/pexpert/arm64/board_config.h	2026-11-05 15:43:35.239482353 +0530
+@@ -97,6 +97,16 @@
+ #define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
+ #endif  /* ARM64_BOARD_CONFIG_BCM2837 */
+
++#ifdef ARM64_BOARD_CONFIG_M30LTE
++#include <pexpert/arm64/M30LTE.h>
++
++#define MAX_L2_CLINE                   6
++#define MAX_CPUS                       8
++#define MAX_CPU_CLUSTERS               2
++
++#define CORE_NCTRS                     8 /* Placeholder; KPC is not enabled for this target */
++#endif  /* ARM64_BOARD_CONFIG_M30LTE */
++
+ #ifdef ARM64_BOARD_CONFIG_VMAPPLE
+ #include <pexpert/arm64/VMAPPLE.h>
+

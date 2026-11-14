@@ -1,0 +1,33 @@
+diff -ruN xnu-orig-clean/makedefs/MakeInc.def xnu-final-patch/makedefs/MakeInc.def
+--- xnu-orig-clean/makedefs/MakeInc.def	2026-11-05 21:35:46.631806323 +0530
++++ xnu-final-patch/makedefs/MakeInc.def	2026-11-05 20:27:05.023502038 +0530
+@@ -29,7 +29,7 @@
+ else ifneq ($(findstring _host,$(RC_ProjectName)),)
+ SUPPORTED_ARM64_MACHINE_CONFIGS = NONE
+ else
+-SUPPORTED_ARM64_MACHINE_CONFIGS = BCM2837 T6000 T8101 T8103 VMAPPLE
++SUPPORTED_ARM64_MACHINE_CONFIGS = BCM2837 T6000 T8101 T8103 VMAPPLE M30LTE
+
+ endif
+
+@@ -61,6 +61,11 @@
+ MACHINE_FLAGS_ARM64_T6000 = -DARM64_BOARD_CONFIG_T6000 		-mcpu=apple-a14
+ MACHINE_FLAGS_ARM64_VMAPPLE = -DARM64_BOARD_CONFIG_VMAPPLE              -march=armv8.5a
+ MACHINE_FLAGS_ARM64_BCM2837 = -DARM64_BOARD_CONFIG_BCM2837
++MACHINE_FLAGS_ARM64_M30LTE = -DARM64_BOARD_CONFIG_M30LTE	-march=armv8-a+crypto
++
++ifeq ($(CURRENT_MACHINE_CONFIG),M30LTE)
++export ARCH_STRING_FOR_CURRENT_MACHINE_CONFIG := arm64
++endif
+
+
+ #
+@@ -857,7 +862,7 @@
+ # Default runtime libraries to be linked with the kernel
+ #
+ LD_KERNEL_LIBS	   = -lcc_kext
+-LD_KERNEL_ARCHIVES = $(LDFLAGS_KERNEL_SDK) -lfirehose_kernel
++LD_KERNEL_ARCHIVES = $(LDFLAGS_KERNEL_SDK)
+ # Link opensource binary library
+ ifneq ($(filter T6000 T8101 VMAPPLE T6000 T8101 VMAPPLE,$(CURRENT_MACHINE_CONFIG)),)
+ 	LDFLAGS_KERNEL_ONLY += -rdynamic -Wl,-force_load,$(KDKROOT)/System/Library/KernelSupport/lib$(CURRENT_MACHINE_CONFIG).os.$(CURRENT_KERNEL_CONFIG).a

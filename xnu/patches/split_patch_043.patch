@@ -1,0 +1,25 @@
+diff -ruN xnu-orig-clean/osfmk/arm64/amcc_rorgn_common.c xnu-final-patch/osfmk/arm64/amcc_rorgn_common.c
+--- xnu-orig-clean/osfmk/arm64/amcc_rorgn_common.c	1970-01-01 05:30:00.000000000 +0530
++++ xnu-final-patch/osfmk/arm64/amcc_rorgn_common.c	2026-11-05 21:41:30.587156934 +0530
+@@ -0,0 +1,21 @@
++/*
++ * AMCC RORGN (Region Register) common stubs for non-Apple ARM64 platforms.
++ * These are minimal stubs to allow building with config_amcc.
++ */
++
++#include <kern/kern_types.h>
++#include <arm/pmap.h>
++
++/* Stub for AMCC region register initialization */
++void
++amcc_rorgn_init(void)
++{
++	/* No-op for non-AMCC platforms */
++}
++
++/* Stub for AMCC region register teardown */
++void
++amcc_rorgn_teardown(void)
++{
++	/* No-op for non-AMCC platforms */
++}

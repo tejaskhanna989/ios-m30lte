@@ -1,0 +1,11 @@
+diff -ruN xnu-orig-clean/libkern/crypto/m30_bearssl/inc/bearssl.h xnu-final-patch/libkern/crypto/m30_bearssl/inc/bearssl.h
+--- xnu-orig-clean/libkern/crypto/m30_bearssl/inc/bearssl.h	1970-01-01 05:30:00.000000000 +0530
++++ xnu-final-patch/libkern/crypto/m30_bearssl/inc/bearssl.h	2026-11-05 15:43:35.227101280 +0530
+@@ -0,0 +1,7 @@
++#ifndef BEARSSL_H
++#define BEARSSL_H
++
++#include <stddef.h>
++#include <stdint.h>
++
++#endif /* BEARSSL_H */

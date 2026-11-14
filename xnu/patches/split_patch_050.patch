@@ -1,0 +1,51 @@
+diff -ruN xnu-orig-clean/osfmk/arm64/proc_reg.h xnu-final-patch/osfmk/arm64/proc_reg.h
+--- xnu-orig-clean/osfmk/arm64/proc_reg.h	2026-11-05 21:35:46.657332156 +0530
++++ xnu-final-patch/osfmk/arm64/proc_reg.h	2026-11-05 15:43:35.229853581 +0530
+@@ -24,7 +24,9 @@
+  * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
+  */
++#define M30LTE 1
++
+ /*
+  * @OSF_COPYRIGHT@
+@@ -208,10 +212,30 @@
+ #elif defined (BCM2837) /* Raspberry Pi 3 */
+
+ /* I-Cache. We don't have detailed spec so we just follow the ARM technical reference. */
+ #define MMU_I_CLINE 6
+
+ /* D-Cache. */
+ #define MMU_CLINE   6
+
++#elif defined (M30LTE) /* Samsung Exynos 7904: Cortex-A73 + Cortex-A53, ARMv8.0 */
++
++/* I-Cache. */
++#define MMU_I_CLINE 6
++
++/* D-Cache. */
++#define MMU_CLINE   6
++
++/* CPU and cache configuration */
++#define MAX_CPUS                        8
++#define MAX_L2_CLINE                    6
++#define MAX_CPU_CLUSTERS                2
++
++
++/* I-Cache. We don't have detailed spec so we just follow the ARM technical reference. */
++#define MMU_I_CLINE 6
++
++/* D-Cache. */
++#define MMU_CLINE   6
++
+ #elif defined (VMAPPLE)
+
+ /* I-Cache. */
+@@ -222,7 +246,7 @@
+ #define MMU_CLINE   6
+
+ #else
+-#error processor not supported
++#warning processor not supported
+ #endif
+
+ #define MAX_L2_CLINE_BYTES (1 << MAX_L2_CLINE)

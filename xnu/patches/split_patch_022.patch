@@ -1,0 +1,10 @@
+diff -ruN xnu-orig-clean/.git/info/exclude xnu-final-patch/.git/info/exclude
+--- xnu-orig-clean/.git/info/exclude	2026-11-05 21:35:40.693211788 +0530
++++ xnu-final-patch/.git/info/exclude	1970-01-01 05:30:00.000000000 +0530
+@@ -1,6 +0,0 @@
+-# git ls-files --others --exclude-from=.git/info/exclude
+-# Lines that start with '#' are comments.
+-# For a project mostly in C, the following would be a good set of
+-# exclude patterns (uncomment them if you want to use them):
+-# *.[oa]
+-# *~

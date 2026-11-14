@@ -1,0 +1,83 @@
+diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_data.c xnu-final-patch/osfmk/arm/pmap/pmap_data.c
+--- xnu-orig-clean/osfmk/arm/pmap/pmap_data.c	2026-11-05 21:35:46.644331894 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap_data.c	2026-11-06 14:35:09.328364556 +0530
+@@ -3210,19 +3210,68 @@
+
+ #endif /* XNU_MONITOR */
+
++/* ========================================================================
++ * Non-PPL (M30LTE) ledger management implementations
++ * ========================================================================
++ *
++ * On non-PPL systems, ledgers are allocated from zones created by
++ * ledger_template_complete(). The PPL-specific validation and pointer array
++ * management is not needed. These functions provide minimal implementations
++ * to satisfy linker references and provide correct no-op behavior.
++ */
++
++#if !XNU_MONITOR
++
++/**
++ * Validate a ledger pointer on non-PPL systems.
++ * On non-PPL systems, ledgers are allocated from zones and don't need
++ * PPL-style validation. This function is a no-op that returns a dummy index.
++ */
++uint64_t
++pmap_ledger_validate(const volatile void *ledger)
++{
++	(void)ledger;
++	return 0;
++}
++
++/**
++ * Bump the reference count on a ledger object on non-PPL systems.
++ * On non-PPL systems, ledger reference counting is handled by the
++ * standard ledger API. This function is a no-op.
++ */
++void
++pmap_ledger_retain(ledger_t ledger)
++{
++	(void)ledger;
++}
++
++/**
++ * Decrement the reference count on a ledger object on non-PPL systems.
++ * On non-PPL systems, ledger reference counting is handled by the
++ * standard ledger API. This function is a no-op.
++ */
++void
++pmap_ledger_release(ledger_t ledger)
++{
++	(void)ledger;
++}
++
++/**
++ * Check a ledger's balance on non-PPL systems.
++ * On non-PPL systems, ledger balance checking occurs automatically
++ * during credit/debit operations via the standard ledger API.
++ * This function is a no-op.
++ */
++void
++pmap_ledger_check_balance(pmap_t pmap)
++{
++	(void)pmap;
++}
++
++#endif /* !XNU_MONITOR */
++
+ /**
+  * Credit a specific ledger entry within the passed in pmap's ledger object.
+- *
+- * @note On PPL-enabled systems this operation will not automatically check the
+- *       ledger balances after updating. A call to pmap_ledger_check_balance()
+- *       will need to occur outside of the PPL to handle this.
+- *
+- * @param pmap The pmap whose ledger should be updated.
+- * @param entry The specifc ledger entry to update. This needs to be one of the
+- *              task_ledger entries.
+- * @param amount The amount to credit from the ledger.
+- *
+- * @return The return value from the credit operation.
+  */
+ kern_return_t
+ pmap_ledger_credit(pmap_t pmap, int entry, ledger_amount_t amount)

@@ -1,0 +1,29 @@
+diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.c xnu-final-patch/osfmk/arm/pmap/pmap.c
+--- xnu-orig-clean/osfmk/arm/pmap/pmap.c	2026-11-05 21:35:46.642331854 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap.c	2026-11-06 19:22:47.507706072 +0530
+@@ -84,8 +84,10 @@
+
+ #include <arm64/proc_reg.h>
+ #include <pexpert/arm64/boot.h>
++#if defined(APPLE_ARM64_ARCH_FAMILY)
+ #include <arm64/ppl/sart.h>
+ #include <arm64/ppl/uat.h>
++#endif
+
+ #if defined(KERNEL_INTEGRITY_KTRR) || defined(KERNEL_INTEGRITY_CTRR)
+ #include <arm64/amcc_rorgn.h>
+@@ -14294,3 +14296,14 @@
+ }
+
+ #endif /* DEVELOPMENT || DEBUG */
++
++/*
++ * pmap_pending_preemption - check if preemption is pending
++ * This is called from various places in the pmap to check if
++ * a preemption is pending and the current operation should yield.
++ */
++boolean_t
++pmap_pending_preemption(void)
++{
++	return _pmap_pending_preemption_real();
++}

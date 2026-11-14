@@ -1,0 +1,5 @@
+diff -ruN xnu-orig-clean/.git/HEAD xnu-final-patch/.git/HEAD
+--- xnu-orig-clean/.git/HEAD	2026-11-05 21:35:46.168901214 +0530
++++ xnu-final-patch/.git/HEAD	1970-01-01 05:30:00.000000000 +0530
+@@ -1 +0,0 @@
+-1b191cb58250d0705d8a51287127505aa4bc0789

@@ -1,0 +1,12 @@
+diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap.h xnu-final-patch/osfmk/arm/pmap/pmap.h
+--- xnu-orig-clean/osfmk/arm/pmap/pmap.h	2026-11-05 21:35:46.644078078 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap.h	2026-11-05 15:43:35.229109527 +0530
+@@ -442,7 +442,7 @@
+ #if HAS_APPLE_PAC
+ 	bool disable_jop;
+ #else
+-	bool reserved10;
++	bool reserved10_pac;
+ #endif /* HAS_APPLE_PAC */
+
+ 	bool reserved11;

@@ -1,0 +1,84 @@
+diff -ruN xnu-orig-clean/osfmk/arm64/kpc.c xnu-final-patch/osfmk/arm64/kpc.c
+--- xnu-orig-clean/osfmk/arm64/kpc.c	1970-01-01 05:30:00.000000000 +0530
++++ xnu-final-patch/osfmk/arm64/kpc.c	2026-11-05 21:46:37.247113601 +0530
+@@ -0,0 +1,80 @@
++/*
++ * Kernel Performance Counters (KPC) stub for non-Apple ARM64 platforms.
++ * Minimal implementation to allow building with kpc option enabled.
++ */
++
++#include <kern/kern_types.h>
++#include <machine/kpc.h>
++
++/* Stub functions for KPC */
++kern_return_t
++kpc_cpu_string(char *buf, unsigned int *buf_size)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_get_period(uint32_t *period)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_get_counting(uint32_t *counting)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_set_counting(uint32_t counting)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_get_config(uint32_t *config)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_set_config(uint32_t config)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_get_thread_config(uint32_t *config)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_set_thread_config(uint32_t config)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_get_cpu_counters(uint32_t config, uint64_t *buf, uint32_t *buf_size)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_get_thread_counters(uint32_t config, uint64_t *buf, uint32_t *buf_size)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_get_raw_pmc(uint32_t pmc, uint64_t *value)
++{
++	return KERN_FAILURE;
++}
++
++kern_return_t
++kpc_cpu_set_raw_pmc(uint32_t pmc, uint64_t value)
++{
++	return KERN_FAILURE;
++}

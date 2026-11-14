@@ -1,0 +1,25 @@
+diff -ruN xnu-orig-clean/osfmk/arm64/amcc_rorgn_ppl.c xnu-final-patch/osfmk/arm64/amcc_rorgn_ppl.c
+--- xnu-orig-clean/osfmk/arm64/amcc_rorgn_ppl.c	1970-01-01 05:30:00.000000000 +0530
++++ xnu-final-patch/osfmk/arm64/amcc_rorgn_ppl.c	2026-11-05 21:41:37.426290806 +0530
+@@ -0,0 +1,21 @@
++/*
++ * AMCC RORGN (Region Register) PPL (Pointer Protection Layer) stubs for non-Apple ARM64 platforms.
++ * These are minimal stubs to allow building with config_amcc.
++ */
++
++#include <kern/kern_types.h>
++#include <arm/pmap.h>
++
++/* Stub for AMCC PPL region register initialization */
++void
++amcc_rorgn_ppl_init(void)
++{
++	/* No-op for non-AMCC platforms */
++}
++
++/* Stub for AMCC PPL region register teardown */
++void
++amcc_rorgn_ppl_teardown(void)
++{
++	/* No-op for non-AMCC platforms */
++}

@@ -1,0 +1,86 @@
+diff -ruN xnu-orig-clean/libkern/crypto/m30_bearssl/inc/bearssl_hash.h xnu-final-patch/libkern/crypto/m30_bearssl/inc/bearssl_hash.h
+--- xnu-orig-clean/libkern/crypto/m30_bearssl/inc/bearssl_hash.h	1970-01-01 05:30:00.000000000 +0530
++++ xnu-final-patch/libkern/crypto/m30_bearssl/inc/bearssl_hash.h	2026-11-05 15:43:35.227242670 +0530
+@@ -0,0 +1,81 @@
++#ifndef BEARSSL_HASH_H
++#define BEARSSL_HASH_H
++
++#include <stddef.h>
++#include <stdint.h>
++
++typedef struct br_hash_class br_hash_class;
++typedef struct br_aes_ct_cbcenc_state br_aes_ct_cbcenc_state;
++typedef struct br_aes_ct_cbcdec_state br_aes_ct_cbcdec_state;
++
++typedef struct {
++    uint64_t count;
++    unsigned char buf[64];
++    unsigned char val[32];
++} br_sha256_context;
++
++typedef struct {
++    uint64_t count;
++    unsigned char buf[64];
++    unsigned char val[20];
++} br_sha1_context;
++
++typedef struct {
++    uint64_t count;
++    unsigned char buf[128];
++    unsigned char val[64];
++} br_sha512_context;
++
++typedef struct {
++    uint64_t count;
++    unsigned char buf[128];
++    unsigned char val[48];
++} br_sha384_context;
++
++typedef struct {
++    uint64_t count;
++    unsigned char buf[64];
++    unsigned char val[16];
++} br_md5_context;
++
++extern const br_hash_class br_sha256_vtable;
++extern const br_hash_class br_sha1_vtable;
++extern const br_hash_class br_sha512_vtable;
++extern const br_hash_class br_sha384_vtable;
++extern const br_hash_class br_md5_vtable;
++
++void br_sha256_init(br_sha256_context *ctx);
++void br_sha256_update(br_sha256_context *ctx, const void *data, size_t len);
++void br_sha256_output(br_sha256_context *ctx, void *out, size_t len);
++
++void br_sha1_init(br_sha1_context *ctx);
++void br_sha1_update(br_sha1_context *ctx, const void *data, size_t len);
++void br_sha1_output(br_sha1_context *ctx, void *out, size_t len);
++void br_sha1_out(br_sha1_context *ctx, void *out, size_t len);
++
++void br_sha512_init(br_sha512_context *ctx);
++void br_sha512_update(br_sha512_context *ctx, const void *data, size_t len);
++void br_sha512_output(br_sha512_context *ctx, void *out, size_t len);
++void br_sha512_out(br_sha512_context *ctx, void *out, size_t len);
++
++void br_sha384_init(br_sha384_context *ctx);
++void br_sha384_update(br_sha384_context *ctx, const void *data, size_t len);
++void br_sha384_output(br_sha384_context *ctx, void *out, size_t len);
++void br_sha384_out(br_sha384_context *ctx, void *out, size_t len);
++
++void br_md5_init(br_md5_context *ctx);
++void br_md5_update(br_md5_context *ctx, const void *data, size_t len);
++void br_md5_output(br_md5_context *ctx, void *out, size_t len);
++void br_md5_out(br_md5_context *ctx, void *out);
++
++void br_aes_ct_cbcenc_init(br_aes_ct_cbcenc_state *ctx, const unsigned char *key, size_t len);
++void br_aes_ct_cbcenc_update(br_aes_ct_cbcenc_state *ctx, const void *data, size_t len);
++void br_aes_ct_cbcenc_out(br_aes_ct_cbcenc_state *ctx, void *out, size_t len);
++void br_aes_ct_cbcenc_keys(const unsigned char *key, size_t len, void *out);
++
++void br_aes_ct_cbcdec_init(br_aes_ct_cbcdec_state *ctx, const unsigned char *key, size_t len);
++void br_aes_ct_cbcdec_update(br_aes_ct_cbcdec_state *ctx, const void *data, size_t len);
++void br_aes_ct_cbcdec_out(br_aes_ct_cbcdec_state *ctx, void *out, size_t len);
++void br_aes_ct_cbcdec_keys(const unsigned char *key, size_t len, void *out);
++
++#endif /* BEARSSL_HASH_H */
+\ No newline at end of file

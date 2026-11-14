@@ -1,0 +1,21 @@
+diff -ruN xnu-orig-clean/osfmk/arm64/Makefile xnu-final-patch/osfmk/arm64/Makefile
+--- xnu-orig-clean/osfmk/arm64/Makefile	2026-11-05 21:35:46.648331975 +0530
++++ xnu-final-patch/osfmk/arm64/Makefile	2026-11-05 23:08:01.647602228 +0530
+@@ -21,7 +21,6 @@
+ 	machine_kpc.h \
+ 	machine_remote_time.h \
+ 	monotonic.h \
+-	proc_reg.h \
+ 	tlb.h \
+ 	$(ARM_HEADER_FILES)
+
+@@ -39,7 +38,8 @@
+ 	machine_remote_time.h \
+ 	monotonic.h \
+ 	perfmon_arm64_regs.h \
+-	proc_reg.h \
++		proc_reg.h \
++		firehose_buffer_private.h \
+ 	asm.h \
+ 	tlb.h \
+ 	pal_hibernate.h

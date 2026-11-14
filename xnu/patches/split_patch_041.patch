@@ -1,0 +1,334 @@
+diff -ruN xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h xnu-final-patch/osfmk/arm/pmap/pmap_internal.h
+--- xnu-orig-clean/osfmk/arm/pmap/pmap_internal.h	2026-11-05 21:35:46.645331914 +0530
++++ xnu-final-patch/osfmk/arm/pmap/pmap_internal.h	2026-11-06 21:46:55.273132347 +0530
+@@ -56,6 +56,9 @@
+ #include <arm/pmap/pmap_data.h>
+ #include <arm/pmap/pmap_pt_geometry.h>
+
++/* KPC config type for non-PPL builds */
++typedef uint64_t kpc_config_t;
++
+ #if XNU_MONITOR
+ /**
+  * Temporary macros and prototypes needed to implement the ppl_handler_table.
+@@ -110,6 +113,278 @@
+ 	extern __return_type __function_name##_internal __function_args
+ #endif /* XNU_MONITOR */
+
++/*
++ * XPRR (Extended Permission Register Register) permission values for non-Apple ARM64.
++ * These are Apple PPL-specific extensions. For non-PPL platforms, we map them
++ * to standard ARMv8-A PTE permission bits.
++ */
++#ifndef XPRR_KERN_RO_PERM
++#define XPRR_KERN_RO_PERM    0x0  /* Kernel read-only */
++#endif
++#ifndef XPRR_KERN_RW_PERM
++#define XPRR_KERN_RW_PERM    0x1  /* Kernel read-write */
++#endif
++#ifndef XPRR_KERN_RX_PERM
++#define XPRR_KERN_RX_PERM    0x2  /* Kernel read-execute */
++#endif
++#ifndef XPRR_PPL_RW_PERM
++#define XPRR_PPL_RW_PERM     0x3  /* PPL read-write (maps to kernel RW for non-PPL) */
++#endif
++#ifndef XPRR_PPL_RX_PERM
++#define XPRR_PPL_RX_PERM     0x4  /* PPL read-execute (maps to kernel RX for non-PPL) */
++#endif
++#ifndef XPRR_MAX_PERM
++#define XPRR_MAX_PERM        0x4
++#endif
++
++/*
++ * XPRR PTE bit definitions for non-PPL platforms.
++ * Apple's XPRR extension uses additional PTE bits. For non-PPL platforms,
++ * we define these as no-ops.
++ */
++#ifndef ARM_PTE_XPRR_SHIFT
++#define ARM_PTE_XPRR_SHIFT   0
++#endif
++#ifndef ARM_PTE_XPRR_MASK
++#define ARM_PTE_XPRR_MASK    0
++#endif
++
++/*
++ * Stub functions for XPRR permission conversion on non-PPL platforms.
++ */
++#ifndef XNU_MONITOR
++static inline uint64_t
++pte_to_xprr_perm(pt_entry_t pte)
++{
++	/* Extract permission bits from PTE - no-op for non-PPL */
++	(void)pte;
++	return 0;
++}
++
++static inline pt_entry_t
++xprr_perm_to_pte(uint64_t xprr_perm)
++{
++	/* Convert XPRR permission to PTE bits - no-op for non-PPL */
++	(void)xprr_perm;
++	return 0;
++}
++
++static inline void
++pmap_set_xprr_perm(unsigned int pai, uint64_t old_perm, uint64_t new_perm)
++{
++	/* No-op for non-PPL platforms */
++	(void)pai; (void)old_perm; (void)new_perm;
++}
++
++static inline void
++pa_set_range_xprr_perm(pmap_paddr_t start, pmap_paddr_t end, uint64_t old_perm, uint64_t new_perm)
++{
++	/* No-op for non-PPL platforms */
++	(void)start; (void)end; (void)old_perm; (void)new_perm;
++}
++
++static inline void
++pmap_set_range_xprr_perm(vm_offset_t start, vm_offset_t end, uint64_t old_perm, uint64_t new_perm)
++{
++	/* No-op for non-PPL platforms */
++	(void)start; (void)end; (void)old_perm; (void)new_perm;
++}
++#endif /* !XNU_MONITOR */
++
++/*
++ * Hibernation support for PPL (no-op for non-PPL)
++ */
++#if XNU_MONITOR
++extern void pmap_set_ppl_hashed_flag(const pmap_paddr_t addr);
++extern void pmap_clear_ppl_hashed_flag_all(void);
++extern void pmap_check_ppl_hashed_flag_all(void);
++#else
++static inline void
++pmap_set_ppl_hashed_flag(const pmap_paddr_t addr)
++{
++	(void)addr;
++}
++
++static inline void
++pmap_clear_ppl_hashed_flag_all(void)
++{
++}
++
++static inline void
++pmap_check_ppl_hashed_flag_all(void)
++{
++}
++#endif /* XNU_MONITOR */
++
++static inline boolean_t
++pmap_is_monitor(ppnum_t pn)
++{
++	(void)pn;
++	return FALSE;
++}
++
++/*
++ * Non-PPL stub implementations for PPL-specific functions.
++ * These are no-ops for non-PPL systems.
++ */
++#ifndef XNU_MONITOR
++static inline void
++pmap_ppl_lockdown_pages(vm_address_t kva __unused, vm_size_t size __unused, uint64_t lockdown_flag __unused, bool ppl_writable __unused)
++{
++}
++
++static inline void
++pmap_ppl_unlockdown_pages(vm_address_t kva __unused, vm_size_t size __unused, uint64_t lockdown_flag __unused, bool ppl_writable __unused)
++{
++}
++
++static inline void
++pmap_ppl_lockdown_page(vm_address_t kva __unused, uint64_t lockdown_flag __unused, bool ppl_writable __unused)
++{
++}
++
++static inline void
++pmap_ppl_unlockdown_page(vm_address_t kva __unused, uint64_t lockdown_flag __unused, bool ppl_writable __unused)
++{
++}
++
++static inline void
++pmap_ppl_lockdown_page_with_prot(vm_address_t kva __unused, uint64_t lockdown_flag __unused, bool ppl_writable __unused, vm_prot_t prot __unused)
++{
++}
++
++#endif /* !XNU_MONITOR */
++
++/*
++ * Non-PPL stub implementations for functions that are called from
++ * non-XNU_MONITOR code paths but are only implemented in PPL builds.
++ * These provide minimal stub implementations for non-PPL builds.
++ */
++
++int
++ptep_get_iommu(pt_entry_t *pte_p __unused)
++{
++	return 0;
++}
++
++/* pmap_phys_write_disable/enable - defined in pmap.c */
++
++/* ARM cache maintenance stubs - declared in pmap.h */
++
++/* KPC stubs for non-PPL builds */
++void
++kpc_get_config(uint32_t classes __unused, kpc_config_t *config __unused)
++{
++}
++
++uint32_t
++kpc_get_config_count(uint32_t classes __unused)
++{
++	return 0;
++}
++
++uint32_t
++kpc_get_counter_count(uint32_t classes __unused)
++{
++	return 0;
++}
++
++int
++kpc_get_cpu_counters(boolean_t all_cpus __unused, uint32_t classes __unused, uint64_t *buf __unused, uint32_t *buf_size __unused)
++{
++	return 0;
++}
++
++int
++kpc_get_curthread_counters(uint32_t *inoutcount __unused, uint64_t *buf __unused)
++{
++	return 0;
++}
++
++uint32_t
++kpc_get_running(void)
++{
++	return 0;
++}
++
++void
++kpc_idle(void)
++{
++}
++
++void
++kpc_idle_exit(void)
++{
++}
++
++boolean_t
++kpc_off_cpu_active(void)
++{
++	return FALSE;
++}
++
++void
++kpc_off_cpu_internal(thread_t thread __unused)
++{
++}
++
++void
++kpc_thread_ast_handler(thread_t thread __unused)
++{
++}
++
++/* Monitor stub - declared in machine_routines.h */
++
++/* Pmap preemption stub - declared in pmap.h */
++
++/* Firehose stubs */
++vm_offset_t
++__firehose_buffer_create(size_t *size __unused)
++{
++	return 0;
++}
++
++boolean_t
++__firehose_kernel_configuration_valid(uint32_t chunk_count __unused, uint32_t io_pages __unused)
++{
++	return TRUE;
++}
++
++boolean_t
++__firehose_merge_updates(void *reply __unused)
++{
++	return FALSE;
++}
++
++void
++__firehose_buffer_tracepoint_flush(void *ft __unused, uint64_t ftid __unused)
++{
++}
++
++void *
++__firehose_buffer_tracepoint_reserve(uint64_t stamp __unused, uint64_t stream __unused, uint16_t datalen __unused, uint32_t flags __unused, void *context __unused)
++{
++	return NULL;
++}
++
++void
++__firehose_buffer_tracepoint_commit(void *tp __unused)
++{
++}
++
++boolean_t
++__firehose_buffer_tracepoint_try_reserve(uint64_t stamp __unused, uint64_t stream __unused, uint16_t datalen __unused, uint32_t flags __unused, void *context __unused, void **tp_out __unused)
++{
++	return FALSE;
++}
++
++void
++oslogwakeup(void)
++{
++}
++
++/* Pmap preemption stub - declared in pmap.h */
++
+ /**
+  * Global variables exported to the rest of the internal pmap implementation.
+  */
+@@ -476,4 +751,42 @@
+ }
+ #endif /* __arm64__ */
+
+-#endif /* _ARM_PMAP_PMAP_INTERNAL_H_ */
++/*
++ * Non-PPL stub implementations for functions that are called from
++ * non-XNU_MONITOR code paths but are only implemented in PPL builds.
++ * These provide minimal stub implementations for non-PPL builds.
++ */
++
++void
++CleanPoC_DcacheRegion_Force_nopreempt_nohid(vm_offset_t va __unused, size_t length __unused)
++{
++}
++
++void
++ml_enable_monitor(void)
++{
++}
++
++void
++uat_bootstrap(void)
++{
++}
++
++void
++sart_bootstrap(void)
++{
++}
++
++void
++pmap_phys_write_disable(vm_address_t va __unused)
++{
++}
++
++void
++pmap_phys_write_enable(vm_address_t va __unused)
++{
++}
++
++#endif /* _ARM_PMAP_INTERNAL_H_ */

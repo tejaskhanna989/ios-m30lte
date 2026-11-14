@@ -1,0 +1,123 @@
+diff -ruN xnu-orig-clean/osfmk/arm64/machine_routines_asm.s xnu-final-patch/osfmk/arm64/machine_routines_asm.s
+--- xnu-orig-clean/osfmk/arm64/machine_routines_asm.s	2026-11-05 21:35:46.655332116 +0530
++++ xnu-final-patch/osfmk/arm64/machine_routines_asm.s	2026-11-05 20:18:09.637605259 +0530
+@@ -868,7 +868,6 @@
+ #if HAS_CLUSTER
+ 	cbnz		x0, is_deep_sleep                           // Skip if deep_sleep == true
+
+-
+ 	// Mask FIQ and IRQ to avoid spurious wakeups
+ 	mrs		x9, CPU_OVRD
+ 	and		x9, x9, #(~(ARM64_REG_CYC_OVRD_irq_mask | ARM64_REG_CYC_OVRD_fiq_mask))
+@@ -911,7 +910,7 @@
+ 	orr		x1, x1, #(  ARM64_REG_ACC_OVRD_ok2PwrDnCPM_deepsleep)
+ 	msr		EBLK_OVRD, x1
+
+-#endif
++#endif /* __ARM_GLOBAL_SLEEP_BIT__ */
+
+ #else
+ #if defined(APPLETYPHOON) || defined(APPLETWISTER)
+@@ -919,8 +918,6 @@
+ 	mov		x1, ARM64_REG_CYC_CFG_deepSleep
+ 	msr		CPU_CFG, x1
+ #endif
+-#endif
+-
+ not_deep_sleep:
+ 	// Set "OK to power down" (<rdar://problem/12390433>)
+ 	mrs		x9, CPU_OVRD
+@@ -956,7 +953,6 @@
+ 	POP_FRAME
+ 	ARM64_STACK_EPILOG
+
+-
+ #if HAS_RETENTION_STATE
+ 	.text
+ 	.align 2
+@@ -973,14 +969,19 @@
+ 	b		.			// cpu_idle_exit() should never return
+ #endif
+
++#endif /* __ARM_GLOBAL_SLEEP_BIT__ */
+
++not_deep_sleep:
++	// Set "OK to power down" (<rdar://problem/12390433>)
++	mrs		x9, CPU_OVRD
++	orr		x9, x9, #(ARM64_REG_CYC_OVRD_ok2pwrdn_force_down)
++#if HAS_RETENTION_STATE
++	orr		x9, x9, #(ARM64_REG_CYC_OVRD_disWfiRetn)
++#endif
++	msr		CPU_OVRD, x9
++
++	EXEC_END
+
+-#else /* !defined(APPLE_ARM64_ARCH_FAMILY) */
+-	.text
+-	.align 2
+-	.globl EXT(arm64_prepare_for_sleep)
+-LEXT(arm64_prepare_for_sleep)
+-	PUSH_FRAME
+ Lwfi_inst:
+ 	dsb		sy
+ 	isb		sy
+@@ -989,15 +990,58 @@
+
+ /*
+  * Force WFI to use clock gating only
+- * Note: for non-Apple device, do nothing.
++ *
+  */
+ 	.text
+ 	.align 2
+ 	.globl EXT(arm64_force_wfi_clock_gate)
+ LEXT(arm64_force_wfi_clock_gate)
++	ARM64_STACK_PROLOG
++	PUSH_FRAME
++
++	mrs		x0, CPU_OVRD
++	orr		x0, x0, #(ARM64_REG_CYC_OVRD_ok2pwrdn_force_up)
++	msr		CPU_OVRD, x0
++
++	POP_FRAME
++	ARM64_STACK_EPILOG
++
++#if HAS_RETENTION_STATE
++	.text
++	.align 2
++	.globl EXT(arm64_retention_wfi)
++LEXT(arm64_retention_wfi)
++	wfi
++	cbz		lr, Lwfi_retention	// If lr is 0, we entered retention state and lost all GPRs except sp and pc
++	ret					// Otherwise just return to cpu_idle()
++Lwfi_retention:
++	mov		x0, #1
++	bl		EXT(ClearIdlePop)
++	mov		x0, #0
++	bl		EXT(cpu_idle_exit)	// cpu_idle_exit(from_reset = FALSE)
++	b		.			// cpu_idle_exit() should never return
++#endif /* defined(APPLE_ARM64_ARCH_FAMILY) */
++
++#else /* !defined(APPLE_ARM64_ARCH_FAMILY) */
++	.text
++	.align 2
++	.globl EXT(arm64_prepare_for_sleep)
++LEXT(arm64_prepare_for_sleep)
++	PUSH_FRAME
++	// For non-Apple ARM64, just return (no deep sleep support)
++	POP_FRAME
++	ARM64_STACK_EPILOG
++	ret
++
++	.text
++	.align 2
++	.globl EXT(arm64_force_wfi_clock_gate)
++LEXT(arm64_force_wfi_clock_gate)
+ 	PUSH_FRAME
+ 	nop
+ 	POP_FRAME
++	ARM64_STACK_EPILOG
++	ret
+
+ #endif /* defined(APPLE_ARM64_ARCH_FAMILY) */
+

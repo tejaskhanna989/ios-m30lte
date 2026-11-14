@@ -1,0 +1,12 @@
+diff -ruN xnu-orig-clean/.git/hooks/post-update.sample xnu-final-patch/.git/hooks/post-update.sample
+--- xnu-orig-clean/.git/hooks/post-update.sample	2026-11-05 21:35:40.692211768 +0530
++++ xnu-final-patch/.git/hooks/post-update.sample	1970-01-01 05:30:00.000000000 +0530
+@@ -1,8 +0,0 @@
+-#!/bin/sh
+-#
+-# An example hook script to prepare a packed repository for use over
+-# dumb transports.
+-#
+-# To enable this hook, rename this file to "post-update".
+-
+-exec git update-server-info
