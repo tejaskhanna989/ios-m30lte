@@ -154,8 +154,8 @@ jobs:
       run: cd xnu-source; mkdir -p EXPORT_HDRS/osfmk/kern; cp -r osfmk/kern/*.h EXPORT_HDRS/osfmk/kern/; mkdir -p EXPORT_HDRS/osfmk/vm; cp -r osfmk/vm/*.h EXPORT_HDRS/osfmk/vm/; mkdir -p EXPORT_HDRS/osfmk/ipc; cp -r osfmk/ipc/*.h EXPORT_HDRS/osfmk/ipc/
     - name: Copy config files to build directory
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config; cp -r config/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/
-    - name: Copy SETUP/config source to build directory for build_setup
-      run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP/config; cp -r SETUP/config/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP/config/
+    - name: Copy SETUP source to build directory for build_setup
+      run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP; cp -r SETUP/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP/
     - name: Generate component .filelist files
       run: cd xnu-source; python3 ../xnu/create_filelists.py .
     - name: Create all export files and filelists for kernel build
