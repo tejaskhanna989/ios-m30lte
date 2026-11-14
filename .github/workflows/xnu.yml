@@ -100,30 +100,6 @@ jobs:
       run: cd xnu-source; head -20 bsd/Makefile
     - name: Fix DriverKit IORPC for Xcode 26
       run: cd xnu-source; find . -name "IORPC.h" | xargs sed -i '' 's/__attribute__((availability(macosx,introduced=10.15)))//g'
-    - name: Fix DriverKit Makefile circular dependency for IIG generation
-      run: |
-        cd xnu-source
-        # Fix circular dependency: The pattern rule generates both .h and .iig.cpp from .iig
-        # Remove the dependency between GENERATED_IMPL and GENERATED_HEADERS entirely
-        # since they are both generated from .iig by the same IIG command
-        sed -i '' '/^\$(GENERATED_IMPL) : \$(GENERATED_HEADERS)$/d' iokit/DriverKit/Makefile
-        # Also ensure the IIG tool uses the macOS SDK for host-side generation
-        sed -i '' 's/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(SDKROOT)/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(shell xcrun --sdk macosx --show-sdk-path)/' iokit/DriverKit/Makefile
-        # Remove GENERATED_IMPL from COMP_FILES since .iig.cpp files are generated as side effect
-        sed -i '' 's/COMP_FILES = \${GENERATED_HEADERS} \$(GENERATED_IMPL)/COMP_FILES = ${GENERATED_HEADERS}/' iokit/DriverKit/Makefile
-        # Add VPATH with absolute paths to find source .iig files (SRCROOT may not be passed to sub-makes)
-        SRCPATH="$(realpath .)"
-        if ! grep -q "^VPATH" iokit/DriverKit/Makefile; then
-          awk -v src="$SRCPATH" '/include.*MakeInc_def/ {print; print "VPATH = " src ":" src "/iokit/DriverKit"; next} 1' iokit/DriverKit/Makefile > iokit/DriverKit/Makefile.tmp && mv iokit/DriverKit/Makefile.tmp iokit/DriverKit/Makefile
-        fi
-        # Debug: verify .iig files exist and VPATH is set
-        echo "=== Checking .iig files in source ==="
-        ls -la iokit/DriverKit/*.iig | head -20
-        echo "=== Modified DriverKit Makefile ==="
-        grep -A 2 -B 2 "GENERATED_IMPL" iokit/DriverKit/Makefile
-        grep -A 2 -B 2 "COMP_FILES" iokit/DriverKit/Makefile
-        grep -A 2 -B 2 "OTHER_IIG_CFLAGS" iokit/DriverKit/Makefile
-        grep -A 1 "VPATH" iokit/DriverKit/Makefile
     - name: Patch osfmk/mach/Makefile for VPATH
       run: cd xnu-source; sed -i '' 's/^VPATH.*=.*/VPATH = $(SRCROOT):$(SRCROOT)\/osfmk\/mach/' osfmk/mach/Makefile
     - name: Patch osfmk/gssd/Makefile for VPATH
@@ -182,6 +158,30 @@ jobs:
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP; cp -r SETUP/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP/
     - name: Copy iokit/DriverKit source to build directory for IIG generation
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit; cp -r iokit/DriverKit/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/
+    - name: Fix DriverKit Makefile in build directory for IIG generation
+      run: |
+        cd xnu-source
+        # Fix circular dependency: The pattern rule generates both .h and .iig.cpp from .iig
+        # Remove the dependency between GENERATED_IMPL and GENERATED_HEADERS entirely
+        # since they are both generated from .iig by the same IIG command
+        sed -i '' '/^\$(GENERATED_IMPL) : \$(GENERATED_HEADERS)$/d' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
+        # Also ensure the IIG tool uses the macOS SDK for host-side generation
+        sed -i '' 's/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(SDKROOT)/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(shell xcrun --sdk macosx --show-sdk-path)/' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
+        # Remove GENERATED_IMPL from COMP_FILES since .iig.cpp files are generated as side effect
+        sed -i '' 's/COMP_FILES = \${GENERATED_HEADERS} \$(GENERATED_IMPL)/COMP_FILES = ${GENERATED_HEADERS}/' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
+        # Add VPATH with absolute paths to find source .iig files
+        SRCPATH="$(realpath .)"
+        if ! grep -q "^VPATH" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile; then
+          awk -v src="$SRCPATH" '/include.*MakeInc_def/ {print; print "VPATH = " src ":" src "/iokit/DriverKit"; next} 1' BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile > BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile.tmp && mv BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile.tmp BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
+        fi
+        # Debug: verify .iig files exist and VPATH is set
+        echo "=== Checking .iig files in build directory ==="
+        ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/*.iig | head -20
+        echo "=== Modified DriverKit Makefile in build directory ==="
+        grep -A 2 -B 2 "GENERATED_IMPL" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
+        grep -A 2 -B 2 "COMP_FILES" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
+        grep -A 2 -B 2 "OTHER_IIG_CFLAGS" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
+        grep -A 1 "VPATH" BUILD/obj/DEVELOPMENT_ARM64_M30LTE/iokit/DriverKit/Makefile
     - name: Verify IIG tool availability
       run: |
         echo "=== Checking IIG tool availability ==="
