@@ -21,8 +21,7 @@ def main():
     for fl in filelists:
         path = os.path.join(srcroot, fl)
         with open(path, "w") as f:
-            f.write("# Minimal filelist
-")
+            f.write("# Minimal filelist\n")
         print(f"Created {fl}")
     
     print("Filelists created successfully")
