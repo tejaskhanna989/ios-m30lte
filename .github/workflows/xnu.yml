@@ -148,7 +148,7 @@ jobs:
     - name: Patch EXPORT_HDRS/osfmk/arm/locks.h for full lck_mtx_t definition
       run: cd xnu-source; if [ -f EXPORT_HDRS/osfmk/arm/locks.h ]; then sed -i '' 's/struct lck_mtx_t;/struct lck_mtx_t { uint32_t lck_mtx_type; uint32_t lck_mtx_attr; uint32_t lck_mtx_grp; uint32_t lck_mtx_pad1; uint32_t lck_mtx_pad2; struct lck_mtx_deb *lck_mtx_deb; };/' EXPORT_HDRS/osfmk/arm/locks.h; fi
     - name: Patch security/mac_audit.c for kernel includes and ptrauth
-      run: cd xnu-source; sed -i '' '1i#include <sys/param.h>\n#include <sys/systm.h>\n#include <sys/kernel.h>\n#include <sys/proc.h>\n#include <security/audit/audit.h>\n#include <sys/ptrauth.h>' security/mac_audit.c
+      run: cd xnu-source; sed -i '' -e '1i\#include <sys/param.h>' -e '1i\#include <sys/systm.h>' -e '1i\#include <sys/kernel.h>' -e '1i\#include <sys/proc.h>' -e '1i\#include <security/audit/audit.h>' -e '1i\#include <sys/ptrauth.h>' security/mac_audit.c
     - name: Copy and patch kernel-private headers to EXPORT_HDRS
       run: cd xnu-source; mkdir -p EXPORT_HDRS/osfmk/kern; cp -r osfmk/kern/*.h EXPORT_HDRS/osfmk/kern/; mkdir -p EXPORT_HDRS/osfmk/vm; cp -r osfmk/vm/*.h EXPORT_HDRS/osfmk/vm/; mkdir -p EXPORT_HDRS/osfmk/ipc; cp -r osfmk/ipc/*.h EXPORT_HDRS/osfmk/ipc/
     - name: Copy config files to build directory
