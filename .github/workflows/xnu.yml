@@ -107,6 +107,10 @@ jobs:
         sed -i '' 's/^$(GENERATED_IMPL) : $(GENERATED_HEADERS)$/$(GENERATED_IMPL) : | $(GENERATED_HEADERS)/' iokit/DriverKit/Makefile
         # Also ensure the IIG tool uses the macOS SDK for host-side generation
         sed -i '' 's/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(SDKROOT)/OTHER_IIG_CFLAGS = $(IIG_INCFLAGS) -isysroot $(shell xcrun --sdk macosx --show-sdk-path)/' iokit/DriverKit/Makefile
+        # Debug: print the modified Makefile sections
+        echo "=== Modified DriverKit Makefile ==="
+        grep -A 2 -B 2 "GENERATED_IMPL" iokit/DriverKit/Makefile
+        grep -A 2 -B 2 "OTHER_IIG_CFLAGS" iokit/DriverKit/Makefile
     - name: Patch osfmk/mach/Makefile for VPATH
       run: cd xnu-source; sed -i '' 's/^VPATH.*=.*/VPATH = $(SRCROOT):$(SRCROOT)\/osfmk\/mach/' osfmk/mach/Makefile
     - name: Patch osfmk/gssd/Makefile for VPATH
