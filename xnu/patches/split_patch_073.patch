@@ -1,0 +1,29 @@
+--- xnu-orig/osfmk/mach_ldebug.h	2026-11-15 12:29:03.758168855 +0530
++++ xnu-source/osfmk/mach_ldebug.h	2026-11-15 12:29:00.978132431 +0530
+@@ -0,0 +1,26 @@
++/*
++ * mach_ldebug.h - stub for optional mach_ldebug feature
++ * This is a minimal stub for building without the full mach_ldebug implementation.
++ */
++
++#ifndef _MACH_MACH_LDEBUG_H_
++#define _MACH_MACH_LDEBUG_H_
++
++#include <mach/boolean.h>
++#include <mach/kern_return.h>
++
++__BEGIN_DECLS
++
++/* mach_ldebug types */
++typedef int mach_ldebug_type_t;
++
++/* mach_ldebug functions */
++extern void mach_ldebug_init(void);
++extern void mach_ldebug_thread_init(void);
++extern void mach_ldebug_thread_terminate(void);
++extern void mach_ldebug_task_init(void);
++extern void mach_ldebug_task_terminate(void);
++
++__END_DECLS
++
++#endif /* _MACH_MACH_LDEBUG_H_ */
