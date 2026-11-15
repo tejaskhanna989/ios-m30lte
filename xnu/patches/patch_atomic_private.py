@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Patch libkern/os/atomic_private_impl.h to define memory_order enum."""
 import sys
+import re
 
 with open('libkern/os/atomic_private_impl.h', 'r') as f:
     content = f.read()
@@ -9,14 +10,16 @@ with open('libkern/os/atomic_private_impl.h', 'r') as f:
 if 'typedef enum memory_order' in content:
     print("memory_order enum already defined")
 else:
-    # Define memory_order enum - add after the license header (after the first blank line after the header)
-    # Find the end of the license header (look for the first line that's not a comment)
+    # Define memory_order enum - add after the license header
+    # Find the end of the license header (look for the first non-comment line after the header)
     lines = content.split('\n')
     insert_idx = 0
     in_header = True
     for i, line in enumerate(lines):
+        stripped = line.strip()
         if in_header:
-            if line.strip() == '' or line.startswith('/*') or line.startswith('*') or line.startswith('//') or line.startswith('#'):
+            # Skip license header comments and blank lines
+            if stripped == '' or stripped.startswith('/*') or stripped.startswith('*') or stripped.startswith('//') or stripped.startswith('#'):
                 continue
             else:
                 insert_idx = i
@@ -42,19 +45,7 @@ typedef enum memory_order {
 
 # Replace memory_order_* values with __ATOMIC_* constants (for any remaining uses)
 # But be careful not to replace the enum values we just added
-# First, let's check what the content looks like now
-print("Content length:", len(content))
-print("First 500 chars of content:")
-print(content[:500])
-
-# Replace memory_order_* values with __ATOMIC_* constants (for any remaining uses)
-# But be careful not to replace the enum values we just added
-# The enum uses memory_order_relaxed = __ATOMIC_RELAXED, etc.
-# So we should not replace those lines
-
-# Let's do a more careful replacement - only replace standalone uses
-import re
-# Replace memory_order_relaxed (but not in enum definition)
+# Use regex with negative lookahead to avoid replacing enum values
 content = re.sub(r'\bmemory_order_relaxed\b(?!\s*=)', '__ATOMIC_RELAXED', content)
 content = re.sub(r'\bmemory_order_acquire\b(?!\s*=)', '__ATOMIC_ACQUIRE', content)
 content = re.sub(r'\bmemory_order_release\b(?!\s*=)', '__ATOMIC_RELEASE', content)
@@ -83,3 +74,9 @@ if 'memory_order' in content and '__ATOMIC_' in content:
     print("SUCCESS: __ATOMIC_* constants are used")
 else:
     print("WARNING: __ATOMIC_* constants may not be used")
+    
+# Show the first 30 lines to verify
+lines = content.split('\n')
+print("First 30 lines of patched file:")
+for i, line in enumerate(lines[:30]):
+    print(f"{i+1:3}: {line}")
