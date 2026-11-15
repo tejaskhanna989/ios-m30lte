@@ -17,8 +17,9 @@ with open(path, 'r') as f:
     content = f.read()
 
 # The original SETUP_SUBDIRS includes host tools
-# We want to skip them when building for iPhoneOS (target)
-# Check if we're building for iPhoneOS (target) vs macOS (host)
+# We want to skip them when building for ARM64 (target kernel build)
+# Host tools are already built separately for macOS (x86_64)
+# Check RC_ARCHS for arm64 (target) vs x86_64 (host)
 
 old_subdirs = """SETUP_SUBDIRS =		\\
 	config		\\
@@ -28,7 +29,7 @@ old_subdirs = """SETUP_SUBDIRS =		\\
 	installfile	\\
 	replacecontents"""
 
-new_subdirs = """ifeq ($(SDKROOT),iphoneos)
+new_subdirs = """ifeq ($(filter arm64,$(RC_ARCHS)),arm64)
 SETUP_SUBDIRS = config
 else
 SETUP_SUBDIRS =		\\
