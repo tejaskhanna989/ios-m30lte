@@ -43,21 +43,19 @@ extern void atomic_signal_fence(memory_order order);
     return True
 
 def patch_locks_h():
-    """Ensure lck_mtx_t is fully defined in locks.h"""
-    # Try multiple possible locations
+    """Ensure lck_mtx_t is fully defined in lock_types.h"""
+    # The lck_mtx_t is defined in lock_types.h, not locks.h
     paths = [
-        'EXPORT_HDRS/osfmk/arm/locks.h',
-        'osfmk/arm/locks.h',
-        'EXPORT_HDRS/osfmk/mach/locks.h',
-        'osfmk/mach/locks.h',
+        'osfmk/kern/lock_types.h',
+        'EXPORT_HDRS/osfmk/kern/lock_types.h',
     ]
     
     for path in paths:
         if os.path.exists(path):
-            print(f"Found locks.h at {path}")
+            print(f"Found lock_types.h at {path}")
             break
     else:
-        print(f"locks.h not found in any expected location!")
+        print(f"lock_types.h not found in any expected location!")
         return False
         
     with open(path, 'r') as f:
@@ -65,15 +63,15 @@ def patch_locks_h():
     
     # Check if already patched
     if 'lck_mtx_type' in content and 'lck_mtx_attr' in content:
-        print("locks.h already patched")
+        print("lock_types.h already patched")
         return True
     
-    # Replace forward declaration with full definition
-    # Try multiple patterns
+    # The lock_types.h might have a forward declaration or incomplete definition
+    # Look for lck_mtx_t definition
     patterns = [
         'struct lck_mtx_t;',
         'struct lck_mtx_t ;',
-        'struct lck_mtx_t\t;',
+        'typedef struct lck_mtx_t lck_mtx_t;',
     ]
     
     new_def = '''struct lck_mtx_t {
@@ -85,22 +83,19 @@ def patch_locks_h():
     struct lck_mtx_deb *lck_mtx_deb;
 };'''
     
-    for pattern in patterns:
+    for pattern in [
+        'struct lck_mtx_t;',
+        'struct lck_mtx_t ;',
+        'typedef struct lck_mtx_t lck_mtx_t;',
+    ]:
         if pattern in content:
-            content = content.replace(pattern, '''struct lck_mtx_t {
-    uint32_t lck_mtx_type;
-    uint32_t lck_mtx_attr;
-    uint32_t lck_mtx_grp;
-    uint32_t lck_mtx_pad1;
-    uint32_t lck_mtx_pad2;
-    struct lck_mtx_deb *lck_mtx_deb;
-};''')
+            content = content.replace(pattern, new_def)
             with open(path, 'w') as f:
                 f.write(content)
-            print(f"Patched locks.h with full lck_mtx_t definition")
+            print(f"Patched lock_types.h with full lck_mtx_t definition")
             return True
     
-    # If not found, try regex
+    # Try regex
     if re.search(r'struct\s+lck_mtx_t\s*;', content):
         content = re.sub(r'struct\s+lck_mtx_t\s*;', 
             '''struct lck_mtx_t {
@@ -113,12 +108,19 @@ def patch_locks_h():
 };''', content)
         with open(path, 'w') as f:
             f.write(content)
-        print("Patched locks.h with full lck_mtx_t definition (regex)")
+        print("Patched lock_types.h with full lck_mtx_t definition (regex)")
         return True
     
-    print("Could not find struct lck_mtx_t; in locks.h")
-    # Print first 1000 chars for debugging
-    print("First 2000 chars of locks.h:")
+    # If typedef exists, replace it
+    if 'typedef struct lck_mtx_t lck_mtx_t;' in content:
+        content = content.replace('typedef struct lck_mtx_t lck_mtx_t;', new_def)
+        with open(path, 'w') as f:
+            f.write(content)
+        print("Patched lock_types.h with full lck_mtx_t definition (typedef)")
+        return True
+    
+    print("Could not find lck_mtx_t pattern in lock_types.h")
+    print("First 2000 chars of lock_types.h:")
     print(content[:2000])
     return False
 
@@ -132,11 +134,7 @@ def patch_vnode_internal():
     with open(path, 'r') as f:
         content = f.read()
     
-    # Check if XNU_PTRAUTH_SIGNED_PTR macro is properly defined
-    # The issue is that the macro might be defined but not working correctly
-    # We need to ensure the macro is properly defined with ptrauth
-    
-    # Check if the macro is defined with ptrauth
+    # Check if the macro is properly defined with ptrauth
     has_proper_macro = False
     if 'XNU_PTRAUTH_SIGNED_PTR' in content:
         # Check if it's defined with ptrauth
@@ -156,7 +154,7 @@ def patch_vnode_internal():
         content = '\n'.join(lines)
         print("Added sys/ptrauth.h include")
     
-    # Define XNU_PTRAUTH_SIGNED_PTR macro if not properly defined
+    # Define XNU_PTRAUTH_SIGNED_PTR macro properly
     # Find a good place to add the macro (after includes)
     lines = content.split('\n')
     insert_idx = 0
