@@ -2,9 +2,12 @@
 # dxb runs patches/*.sh from the XNU source root before applying *.patch.
 set -euo pipefail
 
-[[ "${MACHINE_CONFIG:-}" == M30LTE ]] || exit 0
+case "${MACHINE_CONFIG:-}" in
+    SWEET|A5XELTE|HEROLTE|M20LTE) ;;
+    *) exit 0 ;;
+esac
 [[ "${MACOS_VERSION:-}" == 13.5 ]] || {
-    echo 'M30LTE libpthread integration requires xnu-8796.141.3 (macOS 13.5)' >&2
+    echo 'Built-in libpthread requires xnu-8796.141.3 (macOS 13.5)' >&2
     exit 1
 }
 [[ -f bsd/pthread/pthread_shims.c ]] || exit 1
@@ -26,7 +29,7 @@ import shutil
 import sys
 
 source = Path(sys.argv[1])
-target = Path('bsd/pthread/m30_libpthread')
+target = Path('bsd/pthread/sweet_libpthread')
 if target.exists():
     raise SystemExit(f'refusing to overwrite existing provider: {target}')
 # Preserve upstream copyright/license headers; no downloaded sources in git.
@@ -61,5 +64,5 @@ PY
 # Kernel builds use -nostdinc. Carry the real SDK target definitions beside
 # the provider so local compiles from the uploaded build tree work as well.
 pthread_sdk=$(xcrun --sdk macosx --show-sdk-path)
-cp "$pthread_sdk/usr/include/TargetConditionals.h" bsd/pthread/m30_libpthread/
-echo "Staged libpthread-514.100.2 ($pthread_sha) for M30LTE"
+cp "$pthread_sdk/usr/include/TargetConditionals.h" bsd/pthread/sweet_libpthread/
+echo "Staged libpthread-514.100.2 ($pthread_sha) for ${MACHINE_CONFIG}"

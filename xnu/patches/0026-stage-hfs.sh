@@ -1,11 +1,11 @@
 #!/bin/bash
-# Stage Apple's open source HFS for the M30LTE built-in filesystem (bsd/m30_hfs).
+# Stage Apple's open source HFS for the SWEET built-in filesystem (bsd/sweet_hfs).
 # dxb runs patches/*.sh from the XNU source root before applying *.patch.
 set -euo pipefail
 
-[[ "${MACHINE_CONFIG:-}" == M30LTE ]] || exit 0
+case "${MACHINE_CONFIG:-}" in SWEET|A5XELTE|HEROLTE|M20LTE) ;; *) exit 0 ;; esac
 [[ "${MACOS_VERSION:-}" == 13.5 ]] || {
-    echo 'M30LTE HFS integration requires xnu-8796.141.3 (macOS 13.5)' >&2
+    echo 'SWEET HFS integration requires xnu-8796.141.3 (macOS 13.5)' >&2
     exit 1
 }
 [[ -f bsd/kern/bsd_init.c ]] || exit 1
@@ -27,15 +27,15 @@ import shutil
 import sys
 
 source = Path(sys.argv[1])
-target = Path('bsd/m30_hfs')
+target = Path('bsd/sweet_hfs')
 if target.exists():
     raise SystemExit(f'refusing to overwrite existing HFS sources: {target}')
 # Preserve upstream copyright/license headers; no downloaded sources in git.
 for directory in ('core', 'hfs_encodings'):
     shutil.copytree(source / directory, target / directory)
 
-# M30LTE has no AppleKeyStore (content protection is not built, see
-# m30_hfs_compat.h); its header is only needed for the key-wrapping API.
+# SWEET has no AppleKeyStore (content protection is not built, see
+# sweet_hfs_compat.h); its header is only needed for the key-wrapping API.
 path = target / 'core' / 'hfs_iokit.h'
 text = path.read_text()
 include = '#include <AppleKeyStore/AppleKeyStoreFSServices.h>\n'
@@ -51,5 +51,5 @@ PY
 
 # Kernel builds use -nostdinc; HFS's kext-config.h needs the SDK's target macros.
 hfs_sdk=$(xcrun --sdk macosx --show-sdk-path)
-cp "$hfs_sdk/usr/include/TargetConditionals.h" bsd/m30_hfs/
-echo "Staged hfs-627.100.6 ($hfs_sha) for M30LTE"
+cp "$hfs_sdk/usr/include/TargetConditionals.h" bsd/sweet_hfs/
+echo "Staged hfs-627.100.6 ($hfs_sha) for SWEET"
