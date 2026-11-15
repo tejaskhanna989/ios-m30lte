@@ -202,6 +202,27 @@ jobs:
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config; cp -r config/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/
     - name: Copy SETUP source to build directory for build_setup
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP; cp -r SETUP/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP/
+    - name: Copy host-built SETUP tools to target build directory
+      run: |
+        cd xnu-source
+        HOST_OBJROOT="$PWD/BUILD/obj/host"
+        TARGET_OBJROOT="$PWD/BUILD/obj/DEVELOPMENT_ARM64_M30LTE"
+        # Copy host-built tools that are needed during kernel build
+        for tool in installfile kextsymboltool setsegname decomment replacecontents; do
+          if [ -f "$HOST_OBJROOT/SETUP/$tool/$tool" ]; then
+            mkdir -p "$TARGET_OBJROOT/SETUP/$tool"
+            cp "$HOST_OBJROOT/SETUP/$tool/$tool" "$TARGET_OBJROOT/SETUP/$tool/"
+            echo "Copied $tool to target build directory"
+          else
+            echo "WARNING: $tool not found in host build directory"
+          fi
+        done
+        # Also copy config tool
+        if [ -f "$HOST_OBJROOT/SETUP/config/config" ]; then
+          mkdir -p "$TARGET_OBJROOT/SETUP/config"
+          cp "$HOST_OBJROOT/SETUP/config/config" "$TARGET_OBJROOT/SETUP/config/"
+          echo "Copied config to target build directory"
+        fi
     - name: Patch SETUP/Makefile in source directory to skip host tools during kernel build
       run: cd xnu-source && python3 ../xnu/patches/patch_setup_makefile.py SETUP/Makefile
     - name: Patch SETUP/Makefile in build directory to skip host tools during kernel build
