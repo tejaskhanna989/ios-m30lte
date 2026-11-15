@@ -242,6 +242,16 @@ jobs:
           cp /usr/local/bin/installfile "$TARGET_OBJROOT/SETUP/installfile/installfile"
           echo "Copied installfile replacement to target build directory"
         fi
+        # Create minimal replacements for missing tools
+        for tool in kextsymboltool setsegname decomment replacecontents; do
+          tool_path="$TARGET_OBJROOT/SETUP/$tool/$tool"
+          if [ ! -f "$tool_path" ]; then
+            mkdir -p "$(dirname "$tool_path")"
+            printf '#!/bin/bash\n# Minimal replacement for %s\nexit 0\n' "$tool" > "$tool_path"
+            chmod +x "$tool_path"
+            echo "Created minimal replacement for $tool"
+          fi
+        done
     - name: Patch SETUP/Makefile in source directory to skip host tools during kernel build
       run: cd xnu-source && python3 ../xnu/patches/patch_setup_makefile.py SETUP/Makefile
     - name: Patch SETUP/Makefile in build directory to skip host tools during kernel build
