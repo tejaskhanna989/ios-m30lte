@@ -89,10 +89,13 @@ jobs:
         HOST_OBJROOT="$PWD/BUILD/obj/host"
         echo "=== Host build directory contents ==="
         find "$HOST_OBJROOT" -type f -name "*" 2>/dev/null | head -50
-        echo "=== Looking for SETUP tools ==="
+        echo "=== Looking for SETUP tools (recursive) ==="
         for tool in installfile kextsymboltool setsegname decomment replacecontents config; do
+          echo "Searching for $tool:"
           find "$HOST_OBJROOT" -name "$tool" -type f 2>/dev/null
         done
+        echo "=== All files in SETUP directory ==="
+        find "$HOST_OBJROOT/SETUP" -type f 2>/dev/null | head -100
     - name: Fix doconf.csh argument parsing bug
       run: cd xnu-source && echo "=== Fixing doconf.csh argument parsing bug ===" && python3 ../xnu/patches/patch_doconf_csh.py && echo "doconf.csh patched successfully"
     - name: Debug MASTER file
