@@ -25,6 +25,18 @@ new_includes = '''/* Include kernel private headers for full type definitions us
 #define XNU_PTRAUTH_SIGNED_PTR(_discriminator)
 #endif
 
+/* Function prototypes for audit stub functions to avoid -Wmissing-prototypes */
+int mac_system_check_audit(struct ucred *cred, void *record, int length);
+int mac_system_check_auditon(struct ucred *cred, int cmd);
+int mac_system_check_auditctl(struct ucred *cred, struct vnode *vp);
+int mac_proc_check_getauid(struct proc *curp);
+int mac_proc_check_setauid(struct proc *curp, uid_t auid);
+int mac_proc_check_getaudit(struct proc *curp, struct auditinfo_addr *aip);
+int mac_proc_check_setaudit(struct proc *curp, struct auditinfo_addr *aip);
+int mac_proc_check_getaudit_addr(struct proc *curp, struct auditinfo_addr *aip, int *sizep);
+int mac_proc_check_setaudit_addr(struct proc *curp, struct auditinfo_addr *aip);
+int mac_system_check_auditctl(struct ucred *cred, struct vnode *vp);
+
 '''
 
 # Insert before #include <sys/vnode_internal.h>
@@ -41,5 +53,5 @@ print("Patched security/mac_audit.c with required includes and XNU_PTRAUTH_SIGNE
 # Verify
 with open('security/mac_audit.c', 'r') as f:
     content = f.read()
-    for i, line in enumerate(content.split('\n')[:45]):
+    for i, line in enumerate(content.split('\n')[:55]):
         print(f"  {i+1}: {line}")
