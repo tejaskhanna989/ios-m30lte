@@ -1,0 +1,11 @@
+diff -ruN xnu-orig/bsd/sys/systm.h xnu-source/bsd/sys/systm.h
+--- xnu-orig/bsd/sys/systm.h
++++ xnu-source/bsd/sys/systm.h
+@@ -108,6 +108,7 @@
+ #include <sys/vm.h>
+ #endif
+ #include <sys/proc.h>
++#include <sys/mount.h>
+ __BEGIN_DECLS
+ #ifdef KERNEL
+ #include <libkern/libkern.h>

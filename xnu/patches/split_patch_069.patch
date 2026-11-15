@@ -1,0 +1,20 @@
+diff -ruN xnu-orig/osfmk/arm/locks.h xnu-source/osfmk/arm/locks.h
+--- xnu-orig/osfmk/arm/locks.h
++++ xnu-source/osfmk/arm/locks.h
+@@ -94,6 +94,16 @@
+ 	uintptr_t opaque[16];
+ } lck_mtx_ext_t;
+ 
++#elif MACH_KERNEL_PRIVATE
++
++typedef struct {
++	uintptr_t opaque[2] __kernel_data_semantics;
++} lck_mtx_t;
++
++typedef struct {
++	uintptr_t opaque[16];
++} lck_mtx_ext_t;
++
+ #else
+ 
+ typedef struct __lck_spin_t__           lck_spin_t;

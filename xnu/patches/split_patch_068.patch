@@ -1,0 +1,67 @@
+diff -ruN xnu-orig/libkern/os/atomic_private_impl.h xnu-source/libkern/os/atomic_private_impl.h
+--- xnu-orig/libkern/os/atomic_private_impl.h
++++ xnu-source/libkern/os/atomic_private_impl.h
+@@ -41,14 +41,31 @@
+ 
+ #pragma mark - implementation details
+ 
++// memory_order enum for C11 atomic operations
++typedef enum memory_order {
++    memory_order_relaxed = __ATOMIC_RELAXED,
++    memory_order_consume = __ATOMIC_CONSUME,
++    memory_order_acquire = __ATOMIC_ACQUIRE,
++    memory_order_release = __ATOMIC_RELEASE,
++    memory_order_acq_rel = __ATOMIC_ACQ_REL,
++    memory_order_seq_cst = __ATOMIC_SEQ_CST
++} memory_order;
++
++// Atomic fence functions (C11)
++extern void atomic_thread_fence(memory_order order);
++extern void atomic_signal_fence(memory_order order);
++
++
++
++
+ static inline int
+ _os_atomic_mo_has_acquire(OS_ATOMIC_STD memory_order ord)
+ {
+ 	switch (ord) {
+ 	case os_atomic_std(memory_order_consume):
+-	case os_atomic_std(memory_order_acquire):
+-	case os_atomic_std(memory_order_acq_rel):
+-	case os_atomic_std(memory_order_seq_cst):
++	case os_atomic_std(__ATOMIC_ACQUIRE):
++	case os_atomic_std(__ATOMIC_ACQ_REL):
++	case os_atomic_std(__ATOMIC_SEQ_CST):
+ 		return 1;
+ 	default:
+ 		return 0;
+ 	default:
+ 		return 0;
+ 	}
+ }
+ 
+-#define _os_atomic_mo_relaxed               os_atomic_std(memory_order_relaxed)
+-#define _os_atomic_mo_compiler_acquire      os_atomic_std(memory_order_relaxed)
+-#define _os_atomic_mo_compiler_release      os_atomic_std(memory_order_relaxed)
+-#define _os_atomic_mo_compiler_acq_rel      os_atomic_std(memory_order_relaxed)
++#define _os_atomic_mo_relaxed               os_atomic_std(__ATOMIC_RELAXED)
++#define _os_atomic_mo_compiler_acquire      os_atomic_std(__ATOMIC_RELAXED)
++#define _os_atomic_mo_compiler_release      os_atomic_std(__ATOMIC_RELAXED)
++#define _os_atomic_mo_compiler_acq_rel      os_atomic_std(__ATOMIC_RELAXED)
+ #define _os_atomic_mo_consume               os_atomic_std(memory_order_consume)
+ #if OS_ATOMIC_CONFIG_MEMORY_ORDER_DEPENDENCY
+-#define _os_atomic_mo_dependency            os_atomic_std(memory_order_acquire)
++#define _os_atomic_mo_dependency            os_atomic_std(__ATOMIC_ACQUIRE)
+ #endif // OS_ATOMIC_CONFIG_MEMORY_ORDER_DEPENDENCY
+-#define _os_atomic_mo_acquire               os_atomic_std(memory_order_acquire)
+-#define _os_atomic_mo_release               os_atomic_std(memory_order_release)
+-#define _os_atomic_mo_acq_rel               os_atomic_std(memory_order_acq_rel)
+-#define _os_atomic_mo_seq_cst               os_atomic_std(memory_order_seq_cst)
++#define _os_atomic_mo_acquire               os_atomic_std(__ATOMIC_ACQUIRE)
++#define _os_atomic_mo_release               os_atomic_std(__ATOMIC_RELEASE)
++#define _os_atomic_mo_acq_rel               os_atomic_std(__ATOMIC_ACQ_REL)
++#define _os_atomic_mo_seq_cst               os_atomic_std(__ATOMIC_SEQ_CST)
+ 
+ /*
+  * Mapping between symbolic memory orderings and actual ones

@@ -1,0 +1,18 @@
+diff -ruN xnu-orig/bsd/sys/vnode_internal.h xnu-source/bsd/sys/vnode_internal.h
+--- xnu-orig/bsd/sys/vnode_internal.h
++++ xnu-source/bsd/sys/vnode_internal.h
+@@ -83,10 +83,15 @@
+ #include <kern/locks.h>
+ #include <vm/vm_kern.h>
+ #include <sys/vnode.h>
++#include <sys/vnode_if.h>
++#include <sys/mount.h>
++#include <sys/kernel_types.h>
+ #include <sys/namei.h>
+ #include <kern/smr.h>
+ #include <sys/vfs_context.h>
+ #include <sys/sysctl.h>
++#include <sys/ptrauth.h>
+ 
+ 
+ struct lockf;
