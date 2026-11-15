@@ -109,116 +109,116 @@ index 9ad7fd6..9f04038 100644
 +	if (!buffer || blocks < 2 || blocks > A5_EMMC_MAX_BLOCKS ||
 +	    address < emmc_first_lba || address - emmc_first_lba >= emmc_nsectors ||
 +	    blocks > emmc_nsectors - (address - emmc_first_lba) ||
-+	    blocks - 1u > UINT32_MAX - lba) return EINVAL.
-+	if (write && !emmc_writable) return EROFS.
-+	if (emmc_io_poisoned) return EIO.
-+	uint32_t hcon = emmc_rd(EMMC_HCON), width = (hcon >> 7) & 7u.
-+	uint32_t ver = emmc_rd(EMMC_VERID) & 0xffffu.
++	    blocks - 1u > UINT32_MAX - lba) return EINVAL;
++	if (write && !emmc_writable) return EROFS;
++	if (emmc_io_poisoned) return EIO;
++	uint32_t hcon = emmc_rd(EMMC_HCON), width = (hcon >> 7) & 7u;
++	uint32_t ver = emmc_rd(EMMC_VERID) & 0xffffu;
 +	if (width > 2 || !ver || ver == 0xffff ||
-+	    !(emmc_rd(EMMC_PWREN) & 1u) || !(emmc_rd(EMMC_CLKENA) & 1u)) return ENXIO.
-+	if (emmc_rd(EMMC_STATUS) & (1u << 9)) return EBUSY.
-+	uint32_t unit = 2u << width, bytes = blocks * 512u, moved = 0.
-+	uint32_t data_off = ver < 0x240au ? 0x100u : 0x200u.
-+	uint32_t ints = emmc_rd(EMMC_INTMASK), response = 0.
-+	bool data_started = false.
-+	unsigned phase = 1.
-+	int error = 0.
-+	emmc_wr(EMMC_INTMASK, 0).
++	    !(emmc_rd(EMMC_PWREN) & 1u) || !(emmc_rd(EMMC_CLKENA) & 1u)) return ENXIO;
++	if (emmc_rd(EMMC_STATUS) & (1u << 9)) return EBUSY;
++	uint32_t unit = 2u << width, bytes = blocks * 512u, moved = 0;
++	uint32_t data_off = ver < 0x240au ? 0x100u : 0x200u;
++	uint32_t ints = emmc_rd(EMMC_INTMASK), response = 0;
++	bool data_started = false;
++	unsigned phase = 1;
++	int error = 0;
++	emmc_wr(EMMC_INTMASK, 0);
 +	emmc_wr(EMMC_CTRL, (emmc_rd(EMMC_CTRL) &
-+	    ~(CTRL_INT_ENABLE | CTRL_DMA_ENABLE | CTRL_USE_IDMAC)) | CTRL_FIFO_RESET).
++	    ~(CTRL_INT_ENABLE | CTRL_DMA_ENABLE | CTRL_USE_IDMAC)) | CTRL_FIFO_RESET);
 +	for (unsigned i = 0; ; i++) {
-+		if (!(emmc_rd(EMMC_CTRL) & CTRL_FIFO_RESET)) break.
++		if (!(emmc_rd(EMMC_CTRL) & CTRL_FIFO_RESET)) break;
 +		if (i == A5_EMMC_POLL_LIMIT - 1) { error = ETIMEDOUT; goto out; }
 +	}
-+	emmc_wr(EMMC_TMOUT, 0x573177ffu).
-+	phase = 2.
-+	error = emmc_command(23u, blocks, false, &response).
++	emmc_wr(EMMC_TMOUT, 0x573177ffu);
++	phase = 2;
++	error = emmc_command(23u, blocks, false, &response);
 +	if (error) {
 +		/* A completed ILLEGAL_COMMAND rejects SBC before any data command.
 +		 * Only this case can safely use the legacy path for this request. */
-+		if (error == EIO && (response & A5_EMMC_R1_ERRORS) == (1u << 22)) error = ENOTSUP.
-+		goto out.
++		if (error == EIO && (response & A5_EMMC_R1_ERRORS) == (1u << 22)) error = ENOTSUP;
++		goto out;
 +	}
-+	emmc_wr(EMMC_BLKSIZ, 512u).
-+	emmc_wr(EMMC_BYTCNT, bytes).
-+	emmc_wr(EMMC_RINTSTS, 0xffffffffu).
-+	emmc_wr(EMMC_CMDARG, lba).
++	emmc_wr(EMMC_BLKSIZ, 512u);
++	emmc_wr(EMMC_BYTCNT, bytes);
++	emmc_wr(EMMC_RINTSTS, 0xffffffffu);
++	emmc_wr(EMMC_CMDARG, lba);
 +	uint32_t command = CMD_START | CMD_WAIT_DATA | CMD_DATA | CMD_RESP_CRC |
-+	    CMD_RESP | (write ? CMD_WRITE | 25u : 18u).
-+	if ((emmc_rd(EMMC_CLKSEL) >> 16) & 7u) command |= CMD_HOLD.
-+	data_started = true.
-+	phase = 3.
-+	emmc_wr(EMMC_CMD, command).
++	    CMD_RESP | (write ? CMD_WRITE | 25u : 18u);
++	if ((emmc_rd(EMMC_CLKSEL) >> 16) & 7u) command |= CMD_HOLD;
++	data_started = true;
++	phase = 3;
++	emmc_wr(EMMC_CMD, command);
 +	for (unsigned i = 0; ; i++) {
-+		uint32_t pending = emmc_rd(EMMC_RINTSTS).
++		uint32_t pending = emmc_rd(EMMC_RINTSTS);
 +		if (pending & INT_ERRORS) { error = EIO; goto out; }
 +		if ((pending & INT_CMD_DONE) && (emmc_rd(EMMC_RESP0) & A5_EMMC_R1_ERRORS)) {
-+			error = EIO; goto out.
++			error = EIO; goto out;
 +		}
-+		uint32_t fifo = (emmc_rd(EMMC_STATUS) >> 17) & 0x1fffu.
++		uint32_t fifo = (emmc_rd(EMMC_STATUS) >> 17) & 0x1fffu;
 +		if (fifo > EMMC_FIFO_DEPTH) { error = EIO; goto out; }
-+		uint32_t available = write ? EMMC_FIFO_DEPTH - fifo : fifo.
++		uint32_t available = write ? EMMC_FIFO_DEPTH - fifo : fifo;
 +		/* Do not push data until the write command has an accepted response. */
-+		if (write && !(pending & INT_CMD_DONE)) available = 0.
++		if (write && !(pending & INT_CMD_DONE)) available = 0;
 +		while (available && moved < bytes) {
-+			uint64_t value = 0.
++			uint64_t value = 0;
 +			if (write) {
-+				memcpy(&value, buffer + moved, unit).
++				memcpy(&value, buffer + moved, unit);
 +				if (unit == 8) {
-+					emmc_wr(data_off, (uint32_t)value).
-+					emmc_wr(data_off + 4, (uint32_t)(value >> 32)).
-+				} else if (unit == 4) emmc_wr(data_off, (uint32_t)value).
-+				else *(volatile uint16_t *)(emmc_regs + data_off) = (uint16_t)value.
++					emmc_wr(data_off, (uint32_t)value);
++					emmc_wr(data_off + 4, (uint32_t)(value >> 32));
++				} else if (unit == 4) emmc_wr(data_off, (uint32_t)value);
++				else *(volatile uint16_t *)(emmc_regs + data_off) = (uint16_t)value;
 +			} else {
 +				if (unit == 8) {
-+					value = emmc_rd(data_off).
-+					value |= (uint64_t)emmc_rd(data_off + 4) << 32.
-+				} else if (unit == 4) value = emmc_rd(data_off).
-+				else value = *(volatile uint16_t *)(emmc_regs + data_off).
-+				memcpy(buffer + moved, &value, unit).
++					value = emmc_rd(data_off);
++					value |= (uint64_t)emmc_rd(data_off + 4) << 32;
++				} else if (unit == 4) value = emmc_rd(data_off);
++				else value = *(volatile uint16_t *)(emmc_regs + data_off);
++				memcpy(buffer + moved, &value, unit);
 +			}
-+			moved += unit; available--.
++			moved += unit; available--;
 +		}
-+		uint32_t request = write ? INT_TXDR : INT_RXDR.
-+		if (pending & request) emmc_wr(EMMC_RINTSTS, request).
-+		if (moved == bytes && (pending & INT_CMD_DONE) && (pending & INT_DATA_OVER)) break.
++		uint32_t request = write ? INT_TXDR : INT_RXDR;
++		if (pending & request) emmc_wr(EMMC_RINTSTS, request);
++		if (moved == bytes && (pending & INT_CMD_DONE) && (pending & INT_DATA_OVER)) break;
 +		if (i == A5_EMMC_POLL_LIMIT - 1) { error = ETIMEDOUT; goto out; }
 +	}
-+	phase = 4.
-+	error = emmc_wait_idle().
++	phase = 4;
++	error = emmc_wait_idle();
 +	/* dw_mci completes SBC data from command/data events and PIO length,
 +	 * not TCBCNT equality. Keep both hardware counters as observations;
 +	 * rejecting a completed transfer then issuing CMD12 can itself fail
 +	 * because the bounded CMD23 transfer already returned to TRAN. */
 +	if (!error && emmc_multi_reads + emmc_multi_writes < 4) {
 +		printf("A5XELTE eMMC multi: complete write=%u blocks=%u moved=%u tcbc=%u tbbc=%u\n",
-+		    write, blocks, moved, emmc_rd(EMMC_TCBCNT), emmc_rd(EMMC_TBBCNT)).
++		    write, blocks, moved, emmc_rd(EMMC_TCBCNT), emmc_rd(EMMC_TBBCNT));
 +	}
 +out:
 +	if (error) {
 +		printf("A5XELTE eMMC multi: phase=%u error=%d rint=%x resp=%x status=%x tcbc=%u tbbc=%u\n",
 +		    phase, error, emmc_rd(EMMC_RINTSTS), emmc_rd(EMMC_RESP0),
-+		    emmc_rd(EMMC_STATUS), emmc_rd(EMMC_TCBCNT), emmc_rd(EMMC_TBBCNT)).
++		    emmc_rd(EMMC_STATUS), emmc_rd(EMMC_TCBCNT), emmc_rd(EMMC_TBBCNT));
 +	}
 +	if (error && data_started) {
-+		uint32_t stop_response = 0.
-+		int stopped = emmc_command(12u, 0, true, &stop_response).
-+		int idle = emmc_wait_idle().
-+		if (stopped || idle) emmc_io_poisoned = true.
++		uint32_t stop_response = 0;
++		int stopped = emmc_command(12u, 0, true, &stop_response);
++		int idle = emmc_wait_idle();
++		if (stopped || idle) emmc_io_poisoned = true;
 +		printf("A5XELTE eMMC multi: error=%d write=%u blocks=%u moved=%u stop=%d idle=%d poisoned=%u\n",
-+		    error, write, blocks, moved, stopped, idle, emmc_io_poisoned).
++		    error, write, blocks, moved, stopped, idle, emmc_io_poisoned);
 +	}
-+	if (error && !data_started && error != ENOTSUP) emmc_io_poisoned = true.
++	if (error && !data_started && error != ENOTSUP) emmc_io_poisoned = true;
 +	if (error && !data_started) {
 +		printf("A5XELTE eMMC multi: setup error=%d response=%x fallback=%u poisoned=%u\n",
-+		    error, response, error == ENOTSUP, emmc_io_poisoned).
++		    error, response, error == ENOTSUP, emmc_io_poisoned);
 +	}
-+	if (error) emmc_multi_blocks = 1.
++	if (error) emmc_multi_blocks = 1;
 +	else if (write) { emmc_multi_writes++; emmc_multi_write_blocks += blocks; }
 +	else { emmc_multi_reads++; emmc_multi_read_blocks += blocks; }
-+	emmc_wr(EMMC_RINTSTS, 0xffffffffu).
-+	emmc_wr(EMMC_INTMASK, ints).
-+	return error.
++	emmc_wr(EMMC_RINTSTS, 0xffffffffu);
++	emmc_wr(EMMC_INTMASK, ints);
++	return error;
 +}
 +
  static uint32_t
@@ -234,83 +234,83 @@ index 9ad7fd6..9f04038 100644
  		return ENXIO;
  	}
 @@ -512,12 +681,28 @@ emmc_strategy(buf_t bp)
- 		error = EIO.
- 		goto done.
+ 		error = EIO;
+ 		goto done;
  	}
-+	uint64_t requested_at = mach_absolute_time(), acquired_at, finished_at, elapsed.
- 	lck_mtx_lock(&a5xelte_emmc_lock).
-+	acquired_at = mach_absolute_time().
++	uint64_t requested_at = mach_absolute_time(), acquired_at, finished_at, elapsed;
+ 	lck_mtx_lock(&a5xelte_emmc_lock);
++	acquired_at = mach_absolute_time();
 +	if (emmc_io_poisoned) { error = EIO; goto unlock; }
  	for (uint32_t n = 0; n < count;) {
- 		uint64_t pos = off + n.
- 		uint32_t skip = pos & 511u.
- 		uint32_t take = MIN(count - n, 512u - skip).
- 		uint32_t lba = (uint32_t)(emmc_first_lba + pos / 512u).
+ 		uint64_t pos = off + n;
+ 		uint32_t skip = pos & 511u;
+ 		uint32_t take = MIN(count - n, 512u - skip);
+ 		uint32_t lba = (uint32_t)(emmc_first_lba + pos / 512u);
 +		if (!skip && count - n >= 1024u && emmc_multi_blocks > 1) {
-+			uint32_t blocks = MIN((count - n) / 512u, emmc_multi_blocks).
++			uint32_t blocks = MIN((count - n) / 512u, emmc_multi_blocks);
 +			error = emmc_transfer_blocks(lba, (uint8_t *)vaddr + n, blocks,
-+			    !(buf_flags(bp) & B_READ)).
++			    !(buf_flags(bp) & B_READ));
 +			if (!error) {
-+				n += blocks * 512u.
-+				buf_setresid(bp, count - n).
-+				continue.
++				n += blocks * 512u;
++				buf_setresid(bp, count - n);
++				continue;
 +			}
-+			if (error != ENOTSUP) break.
++			if (error != ENOTSUP) break;
 +			/* Only a rejected CMD23, before data transfer, may fall back. */
-+			error = 0.
++			error = 0;
 +		}
  		if (buf_flags(bp) & B_READ) {
- 			error = emmc_read_sector(lba, emmc_bounce).
+ 			error = emmc_read_sector(lba, emmc_bounce);
  			if (!error) {
 @@ -538,6 +723,17 @@ emmc_strategy(buf_t bp)
- 		n += take.
- 		buf_setresid(bp, count - n).
+ 		n += take;
+ 		buf_setresid(bp, count - n);
  	}
 +unlock:
-+	finished_at = mach_absolute_time().
-+	absolutetime_to_nanoseconds(acquired_at - requested_at, &elapsed).
-+	emmc_lock_wait_ns += elapsed.
-+	absolutetime_to_nanoseconds(finished_at - acquired_at, &elapsed).
-+	emmc_active_ns += elapsed.
-+	emmc_max_request_ns = MAX(emmc_max_request_ns, elapsed).
-+	emmc_requests++.
-+	if (buf_flags(bp) & B_READ) emmc_read_bytes += count - buf_resid(bp).
-+	else emmc_write_bytes += count - buf_resid(bp).
-+	if (error) emmc_io_errors++.
- 	lck_mtx_unlock(&a5xelte_emmc_lock).
- 	buf_unmap(bp).
++	finished_at = mach_absolute_time();
++	absolutetime_to_nanoseconds(acquired_at - requested_at, &elapsed);
++	emmc_lock_wait_ns += elapsed;
++	absolutetime_to_nanoseconds(finished_at - acquired_at, &elapsed);
++	emmc_active_ns += elapsed;
++	emmc_max_request_ns = MAX(emmc_max_request_ns, elapsed);
++	emmc_requests++;
++	if (buf_flags(bp) & B_READ) emmc_read_bytes += count - buf_resid(bp);
++	else emmc_write_bytes += count - buf_resid(bp);
++	if (error) emmc_io_errors++;
+ 	lck_mtx_unlock(&a5xelte_emmc_lock);
+ 	buf_unmap(bp);
  done:
 @@ -572,15 +768,30 @@ emmc_ioctl(__unused dev_t dev, u_long cmd, caddr_t data, __unused int flag,
  	case DKIOCISWRITABLE:
- 		*(uint32_t *)data = emmc_writable ? 1 : 0.
- 		return 0.
+ 		*(uint32_t *)data = emmc_writable ? 1 : 0;
+ 		return 0;
 +	/* Advertise the implemented bounded strategy size, not one block.
 +	 * HFS journal get_io_info takes the minimum byte/block/segment limit;
 +	 * stale one-block limits fragment synchronous journal transactions and
 +	 * reacquire the shared controller lock for every small fragment. PIO
 +	 * maps virtual buffers and does not require one physical segment. */
  	case DKIOCGETMAXBLOCKCOUNTREAD:
--		*(uint64_t *)data = 1.
-+		*(uint64_t *)data = A5_EMMC_MAX_IO_BYTES / emmc_secsize.
- 		return 0.
+-		*(uint64_t *)data = 1;
++		*(uint64_t *)data = A5_EMMC_MAX_IO_BYTES / emmc_secsize;
+ 		return 0;
  	case DKIOCGETMAXBLOCKCOUNTWRITE:
--		*(uint64_t *)data = emmc_writable ? 1 : 0.
-+		*(uint64_t *)data = emmc_writable ? A5_EMMC_MAX_IO_BYTES / emmc_secsize : 0.
-+		return 0.
+-		*(uint64_t *)data = emmc_writable ? 1 : 0;
++		*(uint64_t *)data = emmc_writable ? A5_EMMC_MAX_IO_BYTES / emmc_secsize : 0;
++		return 0;
 +	case DKIOCGETMAXBYTECOUNTREAD:
 +	case DKIOCGETMAXSEGMENTBYTECOUNTREAD:
-+		*(uint64_t *)data = A5_EMMC_MAX_IO_BYTES.
-+		return 0.
++		*(uint64_t *)data = A5_EMMC_MAX_IO_BYTES;
++		return 0;
 +	case DKIOCGETMAXBYTECOUNTWRITE:
 +	case DKIOCGETMAXSEGMENTBYTECOUNTWRITE:
-+		*(uint64_t *)data = emmc_writable ? A5_EMMC_MAX_IO_BYTES : 0.
- 		return 0.
++		*(uint64_t *)data = emmc_writable ? A5_EMMC_MAX_IO_BYTES : 0;
+ 		return 0;
  	case DKIOCGETMAXSEGMENTCOUNTREAD:
-+		*(uint64_t *)data = (A5_EMMC_MAX_IO_BYTES + PAGE_SIZE - 1u) / PAGE_SIZE.
-+		return 0.
++		*(uint64_t *)data = (A5_EMMC_MAX_IO_BYTES + PAGE_SIZE - 1u) / PAGE_SIZE;
++		return 0;
  	case DKIOCGETMAXSEGMENTCOUNTWRITE:
--		*(uint64_t *)data = 1.
-+		*(uint64_t *)data = emmc_writable ? (A5_EMMC_MAX_IO_BYTES + PAGE_SIZE - 1u) / PAGE_SIZE : 0.
+-		*(uint64_t *)data = 1;
++		*(uint64_t *)data = emmc_writable ? (A5_EMMC_MAX_IO_BYTES + PAGE_SIZE - 1u) / PAGE_SIZE : 0;
  		return 0.
  	case DKIOCSYNCHRONIZE:
  	case DKIOCSYNCHRONIZECACHE:
@@ -555,7 +555,7 @@ index 0000000..9d715ff
 +#  BSD_RELEASE =    [ BSD_BASE ]
 +#  BSD_DEV =        [ BSD_BASE config_vnguard ]
 +#  BSD_DEBUG =      [ BSD_BASE config_vnguard ]
-+#  FILESYS_BASE =   [ devfs fdesc fifo mockfs sweet_hfs fs_compression config_protect config_mnt_rootsnap config_rosv_startup config_mount_vm config_mount_prebootrecovery config_basesystemroot config_fse quota namedstreams config_imgsrc_access config_triggers config_searchfs config_volfs config_appledouble nullfs bindfs config_mnt_suid config_firmlinks config_dataless_files config_union_mounts config_file_leases ]
++#  FILESYS_BASE =   [ devfs fdesc fifo mockfs fs_compression config_protect config_mnt_rootsnap config_rosv_startup config_mount_vm config_mount_prebootrecovery config_basesystemroot config_fse quota namedstreams config_imgsrc_access config_triggers config_searchfs config_volfs config_appledouble nullfs bindfs config_mnt_suid config_firmlinks config_dataless_files config_union_mounts config_file_leases ]
 +#  FILESYS_RELEASE= [ FILESYS_BASE ]
 +#  FILESYS_DEV =    [ FILESYS_BASE config_iocount_trace ]
 +#  FILESYS_DEBUG =  [ FILESYS_BASE config_iocount_trace ]
