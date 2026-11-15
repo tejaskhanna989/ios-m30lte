@@ -21,7 +21,7 @@ set PLATFORM = ""
 set MACHINE = ""
 set DEF_AVP = ""
 set DEF_SEED = ""
-set SOURCE = ""
+set SOURCE = "."
 unset profile
 '''
 
