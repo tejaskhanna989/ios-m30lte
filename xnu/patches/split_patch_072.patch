@@ -1,5 +1,5 @@
---- xnu-orig/osfmk/mach/mach_assert.h	2026-11-15 12:21:24.382222693 +0530
-+++ xnu-source/osfmk/mach/mach_assert.h	2026-11-15 12:20:50.596880089 +0530
+--- xnu-orig/osfmk/mach_assert.h	2026-11-15 12:25:14.961787808 +0530
++++ xnu-source/osfmk/mach_assert.h	2026-11-15 12:20:50.596880089 +0530
 @@ -0,0 +1,26 @@
 +/*
 + * mach_assert.h - stub for optional mach_assert feature
