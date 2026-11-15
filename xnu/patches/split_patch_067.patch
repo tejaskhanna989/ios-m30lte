@@ -1,6 +1,5 @@
-diff -ruN xnu-orig/bsd/sys/vnode_internal.h xnu-source/bsd/sys/vnode_internal.h
---- xnu-orig/bsd/sys/vnode_internal.h
-+++ xnu-source/bsd/sys/vnode_internal.h
+--- xnu-orig/bsd/sys/vnode_internal.h	2026-11-15 11:43:18.677490107 +0530
++++ xnu-source/bsd/sys/vnode_internal.h	2026-11-15 11:38:58.219169661 +0530
 @@ -83,10 +83,15 @@
  #include <kern/locks.h>
  #include <vm/vm_kern.h>
@@ -13,6 +12,7 @@ diff -ruN xnu-orig/bsd/sys/vnode_internal.h xnu-source/bsd/sys/vnode_internal.h
  #include <sys/vfs_context.h>
  #include <sys/sysctl.h>
 +#include <sys/ptrauth.h>
++
  
  
  struct lockf;

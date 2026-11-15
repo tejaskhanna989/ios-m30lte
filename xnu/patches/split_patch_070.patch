@@ -1,6 +1,5 @@
-diff -ruN xnu-orig/security/mac_audit.c xnu-source/security/mac_audit.c
---- xnu-orig/security/mac_audit.c
-+++ xnu-source/security/mac_audit.c
+--- xnu-orig/security/mac_audit.c	2026-11-15 11:43:19.172334201 +0530
++++ xnu-source/security/mac_audit.c	2026-11-15 11:37:13.428632433 +0530
 @@ -63,6 +63,33 @@
  #include <sys/param.h>
  #include <sys/types.h>

@@ -1,6 +1,5 @@
-diff -ruN xnu-orig/libkern/os/atomic_private_impl.h xnu-source/libkern/os/atomic_private_impl.h
---- xnu-orig/libkern/os/atomic_private_impl.h
-+++ xnu-source/libkern/os/atomic_private_impl.h
+--- xnu-orig/libkern/os/atomic_private_impl.h	2026-11-15 11:43:18.886833559 +0530
++++ xnu-source/libkern/os/atomic_private_impl.h	2026-11-15 11:37:54.540129855 +0530
 @@ -41,14 +41,31 @@
  
  #pragma mark - implementation details
@@ -36,6 +35,17 @@ diff -ruN xnu-orig/libkern/os/atomic_private_impl.h xnu-source/libkern/os/atomic
  		return 1;
  	default:
  		return 0;
+@@ -59,27 +76,27 @@
+ _os_atomic_mo_has_release(OS_ATOMIC_STD memory_order ord)
+ {
+ 	switch (ord) {
+-	case os_atomic_std(memory_order_release):
+-	case os_atomic_std(memory_order_acq_rel):
+-	case os_atomic_std(memory_order_seq_cst):
++	case os_atomic_std(__ATOMIC_RELEASE):
++	case os_atomic_std(__ATOMIC_ACQ_REL):
++	case os_atomic_std(__ATOMIC_SEQ_CST):
+ 		return 1;
  	default:
  		return 0;
  	}

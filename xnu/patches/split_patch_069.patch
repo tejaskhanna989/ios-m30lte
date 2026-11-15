@@ -1,6 +1,5 @@
-diff -ruN xnu-orig/osfmk/arm/locks.h xnu-source/osfmk/arm/locks.h
---- xnu-orig/osfmk/arm/locks.h
-+++ xnu-source/osfmk/arm/locks.h
+--- xnu-orig/osfmk/arm/locks.h	2026-11-15 11:43:18.937508439 +0530
++++ xnu-source/osfmk/arm/locks.h	2026-11-15 11:32:24.040652592 +0530
 @@ -94,6 +94,16 @@
  	uintptr_t opaque[16];
  } lck_mtx_ext_t;
