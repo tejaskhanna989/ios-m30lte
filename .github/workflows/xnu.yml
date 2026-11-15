@@ -169,6 +169,8 @@ jobs:
         ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/sys/ptrauth.h
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
       run: cd xnu-source && python3 ../xnu/patches/patch_atomic_private.py
+    - name: Apply comprehensive patches for remaining issues
+      run: cd xnu-source && python3 ../xnu/patches/patch_comprehensive.py
     - name: Patch proc_reg.h for M30LTE processor support
       run: cd xnu-source && python3 ../xnu/patches/patch_proc_reg.py
     - name: Patch osfmk/mach/arm/Makefile for VPATH
