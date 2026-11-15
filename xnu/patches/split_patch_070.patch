@@ -1,6 +1,6 @@
 --- xnu-orig/security/mac_audit.c	2026-11-15 11:43:19.172334201 +0530
-+++ xnu-source/security/mac_audit.c	2026-11-15 11:37:13.428632433 +0530
-@@ -63,6 +63,33 @@
++++ xnu-source/security/mac_audit.c	2026-11-15 12:16:06.853297116 +0530
+@@ -63,6 +63,32 @@
  #include <sys/param.h>
  #include <sys/types.h>
  #include <sys/vnode.h>
@@ -29,7 +29,6 @@
 +int mac_proc_check_setaudit(struct proc *curp, struct auditinfo_addr *aip);
 +int mac_proc_check_getaudit_addr(struct proc *curp, struct auditinfo_addr *aip, int *sizep);
 +int mac_proc_check_setaudit_addr(struct proc *curp, struct auditinfo_addr *aip);
-+int mac_system_check_auditctl(struct ucred *cred, struct vnode *vp);
 +
  #include <sys/vnode_internal.h>
  #include <sys/kauth.h>
