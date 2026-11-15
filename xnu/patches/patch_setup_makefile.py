@@ -19,7 +19,7 @@ with open(path, 'r') as f:
 # The original SETUP_SUBDIRS includes host tools
 # We want to skip them when building for ARM64 (target kernel build)
 # Host tools are already built separately for macOS (x86_64)
-# Check RC_ARCHS for arm64 (target) vs x86_64 (host)
+# Use CURRENT_ARCH_CONFIG which is passed to recursive makes
 
 old_subdirs = """SETUP_SUBDIRS =		\\
 	config		\\
@@ -29,7 +29,7 @@ old_subdirs = """SETUP_SUBDIRS =		\\
 	installfile	\\
 	replacecontents"""
 
-new_subdirs = """ifeq ($(filter arm64,$(RC_ARCHS)),arm64)
+new_subdirs = """ifeq ($(CURRENT_ARCH_CONFIG),ARM64)
 SETUP_SUBDIRS = config
 else
 SETUP_SUBDIRS =		\\
