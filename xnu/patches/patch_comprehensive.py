@@ -6,8 +6,6 @@ import re
 
 def patch_atomic_thread_fence():
     """Add atomic_thread_fence and atomic_signal_fence declarations."""
-    # These functions are in stdatomic.h but might not be available
-    # We'll add them to atomic_private_impl.h
     path = 'libkern/os/atomic_private_impl.h'
     if not os.path.exists(path):
         print(f"{path} not found!")
@@ -46,12 +44,20 @@ extern void atomic_signal_fence(memory_order order);
 
 def patch_locks_h():
     """Ensure lck_mtx_t is fully defined in locks.h"""
-    path = 'EXPORT_HDRS/osfmk/arm/locks.h'
-    if not os.path.exists(path):
-        # Try alternative location
-        path = 'osfmk/arm/locks.h'
-    if not os.path.exists(path):
-        print(f"locks.h not found!")
+    # Try multiple possible locations
+    paths = [
+        'EXPORT_HDRS/osfmk/arm/locks.h',
+        'osfmk/arm/locks.h',
+        'EXPORT_HDRS/osfmk/mach/locks.h',
+        'osfmk/mach/locks.h',
+    ]
+    
+    for path in paths:
+        if os.path.exists(path):
+            print(f"Found locks.h at {path}")
+            break
+    else:
+        print(f"locks.h not found in any expected location!")
         return False
         
     with open(path, 'r') as f:
@@ -63,8 +69,14 @@ def patch_locks_h():
         return True
     
     # Replace forward declaration with full definition
-    old = 'struct lck_mtx_t;'
-    new = '''struct lck_mtx_t {
+    # Try multiple patterns
+    patterns = [
+        'struct lck_mtx_t;',
+        'struct lck_mtx_t ;',
+        'struct lck_mtx_t\t;',
+    ]
+    
+    new_def = '''struct lck_mtx_t {
     uint32_t lck_mtx_type;
     uint32_t lck_mtx_attr;
     uint32_t lck_mtx_grp;
@@ -73,15 +85,42 @@ def patch_locks_h():
     struct lck_mtx_deb *lck_mtx_deb;
 };'''
     
-    if old in content:
-        content = content.replace(old, new)
+    for pattern in patterns:
+        if pattern in content:
+            content = content.replace(pattern, '''struct lck_mtx_t {
+    uint32_t lck_mtx_type;
+    uint32_t lck_mtx_attr;
+    uint32_t lck_mtx_grp;
+    uint32_t lck_mtx_pad1;
+    uint32_t lck_mtx_pad2;
+    struct lck_mtx_deb *lck_mtx_deb;
+};''')
+            with open(path, 'w') as f:
+                f.write(content)
+            print(f"Patched locks.h with full lck_mtx_t definition")
+            return True
+    
+    # If not found, try regex
+    if re.search(r'struct\s+lck_mtx_t\s*;', content):
+        content = re.sub(r'struct\s+lck_mtx_t\s*;', 
+            '''struct lck_mtx_t {
+    uint32_t lck_mtx_type;
+    uint32_t lck_mtx_attr;
+    uint32_t lck_mtx_grp;
+    uint32_t lck_mtx_pad1;
+    uint32_t lck_mtx_pad2;
+    struct lck_mtx_deb *lck_mtx_deb;
+};''', content)
         with open(path, 'w') as f:
             f.write(content)
-        print("Patched locks.h with full lck_mtx_t definition")
+        print("Patched locks.h with full lck_mtx_t definition (regex)")
         return True
-    else:
-        print("Could not find struct lck_mtx_t; in locks.h")
-        return False
+    
+    print("Could not find struct lck_mtx_t; in locks.h")
+    # Print first 1000 chars for debugging
+    print("First 2000 chars of locks.h:")
+    print(content[:2000])
+    return False
 
 def patch_vnode_internal():
     """Fix XNU_PTRAUTH_SIGNED_PTR macro in vnode_internal.h"""
@@ -93,10 +132,17 @@ def patch_vnode_internal():
     with open(path, 'r') as f:
         content = f.read()
     
-    # Check if already patched
-    if 'XNU_PTRAUTH_SIGNED_PTR' in content and 'ptrauth' in content.lower():
-        print("vnode_internal.h already has ptrauth")
-        return True
+    # Check if XNU_PTRAUTH_SIGNED_PTR macro is properly defined
+    # The issue is that the macro might be defined but not working correctly
+    # We need to ensure the macro is properly defined with ptrauth
+    
+    # Check if the macro is defined with ptrauth
+    has_proper_macro = False
+    if 'XNU_PTRAUTH_SIGNED_PTR' in content:
+        # Check if it's defined with ptrauth
+        if '__ptrauth' in content or 'ptrauth_key' in content:
+            print("vnode_internal.h already has proper ptrauth macro")
+            return True
     
     # Find the ptrauth.h include or add it
     if '#include <sys/ptrauth.h>' not in content:
@@ -108,17 +154,17 @@ def patch_vnode_internal():
                 insert_idx = i + 1
         lines.insert(insert_idx, '#include <sys/ptrauth.h>')
         content = '\n'.join(lines)
+        print("Added sys/ptrauth.h include")
     
-    # Define XNU_PTRAUTH_SIGNED_PTR macro if not defined
-    if 'XNU_PTRAUTH_SIGNED_PTR' not in content:
-        # Find a good place to add the macro (after includes)
-        lines = content.split('\n')
-        insert_idx = 0
-        for i, line in enumerate(lines):
-            if line.startswith('#include') and 'sys/' in line:
-                insert_idx = i + 1
-        
-        macro_def = '''
+    # Define XNU_PTRAUTH_SIGNED_PTR macro if not properly defined
+    # Find a good place to add the macro (after includes)
+    lines = content.split('\n')
+    insert_idx = 0
+    for i, line in enumerate(lines):
+        if line.startswith('#include') and 'sys/' in line:
+            insert_idx = i + 1
+    
+    macro_def = '''
 // Pointer authentication macro for vnode pointers
 #if defined(__arm64__) && __has_feature(ptrauth)
 #define XNU_PTRAUTH_SIGNED_PTR(_discriminator) \\
@@ -128,8 +174,8 @@ def patch_vnode_internal():
 #endif
 
 '''
-        lines.insert(insert_idx + 1, macro_def)
-        content = '\n'.join(lines)
+    lines.insert(insert_idx + 1, macro_def)
+    content = '\n'.join(lines)
     
     with open(path, 'w') as f:
         f.write(content)
@@ -138,7 +184,6 @@ def patch_vnode_internal():
 
 def patch_mount_t():
     """Ensure mount_t is defined by including sys/mount.h where needed"""
-    # The error is in bsd/sys/systm.h - we need to add the include there
     path = 'bsd/sys/systm.h'
     if not os.path.exists(path):
         print(f"systm.h not found!")
@@ -169,8 +214,6 @@ def patch_mount_t():
 
 def patch_config_syntax():
     """Fix config file syntax error at line 193"""
-    # The error might be in a generated config file
-    # Let's check the MASTER.arm64.m30lte config
     path = 'config/MASTER.arm64.m30lte'
     if not os.path.exists(path):
         print(f"MASTER.arm64.m30lte not found!")
