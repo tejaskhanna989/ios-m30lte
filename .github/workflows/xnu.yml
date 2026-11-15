@@ -168,7 +168,7 @@ jobs:
         echo "Copied ptrauth.h to sys/ptrauth.h"
         ls -la BUILD/obj/DEVELOPMENT_ARM64_M30LTE/EXPORT_HDRS/sys/ptrauth.h
     - name: Patch libkern/os/atomic_private_impl.h for memory_order
-      run: cd xnu-source; sed -i '' 's/memory_order_relaxed/__ATOMIC_RELAXED/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_acquire/__ATOMIC_ACQUIRE/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_release/__ATOMIC_RELEASE/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_acq_rel/__ATOMIC_ACQ_REL/g' libkern/os/atomic_private_impl.h; sed -i '' 's/memory_order_seq_cst/__ATOMIC_SEQ_CST/g' libkern/os/atomic_private_impl.h
+      run: cd xnu-source && python3 ../xnu/patches/patch_atomic_private.py
     - name: Patch proc_reg.h for M30LTE processor support
       run: cd xnu-source && python3 ../xnu/patches/patch_proc_reg.py
     - name: Patch osfmk/mach/arm/Makefile for VPATH
