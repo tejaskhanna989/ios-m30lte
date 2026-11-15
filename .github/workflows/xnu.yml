@@ -202,6 +202,8 @@ jobs:
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config; cp -r config/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/config/
     - name: Copy SETUP source to build directory for build_setup
       run: cd xnu-source; mkdir -p BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP; cp -r SETUP/* BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP/
+    - name: Patch SETUP/Makefile in source directory to skip host tools during kernel build
+      run: cd xnu-source && python3 ../xnu/patches/patch_setup_makefile.py SETUP/Makefile
     - name: Patch SETUP/Makefile in build directory to skip host tools during kernel build
       run: cd xnu-source && python3 ../xnu/patches/patch_setup_makefile.py BUILD/obj/DEVELOPMENT_ARM64_M30LTE/SETUP/Makefile
     - name: Copy iokit/DriverKit source to build directory for IIG generation
