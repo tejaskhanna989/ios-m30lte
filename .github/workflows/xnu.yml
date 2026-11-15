@@ -236,6 +236,12 @@ jobs:
           cp "$HOST_OBJROOT/SETUP/config/config" "$TARGET_OBJROOT/SETUP/config/"
           echo "Copied config to target build directory"
         fi
+        # Copy installfile replacement from /usr/local/bin to target build directory
+        if [ -f "/usr/local/bin/installfile" ]; then
+          mkdir -p "$TARGET_OBJROOT/SETUP/installfile"
+          cp /usr/local/bin/installfile "$TARGET_OBJROOT/SETUP/installfile/installfile"
+          echo "Copied installfile replacement to target build directory"
+        fi
     - name: Patch SETUP/Makefile in source directory to skip host tools during kernel build
       run: cd xnu-source && python3 ../xnu/patches/patch_setup_makefile.py SETUP/Makefile
     - name: Patch SETUP/Makefile in build directory to skip host tools during kernel build
