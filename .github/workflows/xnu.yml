@@ -37,7 +37,7 @@ jobs:
       matrix:
         runner: ${{ fromJSON(inputs.runner && format('["{0}"]', inputs.runner) || '["macos-15-intel"]') }}
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 120  # refresh 4 - FINAL
+    timeout-minutes: 120  # refresh 5 - FINAL
     steps:
       - uses: actions/checkout@v4
 
