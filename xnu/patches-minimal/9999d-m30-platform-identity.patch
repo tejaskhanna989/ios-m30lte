@@ -1,0 +1,21 @@
+diff --git a/tools/mkadt.py b/tools/mkadt.py
+index ca9bc2e..140d7ce 100644
+--- a/tools/mkadt.py
++++ b/tools/mkadt.py
+@@ -147,11 +147,11 @@ def build(seed=None, qemu=False):
+ 
+     return node('device-tree', [
+         ph(),
+-        ('compatible', cstr('D22AP') + cstr('iPhone10,3') + cstr('samsung,m30lte') + cstr('samsung,exynos7904') + cstr('AppleARM')),
+-        ('model', cstr('iPhone10,3')),
+-        ('target-type', cstr('D22')),
+-        ('target-sub-type', cstr('D22AP')),
+-        ('manufacturer', cstr('Apple Inc.')),
++        ('compatible', cstr('samsung,m30lte') + cstr('samsung,exynos7904') + cstr('AppleARM')),
++        ('model', cstr('samsung,m30lte')),
++        ('target-type', cstr('SAMSUNG')),
++        ('target-sub-type', cstr('M30LTE')),
++        ('manufacturer', cstr('Samsung Electronics Co., Ltd.')),
+         ('#address-cells', u32(2)),
+         ('#size-cells', u32(2)),
+     ], [chosen, defaults, cpus, arm_io, fbcon, buttons] + product + ([] if qemu else [emmc]))

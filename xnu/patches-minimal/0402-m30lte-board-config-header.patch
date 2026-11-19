@@ -1,0 +1,67 @@
+diff --git a/pexpert/pexpert/arm64/M30LTE.h b/pexpert/pexpert/arm64/M30LTE.h
+new file mode 100644
+index 0000000..1111de7
+--- /dev/null
++++ b/pexpert/pexpert/arm64/M30LTE.h
+@@ -0,0 +1,45 @@
++/* Samsung Galaxy M30 (SM-M305F): Exynos 7904, Cortex-A53. */
++#ifndef _PEXPERT_ARM64_M30LTE_H
++#define _PEXPERT_ARM64_M30LTE_H
++
++#define NO_MONITOR                    1
++#define NO_ECORE                      1
++
++#define M30LTE                        1
++/* Reuse donor's SoC-neutral early services until their guards are renamed. */
++#define SWEET                         1
++#define SWEET_SMP_MAX_CPUS            1
++
++#define ARM_ARCH_TIMER
++#define __ARM_ARCH__                  8
++#define __ARM_VMSA__                  8
++#define __ARM_VFP__                   4
++#define __ARM_COHERENT_CACHE__        1
++#define __ARM_DEBUG__                 7
++#define __ARM_ENABLE_SWAP__           1
++#define __ARM_V8_CRYPTO_EXTENSIONS__  1
++#define __ARM_PAN_AVAILABLE__         0
++
++/* Exynos7904 has a GICv2 distributor and CPU interface, not GICv3. */
++#define HAS_GIC_V3                    0
++#define M30LTE_VTIMER_INTID          27
++
++/* M30LTE-specific board addresses (from M20 donor, verified on M30 shim) */
++#define M30LTE_FB_PA                 0xec000000
++#define M30LTE_FB_WIDTH              1080
++#define M30LTE_FB_HEIGHT             2340
++#define M30LTE_FB_STRIDE             4320
++#define M30LTE_FB_BLOCKS             5
++#define M30LTE_FB_DOT_PITCH          409
++#define M30LTE_MARKER_PA             0x93fff100
++#define M30LTE_BOOT_MPIDR            0x100
++#define M30LTE_EMMC_PA               0x13500000
++/* Keys: ALIVE at 0x11cb0000, GPA1 at +0x60; vol up/dn + power on GPA1 pins 5/6/7, active low */
++#define M30LTE_ALIVE_PA              0x11cb0000
++#define M30LTE_GPA1_OFFSET           0x60
++
++#ifndef ASSEMBLER
++#define PLATFORM_PANIC_LOG_DISABLED
++#endif
++
++#endif /* _PEXPERT_ARM64_M30LTE_H */
+ 
+diff --git a/pexpert/pexpert/arm64/Makefile b/pexpert/pexpert/arm64/Makefile
+index c7d274f..e697ef7 100644
+--- a/pexpert/pexpert/arm64/Makefile
++++ b/pexpert/pexpert/arm64/Makefile
+@@ -18,7 +18,8 @@ PRIVATE_KERNELFILES = \
+ 	H13.h \
+ 	VMAPPLE.h \
+ 	BCM2837.h \
+ 	SWEET.h \
+-	A5XELTE.h
++	M30LTE.h \
++	A5XELTE.h
+ 
+ 
+ # Headers installed into System.framework/PrivateHeaders (userspace internal SDK only).
