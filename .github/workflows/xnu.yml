@@ -89,6 +89,18 @@ jobs:
       run: |
         set -o pipefail
         bash build.sh 2>&1 | tee ../build.log
+    - name: Verify libfirehose_kernel is iOS arm64
+      if: env.XNU_TARGET == 'iphoneos'
+      working-directory: dxb
+      run: |
+        echo "=== libfirehose_kernel.a object platforms ==="
+        for obj in $(find build/libfirehose_kernel.obj -name '*.o' | head -5); do
+          echo "-- $obj"
+          xcrun llvm-lipo -archs "$obj" 2>/dev/null || true
+          otool -l "$obj" 2>/dev/null | grep -A2 LC_BUILD_VERSION | head -4 || true
+        done
+        echo "=== archive presence ==="
+        ls -la fakeroot/usr/local/lib/kernel/libfirehose_kernel.a
     - name: Verify MakeInc.def has M30LTE
       run: |
         echo "=== SUPPORTED_ARM64_MACHINE_CONFIGS ==="
