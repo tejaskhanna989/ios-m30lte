@@ -154,8 +154,13 @@ jobs:
       if: always()
       run: |
         test -f build.log || exit 0
-        kernel="dxb/fakeroot/System/Library/Kernels/kernel.$(echo "$KERNEL_CONFIG" | tr A-Z a-z).$(echo "$MACHINE_CONFIG" | tr A-Z a-z)"
-        if [ -f "$kernel" ]; then echo "kernel built: $kernel"; exit 0; fi
+        kc=$(echo "$KERNEL_CONFIG" | tr A-Z a-z)
+        # macosx target: kernel.<kc>.<mc> in /System/Library/Kernels; ios: mach.<kc>.<mc> at fakeroot root
+        for kernel in \
+          "dxb/fakeroot/System/Library/Kernels/kernel.${kc}.$(echo "$MACHINE_CONFIG" | tr A-Z a-z)" \
+          "dxb/fakeroot/mach.${kc}.$(echo "$MACHINE_CONFIG" | tr A-Z a-z)"; do
+          if [ -f "$kernel" ]; then echo "kernel built: $kernel"; exit 0; fi
+        done
         python3 - build.log <<'PYEOF'
         import re, sys
         lines = open(sys.argv[1], errors='replace').read().splitlines()
