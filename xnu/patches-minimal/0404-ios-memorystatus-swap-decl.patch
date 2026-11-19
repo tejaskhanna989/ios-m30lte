@@ -1,0 +1,15 @@
+diff --git a/osfmk/vm/vm_compressor.c b/osfmk/vm/vm_compressor.c
+--- a/osfmk/vm/vm_compressor.c
++++ b/osfmk/vm/vm_compressor.c
+@@ -769,9 +769,9 @@
+ STARTUP_ARG(EARLY_BOOT, STARTUP_RANK_FIRST, cleanup_csegbufsz_experiment, NULL);
+ #endif /* XNU_TARGET_OS_OSX && __arm64__ */
+ 
+-#if CONFIG_JETSAM
++/* iOS target: the !XNU_TARGET_OS_OSX branches below reference this symbol
++ * regardless of CONFIG_JETSAM, so the declaration must be unconditional. */
+ extern unsigned int memorystatus_swap_all_apps;
+-#endif /* CONFIG_JETSAM */
+ 
+ TUNABLE_DT(uint64_t, swap_vol_min_capacity, "/defaults", "kern.swap_min_capacity", "kern.swap_min_capacity", 0, TUNABLE_DT_NONE);
+ 
