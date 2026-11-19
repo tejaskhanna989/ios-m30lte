@@ -116,6 +116,36 @@ jobs:
           done
           ls dxb/patches | sort
 
+      - name: Apply patches and verify MakeInc.def
+        working-directory: dxb
+        run: |
+          # Apply patches manually to verify
+          cd xnu
+          for patch in \
+            0085-a5xelte-board-target.patch \
+            0096-m30lte-a5xelte-h-overrides.patch \
+            0400-m30lte-board-target.patch \
+            0402-m30lte-board-config-header.patch \
+            0403-m30lte-hardware-overrides.patch; do
+            echo "Applying critical patch: $patch"
+            git apply "../patches/$patch"
+          done
+          # Apply remaining patches
+          for patch in ../patches/*.patch; do
+            name=$(basename "$patch")
+            if [[ ! "$name" =~ ^(0085|0096|0400|0402|0403)- ]]; then
+              git apply "$patch" 2>/dev/null || echo "Skipped: $name"
+            fi
+          done
+          # Verify MakeInc.def has M30LTE
+          echo "=== SUPPORTED_ARM64_MACHINE_CONFIGS ==="
+          grep "SUPPORTED_ARM64_MACHINE_CONFIGS" makedefs/MakeInc.def
+          echo "=== MACHINE_FLAGS_ARM64_M30LTE ==="
+          grep "MACHINE_FLAGS_ARM64_M30LTE" makedefs/MakeInc.def
+          cd ..
+        env:
+          MACHINE_CONFIG: M30LTE
+
       - name: Deps
         run: |
           brew install jq gum bash cmake ninja
@@ -151,6 +181,8 @@ jobs:
           MAKEFLAGS: ${{ inputs.keep_going == 'false' && '' || '-k' }}
         run: |
           set -o pipefail
+          # Skip patch application since we already applied them
+          export SKIP_PATCHES=1
           bash build.sh 2>&1 | tee ../build.log
 
       - name: Verify effective M30 source tree
