@@ -37,10 +37,12 @@ text = text.replace(jsondb_make,
 # libfirehose_kernel.a is linked into the kernel. It must match the target
 # platform/CPU: the stock line builds it for macOS arm64e (pointer auth),
 # which ld rejects when linking an iOS arm64 kernel.
-libfh = 'xcodebuild install -target libfirehose_kernel -sdk macosx ARCHS="x86_64 arm64e" VALID_ARCHS="x86_64 arm64e"'
+# NOTE: patch_build_sh.py runs first and already rewrote the firehose ARCHS
+# to arm64 for M30LTE, so match only the -sdk macosx token on that line.
+libfh = 'xcodebuild install -target libfirehose_kernel -sdk macosx'
 assert text.count(libfh) == 1, 'libfirehose_kernel xcodebuild line not found'
 text = text.replace(libfh,
-    'xcodebuild install -target libfirehose_kernel -sdk iphoneos ARCHS="arm64" VALID_ARCHS="arm64"')
+    'xcodebuild install -target libfirehose_kernel -sdk iphoneos')
 
 path.write_text(text)
 print('iOS target: kernel make + jsondb make -> SDKROOT=iphoneos; libfirehose_kernel -> iphoneos arm64')
