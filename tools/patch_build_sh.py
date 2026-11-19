@@ -52,7 +52,7 @@ new_loop = (
     '        for PATCH in "${PATCH_DIR}"/*.patch; do\n'
     '            PATCH_NAME="$(basename "$PATCH")"\n'
     '            case "$PATCH_NAME" in\n'
-    '        0085-a5xelte-board-target.patch|0096-m30lte-a5xelte-h-overrides.patch|0400-m30lte-board-target.patch|0402-m30lte-board-config-header.patch|0403-m30lte-hardware-overrides.patch|9998b-m30-adt-restore.patch|9998c-m30-adt-restore-call.patch)\n'
+    '        0085-a5xelte-board-target.patch|0096-m30lte-a5xelte-h-overrides.patch|0400-m30lte-board-target.patch|0402-m30lte-board-config-header.patch|0403-m30lte-hardware-overrides.patch|9998b-m30-adt-restore.patch|9998c-m30-adt-restore-call.patch|9998e-m30-adt-export.patch)\n'
     '            if ! APPLY_CHECK=$(git apply --check "$PATCH" 2>&1); then\n'
     '                echo "ERROR: critical M30LTE patch failed preflight: $PATCH_NAME" >&2\n'
     '                echo "$APPLY_CHECK" >&2\n'
