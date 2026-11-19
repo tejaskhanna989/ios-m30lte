@@ -276,3 +276,58 @@ No physical operations performed.
   (current shim.c still contains GICv3 ICC code and an unsupported watchdog poke at 0x10160000),
   timer CNTFRQ_EL0, or any no-write temporary boot route. Per 2ffc523 NO-GO report and
   BOOT_PROTOCOL.md, NO physical boot is authorized; candidate is for offline review only.
+
+## 2026-11-19 — GICv2 / ARM64 startup compatibility investigation (MAIN ONLY)
+
+Status legend: VERIFIED = local evidence; UNKNOWN = no preserved evidence; FAILED = contradicted.
+
+1. GIC register accesses in shim (VERIFIED): shim/shim.c `irq_handler()` reads ICC_IAR1_EL1
+   and writes ICC_EOIR1_EL1 (GICv3 system regs); `test_gic()` (compiler-confirmed dead code,
+   NO callers) touches GICD_BASE 0x12301000, pseudo-GICR_BASE 0x12302000, GICR_TYPER/WAKER,
+   IGROUPR0/IPRIORITYR/ISENABLER0 at GICR+0x080/0x400/0x100, ICC_CTLR/PMR/BPR/IGRPEN1_EL1,
+   CNTV_TVAL_EL0/CNTV_CTL_EL0. shim/device.h + devices/m30lte.c label these GICv3 fields.
+   No `msr DAIFClr` anywhere: interrupts stay masked in the shim.
+2. GIC version/addresses (VERIFIED): raw M30 DT evidence (preserved in unmerged commit
+   2ffc523 FINAL_REPORT.md / offline-remediation) says compatible `arm,cortex-a15-gic` +
+   `arm,cortex-a9-gic` -> GICv2; reg tuples 0x12301000/0x1000 (GICD), 0x12302000/0x1000
+   (GICC), 0x12304000/0x2000, 0x12306000/0x2000; no GICv3 redistributor. The shim's
+   "GICR" 0x12302000 is actually GICC. mkadt.py encodes GIC reg as (addr - SOC_BASE 0x1000000)
+   -> ADT 0x11301000/0x11302000; kernel pe_init_fiq() adds SOC base -> 0x12301000/0x12302000.
+3. GICv3 vs required GICv2 sequence (VERIFIED mismatch, impact NEGLIGIBLE): ICC_* system
+   registers are UNDEFINED on GICv2 and redistributor offsets are wrong. However these paths
+   are unreachable: `test_gic()` is never called and IRQs are masked, so `irq_handler()`
+   cannot be entered. A correct GICv2 sequence exists in earlier candidate source
+   (commit 3e1f3dd, shim_fixed.c `gicv2_init()`) mirroring XNU pe_init_fiq().
+4. Does the shim need GIC init? (VERIFIED NO): XNU patch 0086 `pe_init_fiq()` initializes
+   GICv2 from the ADT itself (GICD 0x000/0x080/0x100/0x400, GICC 0x000/0x004/0x008/0x00c/
+   0x010, RWP wait). The shim can safely preserve the bootloader's interrupt configuration
+   provided IRQs stay masked (confirmed). No GIC init was added to the shim.
+5. Watchdog 0x10160000 (VERIFIED unsupported write REMOVED): shim_main wrote 1 to
+   0x10160000 unconditionally; no DT property supports that address (2ffc523 audit).
+   Applied minimal fix on main: removed the write from shim/shim.c. We never wrote it.
+6. Bootloader load/entry/CPU state (UNKNOWN): no bootloader serial logs or entry traces are
+   preserved. Only physical record is commit 19f9838 (one-time BOOT flash with --no-reboot,
+   device left in Download Mode, XNU observation never captured). Shim is linked at
+   0x10008000 and the payload is placed at 0x10010000 only if that link address is honoured;
+   the claimed 0x80080000 runtime address has no source trace (2ffc523). Incoming EL, MMU and
+   cache state are unverified; earlier candidate 1faf0e8 added EL2 handling based on QEMU,
+   not M30 evidence. Current main shim has no CurrentEL dispatch.
+7. CNTFRQ_EL0 (UNKNOWN): raw DT declares clock-frequency 0x018cba80 = 26 MHz (used as
+   shim .timebase = 26000000, but that field is unused by shim.c). DT declaration is NOT a
+   CNTFRQ_EL0 register measurement. Kernel uses the architected timer with PPI 27.
+8. Minimal correction (APPLIED): only the watchdog removal (item 5). No GIC rewrite: the
+   GICv3 code is unreachable and replacing dead code adds risk without evidence.
+9. Offline tests (VERIFIED 6/6 PASS): validation/gic-audit-20261119/verify_shim_audit.py
+   checks linked shim ELF: no 0x10160000, DAIF masked at entry, no DAIFClr, ICC sysregs
+   unreachable, kernel GICv2 pe_init_fiq present, ADT GIC addresses SOC_BASE-consistent.
+   Fixed shim Image: 7,488 B, SHA256 8a7926bec64beb68e97da51d3c47ba67ab35c0197e08715feb6f084f15c07e84.
+10. Candidate v2 preserved (VERIFIED): SHA256 4fec619bb6dcf8fd6494cb01d136bf003aaadc9f85b0d26546862b9eaad2a763
+   unchanged. Candidate predates the watchdog fix; any future rebuild would produce a new
+   artifact and must be tracked separately.
+
+REMAINING BLOCKERS to physical testing (unchanged NO-GO):
+- No M30-specific no-write temporary boot protocol (BOOT_PROTOCOL.md UNRESOLVED).
+- Shim physical load address and entry contract UNKNOWN.
+- Incoming EL/MMU/cache state UNKNOWN; no CurrentEL handling on main's shim.
+- CNTFRQ_EL0 unmeasured; GICv2 runtime init not demonstrated; QEMU generic-virt not M30.
+- No bootloader logs preserved; earlier physical observation never captured.

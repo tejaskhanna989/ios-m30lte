@@ -185,10 +185,10 @@ void shim_main(uint64_t dtb)
 {
 	(void)dtb;
 
-	/* Samsung Exynos watchdog: kick to prevent reset during early boot. */
-	volatile uint32_t *wdt = (volatile uint32_t *)0x10160000UL;
-	*wdt = 0x1;
-
+	/* No undocumented MMIO writes: the former 0x10160000 watchdog poke had
+	 * no supporting device-tree property (see the 2ffc523 audit) and has
+	 * been removed.  Preserve the bootloader's timer/GIC state until XNU's
+	 * own pe_init_fiq() initializes the GICv2 from the ADT. */
 	volatile uint32_t *fb = (volatile uint32_t *)dev->fb_phys;
 	/* red = running */
 	for (int i = 0; i < 2048; i++) fb[i] = 0xFF0000FF;
