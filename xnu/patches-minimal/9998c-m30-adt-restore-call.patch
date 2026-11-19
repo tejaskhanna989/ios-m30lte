@@ -2,15 +2,14 @@ diff --git a/pexpert/arm/pe_init.c b/pexpert/arm/pe_init.c
 index 04dda53..7a3dbd1 100644
 --- a/pexpert/arm/pe_init.c
 +++ b/pexpert/arm/pe_init.c
-@@ -18,6 +18,7 @@
-  *     http://www.opensource.apple.com/apsl/
-  */
+@@ -21,6 +21,7 @@
+ #include <os/overflow.h>
  
- #include <platform.h>
+ #include <pexpert/arm64/board_config.h>
 +#include <arm64/sweet_early_adt_readback.h>
- #include <pexpert/pexpert.h>
- #include <kern/debug.h>
- #include <kern/kalloc.h>
+ 
+ 
+ /* extern references */
 @@ -423,6 +424,10 @@ PE_init_platform(boolean_t vm_initialized, void *args)
  		 * can be used..
  		 */
