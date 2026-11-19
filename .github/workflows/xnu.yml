@@ -62,6 +62,21 @@ jobs:
           assert text.count(old) == 1, 'darwin-xnu-build firehose line changed'
           text = text.replace(old, new)
 
+          # Add SKIP_PATCHES support to patches function
+          old_patches = (
+              "patches() {\n"
+              "    running \"🩹 Patching xnu files\"\n"
+          )
+          new_patches = (
+              "patches() {\n"
+              "    if [ -n \"${SKIP_PATCHES:-}\" ]; then\n"
+              "        running \"⏭️ Skipping patches (SKIP_PATCHES=1)\"\n"
+              "        return 0\n"
+              "    fi\n"
+              "    running \"🩹 Patching xnu files\"\n"
+          )
+          text = text.replace(old_patches, new_patches)
+
           old_loop = (
               "        for PATCH in \"${PATCH_DIR}\"/*.patch; do\n"
               "            if APPLY_CHECK=$(git apply --check \"$PATCH\" 2>&1); then\n"
@@ -101,6 +116,7 @@ jobs:
           )
           assert text.count(old_loop) == 1, 'darwin-xnu-build patch loop changed'
           text = text.replace(old_loop, new_loop)
+          text = text.replace(old_patches, new_patches)
           path.write_text(text)
           print('firehose:', new)
           print('critical patch policy: strict')
@@ -179,10 +195,9 @@ jobs:
         working-directory: dxb
         env:
           MAKEFLAGS: ${{ inputs.keep_going == 'false' && '' || '-k' }}
+          SKIP_PATCHES: "1"
         run: |
           set -o pipefail
-          # Skip patch application since we already applied them
-          export SKIP_PATCHES=1
           bash build.sh 2>&1 | tee ../build.log
 
       - name: Verify effective M30 source tree
