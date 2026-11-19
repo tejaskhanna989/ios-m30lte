@@ -331,3 +331,55 @@ REMAINING BLOCKERS to physical testing (unchanged NO-GO):
 - Incoming EL/MMU/cache state UNKNOWN; no CurrentEL handling on main's shim.
 - CNTFRQ_EL0 unmeasured; GICv2 runtime init not demonstrated; QEMU generic-virt not M30.
 - No bootloader logs preserved; earlier physical observation never captured.
+
+## 2026-11-19 — Next candidate v3 prepared (MAIN ONLY; NO-GO unchanged)
+
+Baseline: main @ ac461ee7, watchdog write removed from shim/shim.c (verified: only a
+historical comment mentions 0x10160000). Candidate v2 (4fec619b…a763) preserved unchanged.
+
+Build (source pair: boot-capable start.S + matching shim.ld from main, both restored from
+8da6834^; shim.c with watchdog removed; devices/m30lte.c + device.h from main):
+  aarch64-linux-gnu-gcc -O2 -ffreestanding -nostdlib -fno-pic -mgeneral-regs-only \
+    -mstrict-align -fno-stack-protector -Wall -Wextra -c {start.S,shim.c,devices/m30lte.c}
+  link: -static -T shim.ld -Wl,--build-id=none -Wl,--no-warn-rwx-segments -Wl,-N
+  objcopy -O binary -> Image (7,456 B, SHA 8a7926bec64beb68e97da51d3c47ba67ab35c0197e08715feb6f084f15c07e84)
+  python3 tools/mkpayload.py <CI kernel> m30lte-corrected.adt payload.bin \
+    --cmdline "debug=0xc serial=3 cpus=1 keepsyms=1"
+    -> payload.bin 16,452,656 B, SHA 83475dc9241b5b2e177c8f6920141a8a0c42c5a16973d935b731ffe8eae2547b
+  shim padded to 0x8000 + payload -> combined.bin 16,485,424 B,
+    SHA b25b9294bdaeb073c957ce31d2032f9fd3886861a3a8dcc9f3e6bb39bfe577c2
+  mkbootimg v2 (base 0x10000000; kernel 0x8000; ramdisk 0x1000000; dtb 0x1f00000;
+    tags 0x100; page 2048; cmdline "debug=0xc serial=3 keepsyms=1"; 512B empty ramdisk,
+    16B empty DTB)
+    -> m30lte-ios-candidate-20261119-v3.img 16,492,544 B,
+       SHA 52f46e59da71d8cf00d7fc3cb80020e0b961fcf716142684e3d1df7200159b2c
+
+Candidate structural verification: validation/post-green-build-20261119/out-v3/verify_candidate.py
+-> RESULT: 24/24 PASS (ARM64 Image header code0/magic/image_size 0x12000; boot header v2
+kernel 0x10008000, ramdisk 0x11000000, dtb 0x11f00000, tags 0x10000100; kernel bytes ==
+combined.bin; image bounds OK; payload 10 segments; entry VA->PA 0x81427488; ADT PA
+0x824a0000 within RAM; boot_args PA 0x824a4000 16K-aligned; watchdog literal absent from
+linked ELF; DAIF masked at entry and never unmasked).
+
+Verifier re-runs (exact commands in shell history / this section):
+- verify_cpu_fallback.py ... -> 17/17 PASS
+- verify_adt_restore.py ... -> 22/22 PASS
+- verify_shim_audit.py --elf out-v3/build/shim.elf --source shim/shim.c -> 6/6 PASS
+- verify_m30_buildtree.py --tree /tmp/m30-buildtree-ci/xnu -> PASS (4 critical reverse-applies)
+- verify_m30_kernel.py ... -> PASS (6 checks, SHA 361fc613…9042a1)
+
+Boot-chain evidence (UNKNOWN, not fabricated):
+- No preserved bootloader serial log or entry trace. Physical record 19f9838 = one-time
+  BOOT flash --no-reboot; device left in Download Mode; observation never captured.
+- Shim link address 0x10008000; payload placement 0x10010000 holds ONLY if bootloader
+  honours that load address. Runtime physical load address UNKNOWN (old 0x80080000 claim
+  has no source trace).
+- CurrentEL at entry UNKNOWN. Main shim has no CurrentEL dispatch. Earlier candidate
+  1faf0e8 added EL2->EL1 state installation, verified only in generic QEMU, not M30.
+- MMU/cache state at entry UNKNOWN (no boot-chain contract preserved).
+- CNTFRQ_EL0 UNKNOWN (DT clock-frequency 26 MHz is a declaration, not a register read).
+
+FINAL: NO-GO for physical test. Static/package checks all pass; remaining blockers are
+all physical/protocol: no proven M30 no-write temporary boot path, unknown load address,
+unknown entry EL/MMU/cache state, unmeasured CNTFRQ_EL0, no successful faithful-platform
+emulation. Candidate v3 is for offline review only. No device operations performed.
