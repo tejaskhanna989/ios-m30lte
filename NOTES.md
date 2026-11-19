@@ -430,3 +430,26 @@ DISTINCTION: CI verification is complete and green. Physical boot remains UNVERI
 and NO-GO — no M30 no-write boot path, unknown load address/entry EL/MMU/cache,
 unmeasured CNTFRQ_EL0. The platform-match root cause is fixed in the compiled
 kernel, but physical confirmation is not claimed.
+
+## 2026-11-19 — FINAL candidate v4 physical boot review (MAIN only)
+
+Integrity (all PASS):
+- v4 image exists, 16,492,544 B, SHA256 d3c2f75be03f55d900225995a58b72e5a50054859bdb99ba4ea46f94f6ba62db (matches expected).
+- Embedded payload SHA256 42d32803...8809e0907; seg0 bytes match D22AP-fixed kernel a14a2668...ec36 and NOT old v3 kernel 361fc613...042a1.
+- Compiled SweetPlatformExpert IONameMatch = 'samsung,m30lte' (D22AP fix present).
+- Watchdog literal 0x10160000 absent from linked v4 shim ELF.
+- Boot-capable start.S + matching shim.ld pair (ENTRY(_head), . = 0) used.
+- Image structure verifier 24/24 PASS (Image header, offsets, entry arithmetic, ADT/boot_args, bounds).
+
+Physical entry contract (from preserved records — VERIFIED / UNKNOWN / FAILED):
+- VERIFIED (user framebuffer, 2026-11-17): XNU reached `arm_init` with MMU on, then panicked at device_tree.c:65 with ADT pointer 0xfffffff06fbd2d97. This proves the shim successfully handed off to XNU at least once on physical hardware.
+- VERIFIED (user screen, 2026-11-18): after exact-ADT-restore candidate 112415a4...fe12df95, the device_tree.c:65 panic was PASSED and boot advanced to machine_routines.c:1244 CPU assert — subsequently fixed by 9999c. Both D22AP platform-match and CPU-fallback defects are now addressed in the current kernel.
+- VERIFIED (physical flash logs, 2026-11-18): Heimdall BOOT-only --no-reboot flash succeeded twice with exact SHA256 readback; original BOOT backup 469c12d2...441e78 intact. The physically-proven candidates used shim_fixed.elf linked at 0x80080000 WITH CurrentEL dispatch (EL1 direct + EL2->EL1 state install: HCR/VTTBR/CPTR/MDCR/CNTHCTL/CNTVOFF/SCTLR/ELR/SPSR), GICv2 init, and decon_f_enable_software_trigger().
+- FAILED/REGRESSION: candidate v4's shim has NO CurrentEL dispatch (entry 0x0, position-relative), NO GICv2 init (dead GICv3 code only), NO decon software trigger. v4 differs materially from the shim that physically reached XNU. Since incoming EL was never logged, an EL2 handoff would not be handled -> likely hang.
+- UNKNOWN: physical shim load address — boot.img header says 0x10008000; DABT PC/LR from the frozen candidate show 0x80080000 execution; no log definitively resolves which address S-Boot used for the successful boot.
+- UNKNOWN: incoming CurrentEL (physically-proven shim handled both; which path ran was not recorded).
+- UNKNOWN: MMU/cache state at handoff (S-Boot MMU enable proven via last_kmsg.txt; exact SCTLR/TTBR/TCR/MAIR/CTR at entry unobserved).
+- UNKNOWN: CNTFRQ_EL0 (DT clock-frequency 26 MHz is a declaration, not a register read).
+- UNKNOWN: no M30-specific no-write temporary boot route (BOOT_PROTOCOL.md UNRESOLVED).
+
+FINAL: NO-GO for physical test. All static/package checks pass, but v4's shim is NOT the shim configuration that physically reached XNU — it lacks CurrentEL/EL2 handling, and the physical load address/entry EL/MMU/cache state remain unmeasured. Remaining risks are physical/protocol, not kernel-image defects. No device operation performed.
