@@ -613,3 +613,32 @@ wait / launchd / IOService matching) rather than an early panic. Cause UNKNOWN �
 evidence (serial/console capture, or exact text of any later message).
 
 No further boot attempts performed. Device left in recovery. No device operations by me.
+
+## 2026-11-19 — Physical v5 hang point analysis (offline, MAIN only)
+
+User confirmed: after the framebuffer logs (SWEET FB / A5XELTE FB 30 Hz) the device hangs
+INDEFINITELY with no further text. No panic line.
+
+Source analysis of what comes next (from exact CI build tree):
+- The last printed line is from AppleCLCD::start() (patches 0046/0061/0124), during IOKit
+  IOService matching/registration. The very next major boot stage is IOFindBSDRoot()
+  (iokit/bsddev/IOKitBSDInit.cpp:660), which FIRST calls
+  IOService::waitForMatchingService(gIOBSD matching, 30 seconds) — a 30-second stall waiting
+  for BSD/filesystem services. If those never register, no further IOLog is guaranteed.
+- Our payload cmdline is "debug=0xc serial=3 cpus=1 keepsyms=1" — NO rd= (no rd=md0,
+  rd=ufsroot0, rd=emmcroot0). So IOFindBSDRoot will try to locate a root device by other
+  means; with no matching root service it can loop (mountAttempts++ -> "mount(N) failed")
+  or block in waitForMatchingService.
+- If a root device WERE selected, the A5XELTE eMMC path would print
+  "A5XELTE eMMC: ..." lines (patch 0104) or "BSD root: ..." — NONE of these appeared.
+  Therefore the hang is at/before root-device selection, not in the eMMC probe itself.
+- Also relevant: no "!BSD" line appeared. waitForMatchingService prints "!BSD" after 30s
+  timeout; user reports indefinite hang with no text, so either console output stops being
+  flushed after AppleCLCD register, or the stall is inside IOKit matching earlier.
+
+CONCLUSION: XNU reached a live framebuffer console and hung at the IOKit/BSD root-device
+stage. This is a NEW, later blocker than all previously fixed panics. Root cause UNKNOWN
+from current evidence — candidate mechanisms: (a) no rd= root device specified in cmdline,
+(b) IOKit service matching stall, (c) console output not flushed to framebuffer after
+AppleCLCD registration. No further device operations or boots were performed; all above is
+static source analysis plus the user's on-screen observation.
