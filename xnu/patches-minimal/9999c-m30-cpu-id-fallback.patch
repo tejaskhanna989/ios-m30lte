@@ -1,0 +1,37 @@
+diff --git a/osfmk/arm64/machine_routines.c b/osfmk/arm64/machine_routines.c
+--- a/osfmk/arm64/machine_routines.c
++++ b/osfmk/arm64/machine_routines.c
+@@ -1235,11 +1235,32 @@
+ ml_get_cpu_number_local(void)
+ {
+ 	uint64_t mpidr_el1_value = 0;
++	int lookup_id;
+ 	unsigned cpu_id;
+ 
+ 	/* We identify the CPU based on the constant bits of MPIDR_EL1. */
+ 	MRS(mpidr_el1_value, "MPIDR_EL1");
+-	cpu_id = ml_get_cpu_number((uint32_t)mpidr_el1_value);
++	lookup_id = ml_get_cpu_number((uint32_t)mpidr_el1_value);
++	cpu_id = (unsigned int)lookup_id;
++
++	/*
++	 * M30LTE boots one logical CPU.  Its MPIDR affinity may not match the
++	 * ADT "running" node's reg value, in which case ml_get_cpu_number()
++	 * returns -1 and the original assert below fails on the unsigned cast.
++	 * With exactly one configured CPU, the sole topology entry is the boot
++	 * CPU; use its validated logical ID rather than an unverified MPIDR.
++	 * All other lookup failures keep the original assertion behaviour.
++	 */
++	if (lookup_id == -1 && topology_info.num_cpus == 1 &&
++	    topology_info.boot_cpu != NULL) {
++		unsigned int boot_cpu_id = topology_info.boot_cpu->cpu_id;
++
++		if (boot_cpu_id < topology_info.num_cpus &&
++		    boot_cpu_id == (unsigned int)ml_get_max_cpu_number() &&
++		    topology_info.boot_cpu == &topology_info.cpus[boot_cpu_id]) {
++			return boot_cpu_id;
++		}
++	}
+ 
+ 	assert(cpu_id <= (unsigned int)ml_get_max_cpu_number());
+ 

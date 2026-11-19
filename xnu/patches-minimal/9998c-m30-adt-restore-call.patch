@@ -1,0 +1,15 @@
+diff --git a/pexpert/arm/pe_init.c b/pexpert/arm/pe_init.c
+index 04dda53..7a3dbd1 100644
+--- a/pexpert/arm/pe_init.c
++++ b/pexpert/arm/pe_init.c
+@@ -423,6 +423,10 @@ PE_init_platform(boolean_t vm_initialized, void *args)
+ 		 * can be used..
+ 		 */
+ 		SecureDTInit(PE_state.deviceTreeHead, PE_state.deviceTreeSize);
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++            /* Restore exact packaged ADT before platform identification parses it. */
++            m30_adt_readback_impl(PE_state.deviceTreeHead, PE_state.deviceTreeSize);
++#endif
+ 		pe_identify_machine(boot_args_ptr);
+ 	} else {
+ 		pe_arm_init_interrupts(args);

@@ -1,0 +1,47 @@
+diff --git a/iokit/KernelConfigTables.cpp b/iokit/KernelConfigTables.cpp
+index 9987f5a..64a85ab 100644
+--- a/iokit/KernelConfigTables.cpp
++++ b/iokit/KernelConfigTables.cpp
+@@ -34,12 +34,14 @@
+ 
+ const char * gIOKernelConfigTables =
+     "("
+-#if defined(ARM64_BOARD_CONFIG_SWEET) || defined(ARM64_BOARD_CONFIG_A5XELTE)
++#if defined(ARM64_BOARD_CONFIG_SWEET) || defined(ARM64_BOARD_CONFIG_A5XELTE) || defined(ARM64_BOARD_CONFIG_M30LTE)
+     "   {"
+     "     'IOClass'         = SweetPlatformExpert;"
+     "     'IOProviderClass' = IOPlatformExpertDevice;"
+ #if defined(ARM64_BOARD_CONFIG_A5XELTE)
+     "     'IONameMatch'     = 'samsung,a5xelte';"
++#elif defined(ARM64_BOARD_CONFIG_M30LTE)
++    "     'IONameMatch'     = 'samsung,m30lte';"
+ #else
+     "     'IONameMatch'     = 'xiaomi,sweet';"
+ #endif
+@@ -50,6 +52,8 @@ const char * gIOKernelConfigTables =
+     "     'IOProviderClass' = IOPlatformDevice;"
+ #if defined(ARM64_BOARD_CONFIG_A5XELTE)
+     "     'IONameMatch'     = 'arm,cortex-a53';"
++#elif defined(ARM64_BOARD_CONFIG_M30LTE)
++    "     'IONameMatch'     = 'arm,cortex-a53';"
+ #else
+     "     'IONameMatch'     = 'qcom,kryo470';"
+ #endif
+@@ -75,6 +79,8 @@ const char * gIOKernelConfigTables =
+     "     'IOProviderClass' = IOPlatformDevice;"
+ #if defined(ARM64_BOARD_CONFIG_A5XELTE)
+     "     'IONameMatch'     = 'samsung,a5xelte-display';"
++#elif defined(ARM64_BOARD_CONFIG_M30LTE)
++    "     'IONameMatch'     = 'm30lte,display';"
+ #else
+     "     'IONameMatch'     = 'sweet,display';"
+ #endif
+@@ -89,7 +95,7 @@ const char * gIOKernelConfigTables =
+     "     'IOProviderClass' = IOResources;"
+     "     'IOMatchCategory' = SweetHIDTouch;"
+     "   },"
+-#if !defined(ARM64_BOARD_CONFIG_A5XELTE)
++#if !defined(ARM64_BOARD_CONFIG_A5XELTE) && !defined(ARM64_BOARD_CONFIG_M30LTE)
+     "   {"
+     "     'IOClass'         = SweetBattery;"
+     "     'IOProviderClass' = IOResources;"

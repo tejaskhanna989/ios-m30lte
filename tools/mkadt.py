@@ -1,39 +1,34 @@
 #!/usr/bin/env python3
 """Build the minimal Apple Device Tree that the M30LTE xnu needs to boot.
 
-Only what the early boot path actually reads; every MMIO
-address comes from the m30 live FDT. Usage:  mkadt.py OUT.adt [--dump] [--qemu] [--highmem]
+Only values supported by the saved M30 tree are emitted. Usage:
+mkadt.py OUT.adt [--dump] [--qemu]
 """
-import hashlib, os, struct, sys
+import os, struct, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import adt  # noqa: E402
 
-# Kernel-managed RAM
-PHYS_BASE = 0xb0000000
-MEM_SIZE = 0x4d000000
-# Panic log buffer
-PANIC_LOG_SIZE = 0x100000
-# --highmem (phone only)
-HIGH_PHYS_BASE = 0x100000000
-HIGH_MEM_SIZE = 0xfcc00000
+# Kernel-managed RAM (from live DT: memory@80000000 = 0x3DA00000 @ 0x80000000)
+# Use Bank 0 only; other banks are noncontiguous or above the current loader model.
+PHYS_BASE = 0x80000000
+MEM_SIZE = 0x3DA00000  # 986 MB from first bank
 SOC_BASE = 0x01000000
 
-# Exynos 7885 GIC (TBD - will be updated from phone DTB)
-GICD, GICD_SIZE = 0x12300000, 0x10000
-GICR, GICR_SIZE = 0x12340000, 0x100000
-FB, FB_SIZE = 0x9c000000, 0x1700000
-M30LTE_ECID = 0x5357454554000001  # 'SWEET' -> 'M30LT'? Actually use synthetic
-FB_W, FB_H, FB_STRIDE = 1080, 2400, 1080 * 4
+# Exynos 7904 interrupt-controller@123001000 raw reg tuples:
+# distributor-like window 0x12301000/0x1000 and CPU-interface-like
+# window 0x12302000/0x1000. Do not synthesize a GICv3 redistributor.
+GICD, GICD_SIZE = 0x12301000, 0x1000
+GICC, GICC_SIZE = 0x12302000, 0x1000
+FB, FB_SIZE = 0xEC000000, 0x1400000
+FB_W, FB_H, FB_STRIDE = 1080, 2340, 1080 * 4
 # M30 uses eMMC, not UFS
-EMMC, EMMC_SIZE = 0x13500000, 0x1000
-TIMEBASE = 19200000
-VTIMER_INTID = 19
+EMMC, EMMC_SIZE = 0x13500000, 0x2000  # first raw DT reg tuple
+VTIMER_INTID = 27  # PPI 11 -> GIC INTID 27
 # QEMU virt (-M virt,gic-version=3 -cpu cortex-a76)
-QEMU_GICD, QEMU_GICR, QEMU_TIMEBASE = 0x08000000, 0x080a0000, 62500000
+QEMU_GICD, QEMU_GICR = 0x08000000, 0x080a0000
 QEMU_VTIMER_INTID = 27
 
-BOOT_MANIFEST_HASH = hashlib.sha384(b'm30 boot manifest').digest()
 
 D22AP_ADT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../research/ipsw-x/d22ap.adt')
 
@@ -61,11 +56,9 @@ def node(name, props=(), children=()):
     return n
 
 
-def build(seed=None, qemu=False, highmem=False):
-    phys_base, mem_size = (HIGH_PHYS_BASE, HIGH_MEM_SIZE) if highmem else (PHYS_BASE, MEM_SIZE)
-    panic_base = phys_base + mem_size - PANIC_LOG_SIZE
-    mem_size -= PANIC_LOG_SIZE
-    gicd, gicr, timebase = (QEMU_GICD, QEMU_GICR, QEMU_TIMEBASE) if qemu else (GICD, GICR, TIMEBASE)
+def build(seed=None, qemu=False):
+    phys_base, mem_size = PHYS_BASE, MEM_SIZE
+    gicd, gicc = (QEMU_GICD, QEMU_GICR) if qemu else (GICD, GICC)
     seed = seed if seed is not None else os.urandom(64)
     phandle = iter(range(1, 1000))
     ph = lambda: ('AAPL,phandle', u32(next(phandle)))
@@ -76,52 +69,37 @@ def build(seed=None, qemu=False, highmem=False):
         ('dram-size', u64(mem_size)),
         ('random-seed', seed),
         ('debug-enabled', u32(1)),
-        ('embedded-panic-log-size', u32(PANIC_LOG_SIZE)),
         ('firmware-version', cstr('m30lte-shim')),
         ('system-firmware-version', cstr('m30lte-shim')),
-        ('boot-manifest-hash', BOOT_MANIFEST_HASH),
-        ('crypto-hash-method', cstr('sha2-384')),
-        ('display-scale', u32(3)),
-        ('unique-chip-id', struct.pack('<Q', M30LTE_ECID)),
-        ('chip-id', u32(0x8015)),
-        ('certificate-production-status', u32(0)),
-        ('effective-production-status-ap', u32(0)),
-        ('certificate-security-mode', u32(1)),
-        ('effective-security-mode-sep', u32(1)),
     ], [node('memory-map', [ph()]),
-        node('asmb', [ph(), ('lp-sip0', u64(0x6f)), ('lp-sip1', u32(1))])])
+        node('asmb', [ph()])])
 
     cpu_nodes = []
-    for core in range(1 if qemu else 8):
-        cpu_nodes.append(node(f'cpu{core}', [
+    raw_cpus = [(0, 'arm,cortex-a73', 6), (1, 'arm,cortex-a73', 7),
+                (0x100, 'arm,cortex-a53', 0), (0x101, 'arm,cortex-a53', 1),
+                (0x102, 'arm,cortex-a53', 2), (0x103, 'arm,cortex-a53', 3),
+                (0x200, 'arm,cortex-a53', 4), (0x201, 'arm,cortex-a53', 5)]
+    if qemu:
+        raw_cpus = [(0, 'arm,cortex-a53', 0)]
+    for mpidr, compatible, logical_id in raw_cpus:
+        cpu_nodes.append(node(f'cpu@{mpidr:x}', [
             ph(),
             ('device_type', cstr('cpu')),
-            ('compatible', cstr('samsung,exynos7885') + cstr('ARM,v8')),
-            ('reg', u32(core << 8)),
-            ('cpu-id', u32(core)),
-            ('cluster-id', u32(0 if core < 6 else 1)),
-            ('cluster-type', u32(0)),
-            ('die-cluster-id', u32(0)),
-            ('cluster-core-id', u32(core)),
-            ('l2-cache-id', u32(core)),
-            ('l3-cache-id', u32(0)),
-            ('state', cstr('running' if core == 0 else 'stopped')),
-            ('timebase-frequency', u32(timebase)),
-            ('clock-frequency', u32(2304000000 if core >= 6 else 1804800000)),
-            ('bus-frequency', u32(100000000)),
-            ('memory-frequency', u32(1866000000)),
-            ('peripheral-frequency', u32(timebase)),
-            ('fixed-frequency', u32(timebase)),
+            ('compatible', cstr(compatible) + cstr('arm,armv8')),
+            ('reg', u64(mpidr)),
+            ('logical-id', u32(logical_id)),
+            ('enable-method', cstr('psci')),
         ]))
-    cpus = node('cpus', [ph(), ('#address-cells', u32(1)),
+    cpus = node('cpus', [ph(), ('#address-cells', u32(2)),
                          ('#size-cells', u32(0))], cpu_nodes)
 
+    # GICv2 node (from live DT: compatible="arm,cortex-a15-gic")
     gic = node('gic', [
         ph(),
-        ('compatible', cstr('arm,gic-v3')),
+        ('compatible', cstr('arm,cortex-a15-gic')),
         ('interrupt-controller', b''),
         ('virtual-timer-intid', u32(QEMU_VTIMER_INTID if qemu else VTIMER_INTID)),
-        ('reg', u64(gicd - SOC_BASE, GICD_SIZE, gicr - SOC_BASE, GICR_SIZE)),
+        ('reg', u64(gicd - SOC_BASE, GICD_SIZE, gicc - SOC_BASE, GICC_SIZE)),
     ])
     arm_io = node('arm-io', [
         ph(),
@@ -136,8 +114,8 @@ def build(seed=None, qemu=False, highmem=False):
             ph(),
             ('device_type', cstr('display-subsystem')),
             ('compatible', cstr('m30lte,display')),
-            ('canvas-width', u32(1125)),
-            ('canvas-height', u32(2436)),
+            ('canvas-width', u32(1080)),
+            ('canvas-height', u32(2340)),
         ])])
 
     fbcon = node('m30lte-fbcon', [
@@ -155,7 +133,7 @@ def build(seed=None, qemu=False, highmem=False):
         ('reg', u64(EMMC, EMMC_SIZE)),
     ])
 
-    defaults = node('defaults', [ph(), ('no-effaceable-storage', u32(1))])
+    defaults = node('defaults', [ph()])
 
     buttons = node('buttons', [
         ph(),
@@ -167,23 +145,27 @@ def build(seed=None, qemu=False, highmem=False):
     product_props = d22ap_product()
     product = [node('product', [ph()] + product_props)] if product_props else []
 
-    pram = node('pram', [ph(), ('reg', u64(panic_base) + u64(PANIC_LOG_SIZE))])
-
     return node('device-tree', [
         ph(),
-        ('compatible', cstr('D22AP') + cstr('iPhone10,3') + cstr('samsung,m30lte') + cstr('samsung,exynos7885') + cstr('AppleARM')),
-        ('model', cstr('iPhone10,3')),
-        ('target-type', cstr('D22')),
-        ('target-sub-type', cstr('D22AP')),
-        ('manufacturer', cstr('Apple Inc.')),
+        ('compatible', cstr('samsung,m30lte') + cstr('samsung,exynos7904') + cstr('AppleARM')),
+        ('model', cstr('samsung,m30lte')),
+        ('target-type', cstr('SAMSUNG')),
+        ('target-sub-type', cstr('M30LTE')),
+        ('manufacturer', cstr('Samsung Electronics Co., Ltd.')),
         ('#address-cells', u32(2)),
         ('#size-cells', u32(2)),
-    ], [chosen, defaults, cpus, arm_io, fbcon, buttons, pram] + product + ([] if qemu else [emmc]))
+    ], [chosen, defaults, cpus, arm_io, fbcon, buttons] + product + ([] if qemu else [emmc]))
 
 
 if __name__ == '__main__':
-    root = build(qemu='--qemu' in sys.argv, highmem='--highmem' in sys.argv)
+    root = build(qemu='--qemu' in sys.argv)
     blob = adt.serialize(root)
+    # Pad the ADT to exactly M30_ADT_EXPECTED_SIZE (0x27c4 = 10180 bytes)
+    # The kernel expects exactly this size for the embedded ADT.
+    if len(blob) < 0x27c4:
+        blob += b"\x00" * (0x27c4 - len(blob))
+    elif len(blob) > 0x27c4:
+        raise ValueError(f"ADT too large: {len(blob)} > 0x27c4")
     open(sys.argv[1], 'wb').write(blob)
     if '--dump' in sys.argv:
         adt.dump(adt.parse(blob)[0])
