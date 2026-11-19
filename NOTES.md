@@ -491,3 +491,50 @@ Candidates v2/v3/v4 preserved unchanged. No device operations. NO-GO remains for
 testing: load address/entry EL/MMU/cache/CNTFRQ unmeasured; no proven no-write boot path.
 This candidate restores the physically-proven startup logic but static checks cannot claim
 physical success.
+
+## 2026-11-19 — FINAL v5 pre-boot gate verification (MAIN only)
+
+Branch main @ e1a769b at gate start (unchanged by this verification).
+
+Historical physical-flash evidence (the only artifact with byte-exact readback):
+  path (git 27c9298): validation/xnu-handoff-fix/dt-pointer-fix-20261118T064014Z/candidate-20261118T071436Z/shim-boot.img
+  SHA256 112415a409321869d7d35933eeee2f97cf6123b4c364506d276b40a4fe12df95, size 16,603,136 B.
+  Readback (validation/physical-boot-test/20261118T080547Z-exact-adt-restore-boot-test/06-readback.txt):
+  RESULT=EXACT MATCH, SHA256SUMS 7/7 OK. That boot passed device_tree.c:65 and reached
+  machine_routines.c:1244 (CPU assert, since fixed by 9999c) -> XNU arm_init MMU-on confirmed.
+  Note: an earlier flash a8b0833b...d003a8 (D-cache candidate) used the SAME shim ELF/Image
+  a3fd2653.../2d7aea80...; its readback was pending, not exact-confirmed.
+
+Byte comparison (historical flash image vs v5 shim-boot.img):
+- Whole images NOT byte-identical: 112415a4... (16,603,136) vs c5bc8a60... (16,492,544).
+- Boot headers: same magic ANDROID!, page 2048, kernel_addr 0x80080000, tags 0x80000100;
+  kernel_size differs (0xfd4c40 -> 0xfd0c30) because kernel changed. Headers not byte-identical.
+- SHIM REGION (kernel region first 0x20000 bytes = shim Image + zero pad): BYTE-IDENTICAL,
+  SHA256 864370f63a4208a41675e739d4bdb295f53ea3aea8ac58ef81b09f875d15211a in BOTH images.
+  Shim Image first 5,456 bytes identical; padding beyond shim all-zero in both.
+- Payloads differ: entry 0xfffffff00742b488 -> 0xfffffff007427488, kernel_end
+  0xfffffff0084a4000 -> 0xfffffff0084a0000, ADT 75ec0700... (old donor, D22AP primary)
+  -> 2dc36c05... (corrected, samsung,m30lte primary). Same size class (10 segments).
+
+Only intended substantive differences: D22AP-fixed XNU kernel (a14a2668...ec36, IONameMatch
+samsung,m30lte), its derived payload, and the corrected ADT identity in that payload. Shim
+ELF/Image, shim region bytes, offsets, padding, packaging layout are identical to the
+physically-proven flash image.
+
+Validators at gate: v5 candidate verifier 18/18 PASS; proven packaging validator PASS
+(combined_kernel_exact, structurally_valid_generic_android_v0, partition compatible;
+sboot_compatible 'unknown; no exact SM-M305F acceptance evidence'); handoff verifier PASS;
+GIC verifier PASS; platform match 9/9 PASS. Kernel in v5 SHA256 a14a266833ddad0c7099240ad62eee118ec533522e6cdbbe6cb739554cb6ec36,
+compiled IONameMatch samsung,m30lte.
+
+Categorisation:
+- Exact physical readback match: YES for the historical artifact 112415a4... (not for v5).
+- Exact source/artifact match of shim: YES — v5 shim region byte-identical to physically-proven flash image.
+- Structural equivalence of complete images: YES (same shim/pad/payload layout, same addresses).
+- Unverified assumptions: S-Boot load/entry contract, incoming CurrentEL, MMU/cache state,
+  CNTFRQ_EL0, and whether any no-write temporary boot path exists on SM-M305F.
+
+RECOMMENDATION: READY FOR ONE CONTROLLED BOOT TEST — strictly conditional on the operator
+having an already-authorized, proven no-write temporary boot procedure for this exact device
+and image format. If no such procedure is independently authorized/documented, the correct
+status remains NO-GO. No physical operation was performed in this gate.
