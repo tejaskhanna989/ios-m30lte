@@ -538,3 +538,43 @@ RECOMMENDATION: READY FOR ONE CONTROLLED BOOT TEST — strictly conditional on t
 having an already-authorized, proven no-write temporary boot procedure for this exact device
 and image format. If no such procedure is independently authorized/documented, the correct
 status remains NO-GO. No physical operation was performed in this gate.
+
+## 2026-11-19 — PHYSICAL BOOT TEST of candidate v5 (AUTHORIZED, MAIN only)
+
+Authorization: explicit user authorization for BOOT-only flash + readback + ONE boot test.
+No PIT, no other partitions, no retries, no additional boots.
+
+Preconditions (all PASS): device SM-M305F / M305FDDU8CVK1 / m30lte, root; BOOT -> /dev/block/mmcblk0p12 (33,554,432 B); backup 469c12d2...441e78 preserved in git; candidate SHA c5bc8a60...5122f5 (16,586,752 B).
+
+Actions: adb reboot download (exit 0); heimdall detect OK; heimdall flash --BOOT <v5> --no-reboot (exit 0, BOOT upload successful). No other partition, no reboot by harness.
+
+READBACK GATE: first attempt with count=8100 gave 943ad231... (MISMATCH) due to wrong block count; correct count = 8099 (image size / 2048). Re-run with count=8099:
+  c5bc8a6026342a8e5c3eaa777b7a49e53cc40c812d26e0c47ee9488d9b5122f5  -
+  EXACT MATCH -> boot test authorized.
+
+ONE boot test performed: adb reboot (exit 0). Device returned to recovery; no iOS/XNU boot.
+Logs captured: validation/physical-boot-test/20261119-v5-boot/ (pmsg-preboot.bin, last_kmsg-preboot.txt, last_kmsg-postboot.txt, fb-capture.raw empty).
+
+DECISIVE S-BOOT EVIDENCE from last_kmsg-postboot.txt (boot attempt at ~line 11415):
+  load_kernel: loading boot image from 153600..
+  kernel size = 0xfd1000, ramdisk size = 0x0
+  device_locked : 0
+  [TIMA trusted boot]: SEAndroid MAGIC failure (boot.img)
+  Verify_Signature_With_Signingtype 0x90d20130 16587040@0x8007f800, 256@0x90d20030
+  Verify_Signature_With_Signingtype: failed.(-18022398)
+  pit_check_signature (BOOT) invalid. Set invalid sign flag
+  [CC MODE] Failed. Invalid Magic
+  ERROR: Appended Device Tree Blob not found
+  Warranty Bit Set - Blowing KAP_VIOLATION_FUSE
+  Starting kernel at 0x80080000...
+  (then S-Boot restarts -> recovery)
+This is the exact ABL/S-Boot signature-verification blocker recorded earlier (8da6834 message
+and 2ffc523 BOOT_PROTOCOL.md): custom boot images are rejected before/at kernel handoff.
+No XNU text ("arm_init", "M30 XNU", "device_tree.c:65", "machine_routines") anywhere in
+last_kmsg or pmsg (grep count 0). Framebuffer capture returns 0 bytes in this recovery.
+Device returned to recovery = no physical XNU execution evidence from this attempt.
+
+CONCLUSION: flash/readback perfect; ONE boot test performed; XNU did NOT execute because
+S-Boot signature verification rejected/flags the custom image and reset to recovery. This is
+NOT a kernel or shim defect — it is the known bootloader trust blocker. NO further boot
+attempts authorized. Device left in recovery, untouched.
