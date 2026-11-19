@@ -739,3 +739,28 @@ Fixes applied on main for iOS target:
 - workflow: xnu_target input (default iphoneos), iOS target verification, path-agnostic kernel steps.
 
 OSX artifacts and v5 preserved unchanged. No physical operations. STOPPING here per instruction.
+
+## iOS candidate v6 preparation (in progress, MAIN only, no device ops)
+
+Pre-staged validation/ios-candidate-v6-out/ with the EXACT physically proven shim from v5:
+  shim_fixed.elf  a3fd265382b2229e6b785a882d599e3f597ddc9a77874fe3a00f20bd422c51ea
+  shim_fixed.Image 2d7aea8036feac3b8b2dd64e08e788ae3e660300f00d9ce53686be423e1ce2ff
+  v5 shim region (0x20000) 864370f63a4208a41675e739d4bdb295f53ea3aea8ac58ef81b09f875d15211a
+  == physical-flash shim region (byte-for-byte). Proven tools copied unchanged.
+
+iOS-target root-device compatibility (from iOS buildtree artifact run 44571681445):
+- a5xelte_emmc.c present with M30LTE constants: A5_EMMC_PA=M30LTE_EMMC_PA=0x13500000,
+  A5_EMMC_DT_PATH="m30lte-emmc". Read-only by default (emmc_writable requires
+  emmcroot=USERDATA AND emmcwrite=1).
+- IOFindBSDRoot parses rd/rootdev, emmcprobe, rd=emmcroot0 — all intact under iOS target.
+- IMPORTANT DIFFERENCE: under XNU_TARGET_OS_IOS, root failure now PANICS
+  ("Failed to mount root device", IOKitBSDInit.cpp:957) instead of the OSX+arm64
+  silent RecoveryBoot loop. Diagnostics improve; no silent hang expected.
+- Genuine iOS root filesystem still ABSENT — no IPSW/rootfs assets; cannot claim userspace boot.
+
+-miphoneos-version-min=18.0 is auto-derived from Xcode 16 runner iPhoneOS18.0 SDK
+  (SDKVERSION = xcrun -sdk iphoneos -show-sdk-version; MakeInc.def:92). It is a compiler
+  deployment-target flag, not the XNU version — source remains iOS 16-era 8796.141.3.
+  NOT changed per instruction.
+
+CI run 44576445930 in flight (full green re-run with annotation + Collect fixes).
