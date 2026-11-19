@@ -2,22 +2,12 @@ diff --git a/pexpert/arm/pe_init.c b/pexpert/arm/pe_init.c
 index 04dda53..f2e8c9a 100644
 --- a/pexpert/arm/pe_init.c
 +++ b/pexpert/arm/pe_init.c
-@@ -1,10 +1,11 @@
-+#include <arm64/sweet_early_adt_readback.h>
- /*
-  * Copyright (c) 2000-2020 Apple Inc. All rights reserved.
-  *
-  * @APPLE_OSREFERENCE_LICENSE_HEADER_START@
-  *
-  * This file contains Original Code and/or Modifications of Original Code
-  * as defined in and that are subject to the Apple Public Source License
-  * Version 2.0 (the 'License'). You may not use this file except in
-  * compliance with the License. The rights granted to you under the License
-  * may be used by you, or by others, in accordance with the terms of the
-  * License.
-  *
-  * Please obtain a copy of the License at
+@@ -17,6 +17,7 @@
   *     http://www.opensource.apple.com/apsl/
   */
  
  #include <platform.h>
++#include <arm64/sweet_early_adt_readback.h>
+ #include <pexpert/pexpert.h>
+ #include <kern/debug.h>
+ #include <kern/kalloc.h>
