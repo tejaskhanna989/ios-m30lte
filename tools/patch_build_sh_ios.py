@@ -34,5 +34,13 @@ assert text.count(jsondb_make) == 1, 'jsondb make line not uniquely found'
 text = text.replace(jsondb_make,
                     'make SDKROOT=iphoneos TARGET_CONFIGS="$KERNEL_CONFIG $ARCH_CONFIG $MACHINE_CONFIG" LOGCOLORS=y BUILD_WERROR=0 BUILD_LTO=0 BUILD_JSON_COMPILATION_DATABASE=1')
 
+# libfirehose_kernel.a is linked into the kernel. It must match the target
+# platform/CPU: the stock line builds it for macOS arm64e (pointer auth),
+# which ld rejects when linking an iOS arm64 kernel.
+libfh = 'xcodebuild install -target libfirehose_kernel -sdk macosx ARCHS="x86_64 arm64e" VALID_ARCHS="x86_64 arm64e"'
+assert text.count(libfh) == 1, 'libfirehose_kernel xcodebuild line not found'
+text = text.replace(libfh,
+    'xcodebuild install -target libfirehose_kernel -sdk iphoneos ARCHS="arm64" VALID_ARCHS="arm64"')
+
 path.write_text(text)
-print('iOS target: kernel make + jsondb make -> SDKROOT=iphoneos (XNU_TARGET_OS_IOS)')
+print('iOS target: kernel make + jsondb make -> SDKROOT=iphoneos; libfirehose_kernel -> iphoneos arm64')
