@@ -1,0 +1,37 @@
+Candidate v5 — exact provenance (all commits are ancestors on main history)
+
+PHYSICALLY PROVEN SHIM (flashed 2026-11-18 as a8b0833b...d003a8, reached XNU arm_init MMU-on):
+  shim_fixed.elf   SHA256 a3fd265382b2229e6b785a882d599e3f597ddc9a77874fe3a00f20bd422c51ea
+                   source: git show 3df1703:validation/physical-boot-test/20261117T152251Z-preparser-adt-readback/diag-candidate/build/shim_fixed.elf
+                   (identical blob copied into 1785ae7:validation/xnu-handoff-fix/dcache-fix-candidate-20261117/candidate/build/shim_fixed.elf)
+  shim_fixed.Image SHA256 2d7aea8036feac3b8b2dd64e08e788ae3e660300f00d9ce53686be423e1ce2ff
+  ELF entry 0x80080000; CurrentEL EL1/EL2 dispatch; EL2 state install; GICv2 init; DECON trigger.
+  Watchdog 0x10160000: ABSENT (verified in linked ELF).
+
+Matching source used for machine-code cross-checks (gicv2_init / shim_main / DECON):
+  shim_fixed.c   SHA256 cfedb440d6e76de12ef069485838f56136eb047a1d19fc57fb116e55a32df7d9
+                 source: git show 3df1703:validation/xnu-handoff-fix/gic-fixed-candidate-20261117/shim_fixed.c
+  start.S        CurrentEL EL1/EL2 dispatch
+                 source: git show 1785ae7:validation/xnu-handoff-fix/physical-candidate-20261117/start.S
+  shim.ld        ENTRY(_start); . = 0x10008000 (build-time; ELF entry relocated to 0x80080000 by proven build)
+                 source: git show 1785ae7:validation/xnu-handoff-fix/physical-candidate-20261117/shim.ld
+  device.h / devices/m30lte.c from the same candidate directories.
+
+PROVEN PACKAGING TOOLCHAIN (commit 3df1703, diag-candidate/tools):
+  package_boot_images.py  BASE=0x80000000, KERNEL_OFFSET=0x80000 -> kernel_addr 0x80080000
+  validate_boot_images.py, mkpayload.py, adt.py
+  (These are the exact tools that produced the physically-flashed a8b0833b...d003a8.)
+
+NEW D22AP-FIXED KERNEL (CI run 44528894772, all jobs green):
+  kernel.development.m30lte SHA256 a14a266833ddad0c7099240ad62eee118ec533522e6cdbbe6cb739554cb6ec36
+  compiled SweetPlatformExpert IONameMatch = samsung,m30lte
+  fix: xnu/patches-minimal/9999e-m30-platform-expert-match.patch (M30LTE branch first)
+
+ADT: corrected embedded ADT SHA256 2dc36c056e62a563bc5b2262c296d8731e1d8ad9e804d388054c156cec7bd577
+  (byte-identical to the array embedded in the fixed kernel; payload ADT verified).
+
+Justified change vs the physically-proven candidate: ONLY the kernel (and therefore payload +
+derived images) changed. Shim ELF/Image, ADT input, packaging tools and offsets are byte-identical
+to the physically-proven candidate. No startup logic, register writes, or load addresses invented.
+
+No physical operations. Candidates v2/v3/v4 unchanged.

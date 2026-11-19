@@ -453,3 +453,41 @@ Physical entry contract (from preserved records — VERIFIED / UNKNOWN / FAILED)
 - UNKNOWN: no M30-specific no-write temporary boot route (BOOT_PROTOCOL.md UNRESOLVED).
 
 FINAL: NO-GO for physical test. All static/package checks pass, but v4's shim is NOT the shim configuration that physically reached XNU — it lacks CurrentEL/EL2 handling, and the physical load address/entry EL/MMU/cache state remain unmeasured. Remaining risks are physical/protocol, not kernel-image defects. No device operation performed.
+
+## 2026-11-19 — Candidate v5: proven shim + D22AP-fixed kernel (MAIN only)
+
+Built candidate v5 by combining the EXACT physically-proven shim
+(shim_fixed.elf a3fd265382b2229e6b785a882d599e3f597ddc9a77874fe3a00f20bd422c51ea,
+Image 2d7aea8036feac3b8b2dd64e08e788ae3e660300f00d9ce53686be423e1ce2ff,
+commit 3df1703/1785ae7 provenance) with the D22AP-fixed kernel
+a14a266833ddad0c7099240ad62eee118ec533522e6cdbbe6cb739554cb6ec36 (CI 44528894772).
+Proven packaging toolchain from diag-candidate/tools (BASE 0x80000000, KERNEL_OFFSET 0x80000,
+PAYLOAD_OFFSET 0x20000) used unchanged. Corrected ADT 2dc36c05...bd577 embedded in payload.
+
+Candidate v5 (isolated out-v5/):
+  shim-boot.img SHA256 c5bc8a6026342a8e5c3eaa777b7a49e53cc40c812d26e0c47ee9488d9b5122f5
+  ios-boot.img  SHA256 b514c03da1d97bf43a8c8abf3f46580a3768c83481191ff5d43c60cfcf4fcd34
+  combined.bin  SHA256 b9afe802069450a23ba4bb55d279fc2524b71cc358c8daa4014d7bae4d8903fa
+  payload.bin   SHA256 42d32803a5ecadf78f63a39c43f6241555973970f3635eb5483806a8809e0907
+
+Proof of proven shim preservation:
+- verify_handoff_shim.py (exact proven tool) = PASS: CurrentEL dispatch, EL1+EL2 targets,
+  EL2 HCR/VTTBR/CPTR/MDCR/CNTHCTL/CNTVOFF/SCTLR/ELR/SPSR state, eret, EL1 stack+shim_main,
+  no ICC sysregs. ELF entry 0x80080000.
+- verify_gic_shim.py (exact proven tool) with matching source cfedb440... = PASS: all GICv2
+  stores/order/priorities/timer parking/barriers, no GICv3 sysregs or ITARGETSR/ICFGR.
+- DECON software trigger present in proven shim source and called from shim_main.
+- Watchdog 0x10160000 absent from final linked ELF.
+
+Candidate structural verifier 18/18 PASS (kernel_addr 0x80080000, shim+pad+payload layout,
+fixed kernel embedded, ADT/boot_args arithmetic, no ramdisk, ELF entry/features).
+Proven validator: combined_kernel_exact, payload offset 0x20000, partition-compatible,
+"sboot_compatible: unknown; no exact SM-M305F acceptance evidence".
+
+All suites on fixed kernel: CPU fallback 17/17, ADT restore 22/22, platform match 9/9,
+GIC audit 6/6, buildtree PASS, kernel PASS.
+
+Candidates v2/v3/v4 preserved unchanged. No device operations. NO-GO remains for physical
+testing: load address/entry EL/MMU/cache/CNTFRQ unmeasured; no proven no-write boot path.
+This candidate restores the physically-proven startup logic but static checks cannot claim
+physical success.
