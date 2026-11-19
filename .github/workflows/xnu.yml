@@ -132,6 +132,8 @@ jobs:
           done
           ls dxb/patches | sort
 
+      - name: Debug step before patches
+        run: echo "DEBUG: About to apply patches"
       - name: Apply patches and verify MakeInc.def
         working-directory: dxb
         run: |
