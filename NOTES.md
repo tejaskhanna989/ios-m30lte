@@ -642,3 +642,80 @@ from current evidence — candidate mechanisms: (a) no rd= root device specified
 (b) IOKit service matching stall, (c) console output not flushed to framebuffer after
 AppleCLCD registration. No further device operations or boots were performed; all above is
 static source analysis plus the user's on-screen observation.
+
+## 2026-11-19 — Post-framebuffer BSD root blocker: source-level analysis (MAIN only, no device ops)
+
+### Exact execution path
+1. AppleCLCD::start() (iokit/Kernel/arm/SweetFramebuffer.cpp:180-266) logs
+   "SWEET FB: AppleCLCD ..." and "A5XELTE FB: requested 30 Hz, effective 30 Hz,
+   copy timing on" as its LAST statements before `return true`. These are the user's
+   last visible lines. registerService() already happened at line 259.
+2. Console: the visible text is NOT AppleCLCD's own framebuffer — it is the
+   `sweet_fbcon` "serial" console from pexpert/arm/pe_serial.c:803-848, registered by
+   fbcon_probe() from the ADT node `m30lte-fbcon` (reg 0xec000000/0x1400000, 1080x2340,
+   stride 4320 — verified present in the ADT). fbcon writes glyphs directly to the
+   framebuffer and remains registered; AppleCLCD does not unregister it. So IOLog output
+   SHOULD remain visible after AppleCLCD.
+3. Next boot stage: bsd_init -> IOFindBSDRoot() (iokit/bsddev/IOKitBSDInit.cpp:660).
+   Sequence there:
+   a. line 686: waitForMatchingService(gIOResources/IOBSD, 30s). On TIMEOUT it logs "!BSD"
+      (line 691). On SUCCESS it is silent. -> No "!BSD" seen means either BSD resource
+      matched (fine) or console output stopped.
+   b. line 707: parse `rd` / `rootdev` boot arg. Our cmdline has NEITHER -> rdBootVar[0]=0.
+   c. line 715: /chosen root-matching / boot-uuid (none in ADT) -> matching stays NULL.
+   d. line 745: RAMDisk from /chosen/memory-map — ADT has memory-map node but NO RAMDisk
+      property (mkpayload was called WITHOUT --ramdisk) -> no /dev/mdx.
+   e. line 779: A5XELTE: a5xelte_keys_init(); emmcprobe only if boot-arg emmcprobe=1
+      (NOT in our cmdline) -> a5xelte_emmc_probe() NOT called. No "A5XELTE eMMC:" lines.
+      rdBootVar != "emmcroot0" -> eMMC root path skipped.
+   f. line 858: rdBootVar[0]==0 -> skip name-based matching.
+   g. line 884: matching = IOService::serviceMatching("IOMedia") with Content=Apple_HFS.
+      M30LTE is built with A5XELTE config, which has NO IOStorageFamily/IOMedia class
+      (see patch 0103: "SWEET has no IOStorageFamily"). So this matching can NEVER match.
+   h. line 904: IOLog("Waiting on %s", serialized matching) — NOT seen by user.
+   i. line 926: loop waitForService(matching, ROOTDEVICETIMEOUT=60s DEVELOPMENT? build is
+      DEVELOPMENT but DEBUG macro not necessarily set -> likely 60s). On timeout:
+      - lines 931-934: "Still waiting for root device" / PE_display_icon are compiled out
+        for XNU_TARGET_OS_OSX && __arm64__ (build log confirms XNU_TARGET_OS_OSX).
+      - line 955: IOSetRecoveryBoot(BSD_BOOTFAIL_MEDIA_MISSING, NULL, true) — on this board
+        there is no macOS Recovery, so behavior is undefined/hang. The
+        `panic("Failed to mount root device")` is ONLY for XNU_TARGET_OS_IOS (not our build).
+      - loop `while(!service)` repeats with 60s timeouts and NO visible message
+        (because all logs inside that branch are OSX-arm64-compiled out).
+   => This EXACTLY explains: indefinite hang with no further text, no panic.
+
+### 30-second timeout / !BSD
+- waitForMatchingService(30s) at line 686 would log "!BSD" only if it TIMED OUT.
+- It likely SUCCEEDED (IOBSD resource published) -> silent -> consistent with no "!BSD".
+- Then the 60s waitForService loop produces NO console output on OSX+arm64. Correct.
+
+### Root filesystem reality
+- NO ramdisk in v5 payload (10 segments, no RAMDisk appended; mkpayload called without --ramdisk).
+- NO root filesystem artifact anywhere in project (no *.dmg root, no iosroot .img; mkiosroot.sh
+  requires OS.dmg/SYSTEMOS.dmg/APPOS.dmg from an IPSW which are NOT present).
+- NO RAMDisk property in ADT. So there is literally no root volume to mount.
+
+### eMMC driver / device
+- ADT has `m30lte-emmc` node (compatible samsung,dw-mshc, reg 0x13500000/0x20000).
+- a5xelte_emmc_probe / a5xelte_emmc_rootdev ARE linked into the kernel (llvm-nm confirms).
+- BUT they are only invoked when boot-arg emmcprobe=1 / rd=emmcroot0. Our cmdline has neither.
+
+### Most likely blocker (HIGH confidence)
+No root device specified and no root filesystem/ramdisk exists. IOFindBSDRoot falls back to
+IOMedia/Apple_HFS matching, which cannot match because A5XELTE/M30LTE builds have no
+IOStorageFamily. It then loops forever on waitForService with all diagnostics compiled out
+(XNU_TARGET_OS_OSX+arm64). The 30Hz line is the last visible output; everything after is silent.
+
+Alternatives (lower confidence): console output stops being flushed after AppleCLCD takes over
+the framebuffer; or an earlier IOKit matching stall.
+
+### Smallest actionable implementation step (NOT done — needs authorization)
+Option A (diagnostic, smallest): add `rd=emmcroot0 emmcprobe=1` to the payload cmdline via
+mkpayload --cmdline, which activates the already-linked a5xelte_emmc_probe/emmc_rootdev path
+and produces explicit "A5XELTE eMMC: ..." logs. This needs an actual GPT/USERDATA on eMMC
+(which the device has from Android) and would reveal whether the eMMC driver can find
+SYSTEM/USERDATA. Offline-testable via mkpayload + verify_candidate; NO device action.
+Option B (diagnostic): add a temporary IOLog at the top of IOFindBSDRoot and inside the
+waitForService loop guarded by ARM64_BOARD_CONFIG_M30LTE, to prove the path is reached and
+see the serialized matching dictionary. This is a small kernel patch + CI rebuild.
+Neither option is implemented here; both require separate authorization before any build/flash.
