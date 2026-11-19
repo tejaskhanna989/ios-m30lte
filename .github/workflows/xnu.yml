@@ -17,6 +17,9 @@ name: M30LTE XNU Kernel Build
       runner:
         description: GitHub runner image (empty = macos-15-intel)
         default: ''
+      xnu_target:
+        description: XNU target SDK (iphoneos = genuine iOS 16, macosx = legacy reference)
+        default: 'iphoneos'
 concurrency:
   group: xnu-${{ github.ref }}
   cancel-in-progress: true
@@ -26,6 +29,7 @@ env:
   MACOS_VERSION: ${{ inputs.macos_version || '13.5' }}
   KERNEL_CONFIG: ${{ inputs.kernel_config || 'DEVELOPMENT' }}
   MACHINE_CONFIG: ${{ inputs.machine_config || 'M30LTE' }}
+  XNU_TARGET: ${{ inputs.xnu_target || 'iphoneos' }}
 jobs:
   build:
     strategy:
@@ -43,6 +47,14 @@ jobs:
         git -C dxb checkout -q FETCH_HEAD
         cp xnu/patches-minimal/*.patch xnu/patches-minimal/*.sh dxb/patches/ 2>/dev/null || true
         python3 tools/patch_build_sh.py dxb/build.sh "$MACHINE_CONFIG"
+        if [ "$XNU_TARGET" = "iphoneos" ]; then
+          python3 tools/patch_build_sh_ios.py dxb/build.sh
+          echo "XNU_TARGET=$XNU_TARGET -> SDKROOT=iphoneos (XNU_TARGET_OS_IOS)"
+        else
+          echo "XNU_TARGET=$XNU_TARGET -> legacy macosx reference"
+        fi
+        echo "=== XNU kernel make lines ==="
+        grep -n "make install -j8 VERBOSE=YES" dxb/build.sh
     - name: Deps
       run: |
         brew install jq gum bash cmake ninja
@@ -88,9 +100,40 @@ jobs:
         python3 tools/verify_m30_buildtree.py \
           --tree dxb/xnu \
           --patch-dir dxb/patches | tee m30-buildtree-verification.json
+    - name: Verify XNU target (iOS vs OSX)
+      run: |
+        echo "=== XNU_TARGET=$XNU_TARGET ==="
+        echo "=== SDKROOT in build.sh kernel make ==="
+        grep -n "make install -j8 VERBOSE=YES" dxb/build.sh
+        echo "=== target defines observed in build log ==="
+        if grep -q -- "-DXNU_TARGET_OS_IOS" build.log; then echo "FOUND -DXNU_TARGET_OS_IOS"; fi
+        if grep -q -- "-DXNU_TARGET_OS_OSX" build.log; then echo "FOUND -DXNU_TARGET_OS_OSX"; fi
+        python3 - <<'PY'
+        import os, sys
+        target = os.environ.get("XNU_TARGET", "iphoneos")
+        log = open("build.log", errors="replace").read()
+        ios = "-DXNU_TARGET_OS_IOS" in log or "-DXNU_PLATFORM_iPhoneOS" in log
+        osx = "-DXNU_TARGET_OS_OSX" in log
+        print(f"ios_define_present={ios} osx_define_present={osx} target={target}")
+        if target == "iphoneos":
+            if not ios and "SDKROOT=iphoneos" not in open("dxb/build.sh").read():
+                print("ERROR: iOS target requested but no iOS evidence in build"); sys.exit(1)
+            if osx and not ios:
+                print("ERROR: iOS target requested but OSX define present"); sys.exit(1)
+            print("PASS: iOS target selected (SDKROOT=iphoneos, XNU_TARGET_OS_IOS)")
+        else:
+            print("PASS: legacy macosx reference target")
+        PY
     - name: Verify exact M30 kernel binary
       run: |
-        kernel="dxb/fakeroot/System/Library/Kernels/kernel.$(echo "$KERNEL_CONFIG" | tr A-Z a-z).m30lte"
+        kc=$(echo "$KERNEL_CONFIG" | tr A-Z a-z)
+        # macosx target: kernel.<kc>.m30lte in /System/Library/Kernels; ios target: mach.<kc>.m30lte at fakeroot root
+        kernel="dxb/fakeroot/System/Library/Kernels/kernel.${kc}.m30lte"
+        if [ ! -f "$kernel" ]; then
+          kernel="dxb/fakeroot/mach.${kc}.m30lte"
+        fi
+        echo "kernel path: $kernel"
+        test -f "$kernel" || { echo "ERROR: kernel binary not found"; exit 1; }
         python3 tools/verify_m30_kernel.py \
           --kernel "$kernel" \
           --objdump "xcrun llvm-objdump" \
