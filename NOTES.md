@@ -719,3 +719,23 @@ Option B (diagnostic): add a temporary IOLog at the top of IOFindBSDRoot and ins
 waitForService loop guarded by ARM64_BOARD_CONFIG_M30LTE, to prove the path is reached and
 see the serialized matching dictionary. This is a small kernel patch + CI rebuild.
 Neither option is implemented here; both require separate authorization before any build/flash.
+
+## 2026-11-19 — iOS-targeted XNU build ACHIEVED (MAIN only; no device ops)
+
+CI run 44571681445 (commit 73350e4) produced a GENUINE iOS-targeted ARM64 XNU kernel:
+- ios_define_present=True osx_define_present=False target=iphoneos (compile flags show
+  -miphoneos-version-min=18.0 -DXNU_TARGET_OS_IOS -DXNU_PLATFORM_iPhoneOS)
+- Verify libfirehose_kernel iOS arm64: PASS; MakeInc.def M30LTE: PASS; buildtree: PASS;
+  kernel verifier: PASS. Kernel SHA256 5c8ecf20ad01932ff269e1b8cdfb1d5085e496f116ebb56a21628ea0fd8dc40b,
+  size 16,697,344 bytes, installed as mach.development.m30lte (iOS path).
+- Only the "Report build errors" annotation step failed (stale OSX kernel path); fixed on
+  main at 1126cc5 (path-agnostic kernel lookup). Next CI run should be fully green.
+
+Fixes applied on main for iOS target:
+- tools/patch_build_sh_ios.py: SDKROOT=iphoneos for kernel+JSONDB make; libfirehose -sdk iphoneos
+  with narrow HEADER_SEARCH_PATHS include for Availability.h (no SDK files modified).
+- 0404-ios-memorystatus-swap-decl.patch: define memorystatus_swap_all_apps when CONFIG_JETSAM off.
+- 0405-ios-m30lte-ubsan.patch: disable iOS UBSan minimal runtime for M30LTE (no iOS KDK).
+- workflow: xnu_target input (default iphoneos), iOS target verification, path-agnostic kernel steps.
+
+OSX artifacts and v5 preserved unchanged. No physical operations. STOPPING here per instruction.
