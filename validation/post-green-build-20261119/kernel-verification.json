@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "kernel": "/home/tejas/Projects/m30lte-ios/milestone_artifacts/ci_44502403576/xnu-kernel-macos-15-intel/kernel.development.m30lte",
+  "kernel_size_bytes": 17047656,
+  "kernel_sha256": "361fc613a5ae129081849ebe1754d133861ba5339eab2f0c4a127a650e9042a1",
+  "checks": [
+    "linked M30 framebuffer base 0xec000000",
+    "linked M30 marker and relocated framebuffer checkpoints",
+    "linked M30 eMMC and ALIVE/GPA1 constants",
+    "donor Exynos7580 touch implementation absent",
+    "linked GICv2 MMIO initialization and acknowledge/EOI path",
+    "linked XNU virtual-timer ownership"
+  ]
+}
