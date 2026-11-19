@@ -578,3 +578,38 @@ CONCLUSION: flash/readback perfect; ONE boot test performed; XNU did NOT execute
 S-Boot signature verification rejected/flags the custom image and reset to recovery. This is
 NOT a kernel or shim defect — it is the known bootloader trust blocker. NO further boot
 attempts authorized. Device left in recovery, untouched.
+
+## 2026-11-19 — PHYSICAL boot result CORRECTED: XNU DID execute far (user screen transcription)
+
+User screen transcription after the ONE authorized v5 boot test:
+  iboot version: m30lte-shim
+  "name" not a kext
+  "AAPL,phandle" not a kext
+  calling mpo_policy_init for vnguard
+  security policy loaded: guarded vnode policy (vnguard)
+  SWEET FB: AppleCLCD 1080x2340 stride 4320 at 0xec000000, default surface 1, presented as 1080x2340
+  A5XELTE FB: requested 30 Hz, effective 30 Hz, copy timing on
+  (then stopped/hung at that text; no further output)
+
+CORRECTION of earlier conclusion: my prior statement "XNU never executed / blocked by S-Boot
+signature at kernel start" was WRONG. The screen proves XNU booted well past all previously
+observed panics:
+  - iboot version: m30lte-shim -> XNU read the ADT firmware-version (ADT restore worked)
+  - "name"/"AAPL,phandle" not a kext -> IOKit device-tree matching proceeded normally
+    (D22AP platform expert match worked; no "Unable to find driver for this platform")
+  - vnguard policy loaded -> BSD MAC/security init completed
+  - SWEET FB AppleCLCD 1080x2340 @0xec000000 -> framebuffer console UP (exynos display path)
+  - "A5XELTE FB: requested 30 Hz, effective 30 Hz" -> patch 0124 normal SUCCESS log, NOT a
+    panic. This is the "Hz thing" — it is the framebuffer refresh rate, not a clock failure.
+
+Verified against linked kernel strings: "SWEET FB: AppleCLCD", "requested %u Hz, effective %u Hz",
+"copy timing", "not a kext", "calling mpo_policy_init" all present; source = patches
+0046/0061/0124 (AppleCLCD::start). So the "30 Hz" line is expected healthy output.
+
+STATUS: XNU reached a live framebuffer console with security policy loaded — the furthest
+verified physical milestone. The device then HUNG/stopped at that point. No panic text, no
+"XNU Panic" line observed. This is consistent with a later boot-stage hang (e.g. root-device
+wait / launchd / IOService matching) rather than an early panic. Cause UNKNOWN — need more
+evidence (serial/console capture, or exact text of any later message).
+
+No further boot attempts performed. Device left in recovery. No device operations by me.
