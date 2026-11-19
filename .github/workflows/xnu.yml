@@ -37,56 +37,126 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Fetch build script
-      run: "git init -q dxb\ngit -C dxb fetch -q --depth 1 \"$DXB_REPO\" \"$DXB_SHA\"\ngit -C dxb checkout -q FETCH_HEAD\ncp xnu/patches-minimal/*.patch xnu/patches-minimal/*.sh dxb/patches/ 2>/dev/null || true\npython3 -c \"\nimport sys\nfrom pathlib import Path\npath, config = Path(sys.argv[1]), sys.argv[2]\nold = 'ARCHS=\\\"x86_64 arm64e\\\" VALID_ARCHS=\\\"x86_64 arm64e\\\"'\nif config in ('A5XELTE', 'HEROLTE', 'M20LTE', 'M30LTE'):\n    new = ('ARCHS=\\\"arm64\\\" VALID_ARCHS=\\\"arm64\\\" OTHER_CFLAGS=\\\"-mkernel -nostdinc '\n           '-Wno-packed -mcpu=cortex-a53 -march=armv8-a+crypto\\\"')\nelse:\n    new = 'ARCHS=\\\"x86_64 arm64e arm64\\\" VALID_ARCHS=\\\"x86_64 arm64e arm64\\\"'\ntext = path.read_text()\nassert text.count(old) == 1, 'darwin-xnu-build firehose line changed'\ntext = text.replace(old, new)\n\nold_patches = (\n    'patches() {\\n'\n    '    running \"PATCHING xnu files\"\\n'\n)\nnew_patches = (\n    'patches() {\\n'\n    '    if [ -n \"${SKIP_PATCHES:-}\"]; then\\n'\n        running \\\"Skipping patches (SKIP_PATCHES=1)\\\"\\n'\n        return 0\\n'\n    fi\\n'\n    '    running \\\"PATCHING xnu files\\\"\\n'\n)\ntext = text.replace(old_patches, new_patches)\n\nold_loop = (\n    '        for PATCH in \\\"${PATCH_DIR}\\\"/*.patch; do\\n'\n    '            if APPLY_CHECK=$(git apply --check \\\"$PATCH\\\" 2>&1); then\\n'\n                running \\\"Applying patch: ${PATCH}\\\"\\n'\n                git apply \\\"$PATCH\\\"\\n'\n            else\\n'\n                warning \\\"Skipping patch ${PATCH} (already upstream, previously applied, or malformed): ${APPLY_CHECK}\\\"\\n'\n            fi\\n'\n        done\\n'\n)\nnew_loop = (\n    '        for PATCH in \\\"${PATCH_DIR}\\\"/*.patch; do\\n'\n    '            PATCH_NAME=\\\"$(basename \\\"$PATCH\\\")\\\"\\n'\n    '            case \\\"$PATCH_NAME\\\" in\\n'\n    '        0085-a5xelte-board-target.patch|0096-m30lte-a5xelte-h-overrides.patch|0400-m30lte-board-target.patch|0402-m30lte-board-config-header.patch|0403-m30lte-hardware-overrides.patch)\\n'\n            if ! APPLY_CHECK=$(git apply --check \\\"$PATCH\\\" 2>&1); then\\n'\n                echo \\\"ERROR: critical M30LTE patch failed preflight: $PATCH_NAME\\\" >&2\\n'\n                echo \\\"$APPLY_CHECK\\\" >&2\\n'\n                exit 1\\n'\n            fi\\n'\n            running \\\"Applying critical M30LTE patch: ${PATCH}\\\"\\n'\n            if ! git apply \\\"$PATCH\\\"; then\\n'\n                echo \\\"ERROR: critical M30LTE patch failed to apply: $PATCH_NAME\\\" >&2\\n'\n                exit 1\\n'\n            fi\\n'\n            ;;\\n'\n        *)\\n'\n            if APPLY_CHECK=$(git apply --check \\\"$PATCH\\\" 2>&1); then\\n'\n                running \\\"Applying patch: ${PATCH}\\\"\\n'\n                git apply \\\"$PATCH\\\"\\n'\n            else\\n'\n                warning \\\"Skipping patch ${PATCH} (already upstream, previously applied, or malformed): ${APPLY_CHECK}\\\"\\n'\n            fi\\n'\n            ;;\\n'\n        esac\\n'\n    done\\n'\n)\nassert text.count(old_loop) == 1, 'darwin-xnu-build patch loop changed'\ntext = text.replace(old_loop, new_loop)\ntext = text.replace(old_patches, new_patches)\npath.write_text(text)\nprint('firehose:', new)\nprint('critical patch policy: strict')\n           dxb/build.sh \"$MACHINE_CONFIG\"\n# Verify critical patches exist\nfor patch in \\\n  0085-a5xelte-board-target.patch \\\n  0096-m30lte-a5xelte-h-overrides.patch \\\n  0400-m30lte-board-target.patch \\\n  0402-m30lte-board-config-header.patch \\\n  0403-m30lte-hardware-overrides.patch; do\n  git apply --numstat \"dxb/patches/$patch\" >/dev/null\ndone\nls dxb/patches | sort\n"
+      run: |
+        git init -q dxb
+        git -C dxb fetch -q --depth 1 "$DXB_REPO" "$DXB_SHA"
+        git -C dxb checkout -q FETCH_HEAD
+        cp xnu/patches-minimal/*.patch xnu/patches-minimal/*.sh dxb/patches/ 2>/dev/null || true
+        python3 tools/patch_build_sh.py dxb/build.sh "$MACHINE_CONFIG"
     - name: Debug step before patches
       run: 'echo "DEBUG: About to apply patches"'
     - name: Apply patches and verify MakeInc.def
       working-directory: dxb
-      run: "# Apply patches manually to verify\ncd xnu\nfor patch in \\\n  0085-a5xelte-board-target.patch \\\n  0096-m30lte-a5xelte-h-overrides.patch \\\n  0400-m30lte-board-target.patch \\\n  0402-m30lte-board-config-header.patch \\\n  0403-m30lte-hardware-overrides.patch; do\n  echo \"Applying critical patch: $patch\"\n  git apply \"../patches/$patch\"\ndone\n# Apply remaining patches\nfor patch in ../patches/*.patch; do\n  name=$(basename \"$patch\")\n  if [[ ! \"$name\" =~ ^(0085|0096|0400|0402|0403)- ]]; then\n    git apply \"$patch\" 2>/dev/null || echo \"Skipped: $name\"\n  fi\ndone\n# Verify MakeInc.def has M30LTE\necho \"=== SUPPORTED_ARM64_MACHINE_CONFIGS ===\"\ngrep \"SUPPORTED_ARM64_MACHINE_CONFIGS\" makedefs/MakeInc.def\necho \"=== MACHINE_FLAGS_ARM64_M30LTE ===\"\ngrep \"MACHINE_FLAGS_ARM64_M30LTE\" makedefs/MakeInc.def\ncd .."
+      run: |
+        # Apply patches manually to verify
+        cd xnu
+        for patch in \
+          0085-a5xelte-board-target.patch \
+          0096-m30lte-a5xelte-h-overrides.patch \
+          0400-m30lte-board-target.patch \
+          0402-m30lte-board-config-header.patch \
+          0403-m30lte-hardware-overrides.patch; do
+          echo "Applying critical patch: $patch"
+          git apply "../patches/$patch"
+        done
+        # Apply remaining patches
+        for patch in ../patches/*.patch; do
+          name=$(basename "$patch")
+          if [[ ! "$name" =~ ^(0085|0096|0400|0402|0403)- ]]; then
+            git apply "$patch" 2>/dev/null || echo "Skipped: $name"
+          fi
+        done
+        # Verify MakeInc.def has M30LTE
+        echo "=== SUPPORTED_ARM64_MACHINE_CONFIGS ==="
+        grep "SUPPORTED_ARM64_MACHINE_CONFIGS" makedefs/MakeInc.def
+        echo "=== MACHINE_FLAGS_ARM64_M30LTE ==="
+        grep "MACHINE_FLAGS_ARM64_M30LTE" makedefs/MakeInc.def
+        cd ..
       env:
         MACHINE_CONFIG: M30LTE
     - name: Deps
-      run: 'brew install jq gum bash cmake ninja
-
-        printf ''#!/bin/sh\nexit 0\n'' | sudo tee /usr/local/bin/xcodes >/dev/null
-
+      run: |
+        brew install jq gum bash cmake ninja
+        printf '#!/bin/sh\nexit 0\n' | sudo tee /usr/local/bin/xcodes >/dev/null
         sudo chmod +x /usr/local/bin/xcodes
-
         sw_vers
-
         ls -d /Applications/Xcode*.app
-
         XC=$(ls -d /Applications/Xcode_15*.app 2>/dev/null | sort -V | tail -1)
-
         [ -n "$XC" ] || XC=$(ls -d /Applications/Xcode_*.app | sort -V | head -1)
-
         echo "DEVELOPER_DIR=$XC/Contents/Developer" >> "$GITHUB_ENV"
-
         sudo xcode-select -s "$XC"
-
         xcodebuild -version
-
-        xcrun --find iig'
+        xcrun --find iig
     - name: Diagnose KDK availability
-      run: "echo \"=== Checking KDK availability ===\"\necho \"MACOS_VERSION=13.5\"\necho \"Expected KDKROOT: /Library/Developer/KDKs/KDK_13.5_22G74.kdk\"\nls -la /Library/Developer/KDKs/ 2>/dev/null || echo \"KDKs directory not found\"\nif [ -d \"/Library/Developer/KDKs/KDK_13.5_22G74.kdk\" ]; then\n  echo \"KDK_13.5_22G74.kdk FOUND\"\n  ls -la \"/Library/Developer/KDKs/KDK_13.5_22G74.kdk/\"\nelse\n  echo \"KDK_13.5_22G74.kdk NOT FOUND\"\n  echo \"Available KDKs:\"\n  find /Library/Developer/KDKs -maxdepth 1 -type d 2>/dev/null | head -20\nfi"
+      run: |
+        echo "=== Checking KDK availability ==="
+        echo "MACOS_VERSION=13.5"
+        echo "Expected KDKROOT: /Library/Developer/KDKs/KDK_13.5_22G74.kdk"
+        ls -la /Library/Developer/KDKs/ 2>/dev/null || echo "KDKs directory not found"
+        if [ -d "/Library/Developer/KDKs/KDK_13.5_22G74.kdk" ]; then
+          echo "KDK_13.5_22G74.kdk FOUND"
+          ls -la "/Library/Developer/KDKs/KDK_13.5_22G74.kdk/"
+        else
+          echo "KDK_13.5_22G74.kdk NOT FOUND"
+          echo "Available KDKs:"
+          find /Library/Developer/KDKs -maxdepth 1 -type d 2>/dev/null | head -20
+        fi
     - name: Build
       working-directory: dxb
       env:
         MAKEFLAGS: ${{ inputs.keep_going == 'false' && '' || '-k' }}
         SKIP_PATCHES: '1'
-      run: 'set -o pipefail
-
-        bash build.sh 2>&1 | tee ../build.log'
+      run: |
+        set -o pipefail
+        bash build.sh 2>&1 | tee ../build.log
     - name: Verify effective M30 source tree
-      run: "python3 tools/verify_m30_buildtree.py \\\n  --tree dxb/xnu \\\n  --patch-dir dxb/patches | tee m30-buildtree-verification.json"
+      run: |
+        python3 tools/verify_m30_buildtree.py \
+          --tree dxb/xnu \
+          --patch-dir dxb/patches | tee m30-buildtree-verification.json
     - name: Verify exact M30 kernel binary
-      run: "kernel=\"dxb/fakeroot/System/Library/Kernels/kernel.$(echo \\\"$KERNEL_CONFIG\\\" | tr A-Z a-z).m30lte\"\npython3 tools/verify_m30_kernel.py \\\n  --kernel \"$kernel\" \\\n  --objdump \\\"xcrun llvm-objdump\\\" \\\n  --nm \\\"xcrun llvm-nm\\\" | tee m30-kernel-verification.json"
+      run: |
+        kernel="dxb/fakeroot/System/Library/Kernels/kernel.$(echo "$KERNEL_CONFIG" | tr A-Z a-z).m30lte"
+        python3 tools/verify_m30_kernel.py \
+          --kernel "$kernel" \
+          --objdump "xcrun llvm-objdump" \
+          --nm "xcrun llvm-nm" | tee m30-kernel-verification.json
     - name: Report build errors as annotations
       if: always()
-      run: "test -f build.log || exit 0\nkernel=\"dxb/fakeroot/System/Library/Kernels/kernel.$(echo \\\"$KERNEL_CONFIG\\\" | tr A-Z a-z).$(echo \\\"$MACHINE_CONFIG\\\" | tr A-Z a-z)\"\nif [ -f \"$kernel\" ]; then echo \"kernel built: $kernel\"; exit 0; fi\npython3 - build.log <<'PYEOF'\nimport re, sys\nlines = open(sys.argv[1], errors='replace').read().splitlines()\nclean = [re.sub(r'\\x1b\\[[0-9;]*m', '', l) for l in lines]\ncc = re.compile(r'(:\\d+:\\d+: (fatal )?error:|^ld: (?!warning)|Undefined symbols|clang: error|^make.*Error')\nhits = [l for l in clean if cc.search(l)]\nfor i, l in enumerate(clean):\n    if re.search(r':\\d+:\\d+: (fatal )?error:', l) and len(hits) < 40:\n        hits.append('CONTEXT ' + ''.join(x[:200] for x in clean[i:i + 4]))\npat = re.compile(r'(error:|fatal error|Error \\d|\\*\\*\\* |FAILED|No such file|panic)', re.I)\nhits += [l for l in clean if pat.search(l) and l not in hits]\nesc = lambda s: s.replace('%', '%25').replace('\\r', '').replace('\\n', '%0A')\nfor l in hits[:9]:\n    print('::error title=build::' + esc(l[:900]))\ntail = '\\n'.join(l[:300] for l in clean[-60:])\nprint('::error title=build log tail::' + esc(tail[-30000:]))\nPYEOF\nexit 1"
+      run: |
+        test -f build.log || exit 0
+        kernel="dxb/fakeroot/System/Library/Kernels/kernel.$(echo "$KERNEL_CONFIG" | tr A-Z a-z).$(echo "$MACHINE_CONFIG" | tr A-Z a-z)"
+        if [ -f "$kernel" ]; then echo "kernel built: $kernel"; exit 0; fi
+        python3 - build.log <<'PYEOF'
+        import re, sys
+        lines = open(sys.argv[1], errors='replace').read().splitlines()
+        clean = [re.sub(r'\x1b\[[0-9;]*m', '', l) for l in lines]
+        cc = re.compile(r'(:\d+:\d+: (fatal )?error:|^ld: (?!warning)|Undefined symbols|clang: error|^make.*Error)')
+        hits = [l for l in clean if cc.search(l)]
+        for i, l in enumerate(clean):
+            if re.search(r':\d+:\d+: (fatal )?error:', l) and len(hits) < 40:
+                hits.append('CONTEXT ' + ''.join(x[:200] for x in clean[i:i + 4]))
+        pat = re.compile(r'(error:|fatal error|Error \d|\*\*\* |FAILED|No such file|panic)', re.I)
+        hits += [l for l in clean if pat.search(l) and l not in hits]
+        esc = lambda s: s.replace('%', '%25').replace('\r', '').replace('\n', '%0A')
+        for l in hits[:9]:
+            print('::error title=build::' + esc(l[:900]))
+        tail = '\n'.join(l[:300] for l in clean[-60:])
+        print('::error title=build log tail::' + esc(tail[-30000:]))
+        PYEOF
+        exit 1
     - name: Package build tree for local compiles
       if: always()
-      run: "SDK=$(xcrun --sdk macosx --show-sdk-path)\nmkdir -p sdk-kernel-platform\ncp -R \"$SDK/System/Library/Frameworks/Kernel.framework/Versions/A/PrivateHeaders/platform\" sdk-kernel-platform/ || true\ntar czf buildtree.tgz \\\n  --exclude='*.o' --exclude='*.cpo' --exclude='*.a' --exclude='*.dSYM' --exclude='*.unstripped' \\\n  --exclude='kernel.development.*' --exclude='.git' \\\n  -C dxb build/xnu.obj fakeroot/usr/local/include xnu \\\n  -C .. sdk-kernel-platform\nls -la buildtree.tgz"
+      run: |
+        SDK=$(xcrun --sdk macosx --show-sdk-path)
+        mkdir -p sdk-kernel-platform
+        cp -R "$SDK/System/Library/Frameworks/Kernel.framework/Versions/A/PrivateHeaders/platform" sdk-kernel-platform/ || true
+        tar czf buildtree.tgz \
+          --exclude='*.o' --exclude='*.cpo' --exclude='*.a' --exclude='*.dSYM' --exclude='*.unstripped' \
+          --exclude='kernel.development.*' --exclude='.git' \
+          -C dxb build/xnu.obj fakeroot/usr/local/include xnu \
+          -C .. sdk-kernel-platform
+        ls -la buildtree.tgz
     - uses: actions/upload-artifact@v4
       if: always()
       with:
@@ -95,13 +165,11 @@ jobs:
         retention-days: 7
     - name: Collect
       if: always()
-      run: 'mkdir -p out
-
+      run: |
+        mkdir -p out
         cp -R dxb/fakeroot/System/Library/Kernels/. out/ 2>/dev/null || true
-
         ls -la out
-
-        (cd out && shasum -a 256 kernel.* > SHA256SUMS) || true'
+        (cd out && shasum -a 256 kernel.* > SHA256SUMS) || true
     - uses: actions/upload-artifact@v4
       if: always()
       with:
@@ -110,4 +178,30 @@ jobs:
         if-no-files-found: warn
     - name: Check Cortex-A53 compatibility (no ARMv8.1 LSE atomics)
       if: env.MACHINE_CONFIG == 'A5XELTE' || env.MACHINE_CONFIG == 'HEROLTE' || env.MACHINE_CONFIG == 'M20LTE' || env.MACHINE_CONFIG == 'M30LTE'
-      run: "kernel=\"out/kernel.$(echo \\\"$KERNEL_CONFIG\\\" | tr A-Z a-z).$(echo \\\"$MACHINE_CONFIG\\\" | tr A-Z a-z)\"\ntest -f \"$kernel\"\nxcrun llvm-objdump -d --no-show-raw-insn \"$kernel\" > lse-scan.txt || {\n  echo \"::error title=LSE check::llvm-objdump failed on $kernel\"; exit 1; }\npython3 - lse-scan.txt \"$kernel\" <<'PYEOF'\nimport re, sys\nlse = re.compile(r'\\s(cas|casp|ldadd|ldclr|ldeor|ldset|ldsmax|ldsmin|ldumax|ldumin|stadd|stclr|steor|stset|stsmax|stsmin|stumax|stumin|swp)[a-z]*\\s')\ndata_symbols = {'K256'}\nfunc, funcs, samples = '?', {}, []\nfor line in open(sys.argv[1], errors='replace'):\n    m = re.match(r'^[0-9a-f]+ <(.+)>:', line)\n    if m:\n        func = m.group(1)\n    elif lse.search(line) and func not in data_symbols:\n        funcs[func] = funcs.get(func, 0) + 1\n        if len(samples) < 8:\n            samples.append(func + ': ' + line.strip())\ncount = sum(funcs.values())\nprint(f'LSE instructions in code of {sys.argv[2]}: {count}')\nif count:\n    top = sorted(funcs.items(), key=lambda kv: -kv[1])[:40]\n    msg = f'{count} LSE instructions in {len(funcs)} functions\\n'\n    msg += '\\n'.join(f'{n} {f}' for f, n in top) + '\\n--\\n' + '\\n'.join(samples)\n    print('::error title=LSE in kernel::' + msg.replace('%', '%25').replace('\\n', '%0A'))\n    sys.exit(1)\nPYEOF"
+      run: |
+        kernel="out/kernel.$(echo "$KERNEL_CONFIG" | tr A-Z a-z).$(echo "$MACHINE_CONFIG" | tr A-Z a-z)"
+        test -f "$kernel"
+        xcrun llvm-objdump -d --no-show-raw-insn "$kernel" > lse-scan.txt || {
+          echo "::error title=LSE check::llvm-objdump failed on $kernel"; exit 1; }
+        python3 - lse-scan.txt "$kernel" <<'PYEOF'
+        import re, sys
+        lse = re.compile(r'\s(cas|casp|ldadd|ldclr|ldeor|ldset|ldsmax|ldsmin|ldumax|ldumin|stadd|stclr|steor|stset|stsmax|stsmin|stumax|stumin|swp)[a-z]*\s')
+        data_symbols = {'K256'}
+        func, funcs, samples = '?', {}, []
+        for line in open(sys.argv[1], errors='replace'):
+            m = re.match(r'^[0-9a-f]+ <(.+)>:', line)
+            if m:
+                func = m.group(1)
+            elif lse.search(line) and func not in data_symbols:
+                funcs[func] = funcs.get(func, 0) + 1
+                if len(samples) < 8:
+                    samples.append(func + ': ' + line.strip())
+        count = sum(funcs.values())
+        print(f'LSE instructions in code of {sys.argv[2]}: {count}')
+        if count:
+            top = sorted(funcs.items(), key=lambda kv: -kv[1])[:40]
+            msg = f'{count} LSE instructions in {len(funcs)} functions\n'
+            msg += '\n'.join(f'{n} {f}' for f, n in top) + '\n--\n' + '\n'.join(samples)
+            print('::error title=LSE in kernel::' + msg.replace('%', '%25').replace('\n', '%0A'))
+            sys.exit(1)
+        PYEOF
