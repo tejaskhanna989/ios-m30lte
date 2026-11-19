@@ -201,9 +201,11 @@ jobs:
       if: always()
       run: |
         mkdir -p out
+        # macosx target: /System/Library/Kernels/kernel.*; ios target: mach.* at fakeroot root
         cp -R dxb/fakeroot/System/Library/Kernels/. out/ 2>/dev/null || true
+        cp dxb/fakeroot/mach.* out/ 2>/dev/null || true
         ls -la out
-        (cd out && shasum -a 256 kernel.* > SHA256SUMS) || true
+        (cd out && shasum -a 256 kernel.* mach.* > SHA256SUMS 2>/dev/null) || true
     - uses: actions/upload-artifact@v4
       if: always()
       with:
