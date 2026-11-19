@@ -1,0 +1,21 @@
+diff --git a/pexpert/arm/pe_init.c b/pexpert/arm/pe_init.c
+index 04dda53..f2e8c9a 100644
+--- a/pexpert/arm/pe_init.c
++++ b/pexpert/arm/pe_init.c
+@@ -1,3 +1,5 @@
++#include <arm64/sweet_early_adt_readback.h>
++
+ /*
+  * Copyright (c) 2000-2020 Apple Inc. All rights reserved.
+  *
+@@ -423,6 +425,10 @@ PE_init_platform(boolean_t vm_initialized, void *args)
+ 		 * can be used..
+ 		 */
+ 		SecureDTInit(PE_state.deviceTreeHead, PE_state.deviceTreeSize);
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++            /* Restore exact packaged ADT before platform identification parses it. */
++            m30_adt_readback_impl(PE_state.deviceTreeHead, PE_state.deviceTreeSize);
++#endif
+ 		pe_identify_machine(boot_args_ptr);
+ 	 } else {
+ 		pe_arm_init_interrupts(args);
