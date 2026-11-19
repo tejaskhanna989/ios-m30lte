@@ -383,3 +383,50 @@ FINAL: NO-GO for physical test. Static/package checks all pass; remaining blocke
 all physical/protocol: no proven M30 no-write temporary boot path, unknown load address,
 unknown entry EL/MMU/cache state, unmeasured CNTFRQ_EL0, no successful faithful-platform
 emulation. Candidate v3 is for offline review only. No device operations performed.
+
+## 2026-11-19 — D22AP platform-matching fix implemented (MAIN ONLY)
+
+ROOT CAUSE (VERIFIED from linked kernel bytes): XNU 8796.141.3
+IOPlatformExpert.cpp `IOPanicPlatform::start()` panics "Unable to find driver for
+this platform" when no IOPlatformExpert subclass matches. Matching uses
+`provider->compareNames()` -> `IODTCompareNubName()` which checks the DT node's
+name/compatible/device_type/model properties against each table entry's
+`IONameMatch`. M30LTE builds define BOTH ARM64_BOARD_CONFIG_A5XELTE and
+ARM64_BOARD_CONFIG_M30LTE (MakeInc.def). Patch 9999e placed the A5XELTE `#if`
+branch first, so the compiled gIOKernelConfigTables had
+SweetPlatformExpert IONameMatch = 'samsung,a5xelte' (confirmed by extracting
+the serialized table from kernel 361fc613...). The M30 ADT compatible list is
+'samsung,m30lte|D22AP|iPhone10,3|samsung,exynos7904|AppleARM' with NO
+'samsung,a5xelte', so SweetPlatformExpert failed to match and IOPanicPlatform
+(probe score 0) won -> D22AP panic. 9999e and the ADT identity could not
+prevent this because the mismatch was in the compiled IONameMatch, not the ADT.
+
+FIX (smallest correct): rewrote xnu/patches-minimal/9999e so the M30LTE branch
+is evaluated FIRST in each #if chain (SweetPlatformExpert, SweetCPU, AppleCLCD),
+and SweetBattery exclusion checks both macros. A5XELTE-only and Apple builds are
+unchanged (M30LTE macro absent -> original branches).
+
+REGRESSION TEST: tools/verify_platform_match.py preprocesses KernelConfigTables.cpp
+for M30LTE / A5XELTE-only / Apple D22AP configurations and inspects the linked
+kernel's serialized IONameMatch. Result on new CI kernel: 9/9 PASS including
+"Apple D22AP: no SweetPlatformExpert match entry" and
+"linked kernel SweetPlatformExpert match = samsung,m30lte".
+
+CI: run 44528894772 (https://github.com/tejaskhanna989/ios-m30lte/actions/runs/44528894772)
+ALL JOBS GREEN. New kernel SHA256 a14a266833ddad0c7099240ad62eee118ec533522e6cdbbe6cb739554cb6ec36
+(17,064,040 B); compiled IONameMatch = 'samsung,m30lte' verified from kernel bytes.
+
+ALL SUITES on new kernel: CPU fallback 17/17 PASS; ADT restore 22/22 PASS;
+GIC audit 6/6 PASS; buildtree PASS (4 critical reverse-applies); kernel verifier
+PASS (6 checks); platform match 9/9 PASS.
+
+NEW CANDIDATE v4 (v2 and v3 preserved unchanged):
+validation/post-green-build-20261119/out-v4/m30lte-ios-candidate-20261119-v4.img
+SHA256 d3c2f75be03f55d900225995a58b72e5a50054859bdb99ba4ea46f94f6ba62db
+(16,492,544 B; payload 42d32803...8809e0907; combined 0e6a6e17...98878b)
+Candidate structural verifier: 24/24 PASS (same checks as v3, new kernel).
+
+DISTINCTION: CI verification is complete and green. Physical boot remains UNVERIFIED
+and NO-GO — no M30 no-write boot path, unknown load address/entry EL/MMU/cache,
+unmeasured CNTFRQ_EL0. The platform-match root cause is fixed in the compiled
+kernel, but physical confirmation is not claimed.
