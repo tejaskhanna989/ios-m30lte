@@ -1,0 +1,21 @@
+diff --git a/makedefs/MakeInc.def b/makedefs/MakeInc.def
+--- a/makedefs/MakeInc.def
++++ b/makedefs/MakeInc.def
+@@ -520,7 +520,9 @@ endif
+ else
+ 
+ # DEVELOPMENT and RELEASE variants
++# M30LTE has no Apple iOS KDK to supply the minimal UBSan runtime symbols.
+ ifeq ($(PLATFORM),iPhoneOS)
++ifneq ($(CURRENT_MACHINE_CONFIG),M30LTE)
+ 
+ # Currently we have to keep alive two separated UBSAN runtimes (minimal for DEVELOPMENT,
+ # full for KASAN). This implies that we cannot use CFLAGS_$(CURRENT_KERNEL_CONFIG), because
+@@ -543,6 +545,7 @@ UBSAN_CHECKS_TRAP =
+ UBSAN_CHECKS_FATAL =
+ UBSAN_DISABLED =
+ endif
++endif # !M30LTE
+ endif
+ 
+ endif
