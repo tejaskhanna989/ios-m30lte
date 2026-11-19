@@ -207,3 +207,72 @@ No physical operations performed.
 - The candidate BOOT image and its inputs under validation/post-green-build-20261119/out/
   (kernel, ADT, payload, shim sources, combined, final .img, verification outputs) are
   committed directly on main as evidence; none of them are flashed.
+
+## 2026-11-19 — Shim entry recovery & candidate audit (MAIN ONLY)
+
+### Investigation: why main contained a diagnostic stub
+- Commit `8da6834` (2026-10-29, "Fix shim entry point: _start at offset 0, remove branch
+  indirection") replaced the boot-capable `shim/start.S` with a red/green framebuffer stub
+  that **never calls the loader** (`wfe` hang). Commit message notes ABL signature verification
+  was blocking custom boot images at that time. It also changed `shim/shim.ld` from
+  `ENTRY(_head); . = 0` to `ENTRY(_start); . = 0x10008000`.
+- The stub was never reverted on main. Its `shim/out/Image` (5,312 B, SHA
+  f14142d2…5919b8a1) has no ARM64 Linux Image magic, and its first instruction
+  (`0xd2800001`, movz x1,#0) draws test colors.
+- A third entry variant exists in the **unmerged/dangling** commit `2ffc523`
+  (2026-11-16, "Validate M30LTE offline boot candidate"): minimal `_start` that sets
+  `_stack_top` and calls `shim_main`, with the current linker script. That branch's
+  FINAL_REPORT concluded **NO-GO** (no proven no-write boot path, unknown shim load
+  address, GICv2 handoff unimplemented, timer rate unmeasured, QEMU `not_decoded`).
+
+### Source fix applied on main
+- Restored the **consistent pair** `shim/start.S` + `shim/shim.ld` from `8da6834^`
+  (Linux Image header `_head`, full EL1/vectors/BSS setup, calls `shim_main`;
+  linker `ENTRY(_head)`, `. = 0`). Restoring start.S alone would be wrong: with
+  main's `ENTRY(_start); . = 0x10008000` linker script the Image header's `image_size`
+  field becomes `0x1001a000` (268 MB) instead of `0x12000`. Verified by rebuild.
+- Rebuilt shim from main sources: 7,488 B, SHA256 1caee1aeec7e7c342c8de71a5078eb467dd16ec8f17e58d77ef84b3349dd4381,
+  Image header: code0=b _start, text_offset=0, image_size=0x12000, flags=0xa, magic "ARM64".
+- Verification suites after the fix: CPU fallback 17/17 PASS, ADT restore 22/22 PASS,
+  kernel verifier PASS.
+
+### Hash discrepancy resolved (distinct objects, NOT a conflict)
+- `2dc36c056e62a563bc5b2262c296d8731e1d8ad9e804d388054c156cec7bd577` =
+  SHA256 of the **10,180-byte embedded ADT byte array** (`m30_adt_expected[]`) inside
+  `sweet_early_adt_readback.h` and in the linked kernel.
+- `6a607854a8cec038dfe0f1273130fbc147939f9d5d012116d14a94102cc4dac5` =
+  SHA256 of the **whole 70,563-byte header FILE** `osfmk/arm64/sweet_early_adt_readback.h`;
+  this is what the CPU-fallback verifier's `RESTORE_HEADER_SHA256` checks (source integrity),
+  NOT the ADT hash. The older verifier baseline `0a99f9fd…` corresponds to a previous
+  header revision (stale).
+- `75ec0700ed2578604b62e3ac2b5745762caa5d84b9204f871e5c0e0812c8ec49` =
+  old donor ADT file `validation/xnu-handoff-fix/dcache-fix-candidate-20261117/candidate/inputs/m30lte_gicv2_20261117.adt`
+  (D22AP primary; differs from the embedded ADT only in `compatible` ordering).
+- `e07af4d4dc8ea4bb0c116671e2755634b1d8f256e65b62c6885581fd0bb17206` =
+  `out/m30lte_final.adt` (10,196 B, D22AP primary), used in the older payload.
+
+### Corrected candidate (v2) — source revisions documented
+- start.S / shim.ld: `8da6834^` (consistent boot-capable pair)
+- shim.c / devices/m30lte.c / device.h: main HEAD 9d2beac -> now 9d2beac+fix (from 8da6834)
+- kernel: CI artifact from run 44502403576 (SHA 361fc613…9042a1)
+- ADT: corrected embedded ADT extracted from that kernel (2dc36c05…bd577)
+- Output dir: validation/post-green-build-20261119/out-v2/
+  Image SHA 1caee1aeec7e7c342c8de71a5078eb467dd16ec8f17e58d77ef84b3349dd4381
+  payload.bin SHA 83475dc9241b5b2e177c8f6920141a8a0c42c5a16973d935b731ffe8eae2547b
+  combined.bin SHA 36382c8a8c1daedcda5fc64e72074cc37532caed051299bdd800744f38f91daf
+  **m30lte-ios-candidate-20261119-v2.img SHA 4fec619bb6dcf8fd6494cb01d136bf003aaadc9f85b0d26546862b9eaad2a763**
+  (16,492,544 B; boot header v2: kernel 0x10008000, ramdisk 0x11000000, dtb 0x11f00000,
+  page 2048, cmdline "debug=0xc serial=3 keepsyms=1"; kernel bytes == combined.bin verified)
+- The earlier candidate `m30lte-ios-candidate-20261119.img` (b19b0260…28d15) is SUPERSEDED:
+  it mixed the historical start.S with main's linker script -> invalid image_size 0x1001a000.
+  Preserved as evidence; do not use.
+
+### Handoff audit (static only — NOT physical readiness)
+- virt_base 0xfffffff006000000 - phys_base 0x80000000 = 0xffffffef86000000 =
+  M30_ADT_KVA_DELTA exactly; shim's `deviceTreeP` (kernel_end VA 0xfffffff0084a0000)
+  resolves to ADT PA 0x824a0000 inside RAM [0x80000000,0xbd900000); boot_args at 0x824a4000.
+- Kernel entry VA 0xfffffff007427488 -> PA 0x81427488; shim jumps there with x0 = boot_args PA.
+- NOT proven: M30 bootloader load/entry address, CPU state (EL/MMU/cache), GICv2 init in shim
+  (current shim.c still contains GICv3 ICC code and an unsupported watchdog poke at 0x10160000),
+  timer CNTFRQ_EL0, or any no-write temporary boot route. Per 2ffc523 NO-GO report and
+  BOOT_PROTOCOL.md, NO physical boot is authorized; candidate is for offline review only.
