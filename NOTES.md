@@ -764,3 +764,36 @@ iOS-target root-device compatibility (from iOS buildtree artifact run 4457168144
   NOT changed per instruction.
 
 CI run 44576445930 in flight (full green re-run with annotation + Collect fixes).
+
+## 2026-11-19 — iOS candidate v6 (FIRST genuine iOS physical candidate) — READY, AWAITING AUTHORIZATION
+
+CI run 44579283250 (HEAD fbffc1a) — ALL 17 JOBS GREEN (incl. LSE check, Collect, target verify).
+Target evidence: ios_define_present=True osx_define_present=False target=iphoneos;
+-miphoneos-version-min=18.0 auto-derived from Xcode 16 iPhoneOS18.0 SDK (not changed; source is
+iOS 16-era XNU 8796.141.3).
+
+Kernel (authoritative from green run): SHA 790c841d11af707c44800b1e9543e2d87733a9bcf9e6f8fadadc5535c8fd3047,
+size 16,697,344 bytes, installed as mach.development.m30lte. Compiled IONameMatch samsung,m30lte.
+Note: multiple green runs produced different kernel SHAs (5c8ecf20, 6184ed7e, 790c841d) due to
+build non-determinism; v6 uses the kernel from the FINAL fully-green run 44579283250.
+
+Candidate v6: validation/ios-candidate-v6-out/shim-boot.img
+  SHA 5bb27fb3d340ffe01e5667e2f136927a331a1752b7030fd31c2c84ab10f83c7f (16,236,544 B)
+  ios-boot.img 4bba0a47..., combined.bin dc7ff834..., payload 1eea458c...
+  Proven v5 shim region (0x20000) byte-identical: sha 864370f63a42... == physical flash.
+  shim Fixed Image a3fd2653.../2d7aea80...; entry PA 0x81405488; ADT PA 0x82444000;
+  boot_args PA 0x82448000; patched ADT inside RAM window.
+
+Validators: CPU fallback 17/17, ADT restore 22/22, platform match 9/9, kernel verifier PASS,
+buildtree PASS (4 critical reverse-applies), packaging validator PASS (combined exact, structural,
+partition-compatible; sboot acceptance unknown), dedicated handoff verifier PASS (EL1/EL2 dispatch,
+no ICC sysregs), dedicated GIC machine-code verifier PASS. The generic GIC audit's "DAIF at entry"
+check is not applicable to the proven shim (CurrentEL dispatch first); the dedicated verifiers are authoritative.
+
+iOS root compatibility: eMMC driver intact (m30lte-emmc @0x13500000, read-only default,
+rd=emmcroot0/emmcprobe paths). Under XNU_TARGET_OS_IOS root failure PANICS explicitly
+("Failed to mount root device"), not silent OSX recovery loop. GENUINE iOS ROOT FILESYSTEM STILL
+ABSENT — no IPSW/rootfs assets; no SpringBoard/userspace boot claim possible.
+
+OSX artifacts and v2-v5 preserved unchanged. NO physical operations. STOPPING — awaiting fresh
+authorization for a BOOT-only test of candidate v6.
