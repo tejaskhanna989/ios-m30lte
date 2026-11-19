@@ -2,7 +2,7 @@ diff --git a/pexpert/arm/pe_init.c b/pexpert/arm/pe_init.c
 index 04dda53..7a3dbd1 100644
 --- a/pexpert/arm/pe_init.c
 +++ b/pexpert/arm/pe_init.c
-@@ -423,6 +423,12 @@ PE_init_platform(boolean_t vm_initialized, void *args)
+@@ -423,6 +423,11 @@ PE_init_platform(boolean_t vm_initialized, void *args)
  		 * can be used..
  		 */
  		SecureDTInit(PE_state.deviceTreeHead, PE_state.deviceTreeSize);
