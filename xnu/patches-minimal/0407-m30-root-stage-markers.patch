@@ -1,0 +1,57 @@
+diff --git a/iokit/bsddev/IOKitBSDInit.cpp b/iokit/bsddev/IOKitBSDInit.cpp
+--- a/iokit/bsddev/IOKitBSDInit.cpp
++++ b/iokit/bsddev/IOKitBSDInit.cpp
+@@ -683,6 +683,9 @@
+ 
+ 	int xchar, dchar;
+ 
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	IOLog("M30 ROOT: IOFindBSDRoot entered\n");
++#endif
+ 	// stall here for anyone matching on the IOBSD resource to finish (filesystems)
+ 	matching = IOService::serviceMatching(gIOResourcesKey);
+ 	assert(matching);
+@@ -696,6 +699,9 @@
+ 	matching->release();
+ 	matching = NULL;
+ 
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	IOLog("M30 ROOT: waitForMatchingService(IOBSD) returned %s\n", service ? "service" : "TIMEOUT");
++#endif
+ 	if (mountAttempts++) {
+ 		IOLog("mount(%d) failed\n", mountAttempts);
+ 		IOSleep( 5 * 1000 );
+@@ -772,7 +778,13 @@
+ 	}
+ 
+ #if defined(ARM64_BOARD_CONFIG_A5XELTE)
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	IOLog("M30 ROOT: A5XELTE keys/emmc stage (rdBootVar='%s')\n", rdBootVar);
++#endif
+ 	a5xelte_keys_init();
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	IOLog("M30 ROOT: a5xelte_keys_init done\n");
++#endif
+ #if !defined(ARM64_BOARD_CONFIG_M30LTE)
+ 	a5xelte_touch_probe();
+ #endif
+@@ -783,6 +795,9 @@
+ 		a5xelte_emmc_probe();
+ 	}
+ 	}
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	IOLog("M30 ROOT: emmcprobe stage done (emmcprobe=%u, rdBootVar='%s')\n", emmcprobe, rdBootVar);
++#endif
+ 	if (strcmp(rdBootVar, "emmcroot0") == 0) {
+ 		extern int a5xelte_emmc_rootdev(dev_t *dev);
+ 		OSSafeReleaseNULL(matching);
+@@ -924,6 +939,9 @@
+ 		IOService::startDeferredMatches();
+ 	}
+ 
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	IOLog("M30 ROOT: entering wait-for-root-device loop\n");
++#endif
+ 	do {
+ 		t.tv_sec = ROOTDEVICETIMEOUT;
+ 		t.tv_nsec = 0;
