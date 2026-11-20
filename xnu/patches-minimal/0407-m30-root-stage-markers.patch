@@ -45,7 +45,7 @@ diff --git a/iokit/bsddev/IOKitBSDInit.cpp b/iokit/bsddev/IOKitBSDInit.cpp
  	}
  	}
 +#if defined(ARM64_BOARD_CONFIG_M30LTE)
-+	IOLog("M30 ROOT: emmcprobe stage done (emmcprobe=%u, rdBootVar='%s')\n", emmcprobe, rdBootVar);
++	IOLog("M30 ROOT: emmcprobe stage done (rdBootVar='%s')\n", rdBootVar);
 +#endif
  	if (strcmp(rdBootVar, "emmcroot0") == 0) {
  		extern int a5xelte_emmc_rootdev(dev_t *dev);
