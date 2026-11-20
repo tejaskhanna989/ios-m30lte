@@ -1,0 +1,125 @@
+diff --git a/pexpert/arm/pe_serial.c b/pexpert/arm/pe_serial.c
+--- a/pexpert/arm/pe_serial.c
++++ b/pexpert/arm/pe_serial.c
+@@ -741,6 +741,101 @@
+ 	fbcon_clear_row((fbcon_row + 1) % fbcon_rows);
+ }
+ 
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++/*
++ * M30LTE console -> ramoops pmsg mirror.
++ * Live layout: ramoops 0x92400000/0x8000, record_zone 0x4000, pmsg_zone 0x4000.
++ * pmsg zone = 0x92404000. persistent_ram_buffer header (12B):
++ *   sig(0)=0x43474244 "DBGC", start(4), size(4), data(12)
++ * pmsg record framing (tools/decode_pmsg.py):
++ *   [0]=0x6c magic [1]=len(u8) [2..18]=metadata [19..]=tag\0message\0
++ */
++#define M30_PMSG_PA      0x92404000ULL
++#define M30_PMSG_SZ      0x4000u
++#define M30_PMSG_SIG     0x43474244u
++#define M30_PMSG_HDR     12u
++#define M30_REC_HDR      19u
++#define M30_REC_MAGIC    0x6cu
++
++static volatile uint8_t *m30_pmsg_base;   /* points at data[] (pa+12) */
++static uint32_t m30_pmsg_cap;             /* zone size - 12 */
++static uint32_t m30_line_len;
++static uint8_t  m30_line[230];            /* <= 255 - 19 - tag - NUL */
++
++static void
++m30_pmsg_init(void)
++{
++	vm_offset_t va = ml_io_map(M30_PMSG_PA, M30_PMSG_SZ);
++	volatile uint32_t *h;
++	if (va == 0) {
++		return;
++	}
++	h = (volatile uint32_t *)va;
++	if (h[0] != M30_PMSG_SIG) {
++		return;   /* unknown layout: do not touch */
++	}
++	m30_pmsg_cap = M30_PMSG_SZ - M30_PMSG_HDR;
++	if (h[2] > m30_pmsg_cap || h[1] > m30_pmsg_cap) {
++		return;   /* invalid header */
++	}
++	m30_pmsg_base = (volatile uint8_t *)va + M30_PMSG_HDR;
++}
++
++/* Append one framed pmsg record. Non-blocking, no allocation. */
++static void
++m30_pmsg_emit(const uint8_t *msg, uint32_t len)
++{
++	static const char tag[] = "XNU";
++	const uint32_t taglen = 3;   /* "XNU" */
++	uint32_t reclen = M30_REC_HDR + taglen + 1 + len + 1;
++	volatile uint32_t *h = (volatile uint32_t *)(m30_pmsg_base - M30_PMSG_HDR);
++	uint32_t start, size, i;
++	volatile uint8_t *d = m30_pmsg_base;
++
++	if (m30_pmsg_base == NULL || len == 0 || reclen > 255 ||
++	    reclen > m30_pmsg_cap) {
++		return;
++	}
++	start = h[1];   /* old start (write position) */
++	size  = h[2];   /* old size  */
++	if (size < m30_pmsg_cap) {
++		size += reclen;
++		if (size > m30_pmsg_cap) size = m30_pmsg_cap;
++	}
++	/* write bytes at old start, wrapping within data[] */
++	i = 0;
++#define PUT(b) do { d[(start + i) % m30_pmsg_cap] = (uint8_t)(b); i++; } while (0)
++	PUT(M30_REC_MAGIC);
++	PUT(reclen);
++	for (uint32_t k = 0; k < 17; k++) PUT(0);   /* metadata: zero */
++	for (uint32_t k = 0; k < taglen; k++) PUT(tag[k]);
++	PUT(0);
++	for (uint32_t k = 0; k < len; k++) PUT(msg[k]);
++	PUT(0);
++#undef PUT
++	h[2] = size;
++	h[1] = (start + i) % m30_pmsg_cap;
++}
++
++/* Called from fbcon_transmit_data for every printable char; flush on newline. */
++static void
++m30_console_char(uint8_t c)
++{
++	if (m30_pmsg_base == NULL) return;
++	if (c == '\n') {
++		if (m30_line_len) {
++			m30_pmsg_emit(m30_line, m30_line_len);
++			m30_line_len = 0;
++		}
++		return;
++	}
++	if (c == '\r') return;
++	if (m30_line_len < sizeof(m30_line) - 1) {
++		m30_line[m30_line_len++] = c;
++	}
++}
++#endif /* ARM64_BOARD_CONFIG_M30LTE */
++
+ static void
+ fbcon_init(void)
+ {
+@@ -786,6 +881,9 @@
+ 		}
+ 	}
+ 	fbcon_col++;
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	m30_console_char(c);
++#endif
+ }
+ 
+ static unsigned int
+@@ -844,6 +942,9 @@
+ 	fbcon_base = (volatile uint32_t *)ml_io_map_wcomb(reg[0], reg[1]);
+ 	sweet_early_mark(18, "fbcon mapping returned");
+ 	if (fbcon_base != NULL) {
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++		m30_pmsg_init();
++#endif
+ 		register_serial_functions(&sweet_fbcon_serial_functions);
+ 	}
+ }
