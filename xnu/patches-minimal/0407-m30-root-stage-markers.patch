@@ -26,31 +26,27 @@ diff --git a/iokit/bsddev/IOKitBSDInit.cpp b/iokit/bsddev/IOKitBSDInit.cpp
  	}
  	matching->release();
  	matching = NULL;
-@@ -772,7 +781,13 @@
+@@ -770,6 +779,9 @@
+ 			regEntry->release();                                                            /* Toss the entry */
+ 		}
  	}
- 
- #if defined(ARM64_BOARD_CONFIG_A5XELTE)
-+#if defined(ARM64_BOARD_CONFIG_M30LTE)
++#if defined(ARM64_BOARD_CONFIG_M30LTE) && defined(ARM64_BOARD_CONFIG_A5XELTE)
 +	IOLog("M30 ROOT: A5XELTE keys/emmc stage (rdBootVar='%s')\n", rdBootVar);
 +#endif
+ 
+ #if defined(ARM64_BOARD_CONFIG_A5XELTE)
  	a5xelte_keys_init();
-+#if defined(ARM64_BOARD_CONFIG_M30LTE)
-+	IOLog("M30 ROOT: a5xelte_keys_init done\n");
-+#endif
- #if !defined(ARM64_BOARD_CONFIG_M30LTE)
- 	a5xelte_touch_probe();
- #endif
-@@ -783,6 +798,9 @@
+@@ -783,6 +795,9 @@
  		a5xelte_emmc_probe();
  	}
  	}
 +#if defined(ARM64_BOARD_CONFIG_M30LTE)
-+	IOLog("M30 ROOT: emmcprobe stage done (rdBootVar='%s')\n", rdBootVar);
++	IOLog("M30 ROOT: A5XELTE keys/emmc stage done (rdBootVar='%s')\n", rdBootVar);
 +#endif
  	if (strcmp(rdBootVar, "emmcroot0") == 0) {
  		extern int a5xelte_emmc_rootdev(dev_t *dev);
  		OSSafeReleaseNULL(matching);
-@@ -924,6 +942,9 @@
+@@ -924,6 +939,9 @@
  		IOService::startDeferredMatches();
  	}
  
