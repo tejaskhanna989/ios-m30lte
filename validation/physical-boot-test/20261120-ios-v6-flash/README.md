@@ -28,3 +28,21 @@ Readback requires the device back in recovery (Heimdall cannot read partitions i
 Expected: 5bb27fb3d340ffe01e5667e2f136927a331a1752b7030fd31c2c84ab10f83c7f
 (7928 * 2048 = 16,236,544 = exact candidate length)
 BOOT TEST IS WITHHELD UNTIL EXACT READBACK MATCH IS CONFIRMED.
+
+## Boot test result — objective evidence (screen transcription pending user)
+
+READBACK: exact match 5bb27fb3d340ffe01e5667e2f136927a331a1752b7030fd31c2c84ab10f83c7f
+(count=7928 blocks = 16,236,544 B) — condition 4 satisfied.
+
+ONE boot performed: adb reboot (exit 0) at [timestamp ~05:13 UTC]. Device did NOT re-enumerate
+on USB after ~135 s; user returned it to PBRP recovery manually. No retry, no additional boots.
+
+last_kmsg-postboot.txt (sha e408da1db7069c85d68a36df0bc1306942e4fcb2efced18e9664c997f54f20b9)
+shows S-Boot loading OUR image: "kernel size = 0xf7b800" (= 16,236,544 B = v6 exact) and
+"Starting kernel at 0x80080000...", followed by PINRST -> PBRP recovery kernel. No XNU text in
+serial/pstore (XNU console is framebuffer-only). pmsg-postboot.bin contains only PBRP adbd records.
+
+CONCLUSION (pending screen): S-Boot accepted and entered the v6 image at 0x80080000. No evidence
+of XNU output in serial logs; the device did not enumerate as ADB while booted. Awaiting the
+user's screen observation to determine whether XNU reached arm_init / framebuffer / panic.
+No iOS userspace or SpringBoard boot is claimed.
