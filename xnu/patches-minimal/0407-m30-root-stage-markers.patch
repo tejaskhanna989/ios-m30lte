@@ -1,7 +1,7 @@
 diff --git a/iokit/bsddev/IOKitBSDInit.cpp b/iokit/bsddev/IOKitBSDInit.cpp
 --- a/iokit/bsddev/IOKitBSDInit.cpp
 +++ b/iokit/bsddev/IOKitBSDInit.cpp
-@@ -683,6 +683,9 @@
+@@ -683,15 +683,24 @@
  
  	int xchar, dchar;
  
@@ -11,17 +11,22 @@ diff --git a/iokit/bsddev/IOKitBSDInit.cpp b/iokit/bsddev/IOKitBSDInit.cpp
  	// stall here for anyone matching on the IOBSD resource to finish (filesystems)
  	matching = IOService::serviceMatching(gIOResourcesKey);
  	assert(matching);
-@@ -696,6 +699,9 @@
+ 	matching->setObject(gIOResourceMatchedKey, gIOBSDKey);
+ 
+ 	if ((service = IOService::waitForMatchingService(matching, 30ULL * kSecondScale))) {
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++		IOLog("M30 ROOT: waitForMatchingService(IOBSD) returned service\n");
++#endif
+ 		OSSafeReleaseNULL(service);
+ 	} else {
+ 		IOLog("!BSD\n");
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++		IOLog("M30 ROOT: waitForMatchingService(IOBSD) TIMEOUT\n");
++#endif
+ 	}
  	matching->release();
  	matching = NULL;
- 
-+#if defined(ARM64_BOARD_CONFIG_M30LTE)
-+	IOLog("M30 ROOT: waitForMatchingService(IOBSD) returned %s\n", service ? "service" : "TIMEOUT");
-+#endif
- 	if (mountAttempts++) {
- 		IOLog("mount(%d) failed\n", mountAttempts);
- 		IOSleep( 5 * 1000 );
-@@ -772,7 +778,13 @@
+@@ -772,7 +781,13 @@
  	}
  
  #if defined(ARM64_BOARD_CONFIG_A5XELTE)
@@ -35,7 +40,7 @@ diff --git a/iokit/bsddev/IOKitBSDInit.cpp b/iokit/bsddev/IOKitBSDInit.cpp
  #if !defined(ARM64_BOARD_CONFIG_M30LTE)
  	a5xelte_touch_probe();
  #endif
-@@ -783,6 +795,9 @@
+@@ -783,6 +798,9 @@
  		a5xelte_emmc_probe();
  	}
  	}
@@ -45,7 +50,7 @@ diff --git a/iokit/bsddev/IOKitBSDInit.cpp b/iokit/bsddev/IOKitBSDInit.cpp
  	if (strcmp(rdBootVar, "emmcroot0") == 0) {
  		extern int a5xelte_emmc_rootdev(dev_t *dev);
  		OSSafeReleaseNULL(matching);
-@@ -924,6 +939,9 @@
+@@ -924,6 +942,9 @@
  		IOService::startDeferredMatches();
  	}
  
