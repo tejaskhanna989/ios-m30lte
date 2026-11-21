@@ -31,8 +31,6 @@ CRITICAL_PATCHES = (
     "0400-m30lte-board-target.patch",
     "0402-m30lte-board-config-header.patch",
     "0403-m30lte-hardware-overrides.patch",
-    # 0417 extends M30LTE.h (created by 0402); reverse it first in stack order.
-    "0417-m30-16k-pages.patch",
 )
 
 
