@@ -1,0 +1,107 @@
+name: iOS 16 HFSX Root — CI Reassembly and Verification
+
+'on':
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release holding the four rootfs parts
+        default: 'ios-root-20H392-44905109656'
+      expected_sha256:
+        description: Expected SHA-256 of the reassembled 20 GiB image
+        default: '5f2e2aa6a80aea489946287d8cc32ef0ff6a1905a0d2923e8d4324163bb699b5'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-root-verify-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify-root:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      TAG: ${{ inputs.release_tag }}
+      EXPECT_SHA: ${{ inputs.expected_sha256 }}
+      WORK: /home/runner/work/rootfs-verify
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check runner disk capacity (do not assume)
+        run: |
+          df -h /
+          AVAIL=$(df -B1 / | awk 'NR==2 {print $4}')
+          echo "avail_bytes=$AVAIL"
+          # Need ~6.2 GB compressed parts + 21.5 GB image + headroom.
+          test "$AVAIL" -gt 35000000000 || { echo "runner disk too small" >&2; exit 1; }
+
+      - name: Install HFS validation tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq hfsprogs coreutils
+
+      - name: Download four release parts and verify each SHA-256
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$WORK/parts"
+          gh release download "$TAG" -p 'ios-root-20H392.img.gz.part-*' -D "$WORK/parts"
+          gh release download "$TAG" -p parts-sha256.txt -D "$WORK" --clobber
+          cd "$WORK/parts"
+          sha256sum -c "$WORK/parts-sha256.txt"
+          ls -lh
+          test "$(ls ios-root-20H392.img.gz.part-* | wc -l)" = "4"
+
+      - name: Reassemble 20 GiB image on runner (streaming, no local PC)
+        run: |
+          cd "$WORK"
+          cat parts/ios-root-20H392.img.gz.part-aa \
+              parts/ios-root-20H392.img.gz.part-ab \
+              parts/ios-root-20H392.img.gz.part-ac \
+              parts/ios-root-20H392.img.gz.part-ad \
+            | gunzip -c > ios-root-20H392.img
+          stat -c '%n %s bytes' ios-root-20H392.img
+          test "$(stat -c %s ios-root-20H392.img)" = "21474836480"
+          GOT=$(sha256sum ios-root-20H392.img | cut -d' ' -f1)
+          test "$GOT" = "$EXPECT_SHA" || { echo "SHA mismatch: $GOT" >&2; exit 1; }
+          echo "IMAGE_SHA256=$GOT" >> "$GITHUB_ENV"
+          rm -rf "$WORK/parts"     # free compressed parts before fsck/mount
+          df -h "$WORK"
+
+      - name: Validate HFSX signature, filesystem and /sbin/launchd
+        run: |
+          cd "$WORK"
+          SIG=$(sudo dd if=ios-root-20H392.img bs=1 skip=1024 count=2 2>/dev/null | od -An -tx1 | tr -d ' \n')
+          echo "HFSX signature: $SIG"
+          test "$SIG" = "4858"
+          sudo fsck.hfsplus -f -n ios-root-20H392.img | tee "$WORK/fsck.txt"
+          grep -qi 'appears to be OK' "$WORK/fsck.txt"
+          MNT=$(mktemp -d /tmp/iosroot.XXXXXX)
+          sudo mount -t hfsplus -o loop,force,ro ios-root-20H392.img "$MNT"
+          test -x "$MNT/sbin/launchd"
+          ls -l "$MNT/sbin/launchd"
+          sudo umount "$MNT"
+          echo "HFSX=0x4858 fsck=OK launchd=present"
+
+      - name: Prepare transfer/install plan (no transfer performed)
+        run: |
+          {
+            echo '# CI verification result'
+            echo "image: ios-root-20H392.img"
+            echo "size: 21474836480"
+            echo "sha256: $IMAGE_SHA256"
+            echo 'hfsx: 0x4858; fsck: OK; /sbin/launchd: present'
+            echo 'status: verified on runner; NOT transferred (no authorized remote destination)'
+          } > "$WORK/verification.txt"
+          cat "$WORK/verification.txt" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload only small verification manifest (image stays on runner)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-root-verification
+          path: ${{ env.WORK }}/verification.txt
+
+      - name: Final disk report
+        run: df -h /
