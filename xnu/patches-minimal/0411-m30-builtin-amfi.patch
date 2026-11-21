@@ -1,0 +1,50 @@
+diff --git a/bsd/kern/bsd_init.c b/bsd/kern/bsd_init.c
+--- a/bsd/kern/bsd_init.c
++++ b/bsd/kern/bsd_init.c
+@@ -697,8 +697,8 @@
+ 	printf("M30 BSD: vfsinit returned\n");
+ #endif
+ 
+-#if defined(ARM64_BOARD_CONFIG_SWEET)
+-	/* AMFI's MAC policy is built in on SWEET (bsd/kern/sweet_amfi.c). */
++#if defined(ARM64_BOARD_CONFIG_SWEET) || defined(ARM64_BOARD_CONFIG_M30LTE)
++	/* Built-in AMFI MAC policy (bsd/kern/sweet_amfi.c). */
+ 	extern void sweet_amfi_policy_register(void);
+ 	sweet_amfi_policy_register();
+ #endif
+diff --git a/bsd/kern/sweet_amfi.c b/bsd/kern/sweet_amfi.c
+--- a/bsd/kern/sweet_amfi.c
++++ b/bsd/kern/sweet_amfi.c
+@@ -22,7 +22,7 @@
+  * Interfaces no kernel path uses on SWEET (they serve other Apple kexts)
+  * panic with a clear message instead of being NULL.
+  */
+-#if defined(ARM64_BOARD_CONFIG_SWEET)
++#if defined(ARM64_BOARD_CONFIG_SWEET) || defined(ARM64_BOARD_CONFIG_M30LTE)
+ #include <kern/debug.h>
+ #include <kern/startup.h>
+ #include <libkern/amfi/amfi.h>
+@@ -380,4 +380,4 @@
+ 	printf("SWEET Sandbox: permissive policy %s (%d)\n",
+ 	    error ? "NOT registered" : "registered", error);
+ }
+-#endif /* ARM64_BOARD_CONFIG_SWEET */
++#endif /* SWEET || M30LTE built-in AMFI */
+diff --git a/iokit/Kernel/arm/SweetEntitlements.cpp b/iokit/Kernel/arm/SweetEntitlements.cpp
+--- a/iokit/Kernel/arm/SweetEntitlements.cpp
++++ b/iokit/Kernel/arm/SweetEntitlements.cpp
+@@ -10,7 +10,7 @@
+  */
+ #include <pexpert/arm64/board_config.h>
+ 
+-#if defined(SWEET)
++#if defined(SWEET) || defined(ARM64_BOARD_CONFIG_M30LTE)
+ #include <IOKit/IOLib.h>
+ #include <libkern/c++/OSArray.h>
+ #include <libkern/c++/OSBoolean.h>
+@@ -181,4 +181,4 @@
+ 	return v;
+ }
+ }
+-#endif /* SWEET */
++#endif /* SWEET || M30LTE built-in AMFI entitlements */
