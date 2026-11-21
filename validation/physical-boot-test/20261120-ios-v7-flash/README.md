@@ -69,17 +69,29 @@ still present at the head of the zone, so recovery did not wholesale-erase it.
 **Conclusion:** no XNU-written record survived — and given the evidence below, the
 mirror most likely never activated. No persistence claim can be made.
 
-### 2. Root cause identified from Linux source (offline)
+### 2. Root cause — CORRECTED (2026-11-21)
 
-Linux pstore sets a zone header signature of
-`PERSISTENT_RAM_SIG ^ zone_type` (`fs/pstore/ram_core.c`), with
-`PSTORE_TYPE_PMSG = 7` (`include/linux/pstore.h`). The pmsg zone signature is
-therefore `0x43474244 ^ 0x07 = 0x43474243`. The 0406 patch checks for
-`M30_PMSG_SIG = 0x43474244` and returns without writing on mismatch. So on real
-hardware `m30_pmsg_init()` rejects the genuine pmsg zone and the mirror is inert.
-Prior offline validation used a synthetic header of `0x43474244` and therefore
-could not catch this. **Fix for a future round:** use `0x43474243` (or accept both
-`0x43474244` and `0x43474243`). No fix was built or flashed here.
+An earlier analysis in this file incorrectly claimed the pmsg zone signature was
+`0x43474243` (`PERSISTENT_RAM_SIG ^ PSTORE_TYPE_PMSG`). That claim was **wrong**
+and is retracted. Re-checking Linux source (`fs/pstore/ram.c`, both v4.4.177 as
+run on this device and upstream v6.1) shows `ramoops_init_prz("pmsg", ..., 0)`
+passes a zone sig argument of **0**, so the header signature is
+`PERSISTENT_RAM_SIG ^ 0 = 0x43474244` — exactly what patch 0406 checks.
+`PSTORE_TYPE_PMSG (7)` is the pstore *frontend* type, not the zone sig argument.
+
+The device log confirms the signature and header were valid:
+`persistent_ram: found existing buffer, size 2683, start 2683` — the header was
+**unchanged** by XNU (identical to the pre-boot pmsg length), proving the mirror
+never wrote anything.
+
+**Actual root cause:** in `fbcon_transmit_data()` the `m30_console_char(c)` hook
+was placed at the *end* of the function, after early returns for `\r` and `\n`.
+The mirror flushes its line buffer only on `\n`, but that newline was consumed
+by the early return before reaching the hook. No record was ever emitted. The
+fix moves the hook to the top of `fbcon_transmit_data()` so control characters
+reach it. Verified by an offline regression test that reproduces the old
+control flow and emits 0 records. No fix was built or flashed as part of this
+v7 test.
 
 ### 3. Last root-stage marker / eMMC findings
 
