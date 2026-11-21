@@ -2,7 +2,7 @@
 
 ## Evidence (raw preserved, unmodified)
 
-`validation/physical-boot-test/20261121-ios-v9-flash/pmsg-recovered-raw.bin`
+`validation/physical-boot-test/20261121-ios-v9-flash/recovery-capture/pmsg-ramoops-0`
 SHA-256 `9ed6020f9a52abbf1cc45da9edf9b5022175e7f4fb3a94af1440150a7d08c5ca`,
 7633 B, decoded independently to 93 records (72 XNU, 0 issues).
 

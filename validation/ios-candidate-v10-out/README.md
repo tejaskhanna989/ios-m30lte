@@ -13,7 +13,7 @@ No physical operations performed.
   `bsd_autoconf` to pinpoint any remaining bootstrap-thread stall.
 
 Root cause evidence: `validation/bsd-progress-analysis-20261121.md` and
-`validation/physical-boot-test/20261121-ios-v9-flash/pmsg-recovered-raw.bin`.
+`validation/physical-boot-test/20261121-ios-v9-flash/recovery-capture/pmsg-ramoops-0`.
 
 Preserved: iOS 16 target, `maxmem=292`, ramoops reservation, proven shim
 (`864370f6…d15211a`), 0406 mirror, 0407 root markers, 0408 cpu fix, and the

@@ -36,6 +36,8 @@ reboot, retry or partition write. No branches changed; `main` @ `3e5547c`.
 |---|---|
 | `pmsg-preboot.bin` | `2da5f879…42cb2`, 7331 B (89 records, 68 XNU from v8) |
 | `pmsg-postboot.bin` | `771ae87d…adf5e`, 3439 B (42 records, **1 XNU**) |
+| `recovery-capture/pmsg-ramoops-0` | `9ed6020f…08c5ca`, 7633 B — **canonical recovered capture** (93 records, 72 XNU), moved here from the external `/home/tejas/v9-immediate-pstore/` directory; see `recovery-capture/README.md` |
+| `recovery-capture/pmsg-decoded.txt` | `74d57b9a…8fe2`, decoded companion |
 | `last_kmsg-postboot.txt` | `ec5fc66f…42394d`, 2 MiB |
 | `boot-readback.img` / `boot-verify-afterboot.img` | `01fd8d43…a69a7dc` (exact) |
 
@@ -47,7 +49,11 @@ captured file is only 3439 B with a single surviving XNU record
 (`Darwin Kernel Version 22.6.0 ... xnu-8796.141.3`). Raw scan confirms zero
 occurrences of `M30 ROOT`, `Copyright`, `bsd`, `eMMC`, `30 Hz`, `AppleCLCD`.
 No other pstore console file exists and `/dev/mem` is unavailable, so the
-overwritten records cannot be recovered. No further boot is authorized.
+overwritten records cannot be recovered from that delayed read. **Correction:**
+a separate immediate recovery capture was preserved in
+`recovery-capture/pmsg-ramoops-0` (7633 B, 72 XNU records) — it contains the
+missing `bsd_init()` evidence. See `recovery-capture/README.md` and
+`validation/bsd-progress-analysis-20261121.md`. No further boot is authorized.
 
 `last_kmsg-postboot.txt` shows S-Boot loaded our BOOT image
 (`kernel size = 0xf7b800` + 2048 B header = 16,236,544 B = v9) and
