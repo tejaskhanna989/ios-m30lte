@@ -1,0 +1,35 @@
+diff --git a/bsd/kern/bsd_init.c b/bsd/kern/bsd_init.c
+--- a/bsd/kern/bsd_init.c
++++ b/bsd/kern/bsd_init.c
+@@ -697,8 +697,8 @@
+ 	printf("M30 BSD: vfsinit returned\n");
+ #endif
+ 
+-#if defined(ARM64_BOARD_CONFIG_SWEET) || defined(ARM64_BOARD_CONFIG_M30LTE)
+-	/* Built-in AMFI MAC policy (bsd/kern/sweet_amfi.c). */
++#if defined(ARM64_BOARD_CONFIG_SWEET)
++	/* AMFI's MAC policy is built in on SWEET (bsd/kern/sweet_amfi.c). */
+ 	extern void sweet_amfi_policy_register(void);
+ 	sweet_amfi_policy_register();
+ #endif
+diff --git a/osfmk/kern/startup.c b/osfmk/kern/startup.c
+--- a/osfmk/kern/startup.c
++++ b/osfmk/kern/startup.c
+@@ -721,6 +721,17 @@
+ 	kernel_bootstrap_log("vnguard_policy_init");
+ 	vnguard_policy_init();
+ #endif
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	/*
++	 * Register the built-in AMFI MAC policy here, alongside vnguard and
++	 * before machine_lockdown(): mac_policy_list is SECURITY_READ_ONLY_LATE
++	 * in __DATA_CONST and becomes read-only at lockdown. Registering from
++	 * the later bsd_init() faults writing that frozen region.
++	 */
++	kernel_bootstrap_log("sweet_amfi_policy_register");
++	extern void sweet_amfi_policy_register(void);
++	sweet_amfi_policy_register();
++#endif
+ #endif
+ 
+ #if CONFIG_DTRACE
