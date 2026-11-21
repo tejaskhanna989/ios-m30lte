@@ -1,0 +1,2 @@
+total 0
+-r--r--r-- 1 root root 1922 2026-11-21 11:08 pmsg-ramoops-0

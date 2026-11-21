@@ -1,0 +1,220 @@
+# v10 immediate pstore capture - decoded by tools/m30_bootlog.py
+# records=216 issues=2
+
+[000] : ine__00000077:03545405_00000A01_00000000 [ 69 ipp] (113 ins) at [0x761bc00910:0x76
+[001] ArmToArm64Assembler: generated scanline__00000077:03545405_00000A08_00000000 [ 69 ipp] (116 ins) at [0x761bc00ae0:0x761bc00cb0] in 57307 ns
+
+[002] adbd: aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown
+[003] adbd: remote usb: read terminated (message): Cannot send after transport endpoint shutdown
+[004] adbd: closing functionfs transport
+[005] adbd: initializing functionfs
+[006] adbd: functionfs successfully initialized
+[007] adbd: registering usb transport
+[008] XNU: Darwin Kernel Version 22.6.0: Mon Aug 14 05:06:07 UTC 2023; runner:xnu-8796.141.3
+[009] XNU: pmap_startup() init/release time: 3668 microsec
+[010] XNU: pmap_startup() delayed init/release of 0 pages
+[011] XNU: vm_page_bootstrap: 64353 free pages, 10399 wired pages, (up to 0 of which are delayed free)
+[012] XNU: VM boostrap: 51 maps, 153 entries and 128 holes available
+[013] XNU: Maximum number of VM swap files: 5
+[014] XNU: ipc_kernel_copy_map     : 0xfffffff0008b8000 - 0xfffffff0010b8000 (8M)
+[015] XNU: mb                      : 0xfffffff0010b8000 - 0xfffffff0050b8000 (64M)
+[016] XNU: gIOKitPageableFixed3    : 0xfffffff04e800000 - 0xfffffff054800000 (96M)
+[017] XNU: gIOKitPageableFixed2    : 0xfffffff054800000 - 0xfffffff05a800000 (96M)
+[018] XNU: bsd_pageable            : 0xfffffff05a800000 - 0xfffffff05b082000 (8M)
+[019] XNU: bufferhdr               : 0xfffffff05b082000 - 0xfffffff05b140000 (760K)
+[020] XNU: compressor              : 0xfffffff05b140000 - 0xfffffff06d581000 (292M)
+[021] XNU: gIOKitPageableFixed0    : 0xfffffff06d581000 - 0xfffffff073581000 (96M)
+[022] XNU: ipc_kernel_map          : 0xfffffff073581000 - 0xfffffff077581000 (64M)
+[023] XNU: io_submap               : 0xfffffff077581000 - 0xfffffff077d81000 (8M)
+[024] XNU: kmem_sprayqtn_range     : 0xfffffff077d81000 - 0xfffffff07fd3f000 (127M)
+[025] XNU: zones                   : 0xfffffff07fd3f000 - 0xfffffff67fd3f000 (24G)
+[026] XNU: kmem_ptr_range          : 0xfffffff67fd3f000 - 0xfffffff7dd9ff000 (5G)
+[027] XNU: kmem_ptr_range_meta     : 0xfffffff7dd9ff000 - 0xfffffff7ddb06000 (1052K)
+[028] XNU: kmem_data_range         : 0xfffffff7ddb06000 - 0xfffffffbef4f6000 (16G)
+[029] XNU: gIOKitPageableFixed1    : 0xfffffffbef4f6000 - 0xfffffffbf54f6000 (96M)
+[030] XNU: zone_meta               : 0xfffffffbf54f6000 - 0xfffffffbfb5fc000 (97M)
+[031] XNU: kmem_large_ranges[1]    : 0 - 0 (0B)
+[032] XNU: kmem_large_ranges[2]    : 0 - 0 (0B)
+[033] XNU: kmem_large_ranges[3]    : 0 - 0 (0B)
+[034] XNU: kmem_large_ranges[4]    : 0xfffffff078d78c00 - 0xfffffff07fd3f000 (111M)
+[035] XNU: kmem_large_ranges[5]    : 0xfffffff85fe44000 - 0xfffffffbef4f6000 (14G)
+[036] XNU: "vm_compressor_mode" is 0
+[037] XNU: zone_init: pgzalloc  0xfffffff07fd3f000:0xfffffff07fdbe000 (508K) [63 slots]
+[038] XNU: zone_init: map VM    0xfffffff07fdbe000:0xfffffff166411000 (3686M)
+[039] XNU: zone_init: map RO    0xfffffff166411000:0xfffffff1b30d7000 (1228M)
+[040] XNU: zone_init: map GEN0  0xfffffff1b30d7000:0xfffffff29972a000 (3686M)
+[041] XNU: zone_init: map GEN1  0xfffffff29972a000:0xfffffff37fd7d000 (3686M)
+[042] XNU: zone_init: map GEN2  0xfffffff37fd7d000:0xfffffff4663d0000 (3686M)
+[043] XNU: zone_init: map GEN3  0xfffffff4663d0000:0xfffffff54ca24000 (3686M)
+[044] XNU: zone_init: map DATA  0xfffffff54ca24000:0xfffffff67fd3f000 (4915M)
+[045] XNU: zone_init: metadata  0xfffffffbf5506000:0xfffffffbfb506000 (96M)
+[046] XNU: zone_init: metabits  0xfffffffbfb506000:0xfffffffbfb5ec000 (920K)
+[047] XNU: zone_init: extra     0:0 (0B)
+[048] XNU: VM bootstrap done: 39 maps, 112 entries and 115 holes left
+[049] XNU: Firehose configured: 16 chunks, 8 io pages
+[050] XNU: Log queues configured: slot count: 8, per-slot size: 32768, total size: 262144
+[051] XNU: OSLog stream configured: stream: 8192 bytes, cache: 2112 bytes
+[052] XNU: OSLog stream verification: 0
+[053] XNU: Long logs support configured: size: 16384
+[054] XNU: standard timeslicing quantum is 10000 us
+[055] XNU: standard background quantum is 2500 us
+[056] XNU: mig_table_max_displ = 54 mach_kobj_count = 374
+[057] XNU: kdp_core zlib memory 0x7000
+[058] XNU: Serial requested, consistent debug disabled or debug boot arg not present, configuring debugging over serial
+[059] XNU: iBoot version: m30lte-shim
+[060] XNU: "name" not a kext
+[061] XNU: "AAPL,phandle" not a kext
+[062] XNU: calling mpo_policy_init for vnguard
+[063] XNU: Security policy loaded: Guarded vnode policy (vnguard)
+[064] XNU: SWEET: trust caches unavailable (Image4/AMFI not installed)
+[065] XNU: keepsyms boot arg specified; keeping linkedit segment for symbols.
+[066] XNU: No POST boot-arg set.
+[067] XNU: Copyright (c) 1982, 1986, 1989, 1991, 1993
+[068] XNU: 	The Regents of the University of California. All rights reserved.
+[069] XNU: MAC Framework successfully initialized
+[070] XNU: using 1308 buffer headers and 1308 cluster IO buffer headers
+[071] XNU: M30 BSD: IOKitInitializeTime returned
+[072] XNU: IOResources: not registry member at registerService()
+[073] XNU: ktriage_register_subsystem_strings: set subsystem 8 strings
+[074] XNU: M30 BSD: vfsinit returned
+[075] XNU: SWEET HFS: hfs-627.100.6 registered
+[076] XNU: M30 BSD: sweet_hfs registered
+[077] XNU: mcache: 1 CPU(s), 64 bytes CPU cache line size
+[078] XNU: waitForSystemMapper
+[079] XNU: Backtrace 0xfffffff0076f7358 0xfffffff007a5f2ac 0xfffffff007407860 0x0 0x0 0x0 0x0
+[080] XNU:          can't perform kext scan: no kext summaryA5XELTE: starting device-tree platform expert
+[081] XNU: mbinit: done [64 MB total pool size, (42/21) split]
+[082] XNU: dlil_init: Waiting for all the create dlil kernel threads to get scheduled at least once.
+[083] XNU: dlil_init: All the created dlil kernel threads have been scheduled at least once. Proceeding.
+[084] XNU: M30 BSD: calling bsd_autoconf
+[085] XNU: IOResources: not registry member at registerService()
+[086] XNU: M30 BSD: bsd_autoconf returned
+[087] XNU: ifnet_attach: All kernel threads created for interface lo0 have been scheduled at least once. Proceeding.
+[088] XNU: ifnet_attach: Waiting for all kernel threads created for interface gif0 to get scheduled at least once.
+[089] XNU: ifnet_attach: All kernel threads created for interface gif0 have been scheduled at least once. Proceeding.
+[090] XNU: skip attaching fsw to lo0 using legacy TX modelifnet_attach: Waiting for all kernel threads created for interface stf0 to get scheduled at least once.
+[091] XNU: ifnet_attach: All kernel threads created for interface stf0 have been scheduled at least once. Proceeding.
+[092] XNU: M30 ROOT: IOFindBSDRoot entered
+[093] XNU: A5XELTE: platform expert registered
+[094] XNU: SWEET AKS: AppleKeyStore registered (no passcode, unlocked)
+[095] XNU: SWEET WDT: IOWatchdog registered (accepts check-ins, never fires)
+[096] XNU: SWEET SURF: IOCoreSurfaceRoot registered
+[097] XNU: SWEET HID: buttons registered (test every 0 s)
+[098] XNU: SWEET HID: touch registered
+[099] XNU: SWEET FB: AppleCLCD 1080x2340 stride 4320 at 0xec000000, default surface 1, presented as 1080x2340
+[100] XNU: A5XELTE FB: requested 30 Hz, effective 30 Hz, copy timing on
+[101] XNU: M30 ROOT: waitForMatchingService(IOBSD) returned service
+[102] XNU: M30 ROOT: A5XELTE keys/emmc stage (rdBootVar='emmcroot0')
+[103] XNU: M30LTE KEYS: GPA1 con=0 dat=0xe0 pud=0x11111 (read only)
+[104] XNU: A5XELTE eMMC: host ctrl=10 status=8906 clk=1 hcon=8e42541
+[105] XNU: A5XELTE eMMC: GPT SYSTEM first=442368 sectors=7798784 read-only
+[106] XNU: M30 ROOT: A5XELTE keys/emmc stage done (rdBootVar='emmcroot0')
+[107] XNU: A5XELTE eMMC: GPT SYSTEM first=442368 sectors=7798784 read-only
+[108] XNU: A5XELTE eMMC: /dev/emmcroot0 ready, GPT SYSTEM read-only
+[109] XNU: BSD root: emmcroot0, major 1, minor 0
+[110] XNU: hfs_ValidateHFSPlusVolumeHeader: unknown Volume Signature : 80b8
+[111] XNU: hfs_mount: hfs_mountfs returned error=22 for device unknown-dev
+[112] XNU: cannot mount root, errno = 19
+[113] XNU: M30 ROOT: IOFindBSDRoot entered
+[114] XNU: M30 ROOT: waitForMatchingService(IOBSD) returned service
+[115] XNU: mount(2) failed
+[116] XNU: M30 ROOT: A5XELTE keys/emmc stage (rdBootVar='emmcroot0')
+[117] XNU: A5XELTE eMMC: GPT SYSTEM first=442368 sectors=7798784 read-only
+[118] XNU: M30 ROOT: A5XELTE keys/emmc stage done (rdBootVar='emmcroot0')
+[119] XNU: BSD root: emmcroot0, major 1, minor 0
+[120] XNU: vnode_create_internal: alias vnode 0xfffffff2993cf120 is in state of change (start)
+[121] XNU: vnode_create_internal: alias vnode 0xfffffff2993cf120 is in state of change (end)
+[122] XNU: hfs_ValidateHFSPlusVolumeHeader: unknown Volume Signature : 80b8
+[123] XNU: hfs_mount: hfs_mountfs returned error=22 for device unknown-dev
+[124] XNU: cannot mount root, errno = 19
+[125] XNU: M30 ROOT: IOFindBSDRoot entered
+[126] XNU: M30 ROOT: waitForMatchingService(IOBSD) returned service
+[127] XNU: mount(3) failed
+[128] XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[129] XNU: SWEET HID: key 0x30 down (0 clients)
+[130] XNU: A5XELTE KEYS: key=0 down=0 gpio=0xe0
+[131] XNU: SWEET HID: key 0x30 up (0 clients)
+[132] XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[133] XNU: SWEET HID: key 0x30 down (0 clients)
+[134] XNU: A5XELTE KEYS: key=0 down=0 gpio=0xe0
+[135] XNU: SWEET HID: key 0x30 up (0 clients)
+[136] XNU: M30 ROOT: A5XELTE keys/emmc stage (rdBootVar='emmcroot0')
+[137] XNU: A5XELTE eMMC: GPT SYSTEM first=442368 sectors=7798784 read-only
+[138] XNU: M30 ROOT: A5XELTE keys/emmc stage done (rdBootVar='emmcroot0')
+[139] XNU: BSD root: emmcroot0, major 1, minor 0
+[140] XNU: vnode_create_internal: alias vnode 0xfffffff2993cf120 is in state of change (start)
+[141] XNU: vnode_create_internal: alias vnode 0xfffffff2993cf120 is in state of change (end)
+[142] XNU: hfs_ValidateHFSPlusVolumeHeader: unknown Volume Signature : 80b8
+[143] XNU: hfs_mount: hfs_mountfs returned error=22 for device unknown-dev
+[144] XNU: cannot mount root, errno = 19
+[145] XNU: M30 ROOT: IOFindBSDRoot entered
+[146] XNU: M30 ROOT: waitForMatchingService(IOBSD) returned service
+[147] XNU: mount(4) failed
+[148] XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[149] XNU: SWEET HID: key 0x30 down (0 clients)
+[150] XNU: A5XELTE KEYS: key=0 down=0 gpio=0xe0
+[151] XNU: SWEET HID: key 0x30 up (0 clients)
+[152] XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[153] XNU: SWEET HID: key 0x30 down (0 clients)
+[154] XNU: A5XELTE KEYS: key=0 down=0 gpio=0xe0
+[155] XNU: SWEET HID: key 0x30 up (0 clients)
+[156] XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[157] XNU: SWEET HID: key 0x30 down (0 clients)
+[158] XNU: A5XELTE KEYS: key=0 down=0 gpio=0xe0
+[159] XNU: SWEET HID: key 0x30 up (0 clients)
+[160] XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[161] XNU: SWEET HID: key 0x30 down (0 clients)
+[162] XNU: A5XELTE KEYS: key=0 down=0 gpio=0xe0
+[163] XNU: SWEET HID: key 0x30 up (0 clients)
+[164] XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[165] XNU: SWEET HID: key 0x30 down (0 clients)
+[166] XNU: A5XELTE KEYS: key=0 down=0 gpio=0xe0
+[167] XNU: SWEET HID: key 0x30 up (0 clients)
+[168] XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[169] XNU: SWEET HID: key 0x30 down (0 clients)
+[170] XNU: A5XELTE KEYS: key=0 down=0 gpio=0xe0
+[171] XNU: SWEET HID: key 0x30 up (0 clients)
+[172] XNU: A5XELTE KEYS: key=2 down=1 gpio=0xa0
+[173] XNU: SWEET HID: key 0xea down (0 clients)
+[174] XNU: A5XELTE KEYS: key=2 down=0 gpio=0xe0
+[175] XNU: SWEET HID: key 0xea up (0 clients)
+[176] XNU: A5XELTE KEYS: key=2 down=1 gpio=0xa0
+[177] XNU: SWEET HID: key 0xea down (0 clients)
+[178] XNU: A5XELTE KEYS: key=2 down=0 gpio=0xe0
+[179] XNU: SWEET HID: key 0xea up (0 clients)
+[180] XNU: A5XELTE KEYS: key=2 down=1 gpio=0xa0
+[181] XNU: SWEET HID: key 0xea down (0 clients)
+[182] XNU: A5XELTE KEYS: key=2 down=0 gpio=0xe0
+[183] XNU: SWEET HID: key 0xea up (0 clients)
+[184] XNU: M30 ROOT: A5XELTE keys/emmc stage (rdBootVar='emmcroot0')
+[185] XNU: A5XELTE eMMC: GPT SYSTEM first=442368 sectors=7798784 read-only
+[186] XNU: M30 ROOT: A5XELTE keys/emmc stage done (rdBootVar='emmcroot0')
+[187] XNU: BSD root: emmcroot0, major 1, minor 0
+[188] XNU: vnode_create_internal: alias vnode 0xfffffff2993cf120 is in state of change (start)
+[189] XNU: vnode_create_internal: alias vnode 0xfffffff2993cf120 is in state of change (end)
+[190] XNU: hfs_ValidateHFSPlusVolumeHeader: unknown Volume Signature : 80b8
+[191] XNU: hfs_mount: hfs_mountfs returned error=22 for device unknown-dev
+[192] XNU: cannot mount root, errno = 19
+[193] XNU: M30 ROOT: IOFindBSDRoot entered
+[194] XNU: M30 ROOT: waitForMatchingService(IOBSD) returned service
+[195] XNU: mount(5) failed
+[196] XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[197] XNU: SWEET HID: key 0x30 down (0 clients)
+[198] XNU: A5XELTE KEYS: key=0 down=0 gpio=0xe0
+[199] XNU: SWEET HID: key 0x30 up (0 clients)
+[200] XNU: A5XELTE KEYS: key=0 down=1 gpio=0x20
+[201] XNU: SWEET HID: key 0x30 down (0 clients)
+[202] XNU: A5XELTE KEYS: key=2 down=1 gpio=0x20
+[203] XNU: SWEET HID: key 0xea down (0 clients)
+[204] XNU: M30 ROOT: A5XELTE keys/emmc stage (rdBootVar='emmcroot0')
+[205] XNU: A5XELTE eMMC: GPT SYSTEM first=442368 sectors=7798784 read-only
+[206] XNU: M30 ROOT: A5XELTE keys/emmc stage done (rdBootVar='emmcroot0')
+[207] XNU: BSD root: emmcroot0, major 1, minor 0
+[208] XNU: vnode_create_internal: alias vnode 0xfffffff2993cf120 is in state of change (start)
+[209] XNU: vnode_create_internal: alias vnode 0xfffffff2993cf120 is in state of change (end)
+[210] XNU: hfs_ValidateHFSPlusVolumeHeader: unknown Volume Signature : 80b8
+[211] XNU: hfs_mount: hfs_mountfs returned error=22 for device unknown-dev
+[212] XNU: cannot mount root, errno = 19
+[213] XNU: M30 ROOT: IOFindBSDRoot entered
+[214] XNU: M30 ROOT: waitForMatchingService(IOBSD) returned service
+[215] XNU: mount(6) failed
