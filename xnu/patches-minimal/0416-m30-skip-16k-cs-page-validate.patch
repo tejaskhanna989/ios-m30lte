@@ -1,0 +1,32 @@
+diff --git a/bsd/kern/ubc_subr.c b/bsd/kern/ubc_subr.c
+--- a/bsd/kern/ubc_subr.c
++++ b/bsd/kern/ubc_subr.c
+@@ -5737,16 +5737,19 @@
+ 			}
+ 			if (blob->csb_hash_pageshift > PAGE_SHIFT) {
+ 				/*
+-				 * 16K code directory on a 4K-page kernel: the fault
+-				 * offset is only 4K aligned. Round down to the CD hash
+-				 * boundary so the correct first-level hash is selected.
+-				 * The hash below is bounded to the single mapped VM page
+-				 * (no overread); a 4K chunk cannot match a 16K hash, so
+-				 * the page is conservatively marked tainted, never falsely
+-				 * validated. Existing cs_invalid_page policy still decides.
++				 * 16K code directory on a 4K-page kernel: one 4K VM page
++				 * cannot be matched against a 16K page hash (and only one
++				 * page is mapped here). Do NOT claim validation we did not
++				 * perform, and do not mark a tainted text page, which the
++				 * VM would treat as corruption and kill the process. Skip
++				 * this blob: the page stays unvalidated (not tainted), and
++				 * cs_invalid_page applies the process CS_VALID policy as it
++				 * already did for the dyld shared cache. Other blobs, if any,
++				 * are still considered below.
+ 				 */
+-				offset &= ~((off_t)((1U << blob->csb_hash_pageshift) - 1));
+-			} else if (offset & ((1U << blob->csb_hash_pageshift) - 1)) {
++				continue;
++			}
++			if (offset & ((1U << blob->csb_hash_pageshift) - 1)) {
+ 				panic("offset not aligned to cshash boundary");
+ 			}
+ 

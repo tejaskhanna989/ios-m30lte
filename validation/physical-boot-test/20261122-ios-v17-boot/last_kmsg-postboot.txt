@@ -1,0 +1,584 @@
+[0:       0.511] 
+[0:       0.513] Samsung S-Boot 4.0 for SM-M305F (Nov 23 2022 - 18:59:21 59594757)
+[0:       0.520] EXYNOS7885 EVT 0.2 (Base on ARM CortexA50)
+[0:       0.526] 4096MB / Rev 4 / M305FDDU8CVK1 / (PKG_ID 0xe7885000) / LOT_ID NN75S / SHIP /PINRST (0x10000)
+[0:       0.535] __if_pmic_rev_init - MUIC API is not ready!
+[0:       0.542] PMUDBG_CENTRAL_SEQ_*: apsoc 0x0 mif 0x0 apm 0x0
+[0:       0.548] PMUDBG_CL0_*: cpu0 0x0 cpu1 0x0 l2 0x0 noncpu 0x0
+[0:       0.553] PMUDBG_CL2_*: cpu0 0x0 cpu1 0x0
+[0:       0.558] PMUDBG_CL1_*: cpu0 0x0 cpu1 0x0 cpu2 0x0 cpu3 0x0 l2 0x0 noncpu 0x0
+[0:       0.565] RST_STAT: 0x10000
+[0:       0.568] s5p_check_dump_gpr: set sp loading flag
+[0:       0.573] MMU: enable start
+[0:       0.577] MMU: enable done
+[0:       0.580] [MUIC] muic_register_s2mu106_apis
+[0:       0.586] Try 0 : [MUIC] muic_test1:0x001.
+[0:       0.590]  -> matched(s2mu106).
+[0:       0.594] init_multi_microusb_ic Active MUIC 0x01
+[0:       0.600] s2mu106_muic_get_adc_value: ADC:0x00
+[0:       0.606] s2mu106_init_microusb_ic: MUIC: Enable BC1.2
+[0:       0.612] s2mu106_init_microusb_ic: MUIC: CONTROL writing success.
+[0:       0.621] s2mu106_init_microusb_ic: MUIC: CONTROL:0x17
+[0:       0.629] s2mu106_init_microusb_ic: MUIC: TIMING3: 0x8d
+[0:       0.641] s2mu106_muic_get_attached_device: INT[1:0x03, 2:0x04]
+[0:       0.647] s2mu106_muic_get_attached_device: DEV[1:0x80, 2:0x00, 3:0x00]
+[0:       0.657] get_vbvolt: apple: 0x06, dev3: 0x00
+[0:       0.661] get_vbvolt: vbvolt: 0x02
+[0:       0.665] s2mu106_muic_get_attached_device: redetect
+[0:       0.673] get_vbvolt: apple: 0x06, dev3: 0x00
+[0:       0.678] get_vbvolt: vbvolt: 0x02
+[0:       0.687] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       0.706] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       0.725] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       0.744] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       0.762] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       0.781] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       0.800] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       0.819] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       0.837] s2mu106_muic_get_attached_device_ex: det completed after 80 msec
+[0:       0.851] s2mu106_muic_get_attached_device_ex: INT[1:0x03, 2:0x04]
+[0:       0.858] s2mu106_muic_get_attached_device_ex: DEV[1:0x04, 2:0x00, 3:0x00]
+[0:       0.867] ccic_register_s2mu106:
+[0:       0.871] ccic_is_s2mu106:
+[0:       0.875] ccic_is_s2mu106: reg:b2 - val:00 ret:00
+[0:       0.881] ccic_register_s2mu106: 0x1 = 0x2
+[0:       0.887] ccic_register_s2mu106: 0x2 = 0xfa
+[0:       0.893] ccic_register_s2mu106: 0x3 = 0x88
+[0:       0.898] ccic_register_s2mu106: 0x4 = 0x90
+[0:       0.904] ccic_register_s2mu106: 0x5 = 0x88
+[0:       0.910] ccic_register_s2mu106: 0x6 = 0x98
+[0:       0.915] ccic_register_s2mu106: 0x7 = 0x58
+[0:       0.921] ccic_register_s2mu106: 0x8 = 0xa
+[0:       0.927] ccic_register_s2mu106: 0x9 = 0x0
+[0:       0.932] ccic_register_s2mu106: 0xa = 0x90
+[0:       0.938] ccic_register_s2mu106: 0xb = 0xe
+[0:       0.944] ccic_register_s2mu106: 0xc = 0x90
+[0:       0.949] ccic_register_s2mu106: 0x18 = 0xe2
+[0:       0.955] ccic_register_s2mu106: 0xb2 = 0x0
+[0:       0.967] get_vbvolt: apple: 0x06, dev3: 0x00
+[0:       0.971] get_vbvolt: vbvolt: 0x02
+[0:       0.977] ccic_register_s2mu106:  BEFORE VBUS(2)
+[0:       0.983] s2mu106_ccic_check_pd_ta: S2MU106_REG_RID at POWER ON : 0
+[0:       0.990] s2mu106_ccic_check_pd_ta: POWER NEGO CHECK!
+[0:       1.248] s2mu106_ccic_check_pd_ta: S2MU106_REG_RID at FIRST : 0
+[0:       1.703] s2mu106_ccic_check_jig: S2MU106_REG_RID at SECOND : 0
+[0:       1.710] s2mu106 found.
+[0:       1.713] mach_board_initialize: Active ccic device.
+[0:       1.718] ifconn_init: CCIC Mode
+[0:       1.722] ifconn_get_jig_status: CCIC Mode
+[0:       1.726] ccic_read_adc:
+[0:       1.729] s2mu106_read_adc:
+[0:       1.734] s2mu106_read_adc: RID = 00(RID_0)
+[0:       1.738] ifconn_is_ccic_jig_device: rid=00
+[0:       1.743] ccic_wait_auth:
+[0:       1.744] s2mu106_muic_get_adc_value: ADC:0x00
+[0:       1.744] ccic_read_adc:
+[0:       1.744] s2mu106_read_adc:
+[0:       1.745] s2mu106_read_adc: RID = 00(RID_0)
+[0:       1.745] board_ccic_check_uart: jig_adc=00, cc_adc=00
+[0:       1.745] ccic_read_adc:
+[0:       1.745] s2mu106_read_adc:
+[0:       1.747] s2mu106_read_adc: RID = 00(RID_0)
+[0:       1.747] ifconn_com_to_open:
+[0:       1.749] s2mu106_set_muic_uart_early: MUIC: MAN_SW1[0x00]
+[0:       1.843] load Secure Payload done.
+[0:       1.853] 
+Chip ID : 40374f9af386
+[0:       1.853] EL3 Monitor information:
+[0:       1.853] Moonstone-OPR6-8830R1-1-g cd8680b b3380e9 211bf2a 6d54614 7937d2b ingpyo aarch64-linux-gnu
+[SECLIB] Moonstone-OPM1-8516R1-2-g a495e0a e23840b b132408 98e76bc ccf3d9b zazhang aarch6
+
+[0:       1.853] DREX_CALIBRATION3: 0xb000017
+[0:       1.853] MMC Init
+[0:       1.853] MMC0 400Khz 1 bit mode
+[0:       1.937] EXT_CSD structure version 8
+[0:       1.937] cardtype: 0x00000007
+[0:       1.937] MMC RST_n_FUNCTION was already enabled
+[0:       1.937] mmc->card_caps: 0x00000f11
+[0:       1.937] mmc->host_caps: 0x00000f11
+[0:       1.938] !!!Enter 8 Bit DDR mode.!!!
+[0:       1.938] MMC0 52Mhz 8bit DDR mode
+[0:       1.938] MMC0 capacity = 122142720
+[0:       1.938] MMC0 vendor: 0x15
+[0:       1.938] MMC0 PNM: 0x435554413432
+[0:       1.938] MMC0 MD: 2019 6
+[0:       1.938] MMC0 FW: 0x01
+[0:       1.945] MMC0(0x15) LVD reset count : 0
+[0:       1.945] 
+[Debug Info.]
+[0:       1.945]    S-BOOT : VERSION_-+L0
+[0:       1.951] GetSignerVer : SignerVer02
+[0:       1.951] - read_bl1
+[0:       1.951] blk_bread_bootsector: MMC mode
+[0:       1.956] Verify_Signature_With_Signingtype 0x90d20130 4524@0x90d10000, 256@0x90d20030
+[0:       1.958] pit_check_signature (PIT) valid.
+[0:       1.966] PARAM ENV VERSION: v1.0..
+[0:       1.968] blk_bread_bootsector: MMC mode
+[0:       1.973] initialize_ddi_data: usable! (122:0xf), warranty reason : (0x030c)
+[0:       1.973] MAGIC_RAM_BASE: 0, MAGIC_RAM_BASE2: 0, ompin: 0
+[0:       1.973] [ldfw] Pass LDFW partition!
+[0:       1.973] [ldfw] read whole CM partition from the storage
+[0:       2. 73] ldfw: 0th ldfw's version 0x40200924 name : CryptoManagerV40
+[0:       2. 73] ldfw: 1th ldfw's version 0x20181224 name : fmp_fw_V20
+[0:       2. 73] ldfw: 2th ldfw's version 0x20220616 name : drm_fw
+[0:       2. 73] ldfw: 3th ldfw's version 0x24211108 name : srpmb_fw
+[0:       2. 73] ldfw: 4th ldfw's version 0x20181224 name : hdcp_fw
+[0:       2. 73] ldfw: 5th ldfw's version 0x20150828 name : tail_fw
+[0:       2. 73] GetSignerVer : SignerVer02
+[0:       2. 73] ldfw: init ldfw(s). whole ldfws size 0x3ec210
+[0:       2.144] [ldfw] try to init 5 ldfw(s). except 0 ldfw 5 ldfw(s) have been inited done.
+[0:       2.146] [mobi_drv] add: 0x8f0a0f20, size: 15977
+[0:       2.146] MobiCore IDLE flag = 0
+[0:       2.151] MobiCore Driver loaded and RTM IDLE!
+[0:       2.151] [OTP] MODEL_ID read start
+[0:       2.151] [OTP] MODEL_ID read value: 0x63
+[0:       2.151] [OTP] BAN_ROM_SEC_BOOT_KEY read start
+[0:       2.151] [OTP] BAN_ROM_SEC_BOOT_KEY read value: 0x0
+[0:       2.151] [OTP] USE_ROM_SEC_BOOT_KEY read: start
+[0:       2.151] [OTP] USE_ROM_SEC_BOOT_KEY read value: 0x0
+[0:       2.151] [OTP] ENABLE_AES read start
+[0:       2.151] [OTP] ENABLE_AES read value: 0x0
+[0:       2.151] [OTP] PREORDER read start
+[0:       2.151] [OTP] PREORDER read value: 0xff
+[0:       2.151] [OTP] ANTIRBK_NS_AP0 read start
+[0:       2.152] [OTP] ANTIRBK_NS_AP0 read value: 0x8
+[0:       2.152] [OTP] COMMERCIAL read start
+[0:       2.152] [OTP] COMMERCIAL read value: 0x1
+[0:       2.152] [OTP] TEST read start
+[0:       2.152] [OTP] TEST read value: 0x0
+[0:       2.152] [OTP] WARRANTY read start
+[0:       2.152] [OTP] WARRANTY read value: 0x1
+[0:       2.152] [OTP] JTAG_SW_LOCK read start
+[0:       2.152] [OTP] JTAG_SW_LOCK read value: 0x1
+[0:       2.152] [OTP] CUSTOM_FLAG read start (6)
+[0:       2.152] [OTP] CUSTOM_FLAG read value: 0x0
+[0:       2.152] [OTP] CUSTOM_FLAG read start (7)
+[0:       2.152] [OTP] CUSTOM_FLAG read value: 0x1
+[0:       2.152] [OTP] CUSTOM_FLAG read start (8)
+[0:       2.152] [OTP] CUSTOM_FLAG read value: 0x1
+[0:       2.152] [OTP] CUSTOM_FLAG read start (9)
+[0:       2.152] [OTP] CUSTOM_FLAG read value: 0x0
+[0:       2.152] [OTP] ENABLE_ANTIRBK read start
+[0:       2.152] [OTP] ENABLE_ANTIRBK read value: 0x1
+[0:       2.152] [OTP] USE_PREORDER_KEY read start
+[0:       2.152] [OTP] USE_PREORDER_KEY read value: 0x1
+[0:       2.152] [OTP] ENABLE_MODEL_ID read start
+[0:       2.152] [OTP] ENABLE_MODEL_ID read value: 0x1
+[0:       2.152] [EFUSE] SMC Read the 0x0 ...
+[0:       2.152] [EFUSE] SMC Read Count value: 8
+[0:       2.152] [EFUSE] SMC Read the 0x1 ...
+[0:       2.152] [EFUSE] SMC Read Count value: 1
+[0:       2.152] [EFUSE] SMC Read the 0x2 ...
+[0:       2.152] [EFUSE] SMC Read Count value: 0
+[0:       2.152] [EFUSE] SMC Read the 0x3 ...
+[0:       2.152] [EFUSE] SMC Read Count value: 1
+[0:       2.152] [OTP] JTAG_KEY check start
+[0:       2.152] [OTP] JTAG_KEY check: valid key
+[0:       2.152] (8,99) vs (8,99)
+[0:       2.152] JTAG_LOCK is already enabled in this device.
+[0:       2.152] [EFUSE] Already fused for Market status
+[0:       2.152] [EFUSE] This is commercial device.
+[0:       2.152] Secure camera - invalid fastcall id 83000041
+[0:       2.152] blk_rpmb_open: MMC mode
+[0:       2.152] MMC0 RPMB emmc_rpmb_open:
+[0:       2.153] blk_rpmb_read_data: MMC mode
+[0:       2.153] [SW] get random number: start
+[0:       2.153] [SW] get random number: success
+[0:       2.155] HMAC compare success
+[0:       2.155] RPMB: HMAC: 
+[0:       2.155] 
+[0:       2.155] MMC0 RPMB Get DATA success
+MMC0 RPMB string to write = RPMBBOOT
+[0:       2.155] [SW] get random number: start
+[0:       2.155] [SW] get random number: success
+[0:       2.156] MMC0 RPMB counter : 0x8c71.
+[0:       2.156] MMC0 RPMB Get WriteCounter success
+MMC35954 RPMB counter : 0x0.
+[0:       2.158] MMC0 RPMB Get WriteCounter and MAC success
+RPMB: Magic Block Write: success
+[0:       2.158] [SW] get random number: start
+[0:       2.158] [SW] get random number: success
+[0:       2.160] HMAC compare success
+[0:       2.160] RPMB: HMAC: 
+[0:       2.160] 
+[0:       2.160] MMC0 RPMB Get DATA success
+RPMB: Magic Block Read: success
+[0:       2.160] RPMB: Magic Block Compare: success
+[0:       2.160] initialize_secdata_rpmb: usable! (0x52504d42), 1
+[0:       2.160] set_fuse_history : no reason
+[0:       2.160] fuse history 0x0
+[0:       2.160] blk_rpmb_close: MMC mode
+[0:       2.160] MMC0 RPMB emmc_rpmb_close:
+[0:       2.160] ace_hash_sha_digest: passed.(0)
+[0:       2.160] [KG] 'Checking' state
+[0:       2.160] [KG] pass
+[0:       2.160] get_sec_secu_cond
+[0:       2.160] DDR SIZE: 4G
+[0:       2.160] LPDDR4 manufacturer : Micron
+[0:       2.160] PRO_ID : 4010000
+[0:       2.180] [TMU: 0] 34
+[0:       2.200] [TMU: 1] 33
+[0:       2.200] set_rdx_mask: 0x20000
+[0:       2.200] set_rdx_mask: 0xa0000
+[0:       2.200] check_reset_reason: RamBase: 0 / INF2: 0 / INF3: 0 / RST: 10000
+[0:       2.200] set_reset_reason: reason as 5
+[0:       2.200] update_rcnt: not supported
+[0:       2.200] [MUIC] print_init_regs
+[0:       2.204]  CTRL[1:17, 2:0x9d, 3:0xdd]
+[0:       2.207]  INTMASK[1:0x00, 2:0x7a]
+[0:       2.211]  DEV_TYPE[1:0x80, 2:0x00, 3:0x00]
+[0:       2.213]  MAN_SW[0x00]
+[0:       2.214]  RST[0x00]
+[0:       2.214] 
+[0:       2.214] adc_read_temp temp_adc = 1970, temp = 25
+[0:       2.214] adc_read_temp: write battery temp data : 0x19(25)
+[0:       2.216] init_ific: s2mu106 0x11 (rev:0x1)
+[0:       2.219] keep_charger_status : 0x95 : 0xa5
+[0:       2.225] ifconn_get_jig_status_vb: CCIC Mode
+[0:       2.225] ccic_read_adc:
+[0:       2.225] s2mu106_read_adc:
+[0:       2.226] s2mu106_read_adc: RID = 00(RID_0)
+[0:       2.229] get_vbvolt: apple: 0x06, dev3: 0x00
+[0:       2.229] get_vbvolt: vbvolt: 0x02
+[0:       2.229] ifconn_is_ccic_jig_device_vb: rid=00 vbus=2
+[0:       2.246] [DEBUG]disable_factory_mode: DISABLE FACTORY MODE
+[0:       2.250] kick_charger_watchdog: CHG fault status : x00
+[0:       2.251] kick_charger_watchdog: CHG_CTRL0 : x03
+[0:       2.255] set_charger_watchdog: state(1), reg_data(0x1a)
+[0:       2.256] [DEBUG]set_regulation_voltage: S2MU106_CHG_CTRL5 => 0x5a
+[0:       2.259] [DEBUG]set_regulation_voltage: float_voltage change to 4350, 0x5a
+[0:       2.266] set_charger_current : S2MU106_CHG_CTRL7 : (2000)0x27
+[0:       2.266] ifconn_get_charger_status:
+[0:       2.269] get_vbvolt: apple: 0x06, dev3: 0x00
+[0:       2.269] get_vbvolt: vbvolt: 0x02
+[0:       2.269] ccic_read_adc:
+[0:       2.269] s2mu106_read_adc:
+[0:       2.270] s2mu106_read_adc: RID = 00(RID_0)
+[0:       2.270] ccic_is_valid_charger: default ID + VB
+[0:       2.270] ifconn_get_charger_status: valid_charger=1
+[0:       2.275] set_cool_charger_current : S2MU106_CHG_CTRL6 : (450)0x08
+[0:       2.275] ifconn_is_hc_cable:
+[0:       2.275] ifconn_get_device:
+[0:       2.276] s2mu106_muic_get_adc_value: ADC:0x00
+[0:       2.276] ifconn_is_muic_jig_device: adc=0x00
+[0:       2.276] ccic_read_adc:
+[0:       2.276] s2mu106_read_adc:
+[0:       2.278] s2mu106_read_adc: RID = 00(RID_0)
+[0:       2.278] ifconn_is_ccic_jig_device: rid=00
+[0:       2.278] ifconn_is_hc_cable: adc=0x1f
+[0:       2.281] get_vbvolt: apple: 0x06, dev3: 0x00
+[0:       2.281] get_vbvolt: vbvolt: 0x02
+[0:       2.287] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.298] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.309] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.321] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.332] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.344] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.355] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.366] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.378] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.389] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.400] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.412] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.423] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.434] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.446] s2mu106_muic_get_attached_device_ex: det completed after 140 msec
+[0:       2.453] s2mu106_muic_get_attached_device_ex: INT[1:0x03, 2:0x04]
+[0:       2.453] s2mu106_muic_get_attached_device_ex: DEV[1:0x04, 2:0x00, 3:0x00]
+[0:       2.456] set_precharge_current: set charge current(in:500, out:450)
+[0:       2.460] set_charger_current : S2MU106_CHG_CTRL7 : (450)0x08
+[0:       2.460] ifconn_get_charger_status:
+[0:       2.463] get_vbvolt: apple: 0x06, dev3: 0x00
+[0:       2.463] get_vbvolt: vbvolt: 0x02
+[0:       2.463] ccic_read_adc:
+[0:       2.463] s2mu106_read_adc:
+[0:       2.464] s2mu106_read_adc: RID = 00(RID_0)
+[0:       2.464] ccic_is_valid_charger: default ID + VB
+[0:       2.464] ifconn_get_charger_status: valid_charger=1
+[0:       2.468] set_input_current : S2MU106_CHG_CTRL1 : 0x12
+[0:       2.472] set_charger_state : S2MU106_CHG_CTRL0 : 0x3
+[0:       2.475] ReadFGRegisterWord: REG(0x5) = 0x89ae
+[0:       2.477] ReadFGRegisterWord: REG(0x5) = 0x89ae
+[0:       2.477] fuel_gauge_read_vcell: vbat (4302)
+[0:       2.481] set_charger_state : S2MU106_CHG_CTRL0 : 0x1
+[0:       2.531] ifconn_get_device:
+[0:       2.532] s2mu106_muic_get_adc_value: ADC:0x00
+[0:       2.532] ifconn_is_muic_jig_device: adc=0x00
+[0:       2.532] ccic_read_adc:
+[0:       2.532] s2mu106_read_adc:
+[0:       2.534] s2mu106_read_adc: RID = 00(RID_0)
+[0:       2.534] ifconn_is_ccic_jig_device: rid=00
+[0:       2.538] jig_switch_control: 0x25 -> 0x54
+[0:       2.542] jig_switch_control: POR state = 0x00, 0x1E = 0x 3, data_ver = 0x6(0x6), factory_mode(0), jig_status(0)
+[0:       2.544] ReadFGRegisterWord: REG(0x5) = 0x89ae
+[0:       2.547] ReadFGRegisterWord: REG(0x5) = 0x89ae
+[0:       2.547] fuel_gauge_read_vcell: vbat (4302)
+[0:       2.547] jig_switch_control: Fuelgauge is Already initialized
+[0:       2.551] set_charger_state : S2MU106_CHG_CTRL0 : 0x3
+[0:       2.554] ReadFGRegisterWord: REG(0x9) = 0x400
+[0:       2.556] ReadFGRegisterWord: REG(0x9) = 0x400
+[0:       2.556] fuel_gauge_read_soc_four_digits: raw capacity (0x4000:10000)
+[0:       2.559] ReadFGRegisterWord: REG(0x5) = 0x89ae
+[0:       2.562] ReadFGRegisterWord: REG(0x5) = 0x89ae
+[0:       2.562] fuel_gauge_read_vcell: vbat (4302)
+[0:       2.562] init_fuel_gauge: SOC(10000), VCELL(4302)
+[0:       2.562] PMIC_ID		= 0x04
+[0:       2.562] PMIC_INT1    	= 0xc3 PWRONF PWRONR PWRON1S MRB
+[0:       2.562] PMIC_INT2    	= 0x11 RTC60S RTC1S
+[0:       2.562] PMIC_INT3    	= 0xc0 MRBF MRBR
+[0:       2.562] PMIC_STATUS1 	= 0x1f PWRON JIGONB ACOK MRB RSVD
+[0:       2.562] PMIC_STATUS2 	= 0x00
+[0:       2.562] PMIC_PWRONSRC	= 0x08 MRST
+[0:       2.562] PMIC_OFFSRC  	= 0x00
+[0:       2.562] PMIC_RTC_CTRL	= 0x02
+[0:       2.562] PMIC_RTC_SMPL	= 0x03
+[0:       2.563] RTC TIME: 2026-11-21 20:27:43(0x40)PM
+[0:       2.563] PMIC MON[0] = [0x0c: 0x14]
+[0:       2.563] PMIC MON[1] = [0x0e: 0x44]
+[0:       2.563] PMIC MON[2] = [0x0c: 0x14]
+[0:       2.563] PMIC MON[3] = [0x0e: 0x44]
+[0:       2.563] PMIC MON[4] = [0x09: 0x00]
+[0:       2.563] PMIC MON[5] = [0x04: 0xff]
+[0:       2.563] PMIC MON[6] = [0x0c: 0x14]
+[0:       2.563] PMIC MON[7] = [0x0e: 0x44]
+[0:       2.563] s5p_check_keypad: 0x10100000
+[0:       2.563] s5p_check_keypad: recovery mode
+[0:       2.563] blk_bwrite: MMC mode
+[0:       2.565] blk_bwrite: MMC mode
+[0:       2.569] set_oneshot_recovery: recovery mode set! sys_bootm=0x80000
+[0:       2.569] s5p_check_reboot_mode: INFORM3 = 0 ... skip
+[0:       2.576] [EMC]Token does not exist
+[0:       2.576] s5p_check_upload: DL: 4f4c FU: 0
+[0:       2.576] 0x4f4c: MRST enabled
+[0:       2.576] s5p_check_upload: RamBase: 0 / INF2: 0 / INF3: 0 / RST: 10000
+[0:       2.577] s2mu106_muic_get_adc_value: ADC:0x00
+[0:       2.577] s5p_check_upload: debug level is LO! (fu: 0, mask: 0x440)
+[0:       2.577] s5p_check_upload: disable dump_gpr
+[0:       2.577] Disable dumpGPR - 0x0
+[0:       2.577] ccic_wait_auth:
+[0:       2.579] s2mu106_muic_get_adc_value: ADC:0x00
+[0:       2.579] ccic_read_adc:
+[0:       2.579] s2mu106_read_adc:
+[0:       2.580] s2mu106_read_adc: RID = 00(RID_0)
+[0:       2.580] s2mu106_check_jig_adc_value_ex: jig_adc=00, cc_adc=00
+[0:       2.580] ifconn_check_jig_adc_value: ret[0]
+[0:       2.580] s5p_check_download: 0
+[0:       2.580] mach_board_main: recovery set!(0x80000)
+[0:       2.587] s2mu106_muic_get_attached_device: INT[1:0x03, 2:0x04]
+[0:       2.587] s2mu106_muic_get_attached_device: DEV[1:0x80, 2:0x00, 3:0x00]
+[0:       2.590] get_vbvolt: apple: 0x06, dev3: 0x00
+[0:       2.590] get_vbvolt: vbvolt: 0x02
+[0:       2.590] s2mu106_muic_get_attached_device: redetect
+[0:       2.592] get_vbvolt: apple: 0x06, dev3: 0x00
+[0:       2.592] get_vbvolt: vbvolt: 0x02
+[0:       2.598] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.610] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.621] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.633] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.644] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.655] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.667] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.678] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.689] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.701] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.712] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.723] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.735] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.746] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       2.758] s2mu106_muic_get_attached_device_ex: det completed after 140 msec
+[0:       2.764] s2mu106_muic_get_attached_device_ex: INT[1:0x03, 2:0x04]
+[0:       2.764] s2mu106_muic_get_attached_device_ex: DEV[1:0x04, 2:0x00, 3:0x00]
+[0:       2.767] ccic_get_jig_status:
+[0:       2.767] ccic_read_adc:
+[0:       2.767] s2mu106_read_adc:
+[0:       2.768] s2mu106_read_adc: RID = 00(RID_0)
+[0:       2.768] ifconn_get_charger_status:
+[0:       2.771] get_vbvolt: apple: 0x06, dev3: 0x00
+[0:       2.771] get_vbvolt: vbvolt: 0x02
+[0:       2.771] ccic_read_adc:
+[0:       2.771] s2mu106_read_adc:
+[0:       2.772] s2mu106_read_adc: RID = 00(RID_0)
+[0:       2.772] ccic_is_valid_charger: default ID + VB
+[0:       2.772] ifconn_get_charger_status: valid_charger=1
+[0:       2.776] set_charger_state : S2MU106_CHG_CTRL0 : 0x3
+[0:       2.776] check_pm_status: battery ok, charger boot, waiting 500ms and check again
+[0:       3.276] ifconn_get_charger_status:
+[0:       3.279] get_vbvolt: apple: 0x06, dev3: 0x00
+[0:       3.279] get_vbvolt: vbvolt: 0x02
+[0:       3.279] ccic_read_adc:
+[0:       3.279] s2mu106_read_adc:
+[0:       3.281] s2mu106_read_adc: RID = 00(RID_0)
+[0:       3.281] ccic_is_valid_charger: default ID + VB
+[0:       3.281] ifconn_get_charger_status: valid_charger=1
+[0:       3.281] check_pm_status: charger is ok, LPM boot
+[0:       3.281] ifconn_is_hc_cable:
+[0:       3.281] ifconn_get_device:
+[0:       3.282] s2mu106_muic_get_adc_value: ADC:0x00
+[0:       3.282] ifconn_is_muic_jig_device: adc=0x00
+[0:       3.282] ccic_read_adc:
+[0:       3.282] s2mu106_read_adc:
+[0:       3.283] s2mu106_read_adc: RID = 00(RID_0)
+[0:       3.283] ifconn_is_ccic_jig_device: rid=00
+[0:       3.283] ifconn_is_hc_cable: adc=0x1f
+[0:       3.286] get_vbvolt: apple: 0x06, dev3: 0x00
+[0:       3.286] get_vbvolt: vbvolt: 0x02
+[0:       3.292] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.304] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.315] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.326] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.338] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.349] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.360] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.372] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.383] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.395] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.406] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.417] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.429] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.440] s2mu106_muic_get_attached_device_ex: det runnig, retry after 10 msec
+[0:       3.451] s2mu106_muic_get_attached_device_ex: det completed after 140 msec
+[0:       3.458] s2mu106_muic_get_attached_device_ex: INT[1:0x03, 2:0x04]
+[0:       3.458] s2mu106_muic_get_attached_device_ex: DEV[1:0x04, 2:0x00, 3:0x00]
+[0:       3.462] bl_vib
+[0:       3.664] LoadJPEG took 100 msec
+[0:       3.676] init_display_clk: 12061020(       1), 1206183C(       1)
+[0:       3.676] init_display_clk: 14800120(      10), 14801828(       1)
+[0:       3.676] exynos7885_dual_mipi_phy_control, 1 
+[0:       3.724] dsi_read: 04: 90, 60, 03, 
+[0:       3.724] 90, 60, 03, 0x906003
+[0:       3.888] ea8076_displayon: 1, 1, 0
+[0:       3.888] no need protection in MST 46630008
+[0:       3.942] blk_bwrite: MMC mode
+[0:       3.944] blk_bwrite: MMC mode
+[0:       3.948] blk_bwrite: MMC mode
+[0:       3.952] Set debug level to low(4f4c)
+[0:       3.952] Disable dumpGPR - 0x0
+[0:       3.952] load_kernel: disable dump_gpr
+[0:       3.952] 0x4f4c: MRST enabled
+[0:       3.952] DMV: Successfully informed TZ of boot mode: Recovery
+[0:       3.952] load_kernel: loading boot image from 219136..
+[0:       3.955] kernel size = 0x12c3000, ramdisk size = 0xf10800
+[0:       3.955] dt_size:655360, dt_actual:655360
+[0:       3.955] patch_month_year : 8.19 , os_version : 16.1.0
+[0:       3.955] [CM] set os_version & patch_month_year: start
+[0:       3.955] [CM] set os_version & patch_month_year: success
+[0:       3.955] device_locked : 0
+[0:       3.955] [CM] set device_state: start
+[0:       3.955] [CM] set device_state: success
+[0:       3.955] verified_boot_state : 2
+[0:       3.955] [CM] set boot_state: start
+[0:       3.955] [CM] set boot_state: success
+[0:       3.955] [Fchandler]Jenkins build #546
+[0:       4.370] [TIMA trusted boot]: SEANDROID ENFORCING
+[0:       4.370] Verify_Signature_With_Signingtype 0x90d20130 36127008@0x8007f800, 256@0x90d20030
+[0:       4.370] Kernel Image
+[0:       4.651] Verify_Signature_With_Signingtype: failed.(-18022398)
+[0:       4.651] pit_check_signature (RECOVERY) invalid.
+[0:       4.651] Set invalid sign flag
+[0:       4.651] update_image_status_auth: Status for RECOVERY image is already custom
+[0:       4.651] set_ddi_kernel_type : RECOVERY, 0x8
+[0:       4.651]  No need to update kernel type.
+[0:       4.651] [CM] erase public_key: start
+[0:       4.651] [CM] erase public_key: success
+[0:       4.651] make_security_decisions : (RECOVERY)
+[0:       4.651] [KG] Non-block cases
+[0:       4.652] [CC MODE] Failed. Invalid Magic
+[0:       4.652] save_wb_snapshot: already saved
+[0:       4.652] [EFUSE] warranty bit is already set.
+[0:       4.652] tboot ctx base: 0x90d20310
+[0:       4.652] SMC Num = 0x83000001
+
+[0:       4.652] mobismc success!!!
+[0:       4.776] Pass. DTBH size is smaller than a page.
+[0:       4.776] 
+<dtbh_header Info>
+[0:       4.776]     magic:0x48425444, version:0x00000002, num_entries:0x00000004
+[0:       4.776] 
+<device info>
+[0:       4.776]         chip_id: 0x00001ecd
+[0:       4.776]     platform_id: 0x000050a6
+[0:       4.776]      subtype_id: 0x217584da
+[0:       4.776]          hw_rev: 0x00000004
+[0:       4.776] 
+[0:       4.776] dt_entry[03]
+[0:       4.776]         chip_id: 0x00001ecd
+[0:       4.776]     platform_id: 0x000050a6
+[0:       4.776]      subtype_id: 0x217584da
+[0:       4.776]          hw_rev: 0x00000004
+[0:       4.776]      hw_rev_end: 0x000000ff
+[0:       4.776]          offset: 0x00000800
+[0:       4.776]        dtb size: 0x00027800
+[0:       4.776] Selected entry hw_ver : 4
+[0:       4.795] dt_entry of hw_rev 4 is loaded at 0x8a000000.(161792 Bytes)
+[0:       4.795] RPMB: successfully set provision state(1)
+[0:       4.795] print_wb_snapshot
+[0:       4.795] 000000 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 000010 : 43 55 53 54 4F 4D 00 00 00 00 00 00 00 00 00 00 |CUSTOM..........|
+[0:       4.795] 000020 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 000030 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 000040 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 000050 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 000060 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 000070 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 000080 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 000090 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 0000A0 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 0000B0 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 0000C0 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 0000D0 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 0000E0 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 0000F0 : 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................|
+[0:       4.795] 
+[0:       4.795] [OTP] JTAG_SW_LOCK read start
+[0:       4.795] [OTP] JTAG_SW_LOCK read value: 0x1
+[0:       4.795] DDI value :0x0000000f
+[0:       4.795] blk_set_boot_wp: MMC mode
+[0:       4.796] MMC0 Set write protection (boot partition)
+[0:       4.796] DDI value :0x0000000f
+[0:       4.796] [eMMC] : name:CM, 0x00016000 0x00004000
+[0:       4.796] [eMMC] Starting sector of CM partition was not aligned!
+[0:       4.796] [eMMC] : Set WP for CM, Start : 0x00018000, Length : 0x00000000
+[0:       4.796] blk_set_user_wp: MMC mode
+[0:       4.796] MMC0 wp_group_size = 0x4000
+[0:       4.798] MMC0 Set write protection (user partition)
+[0:       4.798] Warranty Bit Set - Blowing KAP_VIOLATION_FUSE
+[0:       4.798] blk_bwrite: MMC mode
+[0:       4.800] KAP status = 5afe0003
+[0:       4.800] blk_bwrite: MMC mode
+[0:       4.804] RR in PARAM: 0 / RR now: 5
+[0:       4.804] [EXTRAINFO] set_extra_info_val: sec_debug_extra_info is NOT initialized
+[0:       4.804] [EXTRAINFO] set_extra_info_val: sec_debug_extra_info is NOT initialized
+[0:       4.804] sec_debug_shared_init_from_param
+[0:       4.804] ATAG_CORE: 5 54410001 0 0 0
+[0:       4.804] ATAG_MEM: 4 54410002 00000000 80000000
+[0:       4.804] blk_getUID: MMC mode
+[0:       4.804] ATAG_SERIAL: 4 54410006 32008173 5bb166a3
+[0:       4.804] ATAG_INITRD2: 4 54420005 89000000 f101d0
+[0:       4.804] ATAG_REVISION: 3 54410007 4
+[0:       4.804] check_secure_jtag: smc cmd is not supported for this model
+[0:       4.804] check_rustproof [1,0] Off
+[0:       4.804] check_ccic_info: [1] CCIC
+[0:       4.805] ucs flag is Unknown
+[0:       4.805] ucs flag : 00 00 00 00
+[0:       4.805] sec_debug_rooting_info: ddi set and warranty set
+[0:       4.806] ATAG_NONE: 0 0
+param logs: R,N,N,N,N,R,N,R,N,R,R,N,R,R,R,N,N,N,R,R,N,R,N,R,N,R,N,R,N,N,R,N,R,N,R,N,N,N,N,N,N,N,N,R,N,N,N,N,N,N,R,N,R,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,N,R,N,R,N,R,N,R,N,R,N,N,R,N,R,N,R,N,R,N,R,R,R,N,R,R,N,R,N,R,N,R,N,R,N,R,N,R,N,R,N,R,N,R,N,R,N,R,N,R,N,R,N,R,N,R,N,R,N,R,R,N,N,R,N,R,N,R,N,N,R,N,R,
+[0:       4.806] [CC MODE] Failed. Invalid Magic
+[0:       4.806] convert_WB_reason_to_char : 0x30c -> '2'
+[0:       4.806] secure info base: 0x90d20000 and SMC Num = 0x83000013
+
+[0:       4.806] secure smc success!!!
+[0:       4.861] pack_atags: ramdisk size start 0x89000000, size 0xf101d0
+[0:       5. 51] Updating device tree @0x8a000000: done
+[0:       5. 51] [CM] block verified boot commands: start
+[0:       5. 51] [CM] block verified boot commands: success
+[0:       5. 51] [OTP] OTP_SW_BLOCK enable start
+[0:       5. 51] [OTP] OTP_SW_BLOCK enable success
+[0:       5. 51] cal_hash_lock: cal_hash locked
+[0:       5. 51] check_rcnt: not supported
+[0:       5. 51] 
+[0:       5. 51] Starting kernel at 0x80080000...
+
+[0:       5. 51] ifconn_show_switch_sel:
+[0:       5. 51] SWITCH_SEL(3)
+[0:       5. 51] BOOTING TIME : 5051
