@@ -1,0 +1,2 @@
+total 0
+-r--r--r-- 1 root root 16372 2026-11-21 17:32 pmsg-ramoops-0
