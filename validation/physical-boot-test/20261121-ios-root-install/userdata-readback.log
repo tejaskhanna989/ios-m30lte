@@ -1,0 +1,2 @@
+2026-11-21T15:54:39Z begin USERDATA readback
+Terminated                 adb exec-out 'dd if=/dev/block/mmcblk0p28 bs=4194304 count=5120 2>/dev/null' | sha256sum
