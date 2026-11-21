@@ -1,0 +1,115 @@
+adbd
+initializing functionfs
+adbd
+opening control endpoint /dev/usb-ffs/adb/ep0
+adbd
+functionfs successfully initialized
+adbd
+registering usb transport
+cutils-trace
+Error opening trace file: No such file or directory (2)
+ArmToArm64Assembler
+generated scanline__00000077:03010101_00008001_00000000 [195 ipp] (241 ins) at [0x77ae7003c0:0x77ae700784] in 68846 ns
+ArmToArm64Assembler
+generated scanline__00000077:03545405_00000000_00000000 [ 65 ipp] (94 ins) at [0x77ae700790:0x77ae700908] in 49539 ns
+ArmToArm64Assembler
+generated scanline__00000077:03545405_00000A01_00000000 [ 69 ipp] (113 ins) at [0x77ae700910:0x77ae700ad4] in 61385 ns
+ArmToArm64Assembler
+generated scanline__00000077:03545405_00000A08_00000000 [ 69 ipp] (116 ins) at [0x77ae700ae0:0x77ae700cb0] in 57193 ns
+adbd
+aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown
+adbd
+remote usb: read terminated (message): Cannot send after transport endpoint shutdown
+adbd
+closing functionfs transport
+adbd
+initializing functionfs
+adbd
+functionfs successfully initialized
+adbd
+registering usb transport
+adbd
+aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown
+adbd
+remote usb: read terminated (message): Cannot send after transport endpoint shutdown
+k"q	
+adbd
+closing functionfs transport
+adbd
+initializing functionfs
+adbd
+functionfs successfully initialized
+adbd
+registering usb transport
+Darwin Kernel Version 22.6.0: Mon Aug 14 05:06:07 UTC 2023; runner:xnu-8796.141.3
+pmap_startup() init/release time: 3666 microsec
+pmap_startup() delayed init/release of 0 pages
+vm_page_bootstrap: 64351 free pages, 10401 wired pages, (up to 0 of which are delayed free)
+VM boostrap: 51 maps, 153 entries and 128 holes available
+Maximum number of VM swap files: 5
+mb                      : 0xfffffff00084f000 - 0xfffffff00484f000 (64M)
+ipc_kernel_copy_map     : 0xfffffff00484f000 - 0xfffffff00504f000 (8M)
+ipc_kernel_map          : 0xfffffff040800000 - 0xfffffff044800000 (64M)
+bufferhdr               : 0xfffffff044800000 - 0xfffffff0448be000 (760K)
+compressor              : 0xfffffff0448be000 - 0xfffffff056cff000 (292M)
+gIOKitPageableFixed1    : 0xfffffff056cff000 - 0xfffffff05ccff000 (96M)
+io_submap               : 0xfffffff05ccff000 - 0xfffffff05d4ff000 (8M)
+gIOKitPageableFixed0    : 0xfffffff05d4ff000 - 0xfffffff0634ff000 (96M)
+kmem_data_range         : 0xfffffff0634ff000 - 0xfffffff47f6ed000 (16G)
+zone_meta               : 0xfffffff47f6ed000 - 0xfffffff4857f3000 (97M)
+kmem_ptr_range          : 0xfffffff4857f3000 - 0xfffffff5e6cb3000 (5G)
+zones                   : 0xfffffff5e6cb3000 - 0xfffffffbe6cb3000 (24G)
+bsd_pageable            : 0xfffffffbe6cb3000 - 0xfffffffbe7535000 (8M)
+gIOKitPageableFixed3    : 0xfffffffbe7535000 - 0xfffffffbed535000 (96M)
+gIOKitPageableFixed2    : 0xfffffffbed535000 - 0xfffffffbf3535000 (96M)
+kmem_sprayqtn_range     : 0xfffffffbf3535000 - 0xfffffffbfb4f3000 (127M)
+kmem_ptr_range_meta     : 0xfffffffbfb4f3000 - 0xfffffffbfb5fc000 (1060K)
+kmem_large_ranges[1]    : 0 - 0 (0B)
+kmem_large_ranges[2]    : 0 - 0 (0B)
+kmem_large_ranges[3]    : 0 - 0 (0B)
+kmem_large_ranges[4]    : 0xfffffffbf452cc00 - 0xfffffffbfb4f3000 (111M)
+kmem_large_ranges[5]    : 0xfffffff0e6d3cc00 - 0xfffffff47f6ed000 (14G)
+"vm_compressor_mode" is 0
+zone_init: pgzalloc  0xfffffff5e6cb3000:0xfffffff5e6d32000 (508K) [63 slots]
+zone_init: map VM    0xfffffff5e6d32000:0xfffffff6cd385000 (3686M)
+zone_init: map RO    0xfffffff6cd385000:0xfffffff71a04b000 (1228M)
+zone_init: map GEN0  0xfffffff71a04b000:0xfffffff80069e000 (3686M)
+zone_init: map GEN1  0xfffffff80069e000:0xfffffff8e6cf1000 (3686M)
+zone_init: map GEN2  0xfffffff8e6cf1000:0xfffffff9cd344000 (3686M)
+zone_init: map GEN3  0xfffffff9cd344000:0xfffffffab3998000 (3686M)
+zone_init: map DATA  0xfffffffab3998000:0xfffffffbe6cb3000 (4915M)
+zone_init: metadata  0xfffffff47f6fd000:0xfffffff4856fd000 (96M)
+zone_init: metabits  0xfffffff4856fd000:0xfffffff4857e3000 (920K)
+zone_init: extra     0:0 (0B)
+VM bootstrap done: 39 maps, 112 entries and 115 holes left
+Firehose configured: 16 chunks, 8 io pages
+Log queues configured: slot count: 8, per-slot size: 32768, total size: 262144
+OSLog stream configured: stream: 8192 bytes, cache: 2112 bytes
+OSLog stream verification: 0
+Long logs support configured: size: 16384
+standard timeslicing quantum is 10000 us
+standard background quantum is 2500 us
+mig_table_max_displ = 54 mach_kobj_count = 374
+kdp_core zlib memory 0x7000
+Serial requested, consistent debug disabled or debug boot arg not present, configuring debugging over serial
+iBoot version: m30lte-shim
+"name" not a kext
+"AAPL,phandle" not a kext
+calling mpo_policy_init for vnguard
+Security policy loaded: Guarded vnode policy (vnguard)
+SWEET: trust caches unavailable (Image4/AMFI not installed)
+keepsyms boot arg specified; keeping linkedit segment for symbols.
+No POST boot-arg set.
+Copyright (c) 1982, 1986, 1989, 1991, 1993
+	The Regents of the University of California. All rights reserved.
+MAC Framework successfully initialized
+using 1308 buffer headers and 1308 cluster IO buffer headers
+A5XELTE: starting device-tree platform expert
+A5XELTE: platform expert registered
+SWEET AKS: AppleKeyStore registered (no passcode, unlocked)
+SWEET WDT: IOWatchdog registered (accepts check-ins, never fires)
+SWEET SURF: IOCoreSurfaceRoot registered
+SWEET HID: buttons registered (test every 0 s)
+SWEET HID: touch registered
+SWEET FB: AppleCLCD 1080x2340 stride 4320 at 0xec000000, default surface 1, presented as 1080x2340
+A5XELTE FB: requested 30 Hz, effective 30 Hz, copy timing on

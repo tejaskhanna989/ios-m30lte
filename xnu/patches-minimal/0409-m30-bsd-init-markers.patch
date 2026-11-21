@@ -1,0 +1,45 @@
+diff --git a/bsd/kern/bsd_init.c b/bsd/kern/bsd_init.c
+--- a/bsd/kern/bsd_init.c
++++ b/bsd/kern/bsd_init.c
+@@ -686,10 +686,16 @@
+ 	 */
+ 	bsd_init_kprintf("calling IOKitInitializeTime\n");
+ 	IOKitInitializeTime();
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	printf("M30 BSD: IOKitInitializeTime returned\n");
++#endif
+ 
+ 	/* Initialize the file systems. */
+ 	bsd_init_kprintf("calling vfsinit\n");
+ 	vfsinit();
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	printf("M30 BSD: vfsinit returned\n");
++#endif
+ 
+ #if defined(ARM64_BOARD_CONFIG_SWEET)
+ 	/* AMFI's MAC policy is built in on SWEET (bsd/kern/sweet_amfi.c). */
+@@ -701,6 +707,9 @@
+ 	/* HFS is built in on SWEET: register it like its kext would, before mounting root. */
+ 	extern void sweet_hfs_register(void);
+ 	sweet_hfs_register();
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	printf("M30 BSD: sweet_hfs registered\n");
++#endif
+ #endif
+ 
+ #if CONFIG_PROC_UUID_POLICY
+@@ -797,8 +806,14 @@
+ 	bsd_init_kprintf("calling sysctl_mib_init\n");
+ 	sysctl_mib_init();
+ 
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	printf("M30 BSD: calling bsd_autoconf\n");
++#endif
+ 	bsd_init_kprintf("calling bsd_autoconf\n");
+ 	bsd_autoconf();
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	printf("M30 BSD: bsd_autoconf returned\n");
++#endif
+ 
+ #if CONFIG_DTRACE
+ 	dtrace_postinit();
