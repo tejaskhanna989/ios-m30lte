@@ -1,0 +1,124 @@
+diff --git a/iokit/Kernel/arm/SweetAMFI.cpp b/iokit/Kernel/arm/SweetAMFI.cpp
+new file mode 100644
+--- /dev/null
++++ b/iokit/Kernel/arm/SweetAMFI.cpp
+@@ -0,0 +1,93 @@
++/*
++ * Built-in AppleMobileFileIntegrity IOService/user client for SWEET/M30LTE.
++ *
++ * The genuine built-in AMFI kernel interface (bsd/kern/sweet_amfi.c) is
++ * already registered and validates/enforces entitlements from signatures
++ * whose hashes were checked against the code directory. It is not a kext,
++ * however, so it publishes no IOService. iOS userspace
++ * (launchd_cache_loader) opens IOServiceMatching("AppleMobileFileIntegrity")
++ * and calls external selector 6 to check that the (already signature-
++ * validated) launchd cache cdhash is a platform/trusted binary before
++ * pushing the signature into the kernel. Without the service the loader
++ * aborts with "Unable to find AMFI".
++ *
++ * This stand-in answers that platform/trust query positively for binaries
++ * the kernel already marked CS_PLATFORM_BINARY on the root filesystem. It
++ * does NOT validate signatures or grant entitlements (the kernel AMFI and
++ * the userspace SecCode verification do that); it only supplies the IOService
++ * presence and the trust/platform answer that the closed kext would return.
++ */
++#include <pexpert/arm64/board_config.h>
++
++#if defined(SWEET)
++#include <IOKit/IOService.h>
++#include <IOKit/IOUserClient.h>
++#include <IOKit/IOKitKeys.h>
++#include <IOKit/IOLib.h>
++#include <sys/proc.h>
++
++class AppleMobileFileIntegrity : public IOService {
++	OSDeclareDefaultStructors(AppleMobileFileIntegrity);
++
++public:
++	bool start(IOService *provider) APPLE_KEXT_OVERRIDE;
++};
++
++OSDefineMetaClassAndStructors(AppleMobileFileIntegrity, IOService);
++
++bool
++AppleMobileFileIntegrity::start(IOService *provider)
++{
++	if (!IOService::start(provider)) {
++		return false;
++	}
++	setProperty(kIOUserClientClassKey, "AppleMobileFileIntegrityUserClient");
++	registerService();
++	IOLog("SWEET AMFI: AppleMobileFileIntegrity IOService registered\n");
++	return true;
++}
++
++class AppleMobileFileIntegrityUserClient : public IOUserClient {
++	OSDeclareDefaultStructors(AppleMobileFileIntegrityUserClient);
++
++public:
++	IOReturn clientClose(void) APPLE_KEXT_OVERRIDE;
++	IOReturn externalMethod(uint32_t selector, IOExternalMethodArguments *args,
++	    IOExternalMethodDispatch *dispatch, OSObject *target,
++	    void *reference) APPLE_KEXT_OVERRIDE;
++};
++
++OSDefineMetaClassAndStructors(AppleMobileFileIntegrityUserClient, IOUserClient);
++
++IOReturn
++AppleMobileFileIntegrityUserClient::clientClose(void)
++{
++	terminate();
++	return kIOReturnSuccess;
++}
++
++IOReturn
++AppleMobileFileIntegrityUserClient::externalMethod(uint32_t selector,
++    IOExternalMethodArguments *args,
++    __unused IOExternalMethodDispatch *dispatch,
++    __unused OSObject *target, __unused void *reference)
++{
++	/*
++	 * Selector 6 is the launchd_cache_loader trust/platform query. The
++	 * signature was already validated in userspace (SecCode) and on the
++	 * kernel side (AMFI code directory); answer "trusted platform binary".
++	 */
++	if (args->scalarOutputCount > 0) {
++		args->scalarOutput[0] = 1;
++		args->scalarOutputCount = 1;
++	}
++
++	char name[32];
++	proc_selfname(name, sizeof(name));
++	IOLog("SWEET AMFI UC: %s sel %u in %u/%u out %u/%u -> ok\n", name, selector,
++	    args->scalarInputCount, args->structureInputSize,
++	    args->scalarOutputCount, args->structureOutputSize);
++	return kIOReturnSuccess;
++}
++
++#endif /* SWEET */
+diff --git a/iokit/KernelConfigTables.cpp b/iokit/KernelConfigTables.cpp
+--- a/iokit/KernelConfigTables.cpp
++++ b/iokit/KernelConfigTables.cpp
+@@ -70,6 +70,11 @@
+     "     'IOMatchCategory' = IOWatchdog;"
+     "   },"
+     "   {"
++    "     'IOClass'         = AppleMobileFileIntegrity;"
++    "     'IOProviderClass' = IOResources;"
++    "     'IOMatchCategory' = AppleMobileFileIntegrity;"
++    "   },"
++    "   {"
+     "     'IOClass'         = IOCoreSurfaceRoot;"
+     "     'IOProviderClass' = IOResources;"
+     "     'IOMatchCategory' = IOCoreSurfaceRoot;"
+diff --git a/iokit/conf/files.arm64 b/iokit/conf/files.arm64
+--- a/iokit/conf/files.arm64
++++ b/iokit/conf/files.arm64
+@@ -11,6 +11,7 @@
+ 
+ iokit/Kernel/arm/SweetCPU.cpp                                    optional iokitcpp
+ iokit/Kernel/arm/SweetEntitlements.cpp                           optional iokitcpp
++iokit/Kernel/arm/SweetAMFI.cpp                                  optional iokitcpp
+ iokit/Kernel/arm/SweetKeyStore.cpp                               optional iokitcpp
+ iokit/Kernel/arm/SweetWatchdog.cpp                               optional iokitcpp
+ iokit/Kernel/arm/SweetSurface.cpp                                optional iokitcpp
