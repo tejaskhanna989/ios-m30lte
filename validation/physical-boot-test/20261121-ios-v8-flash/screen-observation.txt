@@ -1,0 +1,21 @@
+User-reported screen transcription during the single v8 boot attempt
+(captured verbatim from the user's message at 2026-11-21, before any interpretation):
+
+  A5XLTE: starting  device-tree platform expert
+  A5XELTE: platform expert registered
+  SWEET AKS: AppleKeyStore registered (no password, unlocked0
+  SWEEt WDT: IOWatchdog registered (accepts check-ins, never fires)
+  SWEET SURF: IOCoreSurfaceroot registered
+  SWEET HID: Butons registered (test every 0s)
+  SWEET ||Id:touch registered
+  Sweet FB: AppleCLCD 1080x2340 stride 4320 at 0xec000000, default surface 1, presented as 1080x2340
+  A5XELTE FB: requested 30hz, effective 30hz, copy timing on
+
+Note: the user's capitalization/spacing is preserved exactly as typed. The lines
+"SWEET HID: Butons registered", "SWEET ||Id:touch registered" and "SWEET SURF:
+IOCoreSurfaceroot registered" are almost certainly the kernel strings
+"SWEET HID: buttons registered ...", "SWEET HID: touch registered" and
+"SWEET SURF: IOCoreSurfaceRoot registered" respectively (OCR/transcription noise),
+but the raw text is kept unchanged here.
+
+No M30 ROOT: marker, no A5XELTE eMMC: line and no BSD root: line was reported on screen.

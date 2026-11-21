@@ -1,0 +1,37 @@
+diff --git a/osfmk/arm/machine_routines_common.c b/osfmk/arm/machine_routines_common.c
+--- a/osfmk/arm/machine_routines_common.c
++++ b/osfmk/arm/machine_routines_common.c
+@@ -54,6 +54,7 @@
+ 
+ #include <mach/machine.h>
+ #include <mach/machine/sdt.h>
++#include <pexpert/arm64/board_config.h>
+ 
+ #if !HAS_CONTINUOUS_HWCLOCK
+ extern uint64_t mach_absolutetime_asleep;
+@@ -1283,6 +1284,17 @@
+ unsigned int
+ ml_wait_max_cpus(void)
+ {
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	/*
++	 * M30LTE boots a single logical CPU.  SweetCPU::startAll(), the only
++	 * caller of ml_set_max_cpus() on this path, is never started by IOKit
++	 * matching, so max_cpus_initialized would never become MAX_CPUS_SET and
++	 * this wait (called from kperf_init_early, just before bsd_init) would
++	 * block forever.  machine_conf() already derived machine_info.max_cpus
++	 * from the validated CPU topology, so return it directly.
++	 */
++	return machine_info.max_cpus;
++#else
+ 	assert(lockdown_done);
+ 	lck_mtx_lock(&max_cpus_lock);
+ 	while (max_cpus_initialized != MAX_CPUS_SET) {
+@@ -1291,6 +1303,7 @@
+ 	}
+ 	lck_mtx_unlock(&max_cpus_lock);
+ 	return machine_info.max_cpus;
++#endif
+ }
+ 
+ void
