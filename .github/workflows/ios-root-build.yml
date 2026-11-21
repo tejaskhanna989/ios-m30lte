@@ -54,7 +54,9 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq hfsprogs rsync fuse3 libfuse3-dev cmake ninja-build \
             pkg-config zlib1g-dev libbz2-dev libzstd-dev libssl-dev curl unzip coreutils python3
-          git clone --depth 1 https://github.com/sgan81/apfs-fuse.git "$RUNNER_TEMP/apfs-fuse"
+          git clone --recurse-submodules https://github.com/sgan81/apfs-fuse.git "$RUNNER_TEMP/apfs-fuse"
+          git -C "$RUNNER_TEMP/apfs-fuse" submodule update --init --recursive
+          test -s "$RUNNER_TEMP/apfs-fuse/3rdparty/lzfse/src/lzfse.h" || { echo "lzfse submodule missing" >&2; exit 1; }
           cmake -S "$RUNNER_TEMP/apfs-fuse" -B "$RUNNER_TEMP/apfs-fuse/build" \
             -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DCMAKE_CXX_FLAGS="-include cstdint"
