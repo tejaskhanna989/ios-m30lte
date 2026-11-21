@@ -1,0 +1,5 @@
+2026-11-20T07:03:57Z adb reboot (ONE authorized boot attempt)
+adb reboot exit=1
+2026-11-20T07:15:07Z TIMEOUT waiting for device
+2026-11-20T07:16:14Z SINGLE authorized adb reboot
+2026-11-20T07:16:14Z adb reboot rc=0
