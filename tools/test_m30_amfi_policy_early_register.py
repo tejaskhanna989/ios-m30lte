@@ -29,7 +29,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0412-m30-amfi-policy-early-register.patch"
-BT = ROOT / "milestone_artifacts/ci_44931911670/buildtree/unpacked/xnu"
+BT = ROOT / "milestone_artifacts/ci_44934162919/buildtree/unpacked/xnu"
 PSTORE = ROOT / "validation/physical-boot-test/20261121-ios-v13-boot/raw/pmsg-ramoops-0"
 
 MODEL = r"""
@@ -105,6 +105,30 @@ def main() -> int:
     mb = (BT / "security/mac_base.c").read_text()
     assert "SECURITY_READ_ONLY_LATE(mac_policy_list_t) mac_policy_list;" in mb
     print("[PASS] mac_policy_list is SECURITY_READ_ONLY_LATE (__DATA_CONST)")
+
+    # exactly ONE registration path on M30LTE: bsd_init call must be SWEET-only
+    bi = (BT / "bsd/kern/bsd_init.c").read_text()
+    bi_call = bi.index("sweet_amfi_policy_register();")
+    bi_guard = bi.rindex("#if defined(ARM64_BOARD_CONFIG_SWEET)", 0, bi_call)
+    assert "M30LTE" not in bi[bi_guard:bi_call], "bsd_init must not register on M30LTE"
+    assert bi[bi_call:].find("#endif") < bi[bi_call:].find("sweet_hfs_register")
+    print("[PASS] bsd_init registration is SWEET-only (no late M30LTE duplicate)")
+
+    # binary-level (if the built kernel is present): exactly one call site, before lockdown
+    KERNEL = ROOT / "validation/ios-candidate-v14-out/inputs/kernel.development.m30lte"
+    if KERNEL.exists() and shutil.which("llvm-objdump"):
+        dis = subprocess.run(["llvm-objdump", "-d", str(KERNEL)],
+                             capture_output=True, text=True).stdout
+        calls = [ln for ln in dis.splitlines()
+                 if "bl" in ln and "<_sweet_amfi_policy_register>" in ln]
+        assert len(calls) == 1, f"expected 1 call site, got {len(calls)}: {calls}"
+        call_addr = int(calls[0].split(":")[0].strip(), 16)
+        locks = [ln for ln in dis.splitlines()
+                 if "bl" in ln and "<_machine_lockdown>" in ln]
+        assert locks, "machine_lockdown call not found"
+        lock_addr = int(locks[0].split(":")[0].strip(), 16)
+        assert call_addr < lock_addr, "AMFI registration must precede machine_lockdown in binary"
+        print(f"[PASS] binary: exactly 1 call site at {hex(call_addr)} < machine_lockdown {hex(lock_addr)}")
 
     # v13 pstore proves the before-state
     d = PSTORE.read_bytes()
