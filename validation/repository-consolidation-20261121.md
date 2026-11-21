@@ -50,6 +50,17 @@ and verification results are recorded in committed docs (`NOTES.md`, candidate
 READMEs, validation reports). Not committed during consolidation; nothing
 deleted. `milestone_artifacts/SHA256SUMS_MILESTONES.txt` remains tracked.
 
+**Published to GitHub (2026-11-21):** all 11 CI runs are now available as
+release assets at
+`https://github.com/tejaskhanna989/ios-m30lte/releases/tag/ci-milestones-20261121`
+(tag `ci-milestones-20261121`, 12 assets, ~993 MB). Each `ci_<run>.tar.gz`
+contains the complete `milestone_artifacts/ci_<run>/` directory (raw CI
+downloads plus unpacked build tree). Also included: `SHA256SUMS_MILESTONES.txt`
+(original per-artifact hashes) and `ASSET_SHA256.txt` (hashes of the release
+tarballs). Remote asset digests were verified against the local manifest — all
+12 match. This publishes the artifacts without adding ~2.8 GB to the git
+history (two source files exceed GitHub's 100 MB per-file commit limit).
+
 ## 4. Explicitly not changed
 
 Backups (`m30-boot-original/boot.img`), all candidates v2-v10, physical evidence
