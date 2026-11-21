@@ -1,0 +1,150 @@
+name: iOS 16 HFSX Root Filesystem Build
+
+'on':
+  workflow_dispatch:
+    inputs:
+      ipsw_url:
+        description: Official Apple CDN URL for iPhone10,3/10,6 iOS 16.7.16 (20H392) IPSW
+        default: 'https://updates.cdn-apple.com/2025FallFCS/fullrestores/122-77006/1158E502-D76D-4226-AA06-ED5E30CD1111/iPhone10,3,iPhone10,6_16.7.16_20H392_Restore.ipsw'
+      ipsw_sha256:
+        description: Published SHA-256 of the IPSW (ipsw.me API)
+        default: 'ece1194f7e233e9109c5790a8d23a4564a10a254e15ec5b09978a343265568fb'
+      image_size:
+        description: HFSX image size
+        default: '20G'
+      publish_release:
+        description: Publish split compressed image as GitHub release assets (artifact limit is 500 MB)
+        default: 'true'
+      dry_run:
+        description: Only verify IPSW + tooling, do not build the image
+        default: 'false'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ios-root-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-root:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    env:
+      IPSW_URL: ${{ inputs.ipsw_url }}
+      IPSW_SHA: ${{ inputs.ipsw_sha256 }}
+      IMG_SIZE: ${{ inputs.image_size }}
+      PUBLISH: ${{ inputs.publish_release }}
+      DRY: ${{ inputs.dry_run }}
+      WORK: /home/runner/work/rootfs
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Free runner disk (need >25 GB for IPSW + DMGs + image)
+        run: |
+          df -h /
+          sudo rm -rf /opt/hostedtoolcache /usr/local/lib/android /usr/share/dotnet \
+                      /opt/ghc /usr/local/share/boost /usr/share/swift /usr/local/.ghcup /opt/az
+          sudo docker image prune -af 2>/dev/null || true
+          df -h /
+
+      - name: Install host tools (hfsprogs, rsync, fuse, apfs-fuse build deps)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq hfsprogs rsync fuse3 libfuse3-dev cmake ninja-build \
+            pkg-config zlib1g-dev libbz2-dev libzstd-dev libssl-dev curl unzip coreutils python3
+          git clone --depth 1 https://github.com/sgan81/apfs-fuse.git "$RUNNER_TEMP/apfs-fuse"
+          cmake -S "$RUNNER_TEMP/apfs-fuse" -B "$RUNNER_TEMP/apfs-fuse/build" \
+            -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+            -DCMAKE_CXX_FLAGS="-include cstdint"
+          cmake --build "$RUNNER_TEMP/apfs-fuse/build" -j4
+          sudo install -m 0755 "$RUNNER_TEMP/apfs-fuse/build/apfs-fuse" /usr/local/bin/apfs-fuse
+          apfs-fuse --help 2>&1 | head -3 || true
+          for t in apfs-fuse mkfs.hfsplus fsck.hfsplus rsync; do command -v "$t"; done
+
+      - name: Download and verify genuine IPSW (SHA-256 from published manifest)
+        run: |
+          mkdir -p "$WORK"
+          curl -fL --retry 3 --retry-delay 5 -o "$WORK/ipsw.ipsw" "$IPSW_URL"
+          echo "$IPSW_SHA  $WORK/ipsw.ipsw" | sha256sum -c -
+          stat -c '%n %s bytes' "$WORK/ipsw.ipsw"
+
+      - name: Extract and verify the three genuine DMGs
+        run: |
+          mkdir -p "$WORK/dmgs"
+          unzip -j -o "$WORK/ipsw.ipsw" \
+            '087-86698-044.dmg' '087-86593-047.dmg' '087-86715-047.dmg' -d "$WORK/dmgs"
+          test -s "$WORK/dmgs/087-86698-044.dmg"
+          test -s "$WORK/dmgs/087-86593-047.dmg"
+          test -s "$WORK/dmgs/087-86715-047.dmg"
+          test "$(stat -c %s "$WORK/dmgs/087-86698-044.dmg")" = "4730814044"
+          test "$(stat -c %s "$WORK/dmgs/087-86593-047.dmg")" = "2743074816"
+          sha256sum "$WORK/dmgs"/*.dmg | tee "$WORK/dmg-sha256.txt"
+          rm -f "$WORK/ipsw.ipsw"
+          df -h "$WORK"
+
+      - name: Convert APFS DMGs to HFSX and validate (donor method)
+        if: env.DRY != 'true'
+        run: |
+          bash tools/build_ios_root.sh \
+            "$WORK/dmgs/087-86698-044.dmg" \
+            "$WORK/dmgs/087-86593-047.dmg" \
+            "$WORK/dmgs/087-86715-047.dmg" \
+            "$WORK/ios-root-20H392.img" "$IMG_SIZE" | tee "$WORK/build.log"
+          test -s "$WORK/ios-root-20H392.img"
+
+      - name: Record manifest
+        if: env.DRY != 'true'
+        run: |
+          {
+            echo '{'
+            echo "  \"ipsw_url\": \"$IPSW_URL\","
+            echo "  \"ipsw_sha256\": \"$IPSW_SHA\","
+            echo "  \"image_size_arg\": \"$IMG_SIZE\","
+            echo "  \"dmgs\": [\"087-86698-044.dmg\", \"087-86593-047.dmg\", \"087-86715-047.dmg\"],"
+            echo "  \"image\": \"ios-root-20H392.img\","
+            echo "  \"image_size_bytes\": \"$(stat -c %s "$WORK/ios-root-20H392.img")\","
+            echo "  \"image_sha256\": \"$(sha256sum "$WORK/ios-root-20H392.img" | cut -d' ' -f1)\","
+            echo "  \"hfsx_signature\": \"4858\","
+            echo "  \"launchd\": \"present\""
+            echo '}'
+          } > "$WORK/manifest.json"
+          cat "$WORK/manifest.json"
+
+      - name: Compress and split for release assets (Actions artifacts are 500 MB total)
+        if: env.DRY != 'true' && env.PUBLISH == 'true'
+        run: |
+          cd "$WORK"
+          gzip -1 -c ios-root-20H392.img > ios-root-20H392.img.gz
+          rm -f ios-root-20H392.img
+          split -b 1536m ios-root-20H392.img.gz ios-root-20H392.img.gz.part-
+          rm -f ios-root-20H392.img.gz
+          sha256sum ios-root-20H392.img.gz.part-* > "$WORK/parts-sha256.txt"
+          ls -lh "$WORK"/ios-root-20H392.img.gz.part-* | head -20
+          df -h "$WORK"
+
+      - name: Publish release assets
+        if: env.DRY != 'true' && env.PUBLISH == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="ios-root-20H392-${GITHUB_RUN_ID}"
+          gh release create "$TAG" --target "$GITHUB_SHA" \
+            --title "iOS 16.7.16 (20H392) HFSX root filesystem" \
+            --notes "Genuine iPhone X 16.7.16 (20H392) root converted to case-sensitive HFSX by tools/build_ios_root.sh. See manifest.json and parts-sha256.txt. Reassemble: cat ios-root-20H392.img.gz.part-* | gunzip > ios-root.img" \
+            "$WORK/manifest.json" "$WORK/parts-sha256.txt" "$WORK"/ios-root-20H392.img.gz.part-*
+          gh release view "$TAG" --json assets --jq '.assets[].name'
+
+      - name: Upload small manifest artifact
+        if: env.DRY != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-root-manifest
+          path: ${{ env.WORK }}/manifest.json
+
+      - name: Summary
+        if: env.DRY != 'true'
+        run: |
+          cat "$WORK/manifest.json" >> "$GITHUB_STEP_SUMMARY"
+          echo "HFSX image built and validated. Published via release assets." >> "$GITHUB_STEP_SUMMARY"
