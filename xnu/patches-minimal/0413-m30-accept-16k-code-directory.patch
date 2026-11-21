@@ -1,0 +1,28 @@
+diff --git a/bsd/kern/ubc_subr.c b/bsd/kern/ubc_subr.c
+--- a/bsd/kern/ubc_subr.c
++++ b/bsd/kern/ubc_subr.c
+@@ -124,6 +124,7 @@
+ extern int cs_debug;
+ 
+ #define PAGE_SHIFT_4K           (12)
++#define PAGE_SHIFT_16K          (14)    /* iOS dyld shared cache signatures */
+ 
+ static boolean_t
+ cs_valid_range(
+@@ -371,7 +372,15 @@
+ 	if (ntohl(cd->magic) != CSMAGIC_CODEDIRECTORY) {
+ 		return EBADEXEC;
+ 	}
+-	if ((cd->pageSize != PAGE_SHIFT_4K) && (cd->pageSize != PAGE_SHIFT)) {
++	/*
++	 * Accept 16K-page code directories even on a 4K-page kernel. All page
++	 * hash validation below uses cd->pageSize (via csb_hash_pageshift), so a
++	 * 16K CD is still fully hash-validated at its native 16K granularity -
++	 * no signature or page-hash check is weakened or skipped. This is needed
++	 * for the genuine iOS dyld shared cache, which is signed for 16K pages.
++	 */
++	if ((cd->pageSize != PAGE_SHIFT_4K) && (cd->pageSize != PAGE_SHIFT) &&
++	    (cd->pageSize != PAGE_SHIFT_16K)) {
+ 		printf("disallowing unsupported code signature page shift: %u\n", cd->pageSize);
+ 		return EBADEXEC;
+ 	}
