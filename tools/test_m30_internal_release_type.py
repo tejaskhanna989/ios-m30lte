@@ -64,7 +64,7 @@ def main():
     assert "vnode_pager_lookup_vnode(backing->pager)" in t
     assert "M30_IRT_DIAG(25, \"no vnode, cannot parse DSC" in t
     assert t.count("M30_IRT_DIAG(") >= 20, "need diagnostics at every failure point"
-    assert "m30_irt_diag_seen & (1U << (n))" in t, "diagnostics must be one-shot"
+    assert "m30_irt_diag_seen & (1ULL << (n))" in t, "diagnostics must be one-shot"
     assert "m30_irt_last_err = err" in t, "must record vn_rdwr errors"
     # v33: the pmsg ring wraps in a deep boot, so one-shot diagnostics printed
     # at the first code-page fault are lost.  Replay once when the SpringBoard
