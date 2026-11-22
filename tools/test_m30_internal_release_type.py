@@ -22,6 +22,7 @@ PATCH = ROOT / "xnu/patches-minimal/0426-m30-internal-release-type.patch"
 PSTORE_V30 = ROOT / "validation/physical-boot-test/20261122-ios-v30-boot/raw/pmsg-ramoops-0"
 PSTORE_V31 = ROOT / "validation/physical-boot-test/20261122-ios-v31-boot/raw/pmsg-ramoops-0"
 PSTORE_V32 = ROOT / "validation/physical-boot-test/20261122-ios-v32-boot/raw/pmsg-ramoops-0"
+PSTORE_V33 = ROOT / "validation/physical-boot-test/20261122-ios-v33-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -66,6 +67,12 @@ def main():
     assert "M30 IRT: retrigger after XCTEST patch" in t
     assert "m30_irt_diag_seen = 0" in t
     assert "m30_irt_state = M30_IRT_STATE_NEED_DSC;" in t
+    # v34: diag 0 was captured with a non-NULL vnode, then nothing.  The only
+    # silent exits in the NEED_DSC path are Z_NOWAIT allocation failures, so
+    # shrink the chunk to one page and diagnose both allocation sites.
+    assert "size_t  chunk = 4096;" in t
+    assert 'M30_IRT_DIAG(19, "header buffer alloc failed' in t
+    assert 'M30_IRT_DIAG(20, "symbol buffers alloc failed' in t
 
     for bad in ("cs_enforcement_disable", "amfi_get_out_of_my_way",
                 "launchd_unsecure_cache", "CSDebugDisable",
@@ -97,6 +104,18 @@ def main():
     assert b"This process should not be linking or loading SpringBoardUI.framework" in d32
     assert b"M30 IRT" not in d32, "v32 one-shot diagnostics were lost in the wrapped ring"
     print("[PASS] v32 pstore: wrapped 16 KB ring; one-shot IRT diagnostics not captured")
+
+    # --- physical evidence: v33 retrigger lands in the captured window; only
+    # the entry diagnostic appears, with a non-NULL vnode. ---
+    d33 = PSTORE_V33.read_bytes()
+    assert b"M30 XCTEST: patched ascii off" in d33
+    assert b"M30 IRT: retrigger after XCTEST patch" in d33
+    assert b"M30 IRT diag 0: enter state=0 vp=0x" in d33
+    assert b"CRASH SpringBoard[26] sig 6" in d33 or b"CRASH SpringBoard[27] sig 6" in d33
+    assert b"This process should not be linking or loading SpringBoardUI.framework" in d33
+    assert b"M30 IRT diag 1:" not in d33
+    assert b"M30 IRT diag 3:" not in d33
+    print("[PASS] v33 pstore: retrigger + diag 0 captured; vnode non-NULL; next step silent")
 
     # --- behavioural model: retrigger replays diagnostics after XCTest. ---
     state = {"seen": 0}

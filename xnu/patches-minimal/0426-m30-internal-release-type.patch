@@ -1,5 +1,5 @@
 diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
-index e799c9a..576d908 100644
+index e799c9a..576d909 100644
 --- a/osfmk/vm/vm_fault.c
 +++ b/osfmk/vm/vm_fault.c
 @@ -108,6 +108,8 @@
@@ -11,7 +11,7 @@ index e799c9a..576d908 100644
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,326 @@
+@@ -140,9 +142,330 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -96,7 +96,7 @@ index e799c9a..576d908 100644
 +	uint32_t map_off = 0, map_cnt = 0, nlist_off = 0, nlist_cnt = 0;
 +	uint32_t str_off = 0, str_size = 0;
 +	uint32_t found_strx = 0;
-+	size_t  chunk = 65536;
++	size_t  chunk = 4096;   /* one page: Z_NOWAIT must not fail here */
 +	int     found = 0, i;
 +
 +	M30_IRT_DIAG(0, "enter state=%d vp=%p pager=%p mo=0x%llx "
@@ -151,6 +151,7 @@ index e799c9a..576d908 100644
 +	if (m30_irt_state == M30_IRT_STATE_NEED_DSC) {
 +		hdr = kalloc_data(chunk, Z_NOWAIT);
 +		if (hdr == NULL) {
++			M30_IRT_DIAG(19, "header buffer alloc failed\n");
 +			return;
 +		}
 +		if (m30_irt_read(vp, 0, hdr, 96) != 0) {
@@ -177,6 +178,9 @@ index e799c9a..576d908 100644
 +	buf = kalloc_data(chunk, Z_NOWAIT);
 +	maps = kalloc_data(chunk, Z_NOWAIT);
 +	if (hdr == NULL || lsi == NULL || buf == NULL || maps == NULL) {
++		M30_IRT_DIAG(20, "symbol buffers alloc failed hdr=%p lsi=%p "
++		    "buf=%p maps=%p\n", (void *)hdr, (void *)lsi,
++		    (void *)buf, (void *)maps);
 +		m30_irt_state = M30_IRT_STATE_FAILED;
 +		goto out;
 +	}
@@ -338,7 +342,7 @@ index e799c9a..576d908 100644
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8006,23 @@
+@@ -7687,6 +8010,23 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  

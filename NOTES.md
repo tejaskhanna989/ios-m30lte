@@ -1057,3 +1057,20 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: BOOT-only flash, one boot, force back to TWRP, capture pstore; read
   `M30 IRT: retrigger` and following diag/success lines; check SpringBoard.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v33 physical: retrigger captured, diag 0 only
+
+- BOOT-only flash of `shim-boot.img`
+  `d4f817b5df758b40225b14b497493f8d610bdad8d084f6055ca2515426efab6c` succeeded;
+  one boot; forced back to TWRP; fresh pstore
+  `1291fb1a55f205c5bb2f5ccdaf35c5041ccc7a30a52487c680d5ec10747df51a`
+  (16,372 B, 142 records). SpringBoard[26] crash + assertion persist.
+- First successful IRT evidence: `M30 IRT: retrigger after XCTEST patch` and
+  `M30 IRT diag 0: enter state=0 vp=0xfffffff80d0fd780
+  pager=0xfffffff80cdcbe60 mo=0x42a4000 kaddr[0:4]=4c657665`. Vnode is valid,
+  so the earlier NULL-vnode theory is disproved. No diag 1/3/4/5 followed.
+- v34: shrink Z_NOWAIT chunk 64 KB -> 4 KB, add diagnostics at both allocation
+  sites (diag 19/20); test extended with v33 physical evidence. All focused
+  tests pass.
+- NEXT: CI -> validate -> package v34 -> BOOT-only flash -> capture pstore.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
