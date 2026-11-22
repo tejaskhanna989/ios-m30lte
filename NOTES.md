@@ -832,3 +832,15 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: commit patch+test, push to trigger CI, validate kernel/packaging, flash BOOT
   only, boot once, capture pstore immediately, decode, and continue to next blocker.
 - NO UI/lock-screen success claimed. BOOT readback remains SKIPPED.
+
+### v29 offline complete (2026-11-22)
+- Commit `99b1261aaeb6379e38608d064f3252db615c533f` on main: patch 0425 + test.
+- CI `45014061864` GREEN (iphoneos, LSE=0, 0425 applied, no 04xx skipped).
+- Kernel `384b760347bf9f24c7e9954b9c6bd21bf14f783783c017d674bb9eb53e4be287`;
+  payload `1139031c88ffe55cfc188b12745a43efdc6e33ac549406a5a01e4d81c5eec1f9`;
+  shim-boot.img `8956e1c6c95ea6b7df2933b007041afef0d585e3a3060ecd8756d9ad37a095a4`.
+- Validators: buildtree PASS, kernel PASS, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging PASS, handoff 18/18, GIC 5/6 (known inapplicable), all 11 focused
+  tests PASS incl. new xctest probe test. Shim region byte-identical to v6.
+- Candidate: `validation/ios-candidate-v29-out/` with README. NOT physically tested.
+- NEXT: BOOT-only flash, one boot, immediate pstore capture/decode; then continue.
