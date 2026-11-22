@@ -1,5 +1,5 @@
 diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
-index e799c9a..576d90c 100644
+index e799c9a..576d90d 100644
 --- a/osfmk/vm/vm_fault.c
 +++ b/osfmk/vm/vm_fault.c
 @@ -108,6 +108,8 @@
@@ -11,7 +11,7 @@ index e799c9a..576d90c 100644
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,406 @@
+@@ -140,9 +142,420 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -66,6 +66,7 @@ index e799c9a..576d90c 100644
 +
 +/* <sys/vnode.h> is not self-contained in this build (uid_t/gid_t unknown). */
 +#include <sys/vfs_context.h>
++#include <kern/clock.h>       /* delay() for bounded status replay */
 +extern int vnode_ref(vnode_t);
 +extern void vnode_rele(vnode_t);
 +extern int vn_getpath(struct vnode *, char *, int *);
@@ -331,6 +332,19 @@ index e799c9a..576d90c 100644
 +	if (maps != NULL) kfree_data(maps, chunk);
 +	if (fp != vp)     vnode_close(fp, 1 /* FREAD */, vfs_context_kernel());
 +	if (vp != NULL)   vnode_rele(vp);
++
++	/* The 16 KB pmsg ring wraps well before SpringBoard loads.  Replay a
++	 * compact status line periodically for a bounded window so the final
++	 * result is always present in a freshly captured pstore. */
++	for (i = 0; i < 30; i++) {
++		delay(2000000);      /* 2 s */
++		printf("M30 IRT status: state=%d off=0x%llx err=%d replay=%d\n",
++		    m30_irt_state, (unsigned long long)m30_irt_file_offset,
++		    m30_irt_last_err, i);
++		if (m30_irt_state == M30_IRT_STATE_DONE) {
++			break;
++		}
++	}
 +}
 +
 +/* Called in the page-fault path: no vnode I/O, only in-memory patching. */
@@ -418,7 +432,7 @@ index e799c9a..576d90c 100644
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8086,24 @@
+@@ -7687,6 +8100,24 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  

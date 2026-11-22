@@ -1170,3 +1170,20 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: BOOT-only flash v37, short boot window, capture pstore; expect DSC
   vnode after retrigger, .symbols scan, symbol found and page patched.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v37 physical: window ended before SpringBoard; v38 status replay
+
+- BOOT-only flash of `shim-boot.img`
+  `45db21b12eb7c8a20ba8ba5bb0ed4b39e7952aa1698e40574ffdab63db5d2505`; ~30 s
+  boot; forced back to TWRP; pstore
+  `104b1404a54f9319883dde9d59bc4121f53ea4aec5c4fcbd0827e4043bd0508e`
+  (16,372 B, 194 records). Log ends at lockdownd; no SpringBoard, no M30 lines
+  — the XCTEST retrigger had not fired yet.
+- v38 patch 0426: the deferred worker replays a compact status line
+  (`M30 IRT status: state=... off=... err=... replay=N`) every 2 s for up to
+  60 s, so the final state survives 16 KB ring wrap regardless of capture time.
+  Uses `<kern/clock.h>` `delay()`. Syntax check clean; focused tests extended
+  with v37 evidence and a ring-wrap replay model.
+- NEXT: CI -> validate -> package v38 -> BOOT-only flash -> capture pstore at
+  any time; read the latest `M30 IRT status:` line.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.

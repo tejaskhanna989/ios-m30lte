@@ -26,6 +26,7 @@ PSTORE_V33 = ROOT / "validation/physical-boot-test/20261122-ios-v33-boot/raw/pms
 PSTORE_V34 = ROOT / "validation/physical-boot-test/20261122-ios-v34-boot/raw/pmsg-ramoops-0"
 PSTORE_V35 = ROOT / "validation/physical-boot-test/20261122-ios-v35-boot/raw/pmsg-ramoops-0"
 PSTORE_V36 = ROOT / "validation/physical-boot-test/20261122-ios-v36-boot-short/raw/pmsg-ramoops-0"
+PSTORE_V37 = ROOT / "validation/physical-boot-test/20261122-ios-v37-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -84,6 +85,11 @@ def main():
     assert "vnode_ref(vp) == 0" in t
     assert "vnode_rele(vp)" in t
     assert "m30_irt_thread_started = 0;" in t
+    # v38: the 16 KB ring wraps before SpringBoard loads, so replay a compact
+    # final-status line periodically for a bounded window.
+    assert "#include <kern/clock.h>" in t
+    assert 'M30 IRT status: state=%d off=0x%llx err=%d replay=%d' in t
+    assert "delay(2000000)" in t
     assert "no vnode I/O, only in-memory patching" in t
     # v36: the main DSC header has localSymbolsOffset == 0 on this device;
     # local symbols are in the <cache>.symbols companion file.  Open it from
@@ -101,6 +107,11 @@ def main():
     assert "m30_irt_retriggered && !m30_irt_thread_started" in t
     assert "path=%s\\n" in t
     assert "m30_irt_thread_started = 0;" in t
+    # v38: the 16 KB ring wraps before SpringBoard loads, so replay a compact
+    # final-status line periodically for a bounded window.
+    assert "#include <kern/clock.h>" in t
+    assert 'M30 IRT status: state=%d off=0x%llx err=%d replay=%d' in t
+    assert "delay(2000000)" in t
 
     for bad in ("cs_enforcement_disable", "amfi_get_out_of_my_way",
                 "launchd_unsecure_cache", "CSDebugDisable",
@@ -172,6 +183,15 @@ def main():
     assert b"M30 IRT diag 21: worker started vp=0x" in d36
     assert b"M30 IRT diag 4: no dyld magic: cffaedfe" in d36
     print("[PASS] v36 pstore: worker started pre-retrigger on launchd Mach-O vnode")
+
+    # --- physical evidence: v37 short window ended before SpringBoard. ---
+    d37 = PSTORE_V37.read_bytes()
+    assert b"CODE SIGNING: cs_invalid_page" in d37
+    assert b"lockdownd" in d37
+    assert b"M30 IRT" not in d37
+    assert b"M30 XCTEST" not in d37
+    assert b"SpringBoardUI" not in d37
+    print("[PASS] v37 pstore: short window ended before SpringBoard; need status replay")
 
     # --- behavioural model: retrigger replays diagnostics after XCTest. ---
     state = {"seen": 0}
@@ -378,6 +398,21 @@ def main():
     assert scan.fault(b"\xcf\xfa\xed\xfe") == "retry"  # wrong vnode: retry
     assert scan.fault(b"dyld_v1  arm64e") == "found"
     print("[PASS] model: scan gated on retrigger; wrong-magic vnode retried")
+
+    # --- behavioural model: bounded periodic status survives ring wrap. ---
+    ring = []
+    def emit(line):
+        ring.append(line)
+        if len(ring) > 10: ring.pop(0)   # 16 KB ring wraps
+    for i in range(5): emit("noise %d" % i)
+    emit("M30 IRT diag 0: enter")       # early, overwritten later
+    for i in range(20): emit("noise %d" % (5 + i))
+    assert not any("M30 IRT" in x for x in ring)
+    for i in range(3):
+        emit("M30 IRT status: state=2 off=0x1234000 err=0 replay=%d" % i)
+    assert any("M30 IRT status:" in x for x in ring), ring
+    assert "M30 IRT status: state=2 off=0x1234000 err=0 replay=2" in ring
+    print("[PASS] model: periodic status replay survives ring wrap")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 
