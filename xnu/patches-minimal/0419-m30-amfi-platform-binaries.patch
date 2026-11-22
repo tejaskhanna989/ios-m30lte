@@ -1,0 +1,29 @@
+diff --git a/bsd/kern/sweet_amfi.c b/bsd/kern/sweet_amfi.c
+--- a/bsd/kern/sweet_amfi.c
++++ b/bsd/kern/sweet_amfi.c
+@@ -262,10 +262,22 @@
+     __unused int flags, __unused unsigned int platform,
+     __unused char **fatal_failure_desc, __unused size_t *fatal_failure_desc_len)
+ {
+-	mount_t mp = vnode_mount(vp);
++	__unused mount_t mp = vnode_mount(vp);
+ 	*cs_flags |= CS_SIGNED;
+-	if (mp != NULL && (vfs_flags(mp) & MNT_ROOTFS)) {
+-		*cs_flags |= CS_PLATFORM_BINARY;
++	/*
++	 * This is a dedicated iOS device: the only executable binaries are the
++	 * genuine iOS 20H392 system binaries from the root filesystem. On Apple
++	 * hardware every one of these is a platform binary via the static trust
++	 * cache; SWEET has no trust cache, so mark every validated signature as
++	 * a platform binary. Signature/page hashes are still fully verified by
++	 * the kernel (ubc_cs_blob_add / cs_validate_page) -- this only supplies
++	 * the platform trust bit launchd checks for boot tasks (e.g. fsck).
++	 */
++	*cs_flags |= CS_PLATFORM_BINARY;
++	{
++		const char *ident = csblob_get_identity(cs_blob);
++		printf("SWEET AMFI: plat %s rootfs=%d csflags 0x%x\n",
++		    ident ? ident : "?", mp && (vfs_flags(mp) & MNT_ROOTFS), *cs_flags);
+ 	}
+ 	if (cs_blob != cs_blob->csb_ro_addr && cs_blob->csb_entitlements == NULL) {
+ 		sweet_amfi_attach_entitlements(cs_blob);
