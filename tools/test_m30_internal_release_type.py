@@ -24,6 +24,7 @@ PSTORE_V31 = ROOT / "validation/physical-boot-test/20261122-ios-v31-boot/raw/pms
 PSTORE_V32 = ROOT / "validation/physical-boot-test/20261122-ios-v32-boot/raw/pmsg-ramoops-0"
 PSTORE_V33 = ROOT / "validation/physical-boot-test/20261122-ios-v33-boot/raw/pmsg-ramoops-0"
 PSTORE_V34 = ROOT / "validation/physical-boot-test/20261122-ios-v34-boot/raw/pmsg-ramoops-0"
+PSTORE_V35 = ROOT / "validation/physical-boot-test/20261122-ios-v35-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -83,6 +84,16 @@ def main():
     assert "vnode_rele(vp)" in t
     assert "m30_irt_thread_started = 0;" in t
     assert "no vnode I/O, only in-memory patching" in t
+    # v36: the main DSC header has localSymbolsOffset == 0 on this device;
+    # local symbols are in the <cache>.symbols companion file.  Open it from
+    # the deferred worker using the main vnode's path.
+    assert "#include <sys/vfs_context.h>" in t
+    assert "vn_getpath(vp, path, &plen)" in t
+    assert 'memcpy(path + n, symsuffix, sizeof(symsuffix))' in t
+    assert "vnode_open(path, 1 /* FREAD */" in t
+    assert "vnode_close(fp, 1 /* FREAD */" in t
+    assert 'M30_IRT_DIAG(28, "opened symbols file' in t
+    assert 'M30_IRT_DIAG(30, "symbols map_off=' in t
 
     for bad in ("cs_enforcement_disable", "amfi_get_out_of_my_way",
                 "launchd_unsecure_cache", "CSDebugDisable",
@@ -134,6 +145,17 @@ def main():
     assert b"lock_rw.c:877 Assertion failed: lock->lck_rw_owner != self->ctid" in d34
     assert b"M30 IRT diag 3:" not in d34 and b"M30 IRT: found" not in d34
     print("[PASS] v34 pstore: vn_rdwr in fault path panicked on recursive object lock")
+
+    # --- physical evidence: v35 deferred scan works, but main DSC has no
+    # local symbols (ls_off == 0); symbols are in the .symbols companion. ---
+    d35 = PSTORE_V35.read_bytes()
+    assert b"M30 IRT: retrigger after XCTEST patch" in d35
+    assert b"M30 IRT diag 21: worker started vp=0x" in d35
+    assert b"M30 IRT diag 8: header map_off=0x200 map_cnt=1 ls_off=0x0" in d35
+    assert b"M30 IRT diag 24: header has no symbol table" in d35
+    assert b"lock_rw.c:877" not in d35
+    assert b"This process should not be linking or loading SpringBoardUI.framework" in d35
+    print("[PASS] v35 pstore: deferred scan OK; main DSC ls_off=0 -> need .symbols file")
 
     # --- behavioural model: retrigger replays diagnostics after XCTest. ---
     state = {"seen": 0}
@@ -307,6 +329,18 @@ def main():
     worker()
     assert log == ["enter", "vnode read"], log
     print("[PASS] model: vnode reads deferred outside the object lock")
+
+    # --- behavioural model: split symbols file fallback. ---
+    class DSC:
+        def __init__(self, local_symbols): self.local_symbols = local_symbols
+    main = DSC(0)          # split symbols on device
+    symbols = DSC(0x200)
+    path = "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64e"
+    chosen = symbols if main.local_symbols == 0 else main
+    assert chosen is symbols
+    assert (path + ".symbols").endswith("dyld_shared_cache_arm64e.symbols")
+    assert chosen.local_symbols == 0x200
+    print("[PASS] model: main DSC ls_off=0 selects .symbols companion file")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 

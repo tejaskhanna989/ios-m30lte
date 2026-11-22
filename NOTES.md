@@ -1113,3 +1113,22 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: BOOT-only flash v35, one boot, TWRP capture; expect deferred worker
   diagnostics and no recursive-lock panic.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v35 physical: deferred scan works; symbols are split
+
+- BOOT-only flash of `shim-boot.img`
+  `83c2ca87928ecef5cad9b8a5ba412f2d750c8483d94f2192b5b6b082d6fe3618`; one boot;
+  forced back to TWRP; pstore
+  `c38189acd2b8e4718ef4d5ed50ed5e80837f5289f9c5d7ae28126ca4eff9a5a9`
+  (16,372 B, 148 records).
+- Deferred kernel-thread scan confirmed: `M30 IRT diag 21 worker started`, then
+  `diag 8: header map_off=0x200 map_cnt=1 ls_off=0x0`, `diag 24: header has no
+  symbol table`. No `lock_rw.c:877` panic; deep userspace reached;
+  SpringBoard[27] crash + assertion persist.
+- Main DSC has `localSymbolsOffset == 0`: split symbols in `<cache>.symbols`.
+- v36 patch 0426: worker uses `vn_getpath()` on the main DSC vnode, opens
+  `<path>.symbols` with `vnode_open()`/`vfs_context_kernel()`, re-reads its
+  header and continues the scan there. `strcat` avoided in favour of `memcpy`.
+  Standalone syntax check clean; focused tests extended with v35 evidence.
+- NEXT: CI -> validate -> package v36 -> BOOT-only flash -> capture pstore.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
