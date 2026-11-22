@@ -39,11 +39,30 @@ This is genuine iOS SpringBoard framework linkage enforcement firing in a daemon
 that links SpringBoardUI.framework — a userspace issue, not code signing / kernel.
 Needs investigation (which daemon, why it links SpringBoardUI on this hardware).
 
+## Success criteria (from physical evidence)
+
+- 4K config (loader diag shift 12) ✓
+- dyld shared-cache pages fully validated (vsize 4096, valid 1, tainted 0x0) ✓
+- platform binaries reported correctly (blob 1, plat 1 on many daemons) ✓
+- no boot-task platform-binary panic ✓
+- no kernel panic ✓
+- daemon crash loop gone (no repeated CRASH lsd/securityd) ✓
+- SpringBoard starting (SpringBoardUI.framework loaded) ✓
+- root mount / launchd / dyld / OS version: early lines wrapped out of the 16KB
+  pstore ring buffer (flooded by diagnostics; record 000 starts mid-stream), but
+  v27 reached deep userspace — which itself proves they succeeded; v26 pstore
+  baseline still shows `hfs: mounted iOSRoot`, `load_init_program /sbin/launchd`,
+  `hello from launchd.1`, `Darwin Bootstrapper 7.0.0`.
+
 ## Honest status
 
 - Primary v18 daemon crash-loop objective FIXED ✓ (v20-v27 stable).
 - Code-signing fully validated, platform binaries reported correctly ✓.
 - Genuine iOS userspace with SpringBoard starting ✓.
 - No full UI/SpringBoard "booted to lock screen" claim without device evidence of
-  a stable UI. The phone booted far enough to disconnect from recovery USB.
-- Next: investigate the SpringBoardUI.framework exception; rebuild and test.
+  a stable UI. The phone booted far enough to disconnect from recovery USB and
+  the user had to force it back to TWRP with hardware keys.
+- Remaining: SpringBoardUI.framework NSException in a system daemon (userspace,
+  non-fatal to kernel); non-fatal cs_invalid_page events on some dyld pages.
+- Next: remove diagnostic patches (0420-0423) for a clean production candidate,
+  re-verify, and address the userspace SpringBoardUI issue if actionable.
