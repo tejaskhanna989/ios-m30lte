@@ -1,0 +1,20 @@
+diff --git a/bsd/kern/mach_loader.c b/bsd/kern/mach_loader.c
+--- a/bsd/kern/mach_loader.c
++++ b/bsd/kern/mach_loader.c
+@@ -1352,6 +1352,16 @@
+ 							}
+ 						}
+ 
++						/*
++						 * The code directory hashes a full page. addr was
++						 * allocated/read for alloc_size = round_page(cmds_size),
++						 * so a whole page is present even when cmds_size is
++						 * smaller. Hashing only cmds_size mismatches the CD hash
++						 * and clears CS_VALID, losing process CS_SIGNED.
++						 */
++						if (bigbuf == NULL) {
++							vsize = MIN(PAGE_SIZE, alloc_size);
++						}
+ 						valid = cs_validate_range(vp, NULL, voff, vdata, vsize,
+ 						    &tainted);
+ 						if (bigbuf != NULL) {
