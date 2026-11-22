@@ -943,3 +943,17 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: CI `45021301760` green -> validate -> package v31 -> BOOT-only flash,
   one boot, immediate pstore capture/decode.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v31 CI failure and fix (MAIN only)
+
+- CI `45021301760` **FAILED** (not green). Error: `EXPORT_HDRS/bsd/sys/vnode.h`
+  and `ucred.h` report `unknown type name 'uid_t'/'gid_t'` when included from
+  `osfmk/vm/vm_fault.c:111` — adding `<sys/vnode.h>` to that osfmk translation
+  unit resolves to the *exported public* header, which is not self-contained
+  in the kernel include environment (unlike `sys/vnode_internal.h`).
+- Fix (offline): removed `<sys/vnode.h>`; kept `<sys/uio.h>` + `<sys/kauth.h>`
+  and added a local `extern int vn_rdwr(...)` prototype using types those
+  headers provide. Regression test updated to enforce this. `git apply --check`
+  and all local tests pass.
+- No kernel/payload built for this attempt; no device operation performed.
+  Next: commit/push, trigger a fresh CI run, then validate/package as before.

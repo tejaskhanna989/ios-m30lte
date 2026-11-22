@@ -38,6 +38,10 @@ def main():
     assert "UIO_READ" in t, "must only read the file, never write"
     assert "UIO_WRITE" not in t, "file on disk must not be modified"
     assert "vn_rdwr" in t
+    # <sys/vnode.h> resolves to the *exported* public header in this build and
+    # breaks compilation (uid_t/gid_t unknown).  Use a local prototype instead.
+    assert "#include <sys/vnode.h>" not in t
+    assert "extern int vn_rdwr(enum uio_rw, struct vnode *, caddr_t, int, off_t," in t
     assert "dyld_cache_header" in t or "localSymbolsOffset@72" in t
     assert "M30_IRT_STATE_HAVE_OFF" in t and "M30_IRT_STATE_DONE" in t
     assert "Z_NOWAIT" in t, "must not block in the page-fault path"
