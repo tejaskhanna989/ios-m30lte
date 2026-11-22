@@ -20,18 +20,19 @@ import textwrap
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0426-m30-internal-release-type.patch"
 PSTORE_V30 = ROOT / "validation/physical-boot-test/20261122-ios-v30-boot/raw/pmsg-ramoops-0"
+PSTORE_V31 = ROOT / "validation/physical-boot-test/20261122-ios-v31-boot/raw/pmsg-ramoops-0"
 
 
 def main():
     t = PATCH.read_text()
 
     # --- patch structure ---
-    assert "m30_internal_release_fixup(vnode, mo_offset, kaddr);" in t
+    assert "m30_internal_release_fixup(vnode, pager, mo_offset, kaddr);" in t
     # The fix-up call is placed immediately after the xctest fix-up call,
     # which itself is strictly after cs_validate_page() in the v30 base.
     assert "m30_xctest_probe_fixup(kaddr, mo_offset);" in t
     assert t.index("m30_xctest_probe_fixup(kaddr, mo_offset);") < t.index(
-        "m30_internal_release_fixup(vnode, mo_offset, kaddr);")
+        "m30_internal_release_fixup(vnode, pager, mo_offset, kaddr);")
     assert "_internal_release_type" in t
     assert "os_variant_has_internal_content" in t
     assert "*loc = 3;" in t
@@ -47,6 +48,17 @@ def main():
     assert "Z_NOWAIT" in t, "must not block in the page-fault path"
     assert "no check weakened" in t or "No check weakened" in t
 
+    # v32: the dyld shared cache uses the dyld pager, so
+    # vnode_pager_lookup_vnode() returns NULL and the v31 helper silently did
+    # nothing.  Recover the real file vnode via the generic pager
+    # backing-object callback, and emit one-shot failure diagnostics.
+    assert "memory_object_backing_object(pager, mo_offset," in t
+    assert "vnode_pager_lookup_vnode(backing->pager)" in t
+    assert "M30_IRT_DIAG(2, \"no vnode, cannot parse DSC" in t
+    assert t.count("M30_IRT_DIAG(") >= 20, "need diagnostics at every failure point"
+    assert "m30_irt_diag_seen & (1U << (n))" in t, "diagnostics must be one-shot"
+    assert "m30_irt_last_err = err" in t, "must record vn_rdwr errors"
+
     for bad in ("cs_enforcement_disable", "amfi_get_out_of_my_way",
                 "launchd_unsecure_cache", "CSDebugDisable",
                 "vmp_cs_validated = VMP_CS_ALL_TRUE", "tainted = 0;"):
@@ -59,6 +71,14 @@ def main():
     assert b"CRASH SpringBoard[27] sig 6" in d
     assert b"This process should not be linking or loading SpringBoardUI.framework" in d
     print("[PASS] v30 pstore: string patch fired, assertion persists -> second bypass needed")
+
+    # --- physical evidence: v31 patch compiled in but emitted no diagnostics ---
+    d31 = PSTORE_V31.read_bytes()
+    assert b"M30 XCTEST: patched ascii off" in d31
+    assert b"CRASH SpringBoard[27] sig 6" in d31
+    assert b"This process should not be linking or loading SpringBoardUI.framework" in d31
+    assert b"M30 IRT" not in d31, "v31 fix-up produced zero diagnostics"
+    print("[PASS] v31 pstore: XCTEST fired, no M30 IRT lines -> dyld-pager vnode is NULL")
 
     # --- behavioural model: find symbol + patch value ---
     model = textwrap.dedent(r"""
@@ -143,6 +163,50 @@ def main():
         out = subprocess.run([str(b)], check=True, capture_output=True, text=True).stdout
     assert "all=OK" in out and "val=3" in out, out
     print("[PASS] model: DSC local-symbol lookup finds _internal_release_type and sets 3")
+
+    # --- behavioural model: dyld-pager backing-object vnode recovery ---
+    # The dyld pager is not a vnode pager; vnode_pager_lookup_vnode(dyld_pager)
+    # returns NULL.  The generic backing-object callback yields the backing
+    # VM object whose pager IS a vnode pager, so the DSC file vnode is found.
+    pager_model = textwrap.dedent(r"""
+        #include <stdio.h>
+        #include <stdint.h>
+        typedef struct object object_t;
+        struct object { int id; object_t *pager; int is_vnode_pager; int vnode; };
+        static object_t *vnode_pager_lookup_vnode(object_t *p) {
+            return (p && p->is_vnode_pager) ? (object_t *)(intptr_t)p->vnode : 0;
+        }
+        static int backing_object(object_t *p, object_t **out) {
+            if (!p || p->id != 1) return 0;       /* only the dyld pager has one */
+            *out = (object_t *)(intptr_t)0x2000;  /* backing VM object */
+            return 1;
+        }
+        int main(void) {
+            object_t dyld_pager = { .id = 1 };
+            object_t backing = { .id = 2, .pager = (object_t *)0x3000 };
+            object_t vnode_pager = { .id = 3, .is_vnode_pager = 1, .vnode = 0x4000 };
+            (void)backing;
+            /* direct lookup (v31 behaviour): NULL */
+            object_t *vp = vnode_pager_lookup_vnode(&dyld_pager);
+            if (vp != 0) { printf("direct=FAIL\n"); return 1; }
+            /* v32 fallback */
+            object_t *b = 0;
+            if (backing_object(&dyld_pager, &b) && b) {
+                vp = vnode_pager_lookup_vnode(&vnode_pager); /* backing->pager */
+            }
+            if (vp != (object_t *)0x4000) { printf("fallback=FAIL\n"); return 2; }
+            printf("direct=NULL fallback=%p\n", (void *)vp);
+            return 0;
+        }
+    """)
+    with tempfile.TemporaryDirectory() as td:
+        c = Path(td) / "pager.c"
+        b = Path(td) / "pager"
+        c.write_text(pager_model)
+        subprocess.run(["cc", "-O0", "-Wall", "-Wextra", "-o", str(b), str(c)], check=True)
+        out = subprocess.run([str(b)], check=True, capture_output=True, text=True).stdout
+    assert "direct=NULL" in out and "fallback=0x4000" in out, out
+    print("[PASS] model: dyld-pager backing object recovers the DSC file vnode")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 

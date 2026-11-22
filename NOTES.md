@@ -975,3 +975,30 @@ authorization for a BOOT-only test of candidate v6.
   capture/decode; look for `M30 IRT: found/patched` lines and whether
   SpringBoard passes `+[SpringBoardUI load]`.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v31 PHYSICAL result (MAIN only)
+
+- BOOT-only flash of `b9a6ecf5...` (`--no-reboot`, upload successful), one boot,
+  pstore captured after user forced device back to TWRP:
+  `validation/physical-boot-test/20261122-ios-v31-boot/raw/pmsg-ramoops-0`
+  SHA `e6210f009d706c13c46547593ff7ffcb2abae80520028a362dcbf8911b1c3c0c`
+  (16,372 B, 143 records). USERDATA/SYSTEM/RECOVERY untouched; no BOOT readback.
+- Confirmed: deep iOS userspace again; `SpringBoard[27]` starts; patch 0425 fired
+  (`M30 XCTEST: patched ascii off 0x42a4000+1164 (total 1)`).
+- **Patch 0426 completely silent**: zero `M30 IRT` records in pstore even though
+  both format strings are present in the linked kernel. SpringBoard still aborts
+  with the same `NSInternalInconsistencyException` in `+[SpringBoardUI load]`.
+- Root cause (offline analysis): dyld shared cache uses `dyld_pager_ops`, not
+  `vnode_pager_ops`; `vnode_pager_lookup_vnode(pager)` returns NULL, and 0426's
+  `vp == NULL` guard returned on every fault. The v30/v31 XCTEST fix-up works
+  because it scans page content, not the vnode.
+- v32 offline change: patch 0426 recovers the vnode via
+  `memory_object_backing_object(pager, mo_offset, &backing, &boff)` then
+  `vnode_pager_lookup_vnode(backing->pager)`, and adds 21 one-shot `M30 IRT diag`
+  prints covering every failure path (vn_rdwr error, magic, header, lsi, string
+  pool, nlist, mapping). Regression test updated with v31 pstore evidence and a
+  compiled model of the vnode recovery. Standalone syntax check clean,
+  `git apply --check` clean, all tests pass.
+- NEXT: commit, CI, validate, package v32, BOOT-only flash, one boot, capture
+  pstore; read `M30 IRT diag` lines and check SpringBoard progression.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
