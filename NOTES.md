@@ -1159,3 +1159,14 @@ authorization for a BOOT-only test of candidate v6.
   check clean; focused tests extended with v36 evidence and a gating model.
 - NEXT: CI -> validate -> package v37 -> BOOT-only flash -> short capture.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v37 offline complete (MAIN only)
+
+- CI `45042963811` GREEN. Kernel `d68f75da2b9d05580b14b6adf01391aacf8e3420e511580a091ee3fa5383ed0e`;
+  payload `2a5472aa81331d49e257a8a9f34b18d8a3ded7393dd2fbc6cbfc45d5617ddd75`;
+  shim-boot.img `45db21b12eb7c8a20ba8ba5bb0ed4b39e7952aa1698e40574ffdab63db5d2505`.
+- Validators all PASS (platform 9/9, CPU 17/17, ADT 22/22, handoff 18/18,
+  focused tests except inapplicable 0417). Syntax check clean.
+- NEXT: BOOT-only flash v37, short boot window, capture pstore; expect DSC
+  vnode after retrigger, .symbols scan, symbol found and page patched.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
