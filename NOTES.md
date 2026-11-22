@@ -1315,3 +1315,19 @@ authorization for a BOOT-only test of candidate v6.
   precise failure. If the assert persists because the target page was already
   resident, add a validated-page direct patch via the backing VM object.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v41 offline complete (MAIN only)
+
+- CI `45060087612` GREEN for `2977581`. Kernel
+  `2e46c41c4d727c11efdfc7aab611bef39cf2efc4f9811f185432e173c0e2037a`;
+  payload `f90feb5b7210c7a080efe882c9400b64081ae8d8eb2c2153c6f8f08d85af88d2`;
+  shim-boot.img
+  `274e39b49d883abd392a1e626a14daab4e146e1b1d3f36e15344ac96539b0ca5`.
+- Validators all PASS: buildtree, kernel, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging, handoff 18/18, all applicable focused tests (0417 inapplicable).
+  Shim Image/ELF and the shim region in the BOOT image remain byte-identical to
+  the v31 reference.
+- Candidate: `validation/ios-candidate-v41-out/` with README. NOT physically
+  tested. NEXT: BOOT-only flash, capture pstore, expect image-scoped lookup
+  diagnostics and either an IRT patch or a new precise failure.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
