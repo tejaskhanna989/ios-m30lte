@@ -25,6 +25,7 @@ PSTORE_V32 = ROOT / "validation/physical-boot-test/20261122-ios-v32-boot/raw/pms
 PSTORE_V33 = ROOT / "validation/physical-boot-test/20261122-ios-v33-boot/raw/pmsg-ramoops-0"
 PSTORE_V34 = ROOT / "validation/physical-boot-test/20261122-ios-v34-boot/raw/pmsg-ramoops-0"
 PSTORE_V35 = ROOT / "validation/physical-boot-test/20261122-ios-v35-boot/raw/pmsg-ramoops-0"
+PSTORE_V36 = ROOT / "validation/physical-boot-test/20261122-ios-v36-boot-short/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -94,6 +95,12 @@ def main():
     assert "vnode_close(fp, 1 /* FREAD */" in t
     assert 'M30_IRT_DIAG(28, "opened symbols file' in t
     assert 'M30_IRT_DIAG(30, "symbols map_off=' in t
+    # v37: the worker started at load_init_program on launchd's Mach-O vnode
+    # (cffaedfe) long before the XCTEST patch.  Gate on the retrigger and let
+    # a wrong-magic vnode be retried on a later post-retrigger fault.
+    assert "m30_irt_retriggered && !m30_irt_thread_started" in t
+    assert "path=%s\\n" in t
+    assert "m30_irt_thread_started = 0;" in t
 
     for bad in ("cs_enforcement_disable", "amfi_get_out_of_my_way",
                 "launchd_unsecure_cache", "CSDebugDisable",
@@ -156,6 +163,15 @@ def main():
     assert b"lock_rw.c:877" not in d35
     assert b"This process should not be linking or loading SpringBoardUI.framework" in d35
     print("[PASS] v35 pstore: deferred scan OK; main DSC ls_off=0 -> need .symbols file")
+
+    # --- physical evidence: v36 short boot caught the early worker starting
+    # on launchd's Mach-O vnode before the XCTEST retrigger. ---
+    d36 = PSTORE_V36.read_bytes()
+    assert b"load_init_program: attempting to load /sbin/launchd" in d36
+    assert b"M30 IRT diag 0: enter state=0 vp=0x" in d36
+    assert b"M30 IRT diag 21: worker started vp=0x" in d36
+    assert b"M30 IRT diag 4: no dyld magic: cffaedfe" in d36
+    print("[PASS] v36 pstore: worker started pre-retrigger on launchd Mach-O vnode")
 
     # --- behavioural model: retrigger replays diagnostics after XCTest. ---
     state = {"seen": 0}
@@ -341,6 +357,27 @@ def main():
     assert (path + ".symbols").endswith("dyld_shared_cache_arm64e.symbols")
     assert chosen.local_symbols == 0x200
     print("[PASS] model: main DSC ls_off=0 selects .symbols companion file")
+
+    # --- behavioural model: gate scan on retrigger, retry wrong vnode. ---
+    class Scan:
+        def __init__(self): self.retriggered = False; self.started = False; self.state = "need"
+        def fault(self, magic):
+            if self.state != "need" or self.retriggered is False or self.started:
+                return self.state
+            self.started = True
+            if magic[:6] != b"dyld_v":
+                self.state = "need"; self.started = False
+                return "retry"
+            self.state = "have_off"
+            return "found"
+        def retrigger(self): self.retriggered = True; self.state = "need"; self.started = False
+
+    scan = Scan()
+    assert scan.fault(b"\xcf\xfa\xed\xfe") == "need"   # pre-retrigger: ignored
+    scan.retrigger()
+    assert scan.fault(b"\xcf\xfa\xed\xfe") == "retry"  # wrong vnode: retry
+    assert scan.fault(b"dyld_v1  arm64e") == "found"
+    print("[PASS] model: scan gated on retrigger; wrong-magic vnode retried")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 

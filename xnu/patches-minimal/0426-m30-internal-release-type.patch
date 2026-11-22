@@ -1,5 +1,5 @@
 diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
-index e799c9a..576d90b 100644
+index e799c9a..576d90c 100644
 --- a/osfmk/vm/vm_fault.c
 +++ b/osfmk/vm/vm_fault.c
 @@ -108,6 +108,8 @@
@@ -11,7 +11,7 @@ index e799c9a..576d90b 100644
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,397 @@
+@@ -140,9 +142,406 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -131,10 +131,17 @@ index e799c9a..576d90b 100644
 +		goto out;
 +	}
 +	if (memcmp(hdr, "dyld_v", 6) != 0) {
-+		M30_IRT_DIAG(4, "no dyld magic: %02x%02x%02x%02x\n",
++		char path[1024];
++		int  plen = sizeof(path);
++		path[0] = '\0';
++		(void)vn_getpath(vp, path, &plen);
++		M30_IRT_DIAG(4, "no dyld magic: %02x%02x%02x%02x path=%s\n",
 +		    (unsigned char)hdr[0], (unsigned char)hdr[1],
-+		    (unsigned char)hdr[2], (unsigned char)hdr[3]);
-+		m30_irt_state = M30_IRT_STATE_FAILED;
++		    (unsigned char)hdr[2], (unsigned char)hdr[3], path);
++		/* Wrong vnode (e.g. a Mach-O at load_init_program): let a later
++		 * post-retrigger fault try a different vnode. */
++		m30_irt_state = M30_IRT_STATE_NEED_DSC;
++		m30_irt_thread_started = 0;
 +		goto out;
 +	}
 +	map_off   = *(uint32_t *)(hdr + 16);
@@ -384,8 +391,10 @@ index e799c9a..576d90b 100644
 +	}
 +
 +	/* Defer the read-only DSC symbol scan outside the object lock. */
++	/* Only scan after the XCTEST patch retrigger: before that the pager
++	 * hands us launchd/dyld Mach-O vnodes, never the DSC. */
 +	if (m30_irt_state == M30_IRT_STATE_NEED_DSC &&
-+	    !m30_irt_thread_started) {
++	    m30_irt_retriggered && !m30_irt_thread_started) {
 +		if (vnode_ref(vp) == 0) {
 +			kr = kernel_thread_start_priority(
 +			    (thread_continue_t)m30_irt_worker, (void *)vp,
@@ -409,7 +418,7 @@ index e799c9a..576d90b 100644
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8077,24 @@
+@@ -7687,6 +8086,24 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  

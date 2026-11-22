@@ -1,0 +1,167 @@
+file: validation/physical-boot-test/20261122-ios-v36-boot/raw/pmsg-ramoops-0  bytes=16372  sha256=a8c137098fb4c4e7d2f3899c212c9c7090b2b30f1233184e063517a8ab452525
+records=163 issues=2
+  [000] @0x000014 : out 0/4096 ->
+  [001] @0x000039 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [002] @0x000089 XNU: SWEET AKS: backboardd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [003] @0x0000d9 XNU: SWEET AKS: backboardd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [004] @0x00012d XNU: CODE SIGNING: cs_invalid_page(0x1f8450000): p=103[ACCHWComponentAu] final status 0x22000000, allowing (remove VALID) page
+  [005] @0x0001be XNU: SWEET HID: SweetHIDTouch open by IOHIDEventServiceUserClient -> 1
+  [006] @0x000217 XNU: SWEET HID: SweetHIDButtons open by IOHIDEventServiceUserClient -> 1
+  [007] @0x000272 XNU: SWEET AKS: coreduetd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [008] @0x0002c1 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [009] @0x000314 XNU: CODE SIGNING: cs_invalid_page(0x1c368a000): p=104[coreduetd] final status 0x22000000, allowing (remove VALID) page
+  [010] @0x00039e XNU: CODE SIGNING: cs_invalid_page(0x1b51d1000): p=101[PowerUIAgent] final status 0x22000000, allowing (remove VALID) page
+  [011] @0x00042b XNU: SWEET AKS: mediaserverd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [012] @0x00047d XNU: SWEET AKS: mediaserverd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [013] @0x0004cf XNU: SWEET Sandbox: cfprefsd op 12
+  [014] @0x000504 XNU: CODE SIGNING: cs_invalid_page(0x1ed4bc000): p=102[mobileassetd] final status 0x22000000, allowing (remove VALID) page
+  [015] @0x000591 XNU: STR aThis process should not be linking or loading SpringBoardUI.framework (<rdar://problem/26143166>)
+  [016] @0x00060f XNU: STR terminating due to uncaught exception of type NSException
+  [017] @0x000664 XNU: CODE SIGNING: cs_invalid_page(0x20eca1000): p=63[locationd] final status 0x22000000, allowing (remove VALID) page
+  [018] @0x0006ed XNU: CODE SIGNING: cs_invalid_page(0x1b27e0000): p=106[dmd] final status 0x22000000, allowing (remove VALID) page
+  [019] @0x000771 XNU: CODE SIGNING: cs_invalid_page(0x1b7e75000): p=99[awdd] final status 0x22000000, allowing (remove VALID) page
+  [020] @0x0007f5 XNU: CODE SIGNING: cs_invalid_page(0x1b535f000): p=56[contextstored] final status 0x22000000, allowing (remove VALID) page
+  [021] @0x000882 XNU: SWEET AKS: triald sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [022] @0x0008ce XNU: SWEET AKS: triald sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [023] @0x00091a XNU: SWEET AKS: contextstored sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [024] @0x00096d XNU: SWEET AKS: contextstored sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [025] @0x0009c0 XNU: SWEET AKS: passd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [026] @0x000a0b XNU: SWEET AKS: passd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [027] @0x000a5a XNU: SWEET AKS: passd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [028] @0x000aa5 XNU: CODE SIGNING: cs_invalid_page(0x1de0f0000): p=107[liveactivitiesd] final status 0x22000000, allowing (remove VALID) page
+  [029] @0x000b35 XNU: SWEET Sandbox: containermanager op 16
+  [030] @0x000b72 XNU: SWEET Sandbox: containermanager op 15
+  [031] @0x000baf XNU: SWEET AKS: containermanagerd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [032] @0x000c06 XNU: SWEET AKS: containermanagerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [033] @0x000c61 XNU: CRASH lsd[94] sig 6 code 0x0 sub 0x0 slide 0x246a8000 mh 0x1005b0000
+  [034] @0x000cbd XNU: CRASH lsd pc 0x1e6cbf198 lr 0x1f624e5f8 sp 0x16f84f700 fp 0x16f84f720 far 0x1b2344d50
+  [035] @0x000d2a XNU: CRASH lsd bt 0x1b23044b8 0x1a633d2cc 0x1a6342258 0x1b2240780 0x1b21ed830 0x1a6342088 0x1a62c8320 0x1a633d684 0x1a639464c 0x1c8ccc344
+  [036] @0x000dc6 XNU: CRASH lsd reason ns 2 code 0x6: (none)
+  [037] @0x000e04 XNU: SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [038] @0x000e59 XNU: CRASH backboardd[57] sig 6 code 0x0 sub 0x0 slide 0x246a8000 mh 0x100be4000
+  [039] @0x000ebc XNU: CRASH backboardd pc 0x1e6cbf198 lr 0x1f624e5f8 sp 0x16f21b680 fp 0x16f21b6a0 far 0x20351ae28
+  [040] @0x000f30 XNU: CRASH backboardd bt 0x1b23044b8 0x1f6186f54 0x1f6177a4c 0x1a477aafc 0x1f6186424 0x1f61863d4 0x1b2240794 0x1b21e164c 0x100bed334 0x100beda00
+  [041] @0x000fd3 XNU: CODE SIGNING: cs_invalid_page(0x1aa4a5000): p=110[seserviced] final status 0x22000000, allowing (remove VALID) page
+  [042] @0x00105e XNU: STR scan of backboardd heap
+  [043] @0x001091 XNU: STR dlopen(/System/Library/HIDPlugins/IOHIDKeyboardFilter.plugin/IOHIDKeyboardFilter, 0x0115): 
+  [044] @0x001108 XNU: STR Version 16.7.16 (Build 20H392)
+  [045] @0x001142 XNU: STR IOHIDService(0x100e2dc10) id:0x100000125 name:SweetHIDTouch
+  [046] @0x001199 XNU: STR IOHIDService(0x100e381e0) id:0x100000124 name:SweetHIDButtons
+  [047] @0x0011f2 XNU: STR dlsym(0x0, rosetta_is_current_process_translated): invalid handle
+  [048] @0x00124f XNU: STR etta.dylib' (no such file), '/private/preboot/Cryptexes/OS/usr/lib/libRosetta.dylib' (no such file), '/usr/lib/libRosetta.dylib' (no such file, not in dyld cac
+  [049] @0x00130a XNU: STR backboardd: backboardd + 37724
+  [050] @0x001344 XNU: STR IOHIDConnection process:logd pid:25 uuid:A51A1B55-6F4C-4679-A12D-8DED927C2BDC caller:logd: logd + 77196
+  [051] @0x0013c7 XNU: STR IOHIDConnection process:backboardd pid:57 uuid:D961AD9B-F765-4A42-BCAE-1AB68371E3E1 caller:backboardd: backboardd + 37724
+  [052] @0x00145c XNU: STR (0x1ab49940c 0x1a4775c28 0x1a5842f10 0x1a5842ca0 0x1b2454ee4 0x1b2454f20 0x100c01858 0x1b2240780 0x1b21e164c 0x100bed334 0x100beda00 0x1c8ccc344)
+  [053] @0x001509 XNU: STR !*** -[NSURL initFileURLWithPath:]
+  [054] @0x001547 XNU: STR 7*** -[NSURL initFileURLWithPath:]: nil string parameter
+  [055] @0x00159b XNU: STR *** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '*** -[NSURL initFileURLWithPath:]: nil string parameter'
+  [056] @0x001644 XNU: STR *** First throw call stack:
+  [057] @0x00167b XNU: STR (0x1ab49940c 0x1a4775c28 0x1a5842f10 0x1a5842ca0 0x1b2454ee4 0x1b2454f20 0x100c01858 0x1b2240780 0x1b21e164c 0x100bed334 0x100beda00 0x1c8ccc344)
+  [058] @0x001728 XNU: STR terminating due to uncaught exception of type NSException
+  [059] @0x00177d XNU: STR dFilter.plugin> (not loaded)",
+  [060] @0x0017b7 XNU: STR     "CFBundle/CFPlugIn 0x100e1dd80 </System/Library/HIDPlugins/IOHIDPointerScrollFilter.plugin> (not loaded)",
+  [061] @0x001841 XNU: STR     "CFBundle/CFPlugIn 0x1
+  [062] @0x001877 XNU: STR  { count = 7, transaction: 0, voucher = 0x0, contents =
+  [063] @0x0018ca XNU: STR "ContainerClass" => <uint64: 0x81b923eccbd49027>: 12
+  [064] @0x00191a XNU: STR "Platform" => <uint64: 0x81b923eccbd49057>: 2
+  [065] @0x001963 XNU: STR "Flags" => <uint64: 0x81b923a4cbd4905f>: 38654705667
+  [066] @0x0019b3 XNU: STR "Explicit" => <uint64: 0x81b923eccbd49157>: 34
+  [067] @0x0019fd XNU: STR "PrivateFlags" => <uint64: 0x81b923eccbd4905f>: 3
+  [068] @0x001a4a XNU: STR "Transient" => <bool: 0x1ff206e20>: false
+  [069] @0x001a8f XNU: STR "Command" => <uint64: 0x81b923eccbd4917f>: 39
+  [070] @0x001ad8 XNU: SWEET AKS: identityservicesd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [071] @0x001b2f XNU: SWEET AKS: identityservicesd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [072] @0x001b8a XNU: SWEET AKS: identityservicesd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [073] @0x001be5 XNU: SWEET AKS: identityservicesd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [074] @0x001c3c XNU: CODE SIGNING: cs_invalid_page(0x1aa6e7000): p=111[securityd] final status 0x22000000, allowing (remove VALID) page
+  [075] @0x001cc6 XNU: SWEET AKS: securityd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [076] @0x001d15 XNU: SWEET AKS: securityd sel 14 arg0 0 in 0/0 out 1/0 -> 0x0
+  [077] @0x001d65 XNU: SWEET AKS: mediaserverd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [078] @0x001db7 XNU: SWEET AKS: mediaserverd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [079] @0x001e0d XNU: SWEET AKS: securityd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [080] @0x001e5c XNU: STR done: 9312 KiB scanned, 27 strings
+  [081] @0x001e9a XNU: CRASH backboardd reason ns 2 code 0x6: (none)
+  [082] @0x001edf XNU: CODE SIGNING: cs_invalid_page(0x1aa58f000): p=113[mDNSResponder] final status 0x22000000, allowing (remove VALID) page
+  [083] @0x001f6d XNU: SWEET AKS: securityd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [084] @0x001fbc XNU: SWEET AKS: seserviced sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [085] @0x00200c XNU: SWEET AKS: seserviced sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [086] @0x00205c XNU: SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [087] @0x0020b1 XNU: SWEET Sandbox: mDNSResponder op 22
+  [088] @0x0020eb XNU: SWEET Sandbox: mDNSResponder op 1
+  [089] @0x002124 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [090] @0x002177 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [091] @0x0021ca XNU: SWEET AKS: coreduetd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [092] @0x002219 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [093] @0x00226c XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [094] @0x0022bf XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [095] @0x002312 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [096] @0x002365 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [097] @0x0023b8 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [098] @0x00240b XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [099] @0x00245e XNU: SWEET AKS: passd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [100] @0x0024ad XNU: SWEET AKS: dmd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [101] @0x0024f6 XNU: SWEET AKS: dmd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [102] @0x002543 XNU: SWEET AKS: dmd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [103] @0x00258c XNU: CODE SIGNING: cs_invalid_page(0x1aa886000): p=115[nehelper] final status 0x22000000, allowing (remove VALID) page
+  [104] @0x002615 XNU: SWEET AKS: contextstored sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [105] @0x00266c XNU: SWEET AKS: contextstored sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [106] @0x0026c3 XNU: SWEET AKS: contextstored sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [107] @0x00271a XNU: CODE SIGNING: cs_invalid_page(0x1aab0f000): p=116[bluetoothd] final status 0x22000000, allowing (remove VALID) page
+  [108] @0x0027a5 XNU: CODE SIGNING: cs_invalid_page(0x1aa88c000): p=117[CloudKeychainPro] final status 0x22000000, allowing (remove VALID) page
+  [109] @0x002836 XNU: CRASH securityd[111] sig 5 code 0x600000001 sub 0x1b27f6b7c slide 0x246a8000 mh 0x101134000
+  [110] @0x0028a9 XNU: CRASH securityd pc 0x1b27f6b7c lr 0x1b27f6b7c sp 0x16ed52a60 fp 0x16ed52b50 far 0x1033c4000
+  [111] @0x00291c XNU: CRASH securityd bt 0x1b27f7d60 0x10118b640 0x10117b6ac 0x10117b48c 0x10118b5c4 0x10113b2a0 0x101245b8c 0x1b223f7a8 0x1b2240780 0x1b21efbdc
+  [112] @0x0029be XNU: CRASH securityd reason ns 2 code 0x5: (none)
+  [113] @0x002a02 XNU: SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [114] @0x002a57 XNU: CODE SIGNING: cs_invalid_page(0x1b8d88000): p=118[xpcproxy] final status 0x22000000, allowing (remove VALID) page
+  [115] @0x002ae0 XNU: CODE SIGNING: cs_invalid_page(0x1aab57000): p=118[securityd] final status 0x22000000, allowing (remove VALID) page
+  [116] @0x002b6a XNU: CRASH identityservices[53] sig 5 code 0x600000001 sub 0x1b27f6b7c slide 0x246a8000 mh 0x10108c000
+  [117] @0x002be3 XNU: CRASH identityservices pc 0x1b27f6b7c lr 0x1b27f6b7c sp 0x16ed71e40 fp 0x16ed71f30 far 0x101cf8000
+  [118] @0x002c5d XNU: CRASH identityservices bt 0x1b281591c 0x1b27f0f1c 0x10123f090 0x1017685b4 0x101768358 0x1b2240780 0x1b21e164c 0x10176830c 0x1014025d8 0x101401abc
+  [119] @0x002d06 XNU: CRASH identityservices reason ns 2 code 0x5: (none)
+  [120] @0x002d51 XNU: SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [121] @0x002da6 XNU: CODE SIGNING: cs_invalid_page(0x1aa6c0000): p=119[identityservices] final status 0x22000000, allowing (remove VALID) page
+  [122] @0x002e37 XNU: SWEET Sandbox: rapportd privilege 1002 denied
+  [123] @0x002e7c XNU: CODE SIGNING: cs_invalid_page(0x1aa624000): p=120[apsd] final status 0x22000000, allowing (remove VALID) page
+  [124] @0x002f01 XNU: CODE SIGNING: cs_invalid_page(0x1e926c000): p=121[remotepairingdev] final status 0x22000000, allowing (remove VALID) page
+  [125] @0x002f92 XNU: CODE SIGNING: cs_invalid_page(0x1a64ad000): p=70[bluetoothuserd] final status 0x22000000, allowing (remove VALID) page
+  [126] @0x003020 XNU: CODE SIGNING: cs_invalid_page(0x1c3256000): p=124[symptomsd] final status 0x22000000, allowing (remove VALID) page
+  [127] @0x0030aa XNU: CODE SIGNING: cs_invalid_page(0x1aaaa0000): p=122[fmflocatord] final status 0x22000000, allowing (remove VALID) page
+  [128] @0x003136 XNU: CODE SIGNING: cs_invalid_page(0x1ba44c000): p=66[cloudpaird] final status 0x22000000, allowing (remove VALID) page
+  [129] @0x0031c0 XNU: CODE SIGNING: cs_invalid_page(0x1aa4a2000): p=125[syncdefaultsd] final status 0x22000000, allowing (remove VALID) page
+  [130] @0x00324e XNU: CODE SIGNING: cs_invalid_page(0x1f62b7000): p=123[findmydeviced] final status 0x22000000, allowing (remove VALID) page
+  [131] @0x0032dc XNU: SWEET AKS: cloudpaird sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [132] @0x00332c XNU: SWEET AKS: cloudpaird sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [133] @0x00337c XNU: CODE SIGNING: cs_invalid_page(0x1aa695000): p=114[backboardd] final status 0x22000000, allowing (remove VALID) page
+  [134] @0x003407 XNU: CRASH lsd[109] sig 6 code 0x0 sub 0x0 slide 0x246a8000 mh 0x100aa4000
+  [135] @0x003464 XNU: CRASH lsd pc 0x1e6cbf198 lr 0x1f624e5f8 sp 0x16f35b700 fp 0x16f35b720 far 0x1e6cbf190
+  [136] @0x0034d1 XNU: CRASH lsd bt 0x1b23044b8 0x1a633d2cc 0x1a6342258 0x1b2240780 0x1b21ed830 0x1a6342088 0x1a62c8320 0x1a633d684 0x1a639464c 0x1c8ccc344
+  [137] @0x00356d XNU: CRASH lsd reason ns 2 code 0x6: (none)
+  [138] @0x0035ab XNU: Process[109] crashed: lsd. Too many corpses being created.
+  [139] @0x0035fd XNU: CODE SIGNING: cs_invalid_page(0x1a46d4000): p=126[lsd] final status 0x22000000, allowing (remove VALID) page
+  [140] @0x003681 XNU: CODE SIGNING: cs_invalid_page(0x1aac05000): p=127[corespeechd] final status 0x22000000, allowing (remove VALID) page
+  [141] @0x00370d XNU: SWEET AKS: CloudKeychainProxy sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [142] @0x003765 XNU: SWEET AKS: CloudKeychainProxy sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [143] @0x0037bd XNU: SWEET AKS: mobileassetd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [144] @0x00380f XNU: SWEET AKS: mobileassetd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [145] @0x003861 XNU: CODE SIGNING: cs_invalid_page(0x1b8da4000): p=128[xpcproxy] final status 0x22000000, allowing (remove VALID) page
+  [146] @0x0038ea XNU: CODE SIGNING: cs_invalid_page(0x1aa454000): p=128[nsurlsessiond] final status 0x22000000, allowing (remove VALID) page
+  [147] @0x003978 XNU: CODE SIGNING: cs_invalid_page(0x1aaae7000): p=69[dasd] final status 0x22000000, allowing (remove VALID) page
+  [148] @0x0039fc XNU: SWEET AKS: biomed sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [149] @0x003a48 XNU: SWEET AKS: biomed sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [150] @0x003a94 XNU: CODE SIGNING: cs_invalid_page(0x1b8fe2000): p=129[xpcproxy] final status 0x22000000, allowing (remove VALID) page
+  [151] @0x003b1d XNU: CODE SIGNING: cs_invalid_page(0x1aa7c7000): p=129[apsd] final status 0x22000000, allowing (remove VALID) page
+  [152] @0x003ba2 XNU: CODE SIGNING: cs_invalid_page(0x1aaf11000): p=130[xpcproxy] final status 0x22000000, allowing (remove VALID) page
+  [153] @0x003c2b XNU: SWEET AKS: liveactivitiesd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [154] @0x003c80 XNU: SWEET AKS: liveactivitiesd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [155] @0x003cd5 XNU: CODE SIGNING: cs_invalid_page(0x1aa94c000): p=130[CAReportingServi] final status 0x22000000, allowing (remove VALID) page
+  [156] @0x003d66 XNU: CODE SIGNING: cs_invalid_page(0x1c8d07000): p=95[analyticsd] final status 0x22000000, allowing (remove VALID) page
+  [157] @0x003df0 XNU: CODE SIGNING: cs_invalid_page(0x1e92e4000): p=108[aggregated] final status 0x22000000, allowing (remove VALID) page
+  [158] @0x003e7b XNU: CODE SIGNING: cs_invalid_page(0x1c8ccb000): p=131[xpcproxy] final status 0x22000000, allowing (remove VALID) page
+  [159] @0x003f04 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x20
+  [160] @0x003f40 XNU: SWEET HID: key 0x30 down (0 clients)
+  [161] @0x003f7c XNU: A5XELTE KEYS: key=2 down=1 gpio=0x20
+  [162] @0x003fb8 XNU: SWEET HID: key 0xea down (0 clients)
+  ISSUE: gap at 0x0: skipped 20 bytes
+  ISSUE: gap at 0x34: skipped 5 bytes

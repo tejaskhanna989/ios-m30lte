@@ -1143,3 +1143,19 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: BOOT-only flash v36, one boot, TWRP capture; expect .symbols open and
   symbol lookup diagnostics.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v36 physical: deep userspace; worker grabbed wrong vnode
+
+- Boot 1 (150 s): pstore
+  `a8c137098fb4c4e7d2f3899c212c9c7090b2b30f1233184e063517a8ab452525` (163
+  records) ring-wrapped; reached backboardd/lsd/securityd, SpringBoardUI
+  assertion persists, no recursive-lock panic.
+- Boot 2 (~35 s): pstore
+  `97857d5391a3475e873cd10a54acfabb2765d7fe0f74295b06bd0d8daa148346` (175
+  records) captured early worker start at `load_init_program` on launchd's
+  Mach-O vnode: `diag 0`, `diag 21`, `diag 4: no dyld magic: cffaedfe`.
+- v37 patch 0426: gate worker start on `m30_irt_retriggered`; include the vnode
+  path in wrong-magic diag; reset state to NEED_DSC for a later retry. Syntax
+  check clean; focused tests extended with v36 evidence and a gating model.
+- NEXT: CI -> validate -> package v37 -> BOOT-only flash -> short capture.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
