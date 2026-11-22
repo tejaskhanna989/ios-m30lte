@@ -1074,3 +1074,14 @@ authorization for a BOOT-only test of candidate v6.
   tests pass.
 - NEXT: CI -> validate -> package v34 -> BOOT-only flash -> capture pstore.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v34 offline complete (MAIN only)
+
+- CI `45034826739` GREEN. Kernel
+  `8d7896268fc77bb05410940bf297fa362ecafeea227c02e879254786c5c10d4d`;
+  payload `6ec1d9ffc041c4a9a27baeed87d90e16dc29b3048cd79d6b366b1d5fbbd96b65`;
+  shim-boot.img `24486a2652dbc9360da1caa6e747757a44aea111aef936e6b1b710ca88f66cf4`.
+- Validators all PASS (platform 9/9, CPU 17/17, ADT 22/22, handoff 18/18,
+  focused tests except inapplicable 0417).
+- NEXT: BOOT-only flash v34, one boot, TWRP capture, read IRT diagnostics.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
