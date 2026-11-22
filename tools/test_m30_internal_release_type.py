@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0426-m30-internal-release-type.patch"
 PSTORE_V30 = ROOT / "validation/physical-boot-test/20261122-ios-v30-boot/raw/pmsg-ramoops-0"
 PSTORE_V31 = ROOT / "validation/physical-boot-test/20261122-ios-v31-boot/raw/pmsg-ramoops-0"
+PSTORE_V32 = ROOT / "validation/physical-boot-test/20261122-ios-v32-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -58,6 +59,13 @@ def main():
     assert t.count("M30_IRT_DIAG(") >= 20, "need diagnostics at every failure point"
     assert "m30_irt_diag_seen & (1U << (n))" in t, "diagnostics must be one-shot"
     assert "m30_irt_last_err = err" in t, "must record vn_rdwr errors"
+    # v33: the pmsg ring wraps in a deep boot, so one-shot diagnostics printed
+    # at the first code-page fault are lost.  Replay once when the SpringBoard
+    # XCTest literal is patched, inside the captured log window.
+    assert "m30_irt_retriggered" in t
+    assert "M30 IRT: retrigger after XCTEST patch" in t
+    assert "m30_irt_diag_seen = 0" in t
+    assert "m30_irt_state = M30_IRT_STATE_NEED_DSC;" in t
 
     for bad in ("cs_enforcement_disable", "amfi_get_out_of_my_way",
                 "launchd_unsecure_cache", "CSDebugDisable",
@@ -79,6 +87,33 @@ def main():
     assert b"This process should not be linking or loading SpringBoardUI.framework" in d31
     assert b"M30 IRT" not in d31, "v31 fix-up produced zero diagnostics"
     print("[PASS] v31 pstore: XCTEST fired, no M30 IRT lines -> dyld-pager vnode is NULL")
+
+    # --- physical evidence: v32 diagnostics still absent because the 16 KB
+    # pmsg ring wrapped before the captured SpringBoard records. ---
+    d32 = PSTORE_V32.read_bytes()
+    assert len(d32) == 16372, "pmsg ring should be full/wrapped"
+    assert b"M30 XCTEST: patched ascii off" in d32
+    assert b"CRASH SpringBoard[27] sig 6" in d32
+    assert b"This process should not be linking or loading SpringBoardUI.framework" in d32
+    assert b"M30 IRT" not in d32, "v32 one-shot diagnostics were lost in the wrapped ring"
+    print("[PASS] v32 pstore: wrapped 16 KB ring; one-shot IRT diagnostics not captured")
+
+    # --- behavioural model: retrigger replays diagnostics after XCTest. ---
+    state = {"seen": 0}
+    emitted = []
+    def diag(n, msg):
+        if not (state["seen"] & (1 << n)):
+            state["seen"] |= (1 << n)
+            emitted.append(msg)
+    for _ in range(50):           # early faults, before the log window
+        diag(0, "early enter")
+    assert emitted == ["early enter"]
+    emitted.clear()               # pmsg ring wrapped: early output is gone
+    state["seen"] = 0             # retrigger after the XCTest patch
+    diag(0, "late enter")
+    diag(1, "late backing")
+    assert emitted == ["late enter", "late backing"], emitted
+    print("[PASS] model: retrigger resets one-shot bits so diagnostics land in captured window")
 
     # --- behavioural model: find symbol + patch value ---
     model = textwrap.dedent(r"""

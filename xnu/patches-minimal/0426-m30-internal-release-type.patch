@@ -1,5 +1,5 @@
 diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
-index e799c9a..576d907 100644
+index e799c9a..576d908 100644
 --- a/osfmk/vm/vm_fault.c
 +++ b/osfmk/vm/vm_fault.c
 @@ -108,6 +108,8 @@
@@ -11,7 +11,7 @@ index e799c9a..576d907 100644
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,325 @@ unsigned int    vm_object_pagein_throttle = 16;
+@@ -140,9 +142,326 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -46,6 +46,7 @@ index e799c9a..576d907 100644
 +static uint64_t  m30_irt_file_offset = 0;
 +static int       m30_irt_last_err = 0;
 +static uint32_t  m30_irt_diag_seen = 0;
++static int       m30_irt_retriggered = 0;   /* replay once after XCTEST patch */
 +
 +/* One-shot diagnostics: every distinct failure reason is printed at most once
 + * so the ramoops pmsg ring is not flooded. */
@@ -337,10 +338,24 @@ index e799c9a..576d907 100644
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8005,9 @@ vm_page_validate_cs_mapped_slow(
+@@ -7687,6 +8006,23 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  
++		/* The ramoops pmsg ring wraps early in a deep iOS boot.  When the
++		 * SpringBoard-related XCTest literal is first patched, replay the
++		 * IRT state machine and its one-shot diagnostics once so the result
++		 * is visible in the captured log window. */
++		if (m30_xctest_patch_count != 0 && !m30_irt_retriggered) {
++			m30_irt_retriggered = 1;
++			m30_irt_state = M30_IRT_STATE_NEED_DSC;
++			m30_irt_file_offset = 0;
++			m30_irt_last_err = 0;
++			m30_irt_diag_seen = 0;
++			printf("M30 IRT: retrigger after XCTEST patch (total %lu)\n",
++			    m30_xctest_patch_count);
++		}
++
 +		/* LiveContainer bypass part 2: _internal_release_type = 3 */
 +		m30_internal_release_fixup(vnode, pager, mo_offset, kaddr);
 +

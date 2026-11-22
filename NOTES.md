@@ -1022,3 +1022,21 @@ authorization for a BOOT-only test of candidate v6.
   `heimdall print-pit --resume` to boot, one boot, force back to TWRP, capture
   pstore. Read `M30 IRT diag` lines and check SpringBoard progression.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v32 physical: pstore ring wrapped; v33 retrigger
+
+- BOOT-only flash of `shim-boot.img`
+  `ba40d65572e87115ba9bd62ef83a5d50c06201e2c393a1a7e7d994b109776068` succeeded;
+  one boot; forced back to TWRP; fresh pstore
+  `62ae73ff4ff92e7d6f9d5500c039e5bd4c1f3d2ba758473a643dc2cc26e3d301`
+  (16,372 B, 145 records). Deep iOS userspace + SpringBoard[27] start confirmed.
+- `M30 XCTEST` fired; SpringBoardUI assertion persists. Zero `M30 IRT` records
+  despite all 20 diag strings being linked. Verified by disassembly that the
+  fix-up is called after `cs_validate_page()` in
+  `_vm_page_validate_cs_mapped_slow`. The 16 KB pmsg ring wraps (record 0 starts
+  mid-message), so early one-shot diagnostics were overwritten.
+- Patch 0426 v33: replay IRT state machine and re-arm one-shot diagnostics once
+  when the SpringBoard-related XCTest literal is patched. Test extended with
+  v32 physical evidence and a retrigger model; all focused tests pass.
+- NEXT: CI -> validate -> package v33 -> BOOT-only flash -> capture pstore.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
