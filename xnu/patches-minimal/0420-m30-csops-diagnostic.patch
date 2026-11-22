@@ -1,0 +1,36 @@
+diff --git a/bsd/kern/kern_proc.c b/bsd/kern/kern_proc.c
+--- a/bsd/kern/kern_proc.c
++++ b/bsd/kern/kern_proc.c
+@@ -3134,6 +3134,10 @@
+ 
+ 	forself = error = 0;
+ 
++	if (ops == CS_OPS_STATUS || ops == CS_OPS_CDHASH || ops == CS_OPS_IDENTITY) {
++		printf("SWEET CSOPS: pid %d ops %d forself_want %d\n", pid, ops, 0);
++	}
++
+ 	if (pid == 0) {
+ 		pid = proc_selfpid();
+ 	}
+diff --git a/bsd/kern/kern_cs.c b/bsd/kern/kern_cs.c
+--- a/bsd/kern/kern_cs.c
++++ b/bsd/kern/kern_cs.c
+@@ -870,12 +870,14 @@
+ csproc_get_platform_binary(struct proc *p)
+ {
+ 	struct cs_blob *csblob;
++	int result;
+ 
+ 	csblob = csproc_get_blob(p);
+-
+-	/* If there is no csblob this returns 0 because
+-	 *  it is true that it is not a platform binary */
+-	return (csblob == NULL) ? 0 : csblob->csb_platform_binary;
++	result = (csblob == NULL) ? 0 : csblob->csb_platform_binary;
++	printf("SWEET PLATQ: pid %d textvp %d csflags 0x%x blob %d plat %d\n",
++	    p ? proc_getpid(p) : -1, p && p->p_textvp ? 1 : 0,
++	    p ? proc_getcsflags(p) : 0, csblob ? 1 : 0, result);
++	return result;
+ }
+ 
+ int
