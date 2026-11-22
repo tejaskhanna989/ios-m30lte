@@ -1,5 +1,5 @@
 diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
-index e799c9a..576d90e 100644
+index e799c9a..576d90d 100644
 --- a/osfmk/vm/vm_fault.c
 +++ b/osfmk/vm/vm_fault.c
 @@ -108,6 +108,8 @@
@@ -11,7 +11,7 @@ index e799c9a..576d90e 100644
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,427 @@
+@@ -140,9 +142,474 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -150,13 +150,18 @@ index e799c9a..576d90e 100644
 +	ls_off    = *(uint64_t *)(hdr + 72);
 +	M30_IRT_DIAG(8, "header map_off=0x%x map_cnt=%u ls_off=0x%llx\n",
 +	    map_off, map_cnt, (unsigned long long)ls_off);
-+	/* Split symbols: main cache has localSymbolsOffset == 0; the local
-+	 * symbol table lives in the <cache>.symbols companion file. */
++	/* dyld4 subcache: the faulted vnode is e.g. dyld_shared_cache_arm64.31.
++	 * Its localSymbolsOffset is 0; the local symbol table lives in a companion
++	 * file.  Try several candidates and pick the first that actually has a
++	 * symbol table.  Diagnostics identify the real layout in one boot. */
 +	if (ls_off == 0) {
 +		char path[1024];
++		char sympath[1024];
 +		int  plen = sizeof(path);
 +		vnode_t symvp = (vnode_t)0;
-+		size_t n;
++		size_t n, base_n;
++		static const char symsuffix[] = ".symbols";
++		int    cand, opened = 0;
 +
 +		if (vn_getpath(vp, path, &plen) != 0 || plen <= 0 ||
 +		    plen >= (int)sizeof(path)) {
@@ -165,44 +170,86 @@ index e799c9a..576d90e 100644
 +			m30_irt_state = M30_IRT_STATE_FAILED;
 +			goto out;
 +		}
-+		/* vn_getpath() reports plen including the terminating NUL: compute
-+		 * the real string length ourselves before appending the suffix. */
++		/* vn_getpath() reports plen including the terminating NUL. */
 +		n = 0;
 +		while (n < sizeof(path) && path[n] != '\0') {
 +			n++;
 +		}
-+		M30_IRT_DIAG(31, "vn_getpath plen=%d strlen=%zu path=%s\n",
++		printf("M30 IRT diag 31: vn_getpath plen=%d strlen=%zu path=%s\n",
 +		    plen, n, path);
-+		{
-+			static const char symsuffix[] = ".symbols";
-+			if (n + sizeof(symsuffix) > sizeof(path)) {
-+				M30_IRT_DIAG(26, "DSC path too long\n");
-+				m30_irt_state = M30_IRT_STATE_FAILED;
-+				goto out;
-+			}
-+			memcpy(path + n, symsuffix, sizeof(symsuffix));
++
++		/* Strip a trailing .<digits> subcache index. */
++		base_n = n;
++		while (base_n > 0 && path[base_n - 1] >= '0' &&
++		    path[base_n - 1] <= '9') {
++			base_n--;
 +		}
-+		if (vnode_open(path, 1 /* FREAD */, 0, 0, &symvp,
-+		    vfs_context_kernel()) != 0 || symvp == (vnode_t)0) {
-+			M30_IRT_DIAG(27, "open .symbols failed path=%s\n", path);
++		if (base_n > 0 && base_n < n && path[base_n - 1] == '.') {
++			base_n--;
++		}
++		printf("M30 IRT diag 32: base path len=%zu path=%.*s\n",
++		    base_n, (int)base_n, path);
++
++		for (cand = 0; cand < 3 && !opened; cand++) {
++			size_t prefix;
++			vnode_t tvp = (vnode_t)0;
++
++			if (cand == 0)      prefix = base_n;  /* <base>.symbols */
++			else if (cand == 1) prefix = n;       /* <subcache>.symbols */
++			else                prefix = base_n;  /* <base> main cache */
++			if (prefix == 0 ||
++			    (cand < 2 && prefix + sizeof(symsuffix) > sizeof(sympath))) {
++				continue;
++			}
++			if (cand < 2) {
++				memcpy(sympath, path, prefix);
++				memcpy(sympath + prefix, symsuffix, sizeof(symsuffix));
++			} else {
++				memcpy(sympath, path, prefix);
++				sympath[prefix] = '\0';
++			}
++			if (vnode_open(sympath, 1 /* FREAD */, 0, 0, &tvp,
++			    vfs_context_kernel()) != 0 || tvp == (vnode_t)0) {
++				printf("M30 IRT diag 27: open failed cand=%d path=%s\n",
++				    cand, sympath);
++				continue;
++			}
++			if (m30_irt_read(tvp, 0, hdr, 96) != 0 ||
++			    memcmp(hdr, "dyld_v", 6) != 0) {
++				printf("M30 IRT diag 29: invalid header cand=%d path=%s\n",
++				    cand, sympath);
++				vnode_close(tvp, 1 /* FREAD */, vfs_context_kernel());
++				continue;
++			}
++			{
++				uint32_t c_map_off = *(uint32_t *)(hdr + 16);
++				uint32_t c_map_cnt = *(uint32_t *)(hdr + 20);
++				uint64_t c_ls_off  = *(uint64_t *)(hdr + 72);
++				printf("M30 IRT diag 30: cand=%d map_off=0x%x map_cnt=%u "
++				    "ls_off=0x%llx path=%s vp=%p main=%p\n",
++				    cand, c_map_off, c_map_cnt,
++				    (unsigned long long)c_ls_off, sympath,
++				    (void *)tvp, (void *)vp);
++				if (c_ls_off == 0) {
++					vnode_close(tvp, 1 /* FREAD */,
++					    vfs_context_kernel());
++					continue;
++				}
++				map_off = c_map_off;
++				map_cnt = c_map_cnt;
++				ls_off  = c_ls_off;
++			}
++			symvp = tvp;
++			opened = 1;
++		}
++		if (!opened) {
++			M30_IRT_DIAG(24, "no companion with symbol table\n");
 +			m30_irt_state = M30_IRT_STATE_FAILED;
 +			goto out;
 +		}
 +		fp = symvp;
-+		M30_IRT_DIAG(28, "opened symbols file %s vp=%p main=%p\n",
-+		    path, (void *)fp, (void *)vp);
-+		/* .symbols has its own header; re-read it. */
-+		if (m30_irt_read(fp, 0, hdr, 96) != 0 ||
-+		    memcmp(hdr, "dyld_v", 6) != 0) {
-+			M30_IRT_DIAG(29, "symbols header invalid\n");
-+			m30_irt_state = M30_IRT_STATE_FAILED;
-+			goto out;
-+		}
-+		map_off = *(uint32_t *)(hdr + 16);
-+		map_cnt = *(uint32_t *)(hdr + 20);
-+		ls_off  = *(uint64_t *)(hdr + 72);
-+		M30_IRT_DIAG(30, "symbols map_off=0x%x map_cnt=%u ls_off=0x%llx\n",
-+		    map_off, map_cnt, (unsigned long long)ls_off);
++		printf("M30 IRT diag 28: using symbols file vp=%p main=%p\n",
++		    (void *)fp, (void *)vp);
 +	}
 +	if (ls_off == 0 || map_off == 0 || map_cnt == 0) {
 +		M30_IRT_DIAG(24, "header has no symbol table\n");
@@ -439,7 +486,7 @@ index e799c9a..576d90e 100644
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8107,24 @@
+@@ -7687,6 +8154,24 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  

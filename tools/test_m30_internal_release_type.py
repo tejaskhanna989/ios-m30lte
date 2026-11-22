@@ -28,6 +28,7 @@ PSTORE_V35 = ROOT / "validation/physical-boot-test/20261122-ios-v35-boot/raw/pms
 PSTORE_V36 = ROOT / "validation/physical-boot-test/20261122-ios-v36-boot-short/raw/pmsg-ramoops-0"
 PSTORE_V37 = ROOT / "validation/physical-boot-test/20261122-ios-v37-boot/raw/pmsg-ramoops-0"
 PSTORE_V38 = ROOT / "validation/physical-boot-test/20261122-ios-v38-boot/raw/pmsg-ramoops-0"
+PSTORE_V39 = ROOT / "validation/physical-boot-test/20261122-ios-v39-boot2/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -86,43 +87,29 @@ def main():
     assert "vnode_ref(vp) == 0" in t
     assert "vnode_rele(vp)" in t
     assert "m30_irt_thread_started = 0;" in t
-    # v38: the 16 KB ring wraps before SpringBoard loads, so replay a compact
-    # final-status line periodically for a bounded window.
+    # v38: periodic bounded status replay survives the 16 KB pmsg ring wrap.
     assert "#include <kern/clock.h>" in t
     assert 'M30 IRT status: state=%d off=0x%llx err=%d replay=%d' in t
     assert "delay(2000000)" in t
-    # v39: vn_getpath() reports plen including the NUL; appending at path+n
-    # wrote past the NUL and reopened the main cache.  Compute strlen manually.
+    # v39: vn_getpath() plen includes the NUL; compute the real strlen.
     assert "while (n < sizeof(path) && path[n] != '\\0')" in t
-    assert 'M30_IRT_DIAG(31, "vn_getpath plen=%d strlen=%zu' in t
-    assert 'opened symbols file %s vp=%p main=%p' in t
-    assert "no vnode I/O, only in-memory patching" in t
-    # v36: the main DSC header has localSymbolsOffset == 0 on this device;
-    # local symbols are in the <cache>.symbols companion file.  Open it from
-    # the deferred worker using the main vnode's path.
-    assert "#include <sys/vfs_context.h>" in t
-    assert "vn_getpath(vp, path, &plen)" in t
-    assert 'memcpy(path + n, symsuffix, sizeof(symsuffix))' in t
-    assert "vnode_open(path, 1 /* FREAD */" in t
+    assert 'printf("M30 IRT diag 31: vn_getpath plen=%d strlen=%zu' in t
+    # v40: the faulted vnode is a dyld4 subcache (.31).  Strip the trailing
+    # .<digits> and try base+.symbols, subcache+.symbols, then the base cache.
+    assert 'printf("M30 IRT diag 32: base path len=%zu' in t
+    assert "path[base_n - 1] >= '0'" in t
+    assert 'static const char symsuffix[] = ".symbols";' in t
+    assert "for (cand = 0; cand < 3 && !opened; cand++)" in t
+    assert 'printf("M30 IRT diag 30: cand=%d map_off=0x%x map_cnt=%u' in t
+    assert 'printf("M30 IRT diag 28: using symbols file vp=%p main=%p' in t
+    assert "vnode_open(sympath, 1 /* FREAD */" in t
     assert "vnode_close(fp, 1 /* FREAD */" in t
-    assert 'M30_IRT_DIAG(28, "opened symbols file' in t
-    assert 'M30_IRT_DIAG(30, "symbols map_off=' in t
-    # v37: the worker started at load_init_program on launchd's Mach-O vnode
-    # (cffaedfe) long before the XCTEST patch.  Gate on the retrigger and let
-    # a wrong-magic vnode be retried on a later post-retrigger fault.
+    # v37: retrigger gate, and retry with a later vnode on wrong magic.
     assert "m30_irt_retriggered && !m30_irt_thread_started" in t
     assert "path=%s\\n" in t
-    assert "m30_irt_thread_started = 0;" in t
-    # v38: the 16 KB ring wraps before SpringBoard loads, so replay a compact
-    # final-status line periodically for a bounded window.
-    assert "#include <kern/clock.h>" in t
-    assert 'M30 IRT status: state=%d off=0x%llx err=%d replay=%d' in t
-    assert "delay(2000000)" in t
-    # v39: vn_getpath() reports plen including the NUL; appending at path+n
-    # wrote past the NUL and reopened the main cache.  Compute strlen manually.
-    assert "while (n < sizeof(path) && path[n] != '\\0')" in t
-    assert 'M30_IRT_DIAG(31, "vn_getpath plen=%d strlen=%zu' in t
-    assert 'opened symbols file %s vp=%p main=%p' in t
+    assert "no vnode I/O, only in-memory patching" in t
+    assert "#include <sys/vfs_context.h>" in t
+    assert "vn_getpath(vp, path, &plen)" in t
 
     for bad in ("cs_enforcement_disable", "amfi_get_out_of_my_way",
                 "launchd_unsecure_cache", "CSDebugDisable",
@@ -218,6 +205,19 @@ def main():
     assert b"opened symbols file /System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.31 vp=" in d38
     assert b"CRASH SpringBoard[27] sig 6" in d38
     print("[PASS] v38 pstore: status replay works; .symbols suffix landed after NUL")
+
+    # --- physical evidence: v39 stripped the NUL, but the faulted vnode is a
+    # dyld4 subcache (.31).  Its .symbols companion does not exist. ---
+    d39 = PSTORE_V39.read_bytes()
+    assert b"M30 XCTEST: patched ascii off" in d39
+    assert b"M30 IRT: retrigger after XCTEST patch" in d39
+    assert b"M30 IRT diag 21: worker started vp=0x" in d39
+    assert b"M30 IRT diag 8: header map_off=0x200 map_cnt=1 ls_off=0x0" in d39
+    assert b"M30 IRT diag 31: vn_getpath plen=65 strlen=64 path=" in d39
+    assert b"dyld_shared_cache_arm64.31\x00" in d39
+    assert b"M30 IRT diag 27: open failed path=" in d39
+    assert b"dyld_shared_cache_arm64.31.symbols" in d39
+    print("[PASS] v39 pstore: subcache .31 has no .symbols; strip index for v40")
 
     # --- behavioural model: retrigger replays diagnostics after XCTest. ---
     state = {"seen": 0}
@@ -451,6 +451,20 @@ def main():
     correct = main_path[:n] + b".symbols\x00"
     assert correct.split(b"\x00")[0].endswith(b".31.symbols")
     print("[PASS] model: strip NUL before appending .symbols suffix")
+
+    # --- behavioural model: dyld4 subcache symbol path. ---
+    full = "/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.31"
+    base_n = len(full)
+    while base_n > 0 and full[base_n - 1].isdigit():
+        base_n -= 1
+    if base_n > 0 and base_n < len(full) and full[base_n - 1] == '.':
+        base_n -= 1
+    base = full[:base_n]
+    assert base.endswith("dyld_shared_cache_arm64")
+    candidates = [base + ".symbols", full + ".symbols", base]
+    assert candidates[0].endswith("dyld_shared_cache_arm64.symbols")
+    assert candidates[1].endswith("dyld_shared_cache_arm64.31.symbols")
+    print("[PASS] model: strip .31 subcache index to find main cache symbols")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 
