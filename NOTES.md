@@ -797,3 +797,38 @@ ABSENT — no IPSW/rootfs assets; no SpringBoard/userspace boot claim possible.
 
 OSX artifacts and v2-v5 preserved unchanged. NO physical operations. STOPPING — awaiting fresh
 authorization for a BOOT-only test of candidate v6.
+
+## 2026-11-22 — v28 physical evidence + v29 SpringBoardUI class-probe fix (MAIN only)
+
+### Commit / state
+- HEAD after v28 evidence commit: `d145fc053455f066212c1d18872c21b05792b53792b537` (verify via git rev-parse).
+- v28 candidate commit `602b13bb86a3db190c5c104ec8035435d0572fd8`; CI `45008761962` green;
+  kernel `07e043eb2b4e4d516b27ddeb00c2d1918f20d7376dbfed209ccd1520e5c2819f`,
+  payload `9a83a3ec64e9839a863a6f7676cff467eac77722e75b5c013d5b8f3f0cb2439e`,
+  shim-boot.img `03fa2d70cdb5b169ce9d124199645594c96640f87ec3b6d1c0eb792d581434a6`.
+
+### v28 PHYSICAL result (BOOT-only flash, no readback, USERDATA/SYSTEM/RECOVERY untouched)
+- Evidence: `validation/physical-boot-test/20261122-ios-v28-boot/raw/pmsg-ramoops-0`
+  SHA `edc4bf88ae53bcba231415345c96b80edb1865191865dbe5b0f1eb3cc3058089`
+  (16372 B, 147 XNU records). README committed.
+- Confirmed: deep genuine iOS 20H392 userspace, full daemon set, SpringBoard[26]
+  starts, no diagnostic flood, no boot-task panic, no kernel panic, no daemon crash loop.
+- NEW BLOCKER: SpringBoard aborts at `+[SpringBoardUI load]`:
+  `NSInternalInconsistencyException: This process should not be linking or loading
+  SpringBoardUI.framework (<rdar://problem/26143166>)`. This is a userspace
+  Objective-C **class-presence probe**, not a code-signing failure. LiveContainer
+  commit d2a329d works around the identical iOS 16 assertion by registering an
+  `XCTestConfiguration` class before the check runs.
+
+### v29 work in progress (offline only, no device ops yet)
+- Added `xnu/patches-minimal/0425-m30-xctest-class-probe.patch`. It retargets the
+  `XCTestConfiguration` C-string/UTF-16 literal in the already-faulted dyld shared
+  cache page to `NSObject`, once, STRICTLY AFTER `cs_validate_page()` in
+  `osfmk/vm/vm_fault.c`. No signature, hash, AMFI or trust-cache check is skipped
+  or weakened. `git apply --check` verified against the post-0418 buildtree file.
+- Added `tools/test_m30_xctest_class_probe.py`: patch-structure checks, anti-bypass
+  checks, v28 pstore evidence checks, and a compiled C model proving ASCII/UTF-16
+  retargeting plus no false matches. Locally: ALL TESTS PASS.
+- NEXT: commit patch+test, push to trigger CI, validate kernel/packaging, flash BOOT
+  only, boot once, capture pstore immediately, decode, and continue to next blocker.
+- NO UI/lock-screen success claimed. BOOT readback remains SKIPPED.
