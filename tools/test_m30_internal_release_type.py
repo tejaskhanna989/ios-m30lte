@@ -27,6 +27,7 @@ PSTORE_V34 = ROOT / "validation/physical-boot-test/20261122-ios-v34-boot/raw/pms
 PSTORE_V35 = ROOT / "validation/physical-boot-test/20261122-ios-v35-boot/raw/pmsg-ramoops-0"
 PSTORE_V36 = ROOT / "validation/physical-boot-test/20261122-ios-v36-boot-short/raw/pmsg-ramoops-0"
 PSTORE_V37 = ROOT / "validation/physical-boot-test/20261122-ios-v37-boot/raw/pmsg-ramoops-0"
+PSTORE_V38 = ROOT / "validation/physical-boot-test/20261122-ios-v38-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -90,6 +91,11 @@ def main():
     assert "#include <kern/clock.h>" in t
     assert 'M30 IRT status: state=%d off=0x%llx err=%d replay=%d' in t
     assert "delay(2000000)" in t
+    # v39: vn_getpath() reports plen including the NUL; appending at path+n
+    # wrote past the NUL and reopened the main cache.  Compute strlen manually.
+    assert "while (n < sizeof(path) && path[n] != '\\0')" in t
+    assert 'M30_IRT_DIAG(31, "vn_getpath plen=%d strlen=%zu' in t
+    assert 'opened symbols file %s vp=%p main=%p' in t
     assert "no vnode I/O, only in-memory patching" in t
     # v36: the main DSC header has localSymbolsOffset == 0 on this device;
     # local symbols are in the <cache>.symbols companion file.  Open it from
@@ -112,6 +118,11 @@ def main():
     assert "#include <kern/clock.h>" in t
     assert 'M30 IRT status: state=%d off=0x%llx err=%d replay=%d' in t
     assert "delay(2000000)" in t
+    # v39: vn_getpath() reports plen including the NUL; appending at path+n
+    # wrote past the NUL and reopened the main cache.  Compute strlen manually.
+    assert "while (n < sizeof(path) && path[n] != '\\0')" in t
+    assert 'M30_IRT_DIAG(31, "vn_getpath plen=%d strlen=%zu' in t
+    assert 'opened symbols file %s vp=%p main=%p' in t
 
     for bad in ("cs_enforcement_disable", "amfi_get_out_of_my_way",
                 "launchd_unsecure_cache", "CSDebugDisable",
@@ -192,6 +203,21 @@ def main():
     assert b"M30 XCTEST" not in d37
     assert b"SpringBoardUI" not in d37
     print("[PASS] v37 pstore: short window ended before SpringBoard; need status replay")
+
+    # --- physical evidence: v38 status replay captured, but .symbols open
+    # silently reopened the main cache because plen includes the NUL. ---
+    d38 = PSTORE_V38.read_bytes()
+    assert b"M30 XCTEST: patched ascii off" in d38
+    assert b"M30 IRT: retrigger after XCTEST patch" in d38
+    assert b"M30 IRT diag 21: worker started vp=0x" in d38
+    assert b"M30 IRT diag 8: header map_off=0x200 map_cnt=1 ls_off=0x0" in d38
+    assert b"M30 IRT diag 24: header has no symbol table" in d38
+    assert b"M30 IRT status: state=4 off=0x0 err=0 replay=0" in d38
+    assert b"M30 IRT status: state=4 off=0x0 err=0 replay=15" in d38
+    # The "opened symbols file" path lacks .symbols, and its vnode equals main.
+    assert b"opened symbols file /System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.31 vp=" in d38
+    assert b"CRASH SpringBoard[27] sig 6" in d38
+    print("[PASS] v38 pstore: status replay works; .symbols suffix landed after NUL")
 
     # --- behavioural model: retrigger replays diagnostics after XCTest. ---
     state = {"seen": 0}
@@ -413,6 +439,18 @@ def main():
     assert any("M30 IRT status:" in x for x in ring), ring
     assert "M30 IRT status: state=2 off=0x1234000 err=0 replay=2" in ring
     print("[PASS] model: periodic status replay survives ring wrap")
+
+    # --- behavioural model: vn_getpathplen includes NUL. ---
+    main_path = b"/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.31\x00"
+    plen = len(main_path)                 # XNU reports size incl. NUL
+    wrong = main_path[:plen] + b".symbols\x00"
+    assert wrong[len(main_path)-1:len(main_path)+1] == b"\x00."  # suffix after NUL
+    assert wrong.split(b"\x00")[0] == main_path[:-1]            # string unchanged
+    n = 0
+    while n < len(main_path) and main_path[n] != 0: n += 1
+    correct = main_path[:n] + b".symbols\x00"
+    assert correct.split(b"\x00")[0].endswith(b".31.symbols")
+    print("[PASS] model: strip NUL before appending .symbols suffix")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 

@@ -1198,3 +1198,25 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: BOOT-only flash v38, capture pstore at any time; read latest
   `M30 IRT status:` line.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v38 physical: status replay works; .symbols suffix after NUL
+
+- BOOT-only flash of `shim-boot.img`
+  `73378ba9e48dbd58c1ec967a266a74d6ba5016d3b73059f568e3a4b85b98b919`; one boot;
+  forced back to TWRP; pstore
+  `cb467b90af306023c6821670d7bac759a63a33a262b2ec5bdca53201d2543d2d`
+  (16,372 B, 152 records).
+- Periodic status replay works: `M30 IRT status: state=4 ... replay=0..15`
+  survived the ring wrap. Retrigger gate worked: worker started on real DSC
+  vnode at mo=0x42a4000 after XCTEST patch.
+- Bug found: `vn_getpath()` reports `plen` including the NUL; appending
+  `.symbols` at `path+plen` landed after the NUL. The printed path was still
+  `/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.31`, and the
+  opened vnode equalled the main vnode — we re-parsed the main cache and hit
+  `ls_off=0` again. SpringBoard[27] still crashes with the assertion.
+- v39 patch 0426: compute the path length manually before appending `.symbols`;
+  log `plen`, `strlen`, and both vnode pointers. Syntax check clean; focused
+  tests extended with v38 evidence and a NUL-suffix model.
+- NEXT: CI -> validate -> package v39 -> BOOT-only flash -> capture pstore;
+  expect a distinct `.symbols` vnode and a real symbol table (`diag 30 ls_off!=0`).
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.

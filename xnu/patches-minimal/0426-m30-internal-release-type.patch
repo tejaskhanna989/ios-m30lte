@@ -1,5 +1,5 @@
 diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
-index e799c9a..576d90d 100644
+index e799c9a..576d90e 100644
 --- a/osfmk/vm/vm_fault.c
 +++ b/osfmk/vm/vm_fault.c
 @@ -108,6 +108,8 @@
@@ -11,7 +11,7 @@ index e799c9a..576d90d 100644
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,420 @@
+@@ -140,9 +142,427 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -165,7 +165,14 @@ index e799c9a..576d90d 100644
 +			m30_irt_state = M30_IRT_STATE_FAILED;
 +			goto out;
 +		}
-+		n = (size_t)plen;
++		/* vn_getpath() reports plen including the terminating NUL: compute
++		 * the real string length ourselves before appending the suffix. */
++		n = 0;
++		while (n < sizeof(path) && path[n] != '\0') {
++			n++;
++		}
++		M30_IRT_DIAG(31, "vn_getpath plen=%d strlen=%zu path=%s\n",
++		    plen, n, path);
 +		{
 +			static const char symsuffix[] = ".symbols";
 +			if (n + sizeof(symsuffix) > sizeof(path)) {
@@ -182,8 +189,8 @@ index e799c9a..576d90d 100644
 +			goto out;
 +		}
 +		fp = symvp;
-+		M30_IRT_DIAG(28, "opened symbols file %s vp=%p\n", path,
-+		    (void *)fp);
++		M30_IRT_DIAG(28, "opened symbols file %s vp=%p main=%p\n",
++		    path, (void *)fp, (void *)vp);
 +		/* .symbols has its own header; re-read it. */
 +		if (m30_irt_read(fp, 0, hdr, 96) != 0 ||
 +		    memcmp(hdr, "dyld_v", 6) != 0) {
@@ -432,7 +439,7 @@ index e799c9a..576d90d 100644
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8100,24 @@
+@@ -7687,6 +8107,24 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  
