@@ -1,0 +1,57 @@
+diff --git a/bsd/kern/mach_loader.c b/bsd/kern/mach_loader.c
+--- a/bsd/kern/mach_loader.c
++++ b/bsd/kern/mach_loader.c
+@@ -1315,13 +1315,48 @@
+ 
+ 					while (off < alloc_size && ret == LOAD_SUCCESS) {
+ 						tainted = CS_VALIDATE_TAINTED;
++						const void *vdata = (const void *)((uintptr_t)addr + off);
++						vm_size_t vsize = MIN(PAGE_SIZE, cmds_size);
++						memory_object_offset_t voff = file_offset + off;
++						char *bigbuf = NULL;
++						vm_size_t need = 0;
++						struct cs_blob *csb = csvnode_get_blob(vp, voff);
++						/*
++						 * A 16K code directory hashes four 4K pages. The Mach-O
++						 * header buffer (addr) holds only one page, so a 4K read
++						 * cannot verify the 16K hash and would clear CS_VALID,
++						 * losing CS_SIGNED/CS_PLATFORM_BINARY for the process.
++						 * Read the entire hash block from the vnode (vn_rdwr is
++						 * already used here) and validate the real block.
++						 * Fail securely if the block cannot be read.
++						 */
++						if (csb != NULL && csb->csb_hash_pageshift > PAGE_SHIFT) {
++							need = (vm_size_t)1U << csb->csb_hash_pageshift;
++							if (need > vsize) {
++								bigbuf = kalloc_data(need, Z_WAITOK);
++							}
++						}
++						if (bigbuf != NULL) {
++							memory_object_offset_t block =
++							    voff & ~((memory_object_offset_t)(need - 1));
++							int resid = (int)need;
++							if (vn_rdwr(UIO_READ, vp, bigbuf, (int)need, block,
++							    UIO_SYSSPACE, 0, kauth_cred_get(), &resid, NULL) == 0 &&
++							    resid == 0) {
++								vdata = bigbuf;
++								vsize = need;
++								voff = block;
++							} else {
++								kfree_data(bigbuf, need);
++								bigbuf = NULL;
++							}
++						}
+ 
+-						valid = cs_validate_range(vp,
+-						    NULL,
+-						    file_offset + off,
+-						    (const void *)((uintptr_t)addr + off),
+-						    MIN(PAGE_SIZE, cmds_size),
++						valid = cs_validate_range(vp, NULL, voff, vdata, vsize,
+ 						    &tainted);
++						if (bigbuf != NULL) {
++							kfree_data(bigbuf, need);
++						}
+ 						if (!valid || (tainted & CS_VALIDATE_TAINTED)) {
+ 							if (cs_debug) {
+ 								printf("CODE SIGNING: %s[%d]: invalid initial page at offset %lld validated:%d tainted:%d csflags:0x%x\n",
