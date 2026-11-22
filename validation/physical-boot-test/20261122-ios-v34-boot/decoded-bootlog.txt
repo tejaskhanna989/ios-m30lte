@@ -1,0 +1,212 @@
+file: validation/physical-boot-test/20261122-ios-v34-boot/raw/pmsg-ramoops-0  bytes=16372  sha256=13bd06ba44c5cd36d94ac657fa87f51246299f0c3315d2790a55b53720d7443b
+records=209 issues=1
+  [000] @0x000009 adbd: initializing functionfs
+  [001] @0x000039 adbd: functionfs successfully initialized
+  [002] @0x000075 adbd: registering usb transport
+  [003] @0x0000a7 adbd: aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown
+  [004] @0x000118 adbd: remote usb: read terminated (message): Cannot send after transport endpoint shutdown
+  [005] @0x000185 adbd: closing functionfs transport
+  [006] @0x0001ba adbd: initializing functionfs
+  [007] @0x0001ea adbd: functionfs successfully initialized
+  [008] @0x000226 adbd: registering usb transport
+  [009] @0x000258 XNU: Darwin Kernel Version 22.6.0: Mon Aug 14 05:06:07 UTC 2023; runner:xnu-8796.141.3
+  [010] @0x0002c1 XNU: pmap_startup() init/release time: 3664 microsec
+  [011] @0x000308 XNU: pmap_startup() delayed init/release of 0 pages
+  [012] @0x00034e XNU: vm_page_bootstrap: 64341 free pages, 10411 wired pages, (up to 0 of which are delayed free)
+  [013] @0x0003c1 XNU: VM boostrap: 51 maps, 153 entries and 128 holes available
+  [014] @0x000412 XNU: Maximum number of VM swap files: 5
+  [015] @0x00044c XNU: zone_meta               : 0xfffffff03b800000 - 0xfffffff041906000 (97M)
+  [016] @0x0004ab XNU: bufferhdr               : 0xfffffff041906000 - 0xfffffff0419c3000 (756K)
+  [017] @0x00050b XNU: ipc_kernel_copy_map     : 0xfffffff0419c3000 - 0xfffffff0421c3000 (8M)
+  [018] @0x000569 XNU: io_submap               : 0xfffffff0421c3000 - 0xfffffff0429c3000 (8M)
+  [019] @0x0005c7 XNU: gIOKitPageableFixed2    : 0xfffffff0429c3000 - 0xfffffff0489c3000 (96M)
+  [020] @0x000626 XNU: mb                      : 0xfffffff0489c3000 - 0xfffffff04c9c3000 (64M)
+  [021] @0x000685 XNU: kmem_ptr_range          : 0xfffffff04c9c3000 - 0xfffffff1af283000 (5G)
+  [022] @0x0006e3 XNU: ipc_kernel_map          : 0xfffffff1af283000 - 0xfffffff1b3283000 (64M)
+  [023] @0x000742 XNU: kmem_ptr_range_meta     : 0xfffffff1b3283000 - 0xfffffff1b338d000 (1064K)
+  [024] @0x0007a3 XNU: gIOKitPageableFixed0    : 0xfffffff1b338d000 - 0xfffffff1b938d000 (96M)
+  [025] @0x000802 XNU: kmem_data_range         : 0xfffffff1b938d000 - 0xfffffff5d9181000 (16G)
+  [026] @0x000861 XNU: kmem_sprayqtn_range     : 0xfffffff5d9181000 - 0xfffffff5e1139000 (127M)
+  [027] @0x0008c1 XNU: gIOKitPageableFixed1    : 0xfffffff5e1139000 - 0xfffffff5e7139000 (96M)
+  [028] @0x000920 XNU: zones                   : 0xfffffff5e7139000 - 0xfffffffbe7139000 (24G)
+  [029] @0x00097f XNU: gIOKitPageableFixed3    : 0xfffffffbe7139000 - 0xfffffffbed139000 (96M)
+  [030] @0x0009de XNU: bsd_pageable            : 0xfffffffbed139000 - 0xfffffffbed9bb000 (8M)
+  [031] @0x000a3c XNU: compressor              : 0xfffffffbed9bb000 - 0xfffffffbffdfc000 (292M)
+  [032] @0x000a9c XNU: kmem_large_ranges[1]    : 0 - 0 (0B)
+  [033] @0x000ad8 XNU: kmem_large_ranges[2]    : 0 - 0 (0B)
+  [034] @0x000b14 XNU: kmem_large_ranges[3]    : 0 - 0 (0B)
+  [035] @0x000b50 XNU: kmem_large_ranges[4]    : 0xfffffff5da178000 - 0xfffffff5e1139000 (111M)
+  [036] @0x000bb0 XNU: kmem_large_ranges[5]    : 0xfffffff23d34b800 - 0xfffffff5d9181000 (14G)
+  [037] @0x000c0f XNU: "vm_compressor_mode" is 0
+  [038] @0x000c40 XNU: zone_init: pgzalloc  0xfffffff5e7139000:0xfffffff5e71b8000 (508K) [63 slots]
+  [039] @0x000ca4 XNU: zone_init: map VM    0xfffffff5e71b8000:0xfffffff6cd80b000 (3686M)
+  [040] @0x000cfe XNU: zone_init: map RO    0xfffffff6cd80b000:0xfffffff71a4d1000 (1228M)
+  [041] @0x000d58 XNU: zone_init: map GEN0  0xfffffff71a4d1000:0xfffffff800b24000 (3686M)
+  [042] @0x000db2 XNU: zone_init: map GEN1  0xfffffff800b24000:0xfffffff8e7177000 (3686M)
+  [043] @0x000e0c XNU: zone_init: map GEN2  0xfffffff8e7177000:0xfffffff9cd7ca000 (3686M)
+  [044] @0x000e66 XNU: zone_init: map GEN3  0xfffffff9cd7ca000:0xfffffffab3e1e000 (3686M)
+  [045] @0x000ec0 XNU: zone_init: map DATA  0xfffffffab3e1e000:0xfffffffbe7139000 (4915M)
+  [046] @0x000f1a XNU: zone_init: metadata  0xfffffff03b810000:0xfffffff041810000 (96M)
+  [047] @0x000f72 XNU: zone_init: metabits  0xfffffff041810000:0xfffffff0418f6000 (920K)
+  [048] @0x000fcb XNU: zone_init: extra     0:0 (0B)
+  [049] @0x001000 XNU: VM bootstrap done: 39 maps, 112 entries and 117 holes left
+  [050] @0x001052 XNU: Log queues configured: slot count: 8, per-slot size: 32768, total size: 262144
+  [051] @0x0010b8 XNU: Firehose configured: 16 chunks, 8 io pages
+  [052] @0x0010fa XNU: OSLog stream configured: stream: 8192 bytes, cache: 2112 bytes
+  [053] @0x001150 XNU: OSLog stream verification: 0
+  [054] @0x001184 XNU: Long logs support configured: size: 16384
+  [055] @0x0011c5 XNU: standard timeslicing quantum is 10000 us
+  [056] @0x001205 XNU: standard background quantum is 2500 us
+  [057] @0x001243 XNU: mig_table_max_displ = 54 mach_kobj_count = 374
+  [058] @0x001289 XNU: kdp_core zlib memory 0x7000
+  [059] @0x0012bc XNU: Serial requested, consistent debug disabled or debug boot arg not present, configuring debugging over serial
+  [060] @0x001340 XNU: iBoot version: m30lte-shim
+  [061] @0x001372 XNU: "name" not a kext
+  [062] @0x00139b XNU: "AAPL,phandle" not a kext
+  [063] @0x0013cc XNU: SWEET AMFI: built-in interface registered (XML entitlements)
+  [064] @0x001420 XNU: calling mpo_policy_init for vnguard
+  [065] @0x00145b XNU: Security policy loaded: Guarded vnode policy (vnguard)
+  [066] @0x0014a9 XNU: calling mpo_policy_init for SWEET AMFI
+  [067] @0x0014e7 XNU: Security policy loaded: SWEET built-in Mobile File Integrity (SWEET AMFI)
+  [068] @0x001548 XNU: SWEET AMFI: platform binary policy registered (0)
+  [069] @0x001591 XNU: calling mpo_policy_init for Sandbox
+  [070] @0x0015cc XNU: Security policy loaded: SWEET permissive sandbox stand-in (Sandbox)
+  [071] @0x001627 XNU: SWEET Sandbox: permissive policy registered (0)
+  [072] @0x00166e XNU: SWEET: trust caches unavailable (Image4/AMFI not installed)
+  [073] @0x0016c1 XNU: keepsyms boot arg specified; keeping linkedit segment for symbols.
+  [074] @0x00171b XNU: No POST boot-arg set.
+  [075] @0x001748 XNU: Copyright (c) 1982, 1986, 1989, 1991, 1993
+  [076] @0x00178a XNU: 	The Regents of the University of California. All rights reserved.
+  [077] @0x0017e4 XNU: MAC Framework successfully initialized
+  [078] @0x001822 XNU: using 1307 buffer headers and 1307 cluster IO buffer headers
+  [079] @0x001876 XNU: M30 BSD: IOKitInitializeTime returned
+  [080] @0x0018b3 XNU: IOResources: not registry member at registerService()
+  [081] @0x001900 XNU: ktriage_register_subsystem_strings: set subsystem 8 strings
+  [082] @0x001953 XNU: M30 BSD: vfsinit returned
+  [083] @0x001984 XNU: SWEET HFS: hfs-627.100.6 registered
+  [084] @0x0019bf XNU: M30 BSD: sweet_hfs registered
+  [085] @0x0019f4 XNU: mcache: 1 CPU(s), 64 bytes CPU cache line size
+  [086] @0x001a3a XNU: waitForSystemMapper
+  [087] @0x001a65 XNU: Backtrace 0xfffffff007700358 0xfffffff007a69220 0xfffffff007410860 0x0 0x0 0x0 0x0
+  [088] @0x001acf XNU:          can't perform kext scan: no kext summaryA5XELTE: starting device-tree platform expert
+  [089] @0x001b45 XNU: mbinit: done [64 MB total pool size, (42/21) split]
+  [090] @0x001b90 XNU: dlil_init: Waiting for all the create dlil kernel threads to get scheduled at least once.
+  [091] @0x001c01 XNU: dlil_init: All the created dlil kernel threads have been scheduled at least once. Proceeding.
+  [092] @0x001c76 XNU: M30 BSD: calling bsd_autoconf
+  [093] @0x001cab XNU: IOResources: not registry member at registerService()
+  [094] @0x001cf8 XNU: M30 BSD: bsd_autoconf returned
+  [095] @0x001d2e XNU: ifnet_attach: All kernel threads created for interface lo0 have been scheduled at least once. Proceeding.
+  [096] @0x001daf XNU: ifnet_attach: Waiting for all kernel threads created for interface gif0 to get scheduled at least once.
+  [097] @0x001e2e XNU: ifnet_attach: All kernel threads created for interface gif0 have been scheduled at least once. Proceeding.
+  [098] @0x001eb0 XNU: skip attaching fsw to lo0 using legacy TX modelifnet_attach: Waiting for all kernel threads created for interface stf0 to get scheduled at least once.
+  [099] @0x001f5e XNU: ifnet_attach: All kernel threads created for interface stf0 have been scheduled at least once. Proceeding.
+  [100] @0x001fe0 XNU: M30 ROOT: IOFindBSDRoot entered
+  [101] @0x002017 XNU: A5XELTE: platform expert registered
+  [102] @0x002052 XNU: SWEET AKS: AppleKeyStore registered (no passcode, unlocked)
+  [103] @0x0020a5 XNU: SWEET WDT: IOWatchdog registered (accepts check-ins, never fires)
+  [104] @0x0020fe XNU: SWEET AMFI: AppleMobileFileIntegrity IOService registered
+  [105] @0x00214f XNU: SWEET SURF: IOCoreSurfaceRoot registered
+  [106] @0x00218f XNU: SWEET HID: buttons registered (test every 0 s)
+  [107] @0x0021d5 XNU: SWEET HID: touch registered
+  [108] @0x002208 XNU: SWEET FB: AppleCLCD 1080x2340 stride 4320 at 0xec000000, default surface 1, presented as 1080x2340
+  [109] @0x002282 XNU: A5XELTE FB: requested 30 Hz, effective 30 Hz, copy timing on
+  [110] @0x0022d6 XNU: M30 ROOT: waitForMatchingService(IOBSD) returned service
+  [111] @0x002326 XNU: M30 ROOT: A5XELTE keys/emmc stage (rdBootVar='emmcroot0')
+  [112] @0x002377 XNU: M30LTE KEYS: GPA1 con=0 dat=0xe0 pud=0x11111 (read only)
+  [113] @0x0023c7 XNU: A5XELTE eMMC: host ctrl=10 status=8906 clk=1 hcon=8e42541
+  [114] @0x002418 XNU: A5XELTE eMMC: GPT USERDATA first=10729472 sectors=111403008 writable
+  [115] @0x002474 XNU: M30 ROOT: A5XELTE keys/emmc stage done (rdBootVar='emmcroot0')
+  [116] @0x0024ca XNU: A5XELTE eMMC: GPT USERDATA first=10729472 sectors=111403008 writable
+  [117] @0x002526 XNU: A5XELTE eMMC: /dev/emmcroot0 ready, GPT USERDATA writable
+  [118] @0x002577 XNU: BSD root: emmcroot0, major 1, minor 0
+  [119] @0x0025b4 XNU: jnl: b(1, 0): replay_journal: from: 6159360 to: 6448128 (joffset 0xa2000)
+  [120] @0x002615 XNU: jnl: b(1, 0): journal replay done.
+  [121] @0x00264f XNU: hfs: mounted iOSRoot on device b(1, 0)
+  [122] @0x00268d XNU: A5XELTE: root volume is not authenticated (error 25); continuing unsealed
+  [123] @0x0026ee XNU: No POST boot-arg set.
+  [124] @0x00271b XNU: load_init_program: attempting to load /usr/appleinternal/sbin/launchd.development
+  [125] @0x002784 XNU: load_init_program: attempting to load /sbin/launchd
+  [126] @0x0027cf XNU: M30 IRT diag 0: enter state=0 vp=0xfffffff9cd646120 pager=0xfffffffab3babf80 mo=0x14000 kaddr[0:4]=e0010034
+  [127] @0x002852 XNU: panic(cpu 0 caller 0xfffffff0072a6ee4): lock_rw.c:877 Assertion failed: lock->lck_rw_owner != self->ctid : Lock already held state=0x4a0000, owner=0xfffffff8e7110820
+  [128] @0x00290f XNU: Debugger message: panic
+  [129] @0x00293e XNU: Device: D22
+  [130] @0x002961 XNU: Hardware Model: iPhone10,3
+  [131] @0x002993 XNU: ECID: 5357454554000001
+  [132] @0x0029c1 XNU: Boot args: debug=0xc serial=3 cpus=1 keepsyms=1 maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1
+  [133] @0x002a4a XNU: Memory ID: 0x0
+  [134] @0x002a70 XNU: OS release type: Not set yet
+  [135] @0x002aa4 XNU: OS version: Not set yet
+  [136] @0x002ad3 XNU: Kernel version: Darwin Kernel Version 22.6.0: Mon Aug 14 05:06:07 UTC 2023; runner:xnu-8796.141.3
+  [137] @0x002b4c XNU: Kernel UUID: 74557CDC-6C11-306C-A0AF-EA9CC27B33AA
+  [138] @0x002b95 XNU: Boot session UUID: 447595F1-A7D1-46C3-B69E-DAAEFEEE7273
+  [139] @0x002be4 XNU: iBoot version: m30lte-shim
+  [140] @0x002c16 XNU: secure boot?: NO
+  [141] @0x002c3e XNU: roots installed: 0
+  [142] @0x002c68 XNU: Paniclog version: 14
+  [143] @0x002c94 XNU: Kernel text base:  0xfffffff007004000
+  [144] @0x002cd1 XNU: mach_absolute_time: 0x117756f
+  [145] @0x002d06 XNU: Epoch Time:        sec       usec
+  [146] @0x002d3f XNU:   Boot    : 0x00000000 0x0000e2e1
+  [147] @0x002d78 XNU:   Sleep   : 0x00000000 0x00000000
+  [148] @0x002db1 XNU:   Wake    : 0x00000000 0x00000000
+  [149] @0x002dea XNU:   Calendar: 0x00000000 0x000478a9
+  [150] @0x002e23 XNU: Zone info:
+  [151] @0x002e45 XNU:   Zone map: 0xfffffff5e7139000 - 0xfffffffbe7139000
+  [152] @0x002e90 XNU:   . PGZ   : 0xfffffff5e7139000 - 0xfffffff5e71b8000
+  [153] @0x002edb XNU:   . VM    : 0xfffffff5e71b8000 - 0xfffffff6cd80b000
+  [154] @0x002f26 XNU:   . RO    : 0xfffffff6cd80b000 - 0xfffffff71a4d1000
+  [155] @0x002f71 XNU:   . GEN0  : 0xfffffff71a4d1000 - 0xfffffff800b24000
+  [156] @0x002fbc XNU:   . GEN1  : 0xfffffff800b24000 - 0xfffffff8e7177000
+  [157] @0x003007 XNU:   . GEN2  : 0xfffffff8e7177000 - 0xfffffff9cd7ca000
+  [158] @0x003052 XNU:   . GEN3  : 0xfffffff9cd7ca000 - 0xfffffffab3e1e000
+  [159] @0x00309d XNU:   . DATA  : 0xfffffffab3e1e000 - 0xfffffffbe7139000
+  [160] @0x0030e8 XNU:   Metadata: 0xfffffff03b810000 - 0xfffffff041810000
+  [161] @0x003133 XNU:   Bitmaps : 0xfffffff041810000 - 0xfffffff0418f4000
+  [162] @0x00317e XNU:   Extra   : 0 - 0
+  [163] @0x0031a7 XNU: TPIDRx_ELy = {1: 0xfffffff8e7110820  0: 0x0000000000000000  0ro: 0x0000000000000000 }
+  [164] @0x003214 XNU: CORE 0 is the one that panicked. Check the full backtrace for details.
+  [165] @0x003272 XNU: Compressor Info: 0% of compressed pages limit (OK) and 0% of segments limit (OK) with 0 swapfiles and OK swap space
+  [166] @0x0032fd XNU: Panicked task 0xfffffffab3d799a8: 0 pages, 1 threads: pid 1: init
+  [167] @0x003356 XNU: Panicked thread: 0xfffffff8e7110820, backtrace: 0xfffffff5d9206380, tid: 169
+  [168] @0x0033ba XNU: 		  lr: 0xfffffff00728ed18  fp: 0xfffffff5d9206400
+  [169] @0x003404 XNU: 		  lr: 0xfffffff00741ca60  fp: 0xfffffff5d9206420
+  [170] @0x00344e XNU: 		  lr: 0xfffffff00740cdd0  fp: 0xfffffff5d9206470
+  [171] @0x003498 XNU: 		  lr: 0xfffffff00740be08  fp: 0xfffffff5d9206540
+  [172] @0x0034e2 XNU: 		  lr: 0xfffffff00740b5a4  fp: 0xfffffff5d9206550
+  [173] @0x00352c XNU: 		  lr: 0xfffffff00728e298  fp: 0xfffffff5d9206900
+  [174] @0x003576 XNU: 		  lr: 0xfffffff00728f42c  fp: 0xfffffff5d9206980
+  [175] @0x0035c0 XNU: 		  lr: 0xfffffff007a5e844  fp: 0xfffffff5d92069a0
+  [176] @0x00360a XNU: 		  lr: 0xfffffff0072a6ee4  fp: 0xfffffff5d9206a50
+  [177] @0x003654 XNU: 		  lr: 0xfffffff0072a7184  fp: 0xfffffff5d9206a80
+  [178] @0x00369e XNU: 		  lr: 0xfffffff00733c1f8  fp: 0xfffffff5d9206c20
+  [179] @0x0036e8 XNU: 		  lr: 0xfffffff00748da3c  fp: 0xfffffff5d9206c80
+  [180] @0x003732 XNU: 		  lr: 0xfffffff00748a1ec  fp: 0xfffffff5d9206e10
+  [181] @0x00377c XNU: 		  lr: 0xfffffff007489ef4  fp: 0xfffffff5d9206e80
+  [182] @0x0037c6 XNU: 		  lr: 0xfffffff007741a94  fp: 0xfffffff5d9206f00
+  [183] @0x003810 XNU: 		  lr: 0xfffffff0074c8354  fp: 0xfffffff5d9206f70
+  [184] @0x00385a XNU: 		  lr: 0xfffffff0074beba4  fp: 0xfffffff5d9207020
+  [185] @0x0038a4 XNU: 		  lr: 0xfffffff0074bea2c  fp: 0xfffffff5d9207060
+  [186] @0x0038ee XNU: 		  lr: 0xfffffff007358144  fp: 0xfffffff5d92071b0
+  [187] @0x003938 XNU: 		  lr: 0xfffffff00735901c  fp: 0xfffffff5d9207230
+  [188] @0x003982 XNU: 		  lr: 0xfffffff007350f0c  fp: 0xfffffff5d92073e0
+  [189] @0x0039cc XNU: 		  lr: 0xfffffff007350a2c  fp: 0xfffffff5d9207480
+  [190] @0x003a16 XNU: 		  lr: 0xfffffff007353cdc  fp: 0xfffffff5d9207750
+  [191] @0x003a60 XNU: 		  lr: 0xfffffff0073524a4  fp: 0xfffffff5d9207770
+  [192] @0x003aaa XNU: 		  lr: 0xfffffff007787854  fp: 0xfffffff5d92079a0
+  [193] @0x003af4 XNU: 		  lr: 0xfffffff0077801ac  fp: 0xfffffff5d9207b10
+  [194] @0x003b3e XNU: 		  lr: 0xfffffff007783fe4  fp: 0xfffffff5d9207bc0
+  [195] @0x003b88 XNU: 		  lr: 0xfffffff007785228  fp: 0xfffffff5d9207c30
+  [196] @0x003bd2 XNU: 		  lr: 0xfffffff0077858f8  fp: 0xfffffff5d9207cd0
+  [197] @0x003c1c XNU: 		  lr: 0xfffffff007785720  fp: 0xfffffff5d9207e00
+  [198] @0x003c66 XNU: 		  lr: 0xfffffff007700e20  fp: 0xfffffff5d9207e40
+  [199] @0x003cb0 XNU: 		  lr: 0xfffffff0077a6730  fp: 0xfffffff5d9207e80
+  [200] @0x003cfa XNU: 		  lr: 0xfffffff0072817ac  fp: 0xfffffff5d9207ee0
+  [201] @0x003d44 XNU: 		  lr: 0xfffffff00740b9c0  fp: 0xfffffff5d9207ef0
+  [202] @0x003d8e XNU: 		  lr: 0xfffffff00740b7fc  fp: 0xfffffff5d9207f20
+  [203] @0x003dd8 XNU: 		  lr: 0xfffffff007410860  fp: 0x0000000000000000
+  [204] @0x003e22 XNU: ** Stackshot Succeeded ** Bytes Traced 5551 (Uncompressed 15696) **
+  [205] @0x003e7d XNU: Original panic string:
+  [206] @0x003eab XNU: panic(cpu 0 caller 0xfffffff0072a6ee4): lock_rw.c:877 Assertion failed: lock->lck_rw_owner != self->ctid : Lock already held state=0x4a0000, owner=0xfffffff8e7110820
+  [207] @0x003f68 XNU: handshake structure not initialized
+  [208] @0x003fa3 XNU: Please go to https://panic.apple.com to report this panic
+  ISSUE: gap at 0x0: skipped 9 bytes

@@ -1,5 +1,5 @@
 diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
-index e799c9a..576d909 100644
+index e799c9a..576d90a 100644
 --- a/osfmk/vm/vm_fault.c
 +++ b/osfmk/vm/vm_fault.c
 @@ -108,6 +108,8 @@
@@ -11,7 +11,7 @@ index e799c9a..576d909 100644
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,330 @@
+@@ -140,9 +142,343 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -35,6 +35,12 @@ index e799c9a..576d909 100644
 + * shared cache local-symbol table and setting it to 3 (internal release) in
 + * the already-faulted page.  Only the in-memory page is modified; the file on
 + * disk is never written.  Strictly after cs_validate_page(); no check weakened.
++ *
++ * The DSC symbol scan uses vn_rdwr() and MUST NOT run in the page-fault path:
++ * the object lock is held there and a vnode read recurses on it (v34 panic at
++ * load_init_program).  A one-shot kernel thread performs the read-only scan;
++ * the fault path only patches an already-faulted page when the file offset is
++ * known.
 + */
 +#define M30_IRT_STATE_NEED_DSC   0
 +#define M30_IRT_STATE_NEED_SYM   1
@@ -47,6 +53,7 @@ index e799c9a..576d909 100644
 +static int       m30_irt_last_err = 0;
 +static uint32_t  m30_irt_diag_seen = 0;
 +static int       m30_irt_retriggered = 0;   /* replay once after XCTEST patch */
++static int       m30_irt_thread_started = 0;
 +
 +/* One-shot diagnostics: every distinct failure reason is printed at most once
 + * so the ramoops pmsg ring is not flooded. */
@@ -56,6 +63,12 @@ index e799c9a..576d909 100644
 +        printf("M30 IRT diag %d: " fmt, (n), ##__VA_ARGS__);           \
 +    }                                                                   \
 +} while (0)
++
++/* <sys/vnode.h> is not self-contained in this build (uid_t/gid_t unknown). */
++extern int vnode_ref(vnode_t);
++extern void vnode_rele(vnode_t);
++
++static void m30_irt_worker(void *param, wait_result_t wr);
 +
 +static int
 +m30_irt_read(vnode_t vp, uint64_t off, void *buf, size_t len)
@@ -81,120 +94,40 @@ index e799c9a..576d909 100644
 +	return 0;
 +}
 +
++/* Deferred, read-only DSC symbol scan.  Runs without the vm_object lock. */
 +static void
-+m30_internal_release_fixup(vnode_t vp, memory_object_t pager,
-+    uint64_t mo_offset, void *kaddr)
++m30_irt_worker(void *param, wait_result_t wr __unused)
 +{
 +	static const char symname[] = "_internal_release_type";
++	vnode_t vp = (vnode_t)param;
 +	char   *hdr = NULL;
 +	char   *lsi = NULL;
 +	char   *buf = NULL;
 +	char   *maps = NULL;
-+	vm_object_t backing = VM_OBJECT_NULL;
-+	memory_object_offset_t backing_off = 0;
++	size_t  chunk = 4096;
 +	uint64_t ls_off = 0, sym_vmaddr = 0, file_off = 0;
 +	uint32_t map_off = 0, map_cnt = 0, nlist_off = 0, nlist_cnt = 0;
-+	uint32_t str_off = 0, str_size = 0;
-+	uint32_t found_strx = 0;
-+	size_t  chunk = 4096;   /* one page: Z_NOWAIT must not fail here */
++	uint32_t str_off = 0, str_size = 0, found_strx = 0;
 +	int     found = 0, i;
-+
-+	M30_IRT_DIAG(0, "enter state=%d vp=%p pager=%p mo=0x%llx "
-+	    "kaddr[0:4]=%02x%02x%02x%02x\n", m30_irt_state, (void *)vp,
-+	    (void *)pager, (unsigned long long)mo_offset,
-+	    ((unsigned char *)kaddr)[0], ((unsigned char *)kaddr)[1],
-+	    ((unsigned char *)kaddr)[2], ((unsigned char *)kaddr)[3]);
-+
-+	if (m30_irt_state >= M30_IRT_STATE_DONE || kaddr == NULL) {
-+		return;
-+	}
-+
-+	/* The dyld shared cache is normally mapped through the dyld pager, for
-+	 * which vnode_pager_lookup_vnode() returns NULL.  Recover the real file
-+	 * vnode through the pager's generic backing-object callback. */
-+	if (vp == NULL && pager != NULL) {
-+		if (memory_object_backing_object(pager, mo_offset,
-+		    &backing, &backing_off) &&
-+		    backing != VM_OBJECT_NULL && backing->pager != NULL) {
-+			vp = vnode_pager_lookup_vnode(backing->pager);
-+			M30_IRT_DIAG(1, "backing=%p backing_pager=%p -> vnode=%p "
-+			    "boff=0x%llx\n", (void *)backing, (void *)backing->pager,
-+			    (void *)vp, (unsigned long long)backing_off);
-+		} else {
-+			M30_IRT_DIAG(1, "no backing object (pager=%p)\n",
-+			    (void *)pager);
-+		}
-+	}
-+	if (vp == NULL) {
-+		M30_IRT_DIAG(2, "no vnode, cannot parse DSC\n");
-+		return;
-+	}
-+
-+	/* Already know the file offset: patch when that page faults in. */
-+	if (m30_irt_state == M30_IRT_STATE_HAVE_OFF) {
-+		if (mo_offset <= m30_irt_file_offset &&
-+		    mo_offset + PAGE_SIZE > m30_irt_file_offset) {
-+			size_t po = (size_t)(m30_irt_file_offset - mo_offset);
-+			if (po + sizeof(uint32_t) <= PAGE_SIZE) {
-+				uint32_t *loc = (uint32_t *)((char *)kaddr + po);
-+				printf("M30 IRT: patched _internal_release_type "
-+				    "off 0x%llx (%u -> 3)\n",
-+				    (unsigned long long)m30_irt_file_offset, *loc);
-+				*loc = 3;
-+				m30_irt_state = M30_IRT_STATE_DONE;
-+			}
-+		}
-+		return;
-+	}
-+
-+	/* Need DSC: probe vnode header for "dyld_v" magic. */
-+	if (m30_irt_state == M30_IRT_STATE_NEED_DSC) {
-+		hdr = kalloc_data(chunk, Z_NOWAIT);
-+		if (hdr == NULL) {
-+			M30_IRT_DIAG(19, "header buffer alloc failed\n");
-+			return;
-+		}
-+		if (m30_irt_read(vp, 0, hdr, 96) != 0) {
-+			M30_IRT_DIAG(3, "header probe read failed err=%d\n",
-+			    m30_irt_last_err);
-+			kfree_data(hdr, chunk);
-+			return;
-+		}
-+		if (memcmp(hdr, "dyld_v", 6) != 0) {
-+			M30_IRT_DIAG(4, "no dyld magic: %02x%02x%02x%02x\n",
-+			    (unsigned char)hdr[0], (unsigned char)hdr[1],
-+			    (unsigned char)hdr[2], (unsigned char)hdr[3]);
-+			kfree_data(hdr, chunk);
-+			return;
-+		}
-+		M30_IRT_DIAG(5, "DSC magic found at vnode=%p\n", (void *)vp);
-+		m30_irt_state = M30_IRT_STATE_NEED_SYM;
-+		kfree_data(hdr, chunk);
-+	}
-+
-+	/* Need symbol: parse local symbol table via vnode reads. */
-+	hdr = kalloc_data(chunk, Z_NOWAIT);
-+	lsi = kalloc_data(chunk, Z_NOWAIT);
-+	buf = kalloc_data(chunk, Z_NOWAIT);
-+	maps = kalloc_data(chunk, Z_NOWAIT);
-+	if (hdr == NULL || lsi == NULL || buf == NULL || maps == NULL) {
-+		M30_IRT_DIAG(20, "symbol buffers alloc failed hdr=%p lsi=%p "
-+		    "buf=%p maps=%p\n", (void *)hdr, (void *)lsi,
-+		    (void *)buf, (void *)maps);
-+		m30_irt_state = M30_IRT_STATE_FAILED;
-+		goto out;
-+	}
 +
 +	/* dyld_cache_header: mappingOffset@16, mappingCount@20,
 +	 * localSymbolsOffset@72 (all little-endian). */
++	hdr = kalloc_data(chunk, Z_NOWAIT);
++	if (hdr == NULL) {
++		M30_IRT_DIAG(19, "header buffer alloc failed\n");
++		m30_irt_state = M30_IRT_STATE_FAILED;
++		goto out;
++	}
 +	if (m30_irt_read(vp, 0, hdr, 96) != 0) {
-+		M30_IRT_DIAG(6, "main header read failed err=%d\n",
++		M30_IRT_DIAG(3, "header read failed err=%d\n",
 +		    m30_irt_last_err);
 +		m30_irt_state = M30_IRT_STATE_FAILED;
 +		goto out;
 +	}
 +	if (memcmp(hdr, "dyld_v", 6) != 0) {
-+		M30_IRT_DIAG(7, "main header magic mismatch\n");
++		M30_IRT_DIAG(4, "no dyld magic: %02x%02x%02x%02x\n",
++		    (unsigned char)hdr[0], (unsigned char)hdr[1],
++		    (unsigned char)hdr[2], (unsigned char)hdr[3]);
 +		m30_irt_state = M30_IRT_STATE_FAILED;
 +		goto out;
 +	}
@@ -204,6 +137,18 @@ index e799c9a..576d909 100644
 +	M30_IRT_DIAG(8, "header map_off=0x%x map_cnt=%u ls_off=0x%llx\n",
 +	    map_off, map_cnt, (unsigned long long)ls_off);
 +	if (ls_off == 0 || map_off == 0 || map_cnt == 0) {
++		M30_IRT_DIAG(24, "header has no symbol table\n");
++		m30_irt_state = M30_IRT_STATE_FAILED;
++		goto out;
++	}
++
++	lsi  = kalloc_data(chunk, Z_NOWAIT);
++	buf  = kalloc_data(chunk, Z_NOWAIT);
++	maps = kalloc_data(chunk, Z_NOWAIT);
++	if (lsi == NULL || buf == NULL || maps == NULL) {
++		M30_IRT_DIAG(20, "symbol buffers alloc failed lsi=%p "
++		    "buf=%p maps=%p\n", (void *)lsi, (void *)buf,
++		    (void *)maps);
 +		m30_irt_state = M30_IRT_STATE_FAILED;
 +		goto out;
 +	}
@@ -319,30 +264,98 @@ index e799c9a..576d909 100644
 +	    "file off 0x%llx\n", (unsigned long long)sym_vmaddr,
 +	    (unsigned long long)file_off);
 +
-+	/* Patch immediately if the current page is the target. */
-+	if (mo_offset <= file_off && mo_offset + PAGE_SIZE > file_off) {
-+		size_t po = (size_t)(file_off - mo_offset);
-+		if (po + sizeof(uint32_t) <= PAGE_SIZE) {
-+			uint32_t *loc = (uint32_t *)((char *)kaddr + po);
-+			printf("M30 IRT: patched _internal_release_type "
-+			    "off 0x%llx (%u -> 3)\n",
-+			    (unsigned long long)file_off, *loc);
-+			*loc = 3;
-+			m30_irt_state = M30_IRT_STATE_DONE;
-+		}
-+	}
-+
 +out:
 +	if (hdr != NULL)  kfree_data(hdr, chunk);
 +	if (lsi != NULL)  kfree_data(lsi, chunk);
 +	if (buf != NULL)  kfree_data(buf, chunk);
 +	if (maps != NULL) kfree_data(maps, chunk);
++	if (vp != NULL)   vnode_rele(vp);
++}
++
++/* Called in the page-fault path: no vnode I/O, only in-memory patching. */
++static void
++m30_internal_release_fixup(vnode_t vp, memory_object_t pager,
++    uint64_t mo_offset, void *kaddr)
++{
++	vm_object_t backing = VM_OBJECT_NULL;
++	memory_object_offset_t backing_off = 0;
++	kern_return_t kr;
++	thread_t th = THREAD_NULL;
++
++	M30_IRT_DIAG(0, "enter state=%d vp=%p pager=%p mo=0x%llx "
++	    "kaddr[0:4]=%02x%02x%02x%02x\n", m30_irt_state, (void *)vp,
++	    (void *)pager, (unsigned long long)mo_offset,
++	    ((unsigned char *)kaddr)[0], ((unsigned char *)kaddr)[1],
++	    ((unsigned char *)kaddr)[2], ((unsigned char *)kaddr)[3]);
++
++	if (m30_irt_state >= M30_IRT_STATE_DONE || kaddr == NULL) {
++		return;
++	}
++
++	/* Recover the DSC file vnode from the dyld pager's backing object. */
++	if (vp == NULL && pager != NULL) {
++		if (memory_object_backing_object(pager, mo_offset,
++		    &backing, &backing_off) &&
++		    backing != VM_OBJECT_NULL && backing->pager != NULL) {
++			vp = vnode_pager_lookup_vnode(backing->pager);
++			M30_IRT_DIAG(1, "backing=%p backing_pager=%p -> vnode=%p "
++			    "boff=0x%llx\n", (void *)backing,
++			    (void *)backing->pager, (void *)vp,
++			    (unsigned long long)backing_off);
++		} else {
++			M30_IRT_DIAG(2, "no backing object (pager=%p)\n",
++			    (void *)pager);
++		}
++	}
++	if (vp == NULL) {
++		M30_IRT_DIAG(25, "no vnode, cannot parse DSC\n");
++		return;
++	}
++
++	/* File offset known: patch only this already-faulted in-memory page. */
++	if (m30_irt_state == M30_IRT_STATE_HAVE_OFF) {
++		if (mo_offset <= m30_irt_file_offset &&
++		    mo_offset + PAGE_SIZE > m30_irt_file_offset) {
++			size_t po = (size_t)(m30_irt_file_offset - mo_offset);
++			if (po + sizeof(uint32_t) <= PAGE_SIZE) {
++				uint32_t *loc = (uint32_t *)((char *)kaddr + po);
++				printf("M30 IRT: patched _internal_release_type "
++				    "off 0x%llx (%u -> 3)\n",
++				    (unsigned long long)m30_irt_file_offset, *loc);
++				*loc = 3;
++				m30_irt_state = M30_IRT_STATE_DONE;
++			}
++		}
++		return;
++	}
++
++	/* Defer the read-only DSC symbol scan outside the object lock. */
++	if (m30_irt_state == M30_IRT_STATE_NEED_DSC &&
++	    !m30_irt_thread_started) {
++		if (vnode_ref(vp) == 0) {
++			kr = kernel_thread_start_priority(
++			    (thread_continue_t)m30_irt_worker, (void *)vp,
++			    95 /* MAXPRI_KERNEL */, &th);
++			if (kr == KERN_SUCCESS) {
++				m30_irt_thread_started = 1;
++				thread_deallocate(th);
++				M30_IRT_DIAG(21, "worker started vp=%p\n",
++				    (void *)vp);
++			} else {
++				vnode_rele(vp);
++				M30_IRT_DIAG(22, "worker start failed kr=%d\n",
++				    kr);
++			}
++		} else {
++			M30_IRT_DIAG(23, "vnode_ref failed vp=%p\n", (void *)vp);
++		}
++	}
 +}
 +
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8010,23 @@
+@@ -7687,6 +8023,24 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  
@@ -356,6 +369,7 @@ index e799c9a..576d909 100644
 +			m30_irt_file_offset = 0;
 +			m30_irt_last_err = 0;
 +			m30_irt_diag_seen = 0;
++			m30_irt_thread_started = 0;
 +			printf("M30 IRT: retrigger after XCTEST patch (total %lu)\n",
 +			    m30_xctest_patch_count);
 +		}

@@ -1085,3 +1085,20 @@ authorization for a BOOT-only test of candidate v6.
   focused tests except inapplicable 0417).
 - NEXT: BOOT-only flash v34, one boot, TWRP capture, read IRT diagnostics.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v34 physical: recursive lock panic; v35 deferred scan
+
+- BOOT-only flash of `shim-boot.img`
+  `24486a2652dbc9360da1caa6e747757a44aea111aef936e6b1b710ca88f66cf4`; one boot;
+  forced back to TWRP; pstore
+  `13bd06ba44c5cd36d94ac657fa87f51246299f0c3315d2790a55b53720d7443b`
+  (16,372 B, 209 records).
+- KERNEL PANIC before userspace: after `M30 IRT diag 0` (vp non-NULL,
+  mo=0x14000), `lock_rw.c:877 Assertion failed: lock->lck_rw_owner != self->ctid`
+  at `load_init_program`. Inline `vn_rdwr()` recursed on the held vm_object lock.
+- v35 patch 0426: DSC symbol scan moved to a one-shot deferred kernel thread
+  (`kernel_thread_start_priority`, `vnode_ref`/`vnode_rele`); fault path only
+  patches the in-memory page once the file offset is known. Standalone syntax
+  check clean; all focused tests pass with v34 panic evidence and lock model.
+- NEXT: CI -> validate -> package v35 -> BOOT-only flash -> capture pstore.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.

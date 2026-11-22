@@ -23,6 +23,7 @@ PSTORE_V30 = ROOT / "validation/physical-boot-test/20261122-ios-v30-boot/raw/pms
 PSTORE_V31 = ROOT / "validation/physical-boot-test/20261122-ios-v31-boot/raw/pmsg-ramoops-0"
 PSTORE_V32 = ROOT / "validation/physical-boot-test/20261122-ios-v32-boot/raw/pmsg-ramoops-0"
 PSTORE_V33 = ROOT / "validation/physical-boot-test/20261122-ios-v33-boot/raw/pmsg-ramoops-0"
+PSTORE_V34 = ROOT / "validation/physical-boot-test/20261122-ios-v34-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -56,7 +57,7 @@ def main():
     # backing-object callback, and emit one-shot failure diagnostics.
     assert "memory_object_backing_object(pager, mo_offset," in t
     assert "vnode_pager_lookup_vnode(backing->pager)" in t
-    assert "M30_IRT_DIAG(2, \"no vnode, cannot parse DSC" in t
+    assert "M30_IRT_DIAG(25, \"no vnode, cannot parse DSC" in t
     assert t.count("M30_IRT_DIAG(") >= 20, "need diagnostics at every failure point"
     assert "m30_irt_diag_seen & (1U << (n))" in t, "diagnostics must be one-shot"
     assert "m30_irt_last_err = err" in t, "must record vn_rdwr errors"
@@ -73,6 +74,15 @@ def main():
     assert "size_t  chunk = 4096;" in t
     assert 'M30_IRT_DIAG(19, "header buffer alloc failed' in t
     assert 'M30_IRT_DIAG(20, "symbol buffers alloc failed' in t
+    # v35: vn_rdwr() in the page-fault path recursed on the vm_object lock and
+    # panicked at load_init_program.  The read-only DSC scan must be deferred
+    # to a kernel thread; only the in-memory page patch stays in the fault path.
+    assert "kernel_thread_start_priority" in t
+    assert "m30_irt_worker" in t
+    assert "vnode_ref(vp) == 0" in t
+    assert "vnode_rele(vp)" in t
+    assert "m30_irt_thread_started = 0;" in t
+    assert "no vnode I/O, only in-memory patching" in t
 
     for bad in ("cs_enforcement_disable", "amfi_get_out_of_my_way",
                 "launchd_unsecure_cache", "CSDebugDisable",
@@ -116,6 +126,14 @@ def main():
     assert b"M30 IRT diag 1:" not in d33
     assert b"M30 IRT diag 3:" not in d33
     print("[PASS] v33 pstore: retrigger + diag 0 captured; vnode non-NULL; next step silent")
+
+    # --- physical evidence: v34 panicked in the fault path. ---
+    d34 = PSTORE_V34.read_bytes()
+    assert b"M30 IRT diag 0: enter state=0 vp=0x" in d34
+    assert b"load_init_program: attempting to load /sbin/launchd" in d34
+    assert b"lock_rw.c:877 Assertion failed: lock->lck_rw_owner != self->ctid" in d34
+    assert b"M30 IRT diag 3:" not in d34 and b"M30 IRT: found" not in d34
+    print("[PASS] v34 pstore: vn_rdwr in fault path panicked on recursive object lock")
 
     # --- behavioural model: retrigger replays diagnostics after XCTest. ---
     state = {"seen": 0}
@@ -261,6 +279,34 @@ def main():
         out = subprocess.run([str(b)], check=True, capture_output=True, text=True).stdout
     assert "direct=NULL" in out and "fallback=0x4000" in out, out
     print("[PASS] model: dyld-pager backing object recovers the DSC file vnode")
+
+    # --- behavioural model: deferred scan keeps vnode I/O off the fault path. ---
+    class Lock:
+        def __init__(self): self.held = False
+        def acquire(self):
+            if self.held:
+                raise RuntimeError("recursive object lock")
+            self.held = True
+        def release(self): self.held = False
+
+    obj_lock = Lock()
+    log = []
+
+    def fault_path():
+        obj_lock.acquire()
+        try:
+            log.append("enter")             # diag 0 / patch decision
+            return "defer"                  # no vnode read here
+        finally:
+            obj_lock.release()
+
+    def worker():
+        log.append("vnode read")            # safe: no object lock held
+
+    assert fault_path() == "defer"
+    worker()
+    assert log == ["enter", "vnode read"], log
+    print("[PASS] model: vnode reads deferred outside the object lock")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 
