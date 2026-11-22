@@ -1040,3 +1040,20 @@ authorization for a BOOT-only test of candidate v6.
   v32 physical evidence and a retrigger model; all focused tests pass.
 - NEXT: CI -> validate -> package v33 -> BOOT-only flash -> capture pstore.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v33 offline complete (MAIN only)
+
+- CI `45031964267` GREEN for `32f3936` (iphoneos, patch 0426 retrigger applied,
+  LSE=0). Kernel
+  `1fd31bc33cc8d5277ed1a95d5c408d2f2755230ac9ec0607cf3d3e2bf1754f20`;
+  payload `1c97fcf2b4628ea6201e4717a457350c1f55c3628d80bc8fb27b48d74647d268`;
+  shim-boot.img `d4f817b5df758b40225b14b497493f8d610bdad8d084f6055ca2515426efab6c`.
+  Entry VA `0xfffffff00740e488`; shim byte-identical to v6/v30/v31/v32.
+- Validators: buildtree PASS, kernel PASS, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging PASS, handoff 18/18, all applicable focused tests PASS
+  (0417 test inapplicable by design).
+- Candidate: `validation/ios-candidate-v33-out/` with README. NOT physically
+  tested.
+- NEXT: BOOT-only flash, one boot, force back to TWRP, capture pstore; read
+  `M30 IRT: retrigger` and following diag/success lines; check SpringBoard.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
