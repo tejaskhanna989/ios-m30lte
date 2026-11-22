@@ -1132,3 +1132,14 @@ authorization for a BOOT-only test of candidate v6.
   Standalone syntax check clean; focused tests extended with v35 evidence.
 - NEXT: CI -> validate -> package v36 -> BOOT-only flash -> capture pstore.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v36 offline complete (MAIN only)
+
+- CI `45040004275` GREEN. Kernel `c3914e69eb2d6a5bc2c11c00d2e202848487a1b88609abf496a390b6bd0caea5`;
+  payload `4fd22d4458015d3bdf3cbfe6df0022f01d04a69f3dea5d08eb3b8151586109d7`;
+  shim-boot.img `2d629c034d114ff88b3dab71d75bea80088fee5868e804c55ef0bffc81c0817f`.
+- Validators all PASS (platform 9/9, CPU 17/17, ADT 22/22, handoff 18/18,
+  focused tests except inapplicable 0417). Standalone syntax check clean.
+- NEXT: BOOT-only flash v36, one boot, TWRP capture; expect .symbols open and
+  symbol lookup diagnostics.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
