@@ -916,3 +916,30 @@ authorization for a BOOT-only test of candidate v6.
 - v30 physical evidence README committed; NOTES updated.
 - NEXT: commit, CI, validate, package v31, BOOT-only flash, one boot, capture pstore.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v31 include fix + patch review (MAIN only)
+
+- v31 commits now on `main`: `ce2e0ed62cbc88ef9ead173ada400f7fd21f810a`
+  (initial 0426) and `812198a0a87cac5d154fe3cd749b2122b14582b8` (include fix).
+- CI `45020265004` was cancelled by concurrency after `812198a`; **do not treat
+  it as a valid result**. Active CI: `45021301760` for `812198a`.
+- Compile fix: patch 0426 now includes `<sys/vnode.h>`, `<sys/uio.h>` and
+  `<sys/kauth.h>` explicitly. `vn_rdwr()` needs `UIO_READ`/`UIO_SYSSPACE` and
+  `kauth_cred_get()`; `sys/vnode.h` does not provide them transitively.
+  `git apply --check` and `tools/test_m30_internal_release_type.py` pass locally.
+- Verified DSC offsets against Apple dyld tag `dyld-852` (iOS 16):
+  `dyld_cache_header.mappingOffset@16` (u32), `mappingCount@20` (u32),
+  `localSymbolsOffset@72` (u64), `dyld_cache_local_symbols_info` fields at
+  +0/+4/+8/+12 (u32), `nlist_64` 16 bytes, `dyld_cache_mapping_info` 32 bytes.
+  The patch's 64-bit read at +72 is correct; the test model matches it.
+- Lock review: the fault path holds the mmap vm_object lock; `vn_rdwr()` reads
+  via the vnode's separate UBC object, so no same-object relock is expected.
+  `vn_rdwr()` may still block on uncached I/O — physical boot is the only proof.
+- Still unverified: whether the on-device DSC contains local symbols (no
+  `.symbols` file on device); if `localSymbolsOffset==0`, patch 0426 will
+  fail silently. Current patch prints success but no failure reason; if v31
+  boot shows no `M30 IRT` lines and the assertion persists, add one-shot
+  failure diagnostics as the next offline change.
+- NEXT: CI `45021301760` green -> validate -> package v31 -> BOOT-only flash,
+  one boot, immediate pstore capture/decode.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
