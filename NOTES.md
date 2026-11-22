@@ -871,3 +871,18 @@ authorization for a BOOT-only test of candidate v6.
   or `os_variant_has_internal_content` fix-up.
 - NEXT: commit, CI, validate, package v30, BOOT-only flash, one boot, capture pstore.
 - NO UI/lock-screen success claimed. BOOT readback remains SKIPPED.
+
+### v30 offline complete (2026-11-22)
+- Commit `d80d5565665321ef9169c793c4c0616a990f9132` on main: regenerated patch 0425
+  + updated test. v29 physical evidence committed at `9df8a628e6478f164ee8ac482079f5120251b224`.
+- CI `45017347740` GREEN (iphoneos, LSE=0, regenerated 0425 applied, no one-shot guard).
+- Kernel `818b741d27a8c39b8c202b4bfc9c2c7135a58b7c9e3288bf49a66f7cdb5e30b5`;
+  payload `dab66b30c039cf41140fad70441d90acf928f101118c1360b019c29cba26518f`;
+  shim-boot.img `8bcd7d2d8898e0123a42c9f4b1ffff5a1fb04b14e744f72f13f125440d6fff68`.
+- Validators: buildtree PASS, kernel PASS, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging PASS, handoff 18/18, GIC 5/6 (known inapplicable), all 11 focused tests
+  PASS. Shim byte-identical to v6.
+- Candidate: `validation/ios-candidate-v30-out/` with README. NOT physically tested.
+- NEXT: BOOT-only flash, one boot, immediate pstore capture/decode. If assertion
+  persists, implement `_internal_release_type = 3` fix-up (other half of LiveContainer bypass).
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
