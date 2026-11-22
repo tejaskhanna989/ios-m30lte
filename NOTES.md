@@ -1220,3 +1220,14 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: CI -> validate -> package v39 -> BOOT-only flash -> capture pstore;
   expect a distinct `.symbols` vnode and a real symbol table (`diag 30 ls_off!=0`).
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v39 offline complete (MAIN only)
+
+- CI `45048935684` GREEN. Kernel `7ca0b8f2e5f3b6abb9ce63ed2e56a7d1f8e02ea81cb31bddcdee569af6295552`;
+  payload `d36326acc4bfab9d179e27d9ea55b5d954122af11ea8b8b2dcce1898a88c720a`;
+  shim-boot.img `85c6125fd81b94da4cfd59b1f6ee44626a2ce970e7e45e6ca061be919423aa47`.
+- Validators all PASS (platform 9/9, CPU 17/17, ADT 22/22, handoff 18/18,
+  focused tests except inapplicable 0417). Syntax check clean.
+- NEXT: BOOT-only flash v39, capture pstore; expect distinct .symbols vnode and
+  `diag 30` with non-zero ls_off.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
