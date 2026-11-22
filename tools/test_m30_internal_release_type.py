@@ -215,7 +215,7 @@ def main():
     assert b"M30 IRT diag 8: header map_off=0x200 map_cnt=1 ls_off=0x0" in d39
     assert b"M30 IRT diag 31: vn_getpath plen=65 strlen=64 path=" in d39
     assert b"dyld_shared_cache_arm64.31\x00" in d39
-    assert b"M30 IRT diag 27: open failed path=" in d39
+    assert b"M30 IRT diag 27: open .symbols failed path=" in d39
     assert b"dyld_shared_cache_arm64.31.symbols" in d39
     print("[PASS] v39 pstore: subcache .31 has no .symbols; strip index for v40")
 
