@@ -17,4 +17,4 @@ diff --git a/bsd/kern/mach_loader.c b/bsd/kern/mach_loader.c
 +						}
  						valid = cs_validate_range(vp, NULL, voff, vdata, vsize,
  						    &tainted);
- 						printf("SWEET LDVAL: %s shift %d need %u big %d vsize %u valid %d tainted 0x%x\n",
+ 						if (bigbuf != NULL) {
