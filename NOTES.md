@@ -886,3 +886,33 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: BOOT-only flash, one boot, immediate pstore capture/decode. If assertion
   persists, implement `_internal_release_type = 3` fix-up (other half of LiveContainer bypass).
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v30 physical result + v31 _internal_release_type fix (MAIN only)
+
+### v30 physical (commit `a02f1978987413f93ff97d124de04bcdbf8d916e`)
+- pstore `e21a9dc50314ac1366a7db81baa904d81d372fc593669ff484323fc758ede4f9`.
+- `[044] M30 XCTEST: patched ascii off 0x42a4000+1164 (total 1)` — all-copy fix
+  fired, but only ONE occurrence exists in the shared cache. SpringBoard[27] still
+  aborted with the same NSInternalInconsistencyException.
+- Conclusion: string patching (LiveContainer part 2) alone is insufficient. The
+  check requires BOTH bypasses. Re-read d2a329d: part 1 is `_internal_release_type=3`
+  (the original os_variant_has_internal_content hook), part 2 is XCTestConfiguration.
+
+### v31 offline change (new patch 0426)
+- Added `xnu/patches-minimal/0426-m30-internal-release-type.patch`:
+  - Adds `#include <sys/vnode.h>` (needed for vn_rdwr).
+  - `m30_internal_release_fixup(vnode, mo_offset, kaddr)` called strictly AFTER
+    `cs_validate_page()` and the 0425 fix-up.
+  - State machine: probe vnode header for "dyld_v" magic, parse dyld_cache_header
+    (mappingOffset@16, mappingCount@20, localSymbolsOffset@72), read local symbol
+    info, find "_internal_release_type" in string pool, scan nlist_64 entries for
+    matching n_strx, convert vmaddr to file offset via mapping table, patch the
+    in-memory page uint32 to 3. Read-only file access (UIO_READ only); disk file
+    never written. kalloc Z_NOWAIT; fail-secure.
+  - Applies cleanly on v30 buildtree (ci_45017347740).
+- Added `tools/test_m30_internal_release_type.py`: structure checks (post-validation,
+  read-only, no security bypass), v30 pstore evidence, compiled C model of the
+  DSC local-symbol lookup. ALL TESTS PASS.
+- v30 physical evidence README committed; NOTES updated.
+- NEXT: commit, CI, validate, package v31, BOOT-only flash, one boot, capture pstore.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
