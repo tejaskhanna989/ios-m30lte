@@ -1002,3 +1002,23 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: commit, CI, validate, package v32, BOOT-only flash, one boot, capture
   pstore; read `M30 IRT diag` lines and check SpringBoard progression.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v32 offline complete (MAIN only)
+
+- CI `45027980928` GREEN for `d12154f` (iphoneos, patch 0426 with dyld-pager
+  vnode recovery + 21 one-shot diagnostics applied, LSE=0).
+- Kernel `391cb37910791bd0067db7b6fbcfd89d1b3a5611fa8e6b58340fd7ebfda0c26f`
+  (strings confirm 20 `M30 IRT diag` formats linked); payload
+  `369304987fa922bd049ac259a141073a34dc967255931158e12e4465cb14042c`;
+  shim-boot.img `ba40d65572e87115ba9bd62ef83a5d50c06201e2c393a1a7e7d994b109776068`.
+  Entry VA `0xfffffff00740e488`; shim byte-identical to v6/v30/v31.
+- Validators: buildtree PASS, kernel PASS, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging PASS, handoff 18/18, all applicable focused tests PASS
+  (0417 test inapplicable by design).
+- Candidate: `validation/ios-candidate-v32-out/` with README. NOT physically
+  tested. Device currently USB-disconnected; must be reconnected in TWRP.
+- NEXT: reconnect device, `adb reboot download`, `heimdall detect`, BOOT-only
+  `heimdall flash --BOOT .../shim-boot.img --no-reboot`,
+  `heimdall print-pit --resume` to boot, one boot, force back to TWRP, capture
+  pstore. Read `M30 IRT diag` lines and check SpringBoard progression.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
