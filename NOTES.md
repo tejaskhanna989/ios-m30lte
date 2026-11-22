@@ -957,3 +957,21 @@ authorization for a BOOT-only test of candidate v6.
   and all local tests pass.
 - No kernel/payload built for this attempt; no device operation performed.
   Next: commit/push, trigger a fresh CI run, then validate/package as before.
+
+## 2026-11-22 — v31 offline complete (MAIN only)
+
+- CI `45022958043` GREEN for `e0682cf` (iphoneos, patch 0426 applied, LSE=0).
+  Earlier `45021301760` FAILED due to `<sys/vnode.h>` exported-header issue;
+  fixed by local `vn_rdwr()` prototype.
+- Kernel `d4676b0703b274b3f31fdbe93833a4e3be9954e13cb9ee50a56004d7fe169569`
+  (16,788,896 B); payload `8e0451fdb46330a0952c2e4857d74cff02b4dee46ab869554d651c56568c6516`;
+  shim-boot.img `b9a6ecf59322c5ae1c21d7026f92982af6bf5183635ce6a3be06ead736400b17`.
+  Entry VA `0xfffffff00740e488`; shim byte-identical to v6/v30.
+- Validators: buildtree PASS, kernel PASS, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging PASS, handoff 18/18, all applicable focused tests PASS
+  (0417-dependent test inapplicable by design).
+- Candidate: `validation/ios-candidate-v31-out/` with README. NOT physically tested.
+- NEXT: BOOT-only flash of `shim-boot.img`, one boot, immediate pstore
+  capture/decode; look for `M30 IRT: found/patched` lines and whether
+  SpringBoard passes `+[SpringBoardUI load]`.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
