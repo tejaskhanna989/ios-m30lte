@@ -1,8 +1,8 @@
 diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
-index af10823..4c0ac12 100644
+index af10823..e799c9a 100644
 --- a/osfmk/vm/vm_fault.c
 +++ b/osfmk/vm/vm_fault.c
-@@ -142,6 +142,70 @@ extern void throttle_lowpri_io(int);
+@@ -142,6 +142,82 @@ extern void throttle_lowpri_io(int);
  
  extern struct vnode *vnode_pager_lookup_vnode(memory_object_t);
  
@@ -13,58 +13,70 @@ index af10823..4c0ac12 100644
 + * Genuine iOS SpringBoard loads SpringBoardUI.framework without incident, but
 + * the framework's +load raises NSInternalInconsistencyException when the
 + * Objective-C runtime has no XCTestConfiguration class (rdar://26143166).
-+ * LiveContainer works around the same assertion by temporarily registering
-+ * that class before the probe runs.
++ * LiveContainer works around the same assertion by registering that class
++ * before the probe runs.
 + *
 + * On this reconstructed userspace we cannot inject an Objective-C class from
-+ * the kernel.  Instead, retarget the class-name probe in the already-faulted
-+ * dyld shared cache page to an always-present class name (NSObject).  The
-+ * fix-up is applied AFTER cs_validate_page() has finished and does not skip,
-+ * disable or weaken any signature, hash or AMFI check.  It happens once, on
-+ * the page fault that makes the probe string accessible, so the probe lookup
-+ * sees the new name before any userspace instruction can read it.
++ * the kernel.  Instead, retarget EVERY class-name probe literal in EVERY
++ * already-faulted code-signed page to an always-present class name (NSObject).
++ * The v29 one-shot guard patched only the first page containing the literal
++ * (possibly belonging to a different process), leaving SpringBoard's copy
++ * untouched.  Removing the guard ensures every copy is rewritten as its page
++ * faults in, regardless of which process mapped it.
 + *
-+ * Both the C-string and UTF-16 literal forms are handled because clang emits
-+ * Objective-C class-name probes either way depending on the shared cache.
++ * The fix-up runs strictly AFTER cs_validate_page() and does not skip,
++ * disable or weaken any signature, hash, AMFI, trust-cache or security check.
++ * Both the C-string and UTF-16 literal forms are handled, and every occurrence
++ * within a page is rewritten (not just the first).  Each patch is logged with
++ * the object offset and a running total for physical diagnostics.
 + */
-+static int m30_xctest_probe_fixed = 0;
++static unsigned long m30_xctest_patch_count = 0;
 +
 +static void
-+m30_xctest_probe_fixup(void *page)
++m30_xctest_probe_fixup(void *kaddr, uint64_t page_offset)
 +{
 +	static const char probe_ascii[] = "XCTestConfiguration";
 +	static const char repl_ascii[]  = "NSObject";
 +	static const char probe_utf16[] =
 +	    "X\0C\0T\0e\0s\0t\0C\0o\0n\0f\0i\0g\0u\0r\0a\0t\0i\0o\0n\0";
 +	static const char repl_utf16[]  = "N\0S\0O\0b\0j\0e\0c\0t\0";
-+	char *p = (char *)page;
++	char *p = (char *)kaddr;
 +	size_t i;
 +
-+	if (m30_xctest_probe_fixed || page == NULL) {
++	if (p == NULL) {
 +		return;
 +	}
 +
++	/* ASCII C-string literal: patch EVERY occurrence on this page. */
 +	for (i = 0; i + sizeof(probe_ascii) <= PAGE_SIZE; i++) {
++		if (p[i] != 'X') {
++			continue;
++		}
 +		if (memcmp(p + i, probe_ascii, sizeof(probe_ascii) - 1) == 0 &&
 +		    p[i + sizeof(probe_ascii) - 1] == '\0') {
 +			memcpy(p + i, repl_ascii, sizeof(repl_ascii) - 1);
 +			memset(p + i + sizeof(repl_ascii) - 1, 0,
 +			    sizeof(probe_ascii) - sizeof(repl_ascii));
-+			m30_xctest_probe_fixed = 1;
-+			printf("M30 XCTEST: retargeted SpringBoardUI class probe (ascii)\n");
-+			return;
++			printf("M30 XCTEST: patched ascii off 0x%llx+%zu (total %lu)\n",
++			    (unsigned long long)page_offset, i,
++			    ++m30_xctest_patch_count);
 +		}
 +	}
++
++	/* UTF-16LE NSString literal: patch EVERY occurrence on this page. */
 +	for (i = 0; i + sizeof(probe_utf16) + 1 <= PAGE_SIZE; i++) {
++		if (p[i] != 'X') {
++			continue;
++		}
 +		if (memcmp(p + i, probe_utf16, sizeof(probe_utf16) - 1) == 0 &&
 +		    p[i + sizeof(probe_utf16) - 1] == '\0' &&
 +		    p[i + sizeof(probe_utf16)] == '\0') {
 +			memcpy(p + i, repl_utf16, sizeof(repl_utf16) - 1);
 +			memset(p + i + sizeof(repl_utf16) - 1, 0,
 +			    sizeof(probe_utf16) - sizeof(repl_utf16) - 1);
-+			m30_xctest_probe_fixed = 1;
-+			printf("M30 XCTEST: retargeted SpringBoardUI class probe (utf16)\n");
-+			return;
++			printf("M30 XCTEST: patched utf16 off 0x%llx+%zu (total %lu)\n",
++			    (unsigned long long)page_offset, i,
++			    ++m30_xctest_patch_count);
 +		}
 +	}
 +}
@@ -73,12 +85,12 @@ index af10823..4c0ac12 100644
  uint64_t vm_hard_throttle_threshold;
  
  #if DEBUG || DEVELOPMENT
-@@ -7608,6 +7672,9 @@ vm_page_validate_cs_mapped_slow(
+@@ -7608,6 +7684,9 @@ vm_page_validate_cs_mapped_slow(
  		cs_validate_page(vnode, pager, voff, vdata, vsize,
  		    &validated, &tainted, &nx);
  
 +		/* Userspace class-name fix-up, strictly after validation. */
-+		m30_xctest_probe_fixup(kaddr);
++		m30_xctest_probe_fixup(kaddr, mo_offset);
 +
  		if (block_buf != NULL) {
  			kfree_data(block_buf, CS_16K_BLOCK_SIZE);

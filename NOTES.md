@@ -844,3 +844,30 @@ authorization for a BOOT-only test of candidate v6.
   tests PASS incl. new xctest probe test. Shim region byte-identical to v6.
 - Candidate: `validation/ios-candidate-v29-out/` with README. NOT physically tested.
 - NEXT: BOOT-only flash, one boot, immediate pstore capture/decode; then continue.
+
+## 2026-11-22 — v30: all-copy class-probe fix-up (MAIN only)
+
+### v29 physical result (committed `9df8a628e6478f164ee8ac482079f5120251b224`)
+- pstore `c0407fcea26f2f29d3536f78dca6eef2954b67cb051ede165d6a59b83892b5f1`.
+- `[053] M30 XCTEST: retargeted SpringBoardUI class probe (ascii)` fired, but
+  SpringBoard[27] still crashed with the same NSInternalInconsistencyException.
+- Root cause: patch 0425 had a one-shot flag `m30_xctest_probe_fixed`. It fired
+  on the FIRST page containing the literal (timing suggests logd's page at [052]),
+  leaving SpringBoard's own copy of the string untouched.
+
+### v30 offline change (regenerate patch 0425)
+- Removed one-shot guard. Fix-up now patches EVERY occurrence of the ASCII and
+  UTF-16 `XCTestConfiguration` literal on EVERY code-signed page as it faults in,
+  regardless of which process mapped it. Each patch logs object offset + running
+  total (`M30 XCTEST: patched ascii/utf16 off 0x...+N (total M)`).
+- Still strictly AFTER `cs_validate_page()`; no signature/hash/AMFI/security
+  check weakened.
+- Updated `tools/test_m30_xctest_class_probe.py`: v30 structure checks (no one-shot
+  guard, all-copy patching, diagnostics), v28+v29 pstore evidence, and compiled C
+  model proving 3 copies on one page + second page both patched. ALL TESTS PASS.
+- Re-read LiveContainer d2a329d: bypass has TWO parts — `_internal_release_type=3`
+  (os_variant_has_internal_content) and XCTestConfiguration class registration.
+  If all-copy string patching still fails, next step is a `_internal_release_type`
+  or `os_variant_has_internal_content` fix-up.
+- NEXT: commit, CI, validate, package v30, BOOT-only flash, one boot, capture pstore.
+- NO UI/lock-screen success claimed. BOOT readback remains SKIPPED.
