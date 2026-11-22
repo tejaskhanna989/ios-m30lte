@@ -1231,3 +1231,46 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: BOOT-only flash v39, capture pstore; expect distinct .symbols vnode and
   `diag 30` with non-zero ls_off.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v39 physical: faulted vnode is a dyld4 subcache
+
+- v39 BOOT-only flash succeeded. Boot 1 pstore
+  `1e0ee36ac519b805944fabbfd8fa1f7a7c5bcaeb4061930690cb73c11ae5eff6`
+  (16,372 B, 189 records) stopped in early keybagd boot: no `M30 IRT`,
+  `M30 XCTEST`, or SpringBoard lines.
+- Boot 2 pstore
+  `b4f856651f8f1726f60c26b70f39d785539a5524a81ffd2a9adbfb8c5fc36da2`
+  (16,372 B, 167 records) captured records 151-156: XCTEST retrigger, worker
+  start on the real DSC vnode, `diag 8: header map_off=0x200 map_cnt=1
+  ls_off=0x0`, `diag 31: vn_getpath plen=65 strlen=64
+  path=/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.31`, and
+  `diag 27: open .symbols failed ...
+  dyld_shared_cache_arm64.31.symbols`.
+- Conclusion: the NUL fix worked; the remaining error is a dyld4 subcache
+  index. `.31.symbols` is absent; the main cache companion path has the
+  trailing `.31` removed. SpringBoardUI assertion and SpringBoard crash
+  persist. No UI/lock-screen success. BOOT readback SKIPPED.
+
+## 2026-11-22 — v40 offline complete (MAIN only)
+
+- Patch `0426` strips a trailing `.<digits>` subcache suffix and tries
+  `<base>.symbols`, `<subcache>.symbols`, then `<base>`; the first candidate
+  with a real `localSymbolsOffset` is used. Added a faulted-vnode mapping-table
+  fallback for subcache-resident symbols, 64-bit one-shot diagnostic mask,
+  and new `diag 32/33` evidence. Standalone syntax check clean; focused tests
+  extended with v39 pstore records 151-156 and the subcache-path model.
+- CI `45052304788` GREEN for `ca344a7`. Kernel
+  `fc68ed6ae0cbbc70e76bd795782d27e40478ab507500e0f18ce2f8657699b95e`;
+  payload `5b065a6462bdc5f9d1ed99943e9becc50d30f4d8fa0528a695a5f8f82bd51e40`;
+  shim-boot.img
+  `611625babb5e3dc88bf272e1deadcb1c158cb1c9e115c5be3c334e459ca80391`.
+- Entry VA is now `0xfffffff00740f488` (one page later than v39); the shim
+  consumes the payload header entry, and the handoff mechanism is unchanged.
+- Validators all PASS: buildtree, kernel, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging, handoff 18/18, all applicable focused tests (0417 inapplicable).
+  Shim Image/ELF and the shim region in the BOOT image are byte-identical to
+  the v31 reference.
+- Candidate: `validation/ios-candidate-v40-out/` with README. NOT physically
+  tested. NEXT: BOOT-only flash, capture pstore, expect stripped base path and
+  a distinct `.symbols` vnode with non-zero `ls_off`.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
