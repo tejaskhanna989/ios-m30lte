@@ -1,16 +1,18 @@
 diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
-index e799c9a..758417f 100644
+index e799c9a..5f64f8f 100644
 --- a/osfmk/vm/vm_fault.c
 +++ b/osfmk/vm/vm_fault.c
-@@ -108,6 +108,7 @@
+@@ -108,6 +108,9 @@
  
  #include <sys/codesign.h>
  #include <sys/code_signing.h>
 +#include <sys/vnode.h>       /* vn_rdwr() for DSC symbol lookup */
++#include <sys/uio.h>         /* UIO_READ, UIO_SYSSPACE */
++#include <sys/kauth.h>       /* kauth_cred_get() */
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -143,6 +144,230 @@ extern void throttle_lowpri_io(int);
+@@ -143,6 +146,230 @@ extern void throttle_lowpri_io(int);
  extern struct vnode *vnode_pager_lookup_vnode(memory_object_t);
  
  
@@ -241,7 +243,7 @@ index e799c9a..758417f 100644
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +7912,9 @@ vm_page_validate_cs_mapped_slow(
+@@ -7687,6 +7914,9 @@ vm_page_validate_cs_mapped_slow(
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  
