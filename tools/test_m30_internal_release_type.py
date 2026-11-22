@@ -104,6 +104,12 @@ def main():
     assert 'printf("M30 IRT diag 28: using symbols file vp=%p main=%p' in t
     assert "vnode_open(sympath, 1 /* FREAD */" in t
     assert "vnode_close(fp, 1 /* FREAD */" in t
+    # If the chosen symbols file maps only the main cache but the symbol
+    # lives in a subcache, fall back to the faulted vnode's own mapping table.
+    assert "m30_irt_diag_seen = 0;" in t and "static uint64_t" in t
+    assert "(1ULL << (n))" in t
+    assert "if (!found && fp != vp)" in t
+    assert 'M30_IRT_DIAG(33, "mapped via faulted ' in t
     # v37: retrigger gate, and retry with a later vnode on wrong magic.
     assert "m30_irt_retriggered && !m30_irt_thread_started" in t
     assert "path=%s\\n" in t

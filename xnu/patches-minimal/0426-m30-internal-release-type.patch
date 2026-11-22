@@ -11,7 +11,7 @@ index e799c9a..576d90d 100644
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,474 @@
+@@ -140,9 +142,508 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -51,15 +51,15 @@ index e799c9a..576d90d 100644
 +static int       m30_irt_state = M30_IRT_STATE_NEED_DSC;
 +static uint64_t  m30_irt_file_offset = 0;
 +static int       m30_irt_last_err = 0;
-+static uint32_t  m30_irt_diag_seen = 0;
++static uint64_t  m30_irt_diag_seen = 0;
 +static int       m30_irt_retriggered = 0;   /* replay once after XCTEST patch */
 +static int       m30_irt_thread_started = 0;
 +
 +/* One-shot diagnostics: every distinct failure reason is printed at most once
 + * so the ramoops pmsg ring is not flooded. */
 +#define M30_IRT_DIAG(n, fmt, ...) do {                                  \
-+    if ((m30_irt_diag_seen & (1U << (n))) == 0) {                      \
-+        m30_irt_diag_seen |= (1U << (n));                              \
++    if ((m30_irt_diag_seen & (1ULL << (n))) == 0) {                      \
++        m30_irt_diag_seen |= (1ULL << (n));                              \
 +        printf("M30 IRT diag %d: " fmt, (n), ##__VA_ARGS__);           \
 +    }                                                                   \
 +} while (0)
@@ -366,6 +366,40 @@ index e799c9a..576d90d 100644
 +			break;
 +		}
 +	}
++
++	/* The .symbols companion describes the main cache.  If the symbol lives
++	 * in a dyld4 subcache, fall back to the faulted vnode's own mapping table
++	 * so the resulting file offset is relative to that cache file. */
++	if (!found && fp != vp) {
++		uint32_t vm_map_off, vm_map_cnt;
++
++		if (m30_irt_read(vp, 0, hdr, 96) == 0 &&
++		    memcmp(hdr, "dyld_v", 6) == 0) {
++			vm_map_off = *(uint32_t *)(hdr + 16);
++			vm_map_cnt = *(uint32_t *)(hdr + 20);
++			if (vm_map_off != 0 && vm_map_cnt != 0 &&
++			    m30_irt_read(vp, vm_map_off, maps,
++			        MIN(vm_map_cnt, (uint32_t)(chunk / 32)) * 32) == 0) {
++				for (i = 0;
++				    i < (int)MIN(vm_map_cnt, (uint32_t)(chunk / 32));
++				    i++) {
++					uint64_t maddr = *(uint64_t *)(maps + i * 32);
++					uint64_t msize = *(uint64_t *)(maps + i * 32 + 8);
++					if (sym_vmaddr >= maddr &&
++					    sym_vmaddr < maddr + msize) {
++						file_off = *(uint64_t *)(maps + i * 32 + 16) +
++						    (sym_vmaddr - maddr);
++						found = 1;
++						M30_IRT_DIAG(33, "mapped via faulted "
++						    "cache vp=%p off=0x%llx\n",
++						    (void *)vp,
++						    (unsigned long long)file_off);
++						break;
++					}
++				}
++			}
++		}
++	}
 +	if (!found) {
 +		M30_IRT_DIAG(18, "no mapping contains vmaddr 0x%llx (cnt=%u)\n",
 +		    (unsigned long long)sym_vmaddr, map_cnt);
@@ -486,7 +520,7 @@ index e799c9a..576d90d 100644
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8154,24 @@
+@@ -7687,6 +8188,24 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  
