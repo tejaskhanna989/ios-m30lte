@@ -1270,7 +1270,48 @@ authorization for a BOOT-only test of candidate v6.
   packaging, handoff 18/18, all applicable focused tests (0417 inapplicable).
   Shim Image/ELF and the shim region in the BOOT image are byte-identical to
   the v31 reference.
-- Candidate: `validation/ios-candidate-v40-out/` with README. NOT physically
-  tested. NEXT: BOOT-only flash, capture pstore, expect stripped base path and
-  a distinct `.symbols` vnode with non-zero `ls_off`.
+- Candidate: `validation/ios-candidate-v40-out/` with README. Physically tested
+  below; BOOT-only flash, no readback, USERDATA/SYSTEM/RECOVERY untouched.
+
+## 2026-11-22 — v40 physical: companion opens, global symbol scan is ambiguous
+
+- Boot 1 pstore
+  `fcf2a2f45d54dbfd2024c30cba93c2f4106d5864c923c52db7821d8e625701cf`
+  (16,372 B) stopped at SpringBoard code signing before the XCTEST/IRT window;
+  no `M30 XCTEST` or `M30 IRT` records.
+- Boot 2 pstore
+  `33eea723ca1dc07b827a8c3477e7f6a185965edd89398cd770c4e424d6042f5b`
+  (16,372 B) captured records 88-99: XCTEST retrigger, worker on the `.31`
+  subcache vnode, `diag 31` (`plen=65 strlen=64`), `diag 32` stripped base,
+  `diag 30` `cand=0 ls_off=0x4000` for
+  `dyld_shared_cache_arm64.symbols`, and `diag 28` distinct symbols vnode.
+- `diag 10` printed huge fields (`nlist_off=0xa980 cnt=8705811
+  str_off=0x84e1ab0 size=451573533`); `diag 13` found `strx=318698973`, then
+  `diag 15` failed to find that `n_strx` in the nlist table. Diagnosis: the
+  companion layout is valid, but a global string-pool first-match binds to a
+  duplicate/`_internal_release_type`-like string that the target dylib's
+  nlist range does not use. SpringBoardUI assertion and SpringBoard crash
+  persist. No UI/lock-screen success. BOOT readback SKIPPED.
+
+## 2026-11-23 — v41 fix in progress (MAIN only): image-scoped nlist lookup
+
+- Patch `0426` now follows LiveContainer `litehook_find_dsc_symbol()` exactly:
+  read the image list from the main cache, find
+  `/usr/lib/system/libsystem_darwin.dylib`, read `local_symbols_info` and the
+  `dyld_cache_local_symbols_entry_64` for that image index, and scan only its
+  nlist range, reading each nlist's own string from the companion pool.
+  The `.symbols` file is used ONLY for nlist/string data.
+- A vmaddr is now mapped through a REAL cache file (faulted vnode, base cache,
+  then numbered subcaches `.0`-`.63`, with and without a leading zero) before
+  a file offset is accepted. The target vnode is retained and the fault-path
+  patch gate requires that same vnode, so a `.symbols`-relative offset can
+  never patch the wrong page. All file reads remain `UIO_READ`; the in-memory
+  write still happens only after `cs_validate_page()`.
+- Standalone syntax check clean; focused test PASS including v40 physical
+  evidence and an image-scoped duplicate-name model. Patch dry-runs cleanly
+  against pristine and the v40 buildtree after reversing the old 0426.
+- NEXT: commit/push, CI GREEN, package v41 candidate, BOOT-only flash, capture
+  pstore, expect `diag 39/42/13/33` and either `M30 IRT: patched ...` or a new
+  precise failure. If the assert persists because the target page was already
+  resident, add a validated-page direct patch via the backing VM object.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.

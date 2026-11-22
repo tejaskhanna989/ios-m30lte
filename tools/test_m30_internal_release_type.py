@@ -29,6 +29,7 @@ PSTORE_V36 = ROOT / "validation/physical-boot-test/20261122-ios-v36-boot-short/r
 PSTORE_V37 = ROOT / "validation/physical-boot-test/20261122-ios-v37-boot/raw/pmsg-ramoops-0"
 PSTORE_V38 = ROOT / "validation/physical-boot-test/20261122-ios-v38-boot/raw/pmsg-ramoops-0"
 PSTORE_V39 = ROOT / "validation/physical-boot-test/20261122-ios-v39-boot2/raw/pmsg-ramoops-0"
+PSTORE_V40 = ROOT / "validation/physical-boot-test/20261122-ios-v40-boot2/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -92,7 +93,7 @@ def main():
     assert 'M30 IRT status: state=%d off=0x%llx err=%d replay=%d' in t
     assert "delay(2000000)" in t
     # v39: vn_getpath() plen includes the NUL; compute the real strlen.
-    assert "while (n < sizeof(path) && path[n] != '\\0')" in t
+    assert "while (path_n < sizeof(path) && path[path_n] != '\\0')" in t
     assert 'printf("M30 IRT diag 31: vn_getpath plen=%d strlen=%zu' in t
     # v40: the faulted vnode is a dyld4 subcache (.31).  Strip the trailing
     # .<digits> and try base+.symbols, subcache+.symbols, then the base cache.
@@ -108,8 +109,18 @@ def main():
     # lives in a subcache, fall back to the faulted vnode's own mapping table.
     assert "m30_irt_diag_seen = 0;" in t and "static uint64_t" in t
     assert "(1ULL << (n))" in t
-    assert "if (!found && fp != vp)" in t
-    assert 'M30_IRT_DIAG(33, "mapped via faulted ' in t
+    # v41: the .symbols companion is used ONLY for nlist/string data.  A
+    # vmaddr is mapped through a real cache file (faulted vnode, base cache,
+    # then numbered subcaches) so the resulting file offset patches the page
+    # that the fault hook actually sees.
+    assert "M30_IMAGES_OFFSET = 448" in t
+    assert "M30_SYMBOL_UUID_OFFSET = 400" in t
+    assert "image_index" in t and "libsystem_darwin.dylib" in t
+    assert "nlist_start = *(uint32_t *)(buf + 8);" in t
+    assert "nlist_range = *(uint32_t *)(buf + 12);" in t
+    assert "m30_irt_map_vnode(" in t and "m30_irt_map_vnode_open(" in t
+    assert "m30_irt_target_vp != (vnode_t)0 && vp != m30_irt_target_vp" in t
+    assert 'printf("M30 IRT diag 33: mapped via cache vp=%p off=0x%llx path=%s\\n"' in t
     # v37: retrigger gate, and retry with a later vnode on wrong magic.
     assert "m30_irt_retriggered && !m30_irt_thread_started" in t
     assert "path=%s\\n" in t
@@ -224,6 +235,54 @@ def main():
     assert b"M30 IRT diag 27: open .symbols failed path=" in d39
     assert b"dyld_shared_cache_arm64.31.symbols" in d39
     print("[PASS] v39 pstore: subcache .31 has no .symbols; strip index for v40")
+
+    # --- v40 physical: the stripped base .symbols file opens, but a global
+    # string-pool scan finds a bogus strx; the symbol must be scoped to the
+    # libsystem_darwin image's nlist range (LiveContainer algorithm). ---
+    d40 = PSTORE_V40.read_bytes()
+    assert b"M30 XCTEST: patched ascii off" in d40
+    assert b"M30 IRT: retrigger after XCTEST patch" in d40
+    assert b"M30 IRT diag 8: header map_off=0x200 map_cnt=1 ls_off=0x0" in d40
+    assert b"dyld_shared_cache_arm64.31\x00" in d40
+    assert b"M30 IRT diag 32: base path len=61 path=/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64" in d40
+    assert b"M30 IRT diag 30: cand=0 map_off=0x200 map_cnt=1 ls_off=0x4000 path=/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.symbols" in d40
+    assert b"M30 IRT diag 28: using symbols file vp=0x" in d40
+    assert b"M30 IRT diag 10: lsi nlist_off=0xa980 cnt=8705811 str_off=0x84e1ab0 size=451573533" in d40
+    assert b"M30 IRT diag 13: symbol name found strx=318698973" in d40
+    assert b"M30 IRT diag 15: symbol not found in nlist" in d40
+    assert b"This process should not be linking or loading SpringBoardUI.framewor" in d40
+    print("[PASS] v40 pstore: .symbols opened; global strx scan is ambiguous -> v41 image-scoped scan")
+
+    # --- behavioural model: image-scoped nlist lookup. ---
+    # The companion string pool contains the name in several images.  A global
+    # first-match scan can bind to a strx that no nlist in the target dylib
+    # uses (exactly what v40 printed).  LiveContainer scopes by the image's
+    # local-symbols entry, then reads each nlist's own string.
+    names = [b"_internal_release_type\0", b"_other\0", b"_internal_release_type\0"]
+    pool = b"".join(names)
+    offsets = []
+    off = 0
+    for name in names:
+        offsets.append(off)
+        off += len(name)
+
+    def name_at(strx):
+        end = pool.index(b"\0", strx)
+        return pool[strx:end]
+
+    nlists = [
+        (offsets[0], 0x1000),   # different image: same name, wrong vmaddr
+        (offsets[1], 0x2000),   # target image: different symbol
+        (offsets[2], 0x3000),   # target image: correct symbol
+    ]
+    entry = (1, 2)              # nlistStartIndex=1, nlistCount=2 (entry_64)
+    global_strx = offsets[0]
+    assert name_at(global_strx) == b"_internal_release_type"
+    assert all(strx != global_strx for strx, _ in nlists[entry[0]:entry[0] + entry[1]])
+    scoped = [vm for strx, vm in nlists[entry[0]:entry[0] + entry[1]]
+              if name_at(strx) == b"_internal_release_type"]
+    assert scoped == [0x3000], scoped
+    print("[PASS] model: image-scoped nlist range resolves duplicate symbol names")
 
     # --- behavioural model: retrigger replays diagnostics after XCTest. ---
     state = {"seen": 0}
