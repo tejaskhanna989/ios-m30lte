@@ -1187,3 +1187,14 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: CI -> validate -> package v38 -> BOOT-only flash -> capture pstore at
   any time; read the latest `M30 IRT status:` line.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-22 — v38 offline complete (MAIN only)
+
+- CI `45046427792` GREEN. Kernel `868024e7b432c61a6e60f2db36c3650ee80a52ac4bde30513986a43bd2107626`;
+  payload `71a4799757b695d54f651703548959cdd77771e1b569427ea0d830d0b778475e`;
+  shim-boot.img `73378ba9e48dbd58c1ec967a266a74d6ba5016d3b73059f568e3a4b85b98b919`.
+- Validators all PASS (platform 9/9, CPU 17/17, ADT 22/22, handoff 18/18,
+  focused tests except inapplicable 0417). Syntax check clean.
+- NEXT: BOOT-only flash v38, capture pstore at any time; read latest
+  `M30 IRT status:` line.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
