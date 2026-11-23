@@ -1910,3 +1910,34 @@ authorization for a BOOT-only test of candidate v6.
   focused tests extended with the deferred-gate model.
 - NEXT: commit/push, run CI, then package/validate/boot as before.
 - NO UI/lock-screen success claimed.
+
+## 2026-11-23 — v52 CI GREEN and candidate (MAIN only)
+
+- CI `45179499798` GREEN (14m22s) for source commit `c4bbb74d`. Log shows
+  `Applying patch: 0426`, `0427`, `0428`, and `0429`; buildtree
+  `osfmk/vm/vm_fault.c` matches `/tmp/m30_v52/modified.c` byte-for-byte.
+- Kernel
+  `6805139a62ccfc6992e421e0e7a8fad5b1a91f94c899fe12bcb368b54a10ea92`;
+  payload `58584cfeb606f15e218b82005d50ca342b40984fb70424d15b1f06a22f3c8d4d`;
+  shim-boot.img
+  `d2e46bc18c161e9cd4c2c04f0c6eec96dc4166c479298f59285ac46bd2695cda`;
+  ios-boot.img
+  `ae5bc3aa85b6627c9d3b1131e2ad5c854eb734af001c3ce1c585b5b60c16a8cb`.
+- Validators all PASS: buildtree, kernel, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging, handoff 18/18, all applicable focused tests. Patch order
+  `0426 -> 0427 -> 0428 -> 0429` was preflighted with `git apply --check` and
+  verified to reproduce the intended v52 source byte-for-byte.
+- Layout verified: removing the chunk-path retrigger returns the kernel to the
+  v50 values. Entry `0xfffffff007410488`, `_start_first_cpu`
+  `0xfffffff0074120ec`, `__TEXT_EXEC __text` size `0x008ae9d8`, ADT PA
+  `0x82450000`, boot_args PA `0x82454000`. Evidence in
+  `validation/ios-candidate-v52-out/entry-layout-check.txt`. Shim region remains
+  byte-identical to v31.
+- Candidate: `validation/ios-candidate-v52-out/` with README. NOT physically
+  tested. Active handoff: device is in TWRP; awaiting explicit approval for a
+  BOOT-only flash. Next: flash `shim-boot.img`, resume, one ~180 s window,
+  return to TWRP, pull pstore. Check IRT `state=3`/`oh=1`, `xctest=<count>`,
+  new `xctchunk=<count>`, SpringBoardUI assertion ordering, and any
+  `Early boot complete`. Do not equate SpringBoard loading with visible UI.
+- v50 remains the last physically successful IRT candidate. No UI/lock-screen
+  success claimed. BOOT readback SKIPPED; USERDATA/SYSTEM/RECOVERY untouched.
