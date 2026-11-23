@@ -1,0 +1,53 @@
+v51 kernel-entry and payload-layout shift evidence
+===================================================
+
+CI: 45173700250 (GREEN, source 8ee1e3c5)
+Patches applied in CI log: 0426, 0427, 0428.
+Buildtree vm_fault.c matches /tmp/m30_v51/modified.c byte-for-byte.
+
+1) Kernel entry
+---------------
+v50 LC_UNIXTHREAD PC: 0xfffffff007410488
+v51 LC_UNIXTHREAD PC: 0xfffffff007411488   (+0x1000)
+
+llvm-objdump -d --no-show-raw-insn \
+  --start-address=0xfffffff007410488 --stop-address=0xfffffff007410508 \
+  milestone_artifacts/ci_45169239555/.../mach.development.m30lte:
+
+  fffffff007410488 <__start>:
+  fffffff007410488:  b  0xfffffff0074120ec <_start_first_cpu>
+
+llvm-objdump -d --no-show-raw-insn \
+  --start-address=0xfffffff007411488 --stop-address=0xfffffff007411508 \
+  milestone_artifacts/ci_45173700250/.../mach.development.m30lte:
+
+  fffffff007411488 <__start>:
+  fffffff007411488:  b  0xfffffff0074130ec <_start_first_cpu>
+
+Conclusion: __start and _start_first_cpu moved together by exactly 0x1000.
+The wrapper shape is identical; the new LC_UNIXTHREAD PC is valid.
+
+2) Section growth
+-----------------
+__TEXT_EXEC __text:
+  v50 vmaddr 0xfffffff007248000 size 0x008ae9d8
+  v51 vmaddr 0xfffffff007248000 size 0x008af9d8   (+0x1000)
+
+This is the compiled size increase expected from adding 0428's range scanner
+and chunk-path calls. All later linked addresses shift by the same 0x1000.
+
+3) Payload layout
+-----------------
+Payload header fields (mkpayload.py output):
+  v50 kernel_end 0xfffffff008450000 -> ADT PA 0x82450000, boot_args PA 0x82454000
+  v51 kernel_end 0xfffffff008454000 -> ADT PA 0x82454000, boot_args PA 0x82458000
+
+shim/loader.c computes these from the payload header:
+  pa_of_va_base = phys_base - virt_base
+  adt_pa        = kernel_end + pa_of_va_base
+  ba_pa         = align16k(adt_pa + adt_size)
+No hardcoded 0x82450000 or 0x82454000 exists in the shim. MEM_SIZE is
+0x3d900000 from phys_base 0x80000000, so both new addresses remain in RAM.
+
+The shim Image/ELF and the shim region in shim-boot.img remain byte-identical
+to the v31 reference.

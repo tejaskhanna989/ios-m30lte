@@ -1833,3 +1833,29 @@ authorization for a BOOT-only test of candidate v6.
   tests extended with chunk-path and range-boundary models.
 - NEXT: commit/push, run CI, then package/validate/boot as before.
 - NO UI/lock-screen success claimed.
+
+## 2026-11-23 — v51 CI GREEN and candidate (MAIN only)
+
+- CI `45173700250` GREEN (18m16s) for source commit `8ee1e3c5`. Log shows
+  `Applying patch: 0426`, `0427`, and `0428`; buildtree `vm_fault.c` matches
+  `/tmp/m30_v51/modified.c` byte-for-byte.
+- Kernel
+  `d857197355520846d82ba9bd4bcaf175f0d1ddf42677cf2f91a21e206db6a522`;
+  payload `0b75f9e0ef25615dd0e1c10e5699b9baaabf9c76b5a0762b7e7028c061ae2b0d`;
+  shim-boot.img
+  `7bcaa7359081edb851a07bcb304b4bdf9dc64cb8cb4ecac23cd4f0e6cbf342be`.
+- Validators all PASS: buildtree, kernel, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging, handoff 18/18, all applicable focused tests.
+- Layout shift verified: 0428 grew `__TEXT_EXEC __text` by exactly `0x1000`.
+  Entry moved `0xfffffff007410488` -> `0xfffffff007411488`; `_start_first_cpu`
+  moved `0xfffffff0074120ec` -> `0xfffffff0074130ec`; `__start` still branches
+  to `_start_first_cpu`. ADT PA moved `0x82450000` -> `0x82454000`; boot_args
+  PA moved `0x82454000` -> `0x82458000`. `shim/loader.c` derives both from the
+  payload header, with no hardcoded old addresses. Evidence saved in
+  `validation/ios-candidate-v51-out/entry-layout-check.txt`. Shim region remains
+  byte-identical to v31.
+- Candidate: `validation/ios-candidate-v51-out/` with README. NOT physically
+  tested. NEXT: BOOT-only flash, 180 s window, return to TWRP, pull pstore;
+  check `xctest=<count>` versus v50's `1`, XCTEST/retrigger markers, IRT
+  `state=3`, and SpringBoardUI assertion ordering.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
