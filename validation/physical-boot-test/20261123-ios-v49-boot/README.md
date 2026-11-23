@@ -29,11 +29,16 @@ M30 IRT status: state=4 off=0x0 err=0 replay=9 comp=-1 ls=0x0 sym=0x0 img=0x0 hi
 There is no `M30 IRT: patched` marker, no `M30 XCTEST: patched` marker, and no
 `M30 IRT: retrigger` line. `tries=0`, `hits=0`, `fo=0`, `vh=0`, `oh=0`, and
 `err=0` mean the worker never reached the DSC mapping step and recorded no
-read error. The most likely early failure is `kalloc_data()` at worker entry
-before the kernel heap is ready (diag 19), or an equivalent pre-symbol failure.
+read error. However the second replay line already shows `comp=0 ls=0x4000`,
+so the worker did reach the companion `.symbols` file and read a plausible
+local-symbol offset before failing. That is consistent with the v48 note that,
+before the XCTEST retrigger, the pager hands the fault path launchd/dyld Mach-O
+vnodes rather than the real DSC: the early worker picks the wrong companion /
+symbol source and dies before any subcache mapping (`sc=0 si=-1`).
 
 The worker's own 30 x 2 s status replay then consumed the 16 KB pmsg ring, so
-the original one-shot diagnostic was wrapped out of the captured window.
+the original one-shot diagnostic was wrapped out of the captured window. v50
+adds `xctest=<count>` to the durable heartbeat so this evidence survives wrap.
 
 ## Interpretation
 
