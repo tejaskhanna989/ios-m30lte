@@ -50,6 +50,7 @@ PSTORE_V50 = ROOT / "validation/physical-boot-test/20261123-ios-v50-boot/raw/pms
 PSTORE_V51 = ROOT / "validation/physical-boot-test/20261123-ios-v51-boot/raw/pmsg-ramoops-0"
 PSTORE_V52 = ROOT / "validation/physical-boot-test/20261123-ios-v52-boot/raw/pmsg-ramoops-0"
 PSTORE_V53 = ROOT / "validation/physical-boot-test/20261123-ios-v53-boot/raw/pmsg-ramoops-0"
+PSTORE_V54 = ROOT / "validation/physical-boot-test/20261123-ios-v54-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -601,6 +602,20 @@ def main():
     assert b"This process should not be linking or loading SpringBoardUI.framewor" in d53
     assert b"Early boot complete. Continuing system boot." not in d53
     print("[PASS] v53 pstore: early DSC gate failed; state=4, assertion persists")
+
+    # --- v54 physical: bounded early retries restored the IRT patch. ---
+    d54 = PSTORE_V54.read_bytes()
+    assert len(d54) == 16372, "v54 pmsg ring should be full/wrapped"
+    assert d54.count(b"M30 IRT: patched (final state=3 off=0xa432d84") >= 30
+    assert d54.count(b"xctest=1 xctchunk=0") >= 30
+    assert b"oh=1" in d54 and b"state=4" not in d54
+    assert b"Early boot complete. Continuing system boot." not in d54
+    # The ring started mid-message and the one-shot early/retry and assertion
+    # records wrapped out.  Their absence here is NOT evidence that the
+    # assertion was fixed; it only means this capture cannot order it.
+    assert b"M30 IRT: early scan started" not in d54
+    assert b"SpringBoardUI.framework" not in d54
+    print("[PASS] v54 pstore: IRT state=3 restored; one-shot markers wrapped")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global
