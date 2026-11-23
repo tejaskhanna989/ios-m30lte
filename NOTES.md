@@ -1978,3 +1978,5 @@ authorization for a BOOT-only test of candidate v6.
   chunk marker), so the fixed 180 s capture can prove whether the new path
   fired before changing gate behaviour again. No 0417; no security check
   weakened; no BOOT readback.
+
+- v52 physical evidence committed/pushed as `2ee5d54d`.
