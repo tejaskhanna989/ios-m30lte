@@ -203,7 +203,17 @@ def main():
     assert "m30_irt_proactive_result = m30_irt_patch_resident_page();" in t
     assert "pr=%d" in t
     # v37: retrigger gate, and retry with a later vnode on wrong magic.
-    assert "m30_irt_retriggered && !m30_irt_thread_started" in t
+    # v49: start the IRT scan on the first dyld fault instead of waiting for
+    # the XCTEST retrigger; wrong-magic vnodes still reset NEED_DSC.
+    assert "!m30_irt_thread_started) {" in t
+    assert "Start on" in t and "first dyld-pager fault" in t
+    assert "m30_irt_retriggered = 1;" in t
+    # v49: validation-bitmap fast paths skip the slow function where the
+    # fix-ups used to live.  Run both fix-ups on that path too.
+    assert t.count("m30_xctest_probe_fixup(kaddr, mo_offset)") == 2
+    assert t.count("m30_internal_release_fixup(vnode, pager, mo_offset,") == 2
+    assert "} else {" in t  # bitmap-fast-path branch added at the call site
+    assert "validation bitmap fast path skips the slow function" in t
     assert "path=%s\\n" in t
     assert "no vnode I/O, only in-memory patching" in t
     assert "#include <sys/vfs_context.h>" in t
@@ -771,6 +781,18 @@ def main():
     assert patched == 2
     assert pages[0xa434000]["validated"] is False  # unvalidated page rejected
     print("[PASS] model: resident patch only touches a validated cached page")
+
+    # --- behavioural model: bitmap fast path now runs the fix-ups. ---
+    paths = {
+        "slow": ["cs_validate_page", "xctest_fixup", "irt_fixup"],
+        "bitmap_fast_before": ["bitmap_ok"],
+        "bitmap_fast_v49": ["bitmap_ok", "xctest_fixup", "irt_fixup"],
+    }
+    assert paths["bitmap_fast_before"] == ["bitmap_ok"]
+    assert paths["bitmap_fast_v49"] == [
+        "bitmap_ok", "xctest_fixup", "irt_fixup"]
+    assert set(paths["slow"][1:]) == set(paths["bitmap_fast_v49"][1:])
+    print("[PASS] model: bitmap fast path covers both post-validation fix-ups")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 

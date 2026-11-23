@@ -9,7 +9,7 @@
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,1127 @@
+@@ -140,9 +142,1128 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -1108,11 +1108,12 @@
 +		return;
 +	}
 +
-+	/* Defer the read-only DSC symbol scan outside the object lock. */
-+	/* Only scan after the XCTEST patch retrigger: before that the pager
-+	 * hands us launchd/dyld Mach-O vnodes, never the DSC. */
++	/* Defer the read-only DSC symbol scan outside the object lock.  Start on
++	 * the first dyld-pager fault rather than waiting for the XCTEST patch:
++	 * the SpringBoardUI probe can fire before that retrigger.  Wrong-magic
++	 * vnodes reset NEED_DSC, so a later DSC fault retries safely. */
 +	if (m30_irt_state == M30_IRT_STATE_NEED_DSC &&
-+	    m30_irt_retriggered && !m30_irt_thread_started) {
++	    !m30_irt_thread_started) {
 +		if (vnode_ref(vp) == 0) {
 +			kr = kernel_thread_start_priority(
 +			    (thread_continue_t)m30_irt_worker, (void *)vp,
@@ -1137,7 +1138,7 @@
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8807,38 @@
+@@ -7687,6 +8808,38 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  
@@ -1176,3 +1177,19 @@
  		if (block_buf != NULL) {
  			kfree_data(block_buf, CS_16K_BLOCK_SIZE);
  		}
+@@ -7717,0 +8871,15 @@
++	} else {
++		/* The validation bitmap fast path skips the slow function where
++		 * the post-validation fix-ups live.  Replay both fix-ups here so
++		 * already-validated pages (including dyld cache pages) still get
++		 * the class-name retarget and the IRT scan/patch. */
++		vm_object_t             object = VM_PAGE_OBJECT(page);
++		memory_object_t         pager = object->pager;
++		memory_object_offset_t  mo_offset =
++		    page->vmp_offset + object->paging_offset;
++		struct vnode           *vnode =
++		    vnode_pager_lookup_vnode(pager);
++
++		m30_xctest_probe_fixup(kaddr, mo_offset);
++		m30_internal_release_fixup(vnode, pager, mo_offset,
++		    (void *)kaddr);

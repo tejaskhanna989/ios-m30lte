@@ -1689,3 +1689,25 @@ authorization for a BOOT-only test of candidate v6.
   start the IRT scan before the XCTEST retrigger so the patch lands before the
   SpringBoardUI probe.
 - BOOT readback SKIPPED.
+
+## 2026-11-23 — v49 in progress (MAIN only): fast-path fix-ups, earlier IRT scan
+
+- v48 physically proved the IRT patch, but the SpringBoardUI assertion still
+  appeared before the patch. Likely cause: `vm_page_validate_cs_mapped()` can
+  validate via the code-signing bitmap fast path and skip
+  `vm_page_validate_cs_mapped_slow()`, where both post-validation fix-ups live.
+- Run both fix-ups on the bitmap fast path too: call
+  `m30_xctest_probe_fixup()` and `m30_internal_release_fixup()` with the page's
+  object pager and `mo_offset`. Validation has already succeeded via the
+  bitmap; this remains an in-memory-only post-validation write.
+- Start the deferred IRT worker on the first dyld-pager fault instead of
+  waiting for the XCTEST retrigger, so the symbol patch can land before the
+  SpringBoardUI probe. Wrong-magic vnodes still reset `NEED_DSC` for a later
+  retry, and the XCTEST retrigger still resets state for diagnostics.
+- Standalone syntax check PASS; patch dry-runs against the v48 buildtree and
+  the 0425->0426 application order PASS; focused tests extended with v48
+  physical success evidence and a bitmap-fast-path coverage model. The new
+  fast-path hunk uses zero context so `git diff --check` stays clean.
+- NEXT: commit/push, CI, package v49, BOOT-only flash, capture pstore, check
+  whether the assertion is gone and whether SpringBoard progresses.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
