@@ -42,6 +42,7 @@ PSTORE_V46 = ROOT / "validation/physical-boot-test/20261123-ios-v46-boot/raw/pms
 PSTORE_V47 = ROOT / "validation/physical-boot-test/20261123-ios-v47-boot/raw/pmsg-ramoops-0"
 PSTORE_V48 = ROOT / "validation/physical-boot-test/20261123-ios-v48-boot/raw/pmsg-ramoops-0"
 PSTORE_V49 = ROOT / "validation/physical-boot-test/20261123-ios-v49-boot/raw/pmsg-ramoops-0"
+PSTORE_V50 = ROOT / "validation/physical-boot-test/20261123-ios-v50-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -475,6 +476,17 @@ def main():
     assert b"M30 XCTEST: patched" not in d49
     assert b"Early boot complete. Continuing system boot." not in d49
     print("[PASS] v49 pstore: early-start regression (state=4, no patch marker)")
+
+    # --- v50 physical: gate restored; IRT patch fires, assertion persists. ---
+    d50 = PSTORE_V50.read_bytes()
+    assert len(d50) == 16372, "v50 pmsg ring should be full/wrapped"
+    assert b"M30 IRT: patched _internal_release_type off 0xa432d84 (0 -> 3)" in d50
+    assert b"M30 IRT status: state=3 off=0xa432d84" in d50
+    assert b"hits=1 tries=29 sc=42 si=26" in d50
+    assert b"xctest=1)" in d50, "durable heartbeat must prove the class fix-up ran"
+    assert b"This process should not be linking or loading SpringBoardUI.framework" in d50
+    assert b"Early boot complete. Continuing system boot." not in d50
+    print("[PASS] v50 pstore: state=3 restored, xctest=1, assertion persists")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global

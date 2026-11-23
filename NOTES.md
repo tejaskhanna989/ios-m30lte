@@ -1788,3 +1788,25 @@ authorization for a BOOT-only test of candidate v6.
   `state=3` from the heartbeat, check XCTEST/retrigger markers and ordering
   relative to any SpringBoardUI assertion.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v50 physical result (MAIN only)
+
+- v50 BOOT-flashed with `shim-boot.img`
+  `859b5d08dab9dd2f7a9aff80eb9c5f2c77ea6677969480f8ece332b7de74b07a` on the
+  positively identified M30 (`m30lte`, serial `320081735bb166a3`) in TWRP.
+  BOOT only; no BOOT readback; USERDATA/SYSTEM/RECOVERY untouched.
+- pstore `validation/physical-boot-test/20261123-ios-v50-boot/raw/pmsg-ramoops-0`
+  SHA256 `744b504a8552c1af9bfe5eb789f2ae85ee8c3e7216e9c3a50d0512eb0728ba2e`.
+  Decoded: `state=3`, `off=0xa432d84`, `hits=1`, `tries=29`, `sc=42`, `si=26`,
+  `oh=1`, `pr=-5`, durable through `hb=24`. The new `xctest=1` field proves the
+  class-name fix-up ran once.
+- The SpringBoardUI `NSInternalInconsistencyException` is STILL present and
+  appears before the IRT patch marker; there is no surviving `M30 XCTEST:
+  patched` or `M30 IRT: retrigger` marker and no `Early boot complete`.
+  Therefore the single XCTest rewrite was too late or on the wrong page/process.
+- Next (v51): add the same post-validation fix-ups to
+  `vm_page_validate_cs_mapped_chunk()` (called from `vm_fourk_pager.c:1027`,
+  which uses `cs_validate_range()` directly), guarded by `validated`. Keep
+  `m30_irt_retrigger_after_xctest()` on both existing paths. No 0417, no
+  security check weakened.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
