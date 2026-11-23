@@ -1,0 +1,59 @@
+diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
+--- a/osfmk/vm/vm_fault.c
++++ b/osfmk/vm/vm_fault.c
+@@ -1215,10 +1215,11 @@
+ 		return;
+ 	}
+ 
+-	/* The 16 KB pmsg ring wraps well before SpringBoard loads.  Replay a
+-	 * compact status line periodically for a bounded window so the final
+-	 * result is always present in a freshly captured pstore. */
+-	for (i = 0; i < 30; i++) {
++	/* v58: the v57 heartbeat (30 full lines + 180 compact lines every 2 s)
++	 * overwrote the entire 16 KB pmsg ring before SpringBoard could log.
++	 * Keep only enough status to prove the IRT result, then leave the ring
++	 * for SpringBoard/backboardd crash-scan and sampler records. */
++	for (i = 0; i < 5; i++) {
+ 		delay(2000000);      /* 2 s */
+ 		printf("M30 IRT status: state=%d off=0x%llx err=%d replay=%d "
+ 		    "comp=%d ls=0x%llx sym=0x%llx img=0x%llx hits=%d tries=%d "
+@@ -1245,13 +1246,10 @@
+ 		    (unsigned long long)m30_irt_base_map_off);
+ 	}
+ 
+-	/* A full status line every 2 s for 60 s is still overwritten once
+-	 * SpringBoard and its daemons start logging heavily.  Keep a compact
+-	 * heartbeat every 2 s for another 6 min so the final result, including
+-	 * the local-symbol range used to find the symbol, is present in the
+-	 * captured 16 KB ring. */
+-	for (i = 0; i < 180; i++) {
+-		delay(2000000);      /* 2 s */
++	/* A compact heartbeat every 10 s for 3 min keeps the durable CS/IRT
++	 * counters while leaving most of the 16 KB ring for userspace. */
++	for (i = 0; i < 18; i++) {
++		delay(10000000);     /* 10 s */
+ 		if (m30_irt_state == M30_IRT_STATE_DONE) {
+ 			printf("M30 IRT: patched (final state=%d off=0x%llx "
+ 			    "sym=0x%llx comp=%d ls=0x%llx "
+diff --git a/bsd/dev/a5xelte_emmc.c b/bsd/dev/a5xelte_emmc.c
+--- a/bsd/dev/a5xelte_emmc.c
++++ b/bsd/dev/a5xelte_emmc.c
+@@ -29,6 +29,7 @@
+ extern vm_offset_t ml_io_map(vm_offset_t phys_addr, vm_size_t size);
+ extern kern_return_t kernel_thread_start(thread_continue_t, void *, thread_t *);
+ extern void thread_deallocate(thread_t);
++extern void sweet_sample_start(void);
+ extern int hz;
+ 
+ #define A5_LOG_SIZE   (4u << 20)
+@@ -747,6 +748,10 @@
+ 		printf("A5XELTE eMMC: /dev/emmcroot0 ready, GPT %s %s\n",
+ 		    emmc_partition_name, emmc_writable ? "writable" : "read-only");
+ 		emmc_log_start();
++		/* Sample SpringBoard/backboardd if they launch.  sweet_sample.c
++		 * is already compiled for M30LTE; its start call was only in the
++		 * unused SWEET UFS root path. */
++		sweet_sample_start();
+ 	}
+ 	*dev = emmc_bdev;
+ 	return 0;

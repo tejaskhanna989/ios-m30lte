@@ -2442,3 +2442,62 @@ authorization for a BOOT-only test of candidate v6.
   final handoff. Optional follow-up work is residual daemon crashes/entitlement
   noise (NOT required for the UI milestone); do not reflash a validated v57
   without a new root cause and explicit candidate.
+
+## 2026-11-24 - v58 source (MAIN only): SpringBoard visibility and ring budget
+
+- Verified v57 checkpoint before changes: HEAD is `55a0c810`, on `main`, and
+  `sha256sum -c` passes for both
+  `validation/ios-candidate-v57-out/SHA256SUMS` and
+  `validation/physical-boot-test/20261123-ios-v57-boot/SHA256SUMS`. The
+  working tree had pre-existing unstaged `site/` deletions and untracked
+  scratch/artifact directories; none were touched.
+- Corrected interpretation: the v57 Apple logo is a user observation, not proof
+  of SpringBoard or a lock screen. No framebuffer capture was taken. The pstore
+  capture is `clean=False` with 93 gaps/93 `bad_magic` records and starts
+  mid-message; absence of `SpringBoard`/`NSInternal` in that window is **not**
+  evidence that SpringBoard never launched. The kernel does not link
+  `gAppleBootPict`; the logo is most plausibly backboardd/CoreAnimation or a
+  retained splash.
+- Root cause of the evidence loss: the 0426 IRT heartbeat emitted 30 full
+  status lines plus 180 compact lines every 2 s = 210 records (~64 KB), far
+  exceeding the 16 KB pmsg ring. This overwrote the SpringBoard window.
+  `sweet_sample.c` is already compiled for M30LTE and defaults to
+  `SpringBoard,backboardd`, but `sweet_sample_start()` was only called from the
+  unused SWEET UFS root path, never from the M30 eMMC path.
+- Other findings: 19 `cs_invalid_page` records are for auxiliary daemons
+  (`fairplayd.H2`, `xpcproxy`, `bluetoothd`, `searchpartyd`, `fmfd`,
+  `networkserviceproxy`, `triald`, `webbookmarksd`, `usermanagerd`,
+  `bluetoothd`), not SpringBoard/backboardd/launchd/securityd/keybagd. The
+  `coreduetd`/`fmfd` SIGTRAP crashes share PC `0x1a98eeb7c` and are downstream
+  late-boot symptoms, not proven SpringBoard blockers. `lsd` has a
+  cpu-monitor entitlement denial but no evidence it blocks UI. The v57 ADT
+  already has the correct 4-byte zero activation properties (dump formatter
+  misleadingly displayed `''`).
+- New patch `xnu/patches-minimal/0435-m30-springboard-visibility.patch`
+  (incremental on v57):
+  1. IRT heartbeat reduced from 30+180 records to 5+18 (compact every 10 s),
+     leaving most of the 16 KB ring for SpringBoard/backboardd crash-scan and
+     sampler records while keeping durable IRT/CS counters.
+  2. `sweet_sample_start()` called from `a5xelte_emmc_rootdev()` next to
+     `emmc_log_start()`, so SpringBoard/backboardd are sampled at 90 s and then
+     every 120 s with PC/LR/backtrace.
+  No CS/AMFI/trust-cache/page-validation change; no security weakening; no
+  0417; no OSX target; no branch or GitHub settings change.
+- Offline checks PASS: 0435 applies to the exact v57 CI buildtree and
+  reproduces `vm_fault.c` SHA256
+  `9193cd37cf769a68b362dffe8a48c3d7b443cd7a7202d409ea941ab7bac5339a` and
+  `a5xelte_emmc.c` SHA256
+  `d15f61b44050bafb36162bb3124c9a2b4dd355c04f91b2a76cba4e5e133c6bbe`.
+  New `tools/test_m30_springboard_visibility.py` PASS; all other applicable
+  focused tests PASS (`test_m30_16k_pages.py` remains inapplicable without
+  0417). `validate-repo.py` still reports only pre-existing gap warnings.
+- Candidate packaging plan (small, evidence-based, no kernel security change):
+  keep the v57 kernel/payload chain but set cmdline `cpus=6` (historical
+  home-screen build used 6 cores rather than 1) and add
+  `sweetfb_noconsole=1` so the kernel text console stops overwriting the GUI.
+  ADT stays unchanged. Physical observation must capture early and late
+  pstore, and a screen photo if a lock screen appears.
+- NEXT: commit/push source, run CI with `XNU_TARGET=iphoneos`, M30LTE,
+  DEVELOPMENT; validate artifacts; package v58 with the cmdline above; then
+  autonomous BOOT-only physical test with the same identity/download-mode
+  gates. No lock-screen claim without a visible persistent render plus logs.
