@@ -1489,3 +1489,20 @@ authorization for a BOOT-only test of candidate v6.
   `comp=`/`ls=`/`symmap=`/`fb=`, then either `M30 IRT: patched ...` or a new
   precise failure.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v45 offline complete (MAIN only)
+
+- CI `45121370706` GREEN for `ea8202c`. Kernel
+  `2c641272b7ad70435987c28eff6ff5cf2326c5bf35b8ef1d7568de55e26c777d`;
+  payload `617917ee01b2b9df7f1112b63080dedf1d0031c4094e93200c3c1298c474bd75`;
+  shim-boot.img
+  `382db454eb9b0c74ca9957aea8b841f988d1e589406eb0e1a3b3b3210e37c689`.
+- Validators all PASS: buildtree, kernel, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging, handoff 18/18, all applicable focused tests (0417 inapplicable).
+  Shim Image/ELF and the shim region in the BOOT image remain byte-identical to
+  the v31 reference. Kernel entry is unchanged from v44 at
+  `0xfffffff007410488`.
+- Candidate: `validation/ios-candidate-v45-out/` with README. NOT physically
+  tested. NEXT: BOOT-only flash, capture pstore, expect Cryptex companion
+  evidence and either an IRT patch or a new precise failure.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
