@@ -1412,7 +1412,35 @@ authorization for a BOOT-only test of candidate v6.
   packaging, handoff 18/18, all applicable focused tests (0417 inapplicable).
   Shim Image/ELF and the shim region in the BOOT image remain byte-identical to
   the v31 reference.
-- Candidate: `validation/ios-candidate-v43-out/` with README. NOT physically
-  tested. NEXT: BOOT-only flash, capture pstore, expect mapping evidence and
-  either an IRT patch or a new precise failure.
+- Candidate: `validation/ios-candidate-v43-out/` with README. Physically tested
+  below; BOOT-only flash, no readback, USERDATA/SYSTEM/RECOVERY untouched.
+
+## 2026-11-23 — v43 physical: companion vmaddr outside real cache mappings
+
+- BOOT-only flash succeeded. pstore
+  `135ad9284963ec6edb4f9115ce19cdd4577cd498b562b1aff34c25a655f388d7`
+  (16,372 B) captured the extended replay: `sym=0x1e1d3ad84
+  img=0x1d1c22000 hits=0 basecnt=1
+  base0=0x1ecc80000/0x62ac000@0x0`.
+- The base cache mapping starts 0x0af4527c above the symbol, and the target
+  image address is even lower. No real cache file among the faulted vnode,
+  base cache, `.0`–`.511` subcaches, or Cryptex candidates contained the
+  vmaddr. SpringBoardUI assertion persists. No UI success. BOOT readback
+  SKIPPED.
+
+## 2026-11-23 — v44 fix in progress (MAIN only): companion-map translation
+
+- Added `diag 52` for the companion's mapping table and `diag 53` for the new
+  fallback. When no real-cache vmaddr mapping matches, the nlist value is
+  translated through the companion mapping to a file offset
+  (`sym_map_fileoff + (sym_vmaddr - sym_map_addr)`) and patched through the
+  base cache vnode at that offset. The companion is still read-only; the only
+  write remains the in-memory page after `cs_validate_page()`.
+- Extended both System and Cryptex subcache searches to `.0`–`.511`, and added
+  `tries`/`symmap`/`fb` fields to the periodic status replay.
+- Standalone syntax check clean; focused tests PASS with v43 physical evidence;
+  patch dry-runs cleanly against pristine and the v43 buildtree.
+- NEXT: CI GREEN, package v44 candidate, BOOT-only flash, capture pstore, read
+  `diag 52/53` and status `symmap=... fb=...`, then either `M30 IRT: patched ...`
+  or a new precise failure.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.

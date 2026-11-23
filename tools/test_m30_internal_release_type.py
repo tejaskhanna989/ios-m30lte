@@ -32,6 +32,7 @@ PSTORE_V39 = ROOT / "validation/physical-boot-test/20261122-ios-v39-boot2/raw/pm
 PSTORE_V40 = ROOT / "validation/physical-boot-test/20261122-ios-v40-boot2/raw/pmsg-ramoops-0"
 PSTORE_V41 = ROOT / "validation/physical-boot-test/20261123-ios-v41-boot/raw/pmsg-ramoops-0"
 PSTORE_V42 = ROOT / "validation/physical-boot-test/20261123-ios-v42-boot/raw/pmsg-ramoops-0"
+PSTORE_V43 = ROOT / "validation/physical-boot-test/20261123-ios-v43-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -136,7 +137,14 @@ def main():
     assert 'M30_IRT_DIAG(49, "image addr=0x%llx pathFileOff=0x%x\\n"' in t
     assert "static const char cryptex[] =" in t
     assert "/private/preboot/Cryptexes/OS/System/Library/Caches/" in t
-    assert "sym=0x%llx img=0x%llx hits=%d basecnt=%u" in t
+    assert "sym=0x%llx img=0x%llx hits=%d tries=%d" in t
+    # v44: when the companion uses a different virtual base, translate its
+    # nlist vmaddr through the companion mapping to a real cache file offset.
+    assert "m30_irt_sym_map_fileoff" in t and "m30_irt_fallback_off" in t
+    assert 'M30_IRT_DIAG(52, "sym map off=0x%x cnt=%u first=0x%llx/' in t
+    assert 'M30_IRT_DIAG(53, "companion map fallback off=0x%llx\\n"' in t
+    assert "for (idx = 0; idx < 512 && !found; idx++)" in t
+    assert "symmap=0x%llx/0x%llx@0x%llx fb=0x%llx" in t
     # v37: retrigger gate, and retry with a later vnode on wrong magic.
     assert "m30_irt_retriggered && !m30_irt_thread_started" in t
     assert "path=%s\\n" in t
@@ -293,6 +301,16 @@ def main():
     assert b"This process should not be linking or loading SpringBoardUI.framewor" in d42
     assert b"M30 IRT: patched" not in d42
     print("[PASS] v42 pstore: image-scoped symbol found; real-cache mapping missing -> v43 evidence")
+
+    # --- v43 physical: the base cache mapping starts far above the symbol,
+    # and the image address is even lower.  No vmaddr mapping matched. ---
+    d43 = PSTORE_V43.read_bytes()
+    assert b"M30 IRT status: state=4 off=0x0 err=0 replay=14 sym=0x1e1d3ad84 " in d43
+    assert b"img=0x1d1c22000 hits=0 basecnt=1" in d43
+    assert b"base0=0x1ecc80000/0x62ac000@0x0" in d43
+    assert b"This process should not be linking or loading SpringBoardUI.framewor" in d43
+    assert b"M30 IRT: patched" not in d43
+    print("[PASS] v43 pstore: companion vmaddr outside real mappings -> companion-map fallback")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global

@@ -9,7 +9,7 @@
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,805 @@
+@@ -140,9 +142,864 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -60,6 +60,12 @@
 +static uint64_t  m30_irt_base_map_size = 0;
 +static uint64_t  m30_irt_base_map_off = 0;
 +static int       m30_irt_map_hits = 0;
++static uint32_t  m30_irt_sym_map_cnt = 0;
++static uint64_t  m30_irt_sym_map_addr = 0;
++static uint64_t  m30_irt_sym_map_size = 0;
++static uint64_t  m30_irt_sym_map_fileoff = 0;
++static uint64_t  m30_irt_fallback_off = 0;
++static int       m30_irt_map_tries = 0;
 +
 +/* One-shot diagnostics: every distinct failure reason is printed at most once
 + * so the ramoops pmsg ring is not flooded. */
@@ -131,6 +137,7 @@
 +{
 +	uint32_t map_off, map_cnt, n, i;
 +
++	m30_irt_map_tries++;
 +	if (ivp == NULL || m30_irt_read(ivp, 0, hdr, 96) != 0 ||
 +	    memcmp(hdr, "dyld_v", 6) != 0) {
 +		return 0;
@@ -360,6 +367,31 @@
 +		    (void *)maps);
 +		m30_irt_state = M30_IRT_STATE_FAILED;
 +		goto out;
++	}
++
++	/* Capture the companion's own mapping table.  Its virtual base can differ
++	 * from the real cache, but its file offsets mirror the main cache layout. */
++	{
++		uint32_t sn = MIN(map_cnt, (uint32_t)(chunk / 32));
++
++		m30_irt_sym_map_cnt = map_cnt;
++		m30_irt_sym_map_addr = 0;
++		m30_irt_sym_map_size = 0;
++		m30_irt_sym_map_fileoff = 0;
++		if (sn != 0 && m30_irt_read(fp, map_off, maps,
++		    (size_t)sn * 32) == 0) {
++			m30_irt_sym_map_addr = *(uint64_t *)(maps);
++			m30_irt_sym_map_size = *(uint64_t *)(maps + 8);
++			m30_irt_sym_map_fileoff = *(uint64_t *)(maps + 16);
++			M30_IRT_DIAG(52, "sym map off=0x%x cnt=%u first=0x%llx/"
++			    "0x%llx@0x%llx\n", map_off, map_cnt,
++			    (unsigned long long)m30_irt_sym_map_addr,
++			    (unsigned long long)m30_irt_sym_map_size,
++			    (unsigned long long)m30_irt_sym_map_fileoff);
++		} else {
++			M30_IRT_DIAG(54, "sym map read failed off=0x%x cnt=%u "
++			    "err=%d\n", map_off, map_cnt, m30_irt_last_err);
++		}
 +	}
 +
 +	/* Capture the real base cache mapping table for the status replay. */
@@ -597,7 +629,7 @@
 +		char subpath[1024];
 +		uint32_t idx;
 +
-+		for (idx = 0; idx < 64 && !found; idx++) {
++		for (idx = 0; idx < 512 && !found; idx++) {
 +			int width;
 +
 +			for (width = 0; width < 2 && !found; width++) {
@@ -633,7 +665,7 @@
 +		char cpath[1024];
 +		uint32_t idx;
 +
-+		for (idx = 0; idx < 256 && !found; idx++) {
++		for (idx = 0; idx < 512 && !found; idx++) {
 +			int width;
 +
 +			for (width = 0; width < 2 && !found; width++) {
@@ -668,6 +700,27 @@
 +				    MIN(n + 1, (size_t)sizeof(target_path)));
 +			}
 +		}
++	}
++	if (!found && m30_irt_sym_map_cnt != 0 && m30_irt_sym_map_size != 0 &&
++	    sym_vmaddr >= m30_irt_sym_map_addr &&
++	    sym_vmaddr < m30_irt_sym_map_addr + m30_irt_sym_map_size) {
++		file_off = m30_irt_sym_map_fileoff +
++		    (sym_vmaddr - m30_irt_sym_map_addr);
++		m30_irt_fallback_off = file_off;
++		target_vp = imgvp;
++		target_path[0] = '\0';
++		if (imgvp == vp) {
++			keep_faulted_ref = 1;
++		} else {
++			keep_imgvp = 1;
++			if (base_n != 0 && base_n < sizeof(target_path)) {
++				memcpy(target_path, path, base_n);
++				target_path[base_n] = '\0';
++			}
++		}
++		found = 1;
++		M30_IRT_DIAG(53, "companion map fallback off=0x%llx\n",
++		    (unsigned long long)file_off);
 +	}
 +	if (!found) {
 +		M30_IRT_DIAG(18, "no real cache mapping contains vmaddr 0x%llx "
@@ -706,11 +759,17 @@
 +	for (i = 0; i < 30; i++) {
 +		delay(2000000);      /* 2 s */
 +		printf("M30 IRT status: state=%d off=0x%llx err=%d replay=%d "
-+		    "sym=0x%llx img=0x%llx hits=%d basecnt=%u "
-+		    "base0=0x%llx/0x%llx@0x%llx\n",
++		    "sym=0x%llx img=0x%llx hits=%d tries=%d "
++		    "symmap=0x%llx/0x%llx@0x%llx fb=0x%llx "
++		    "basecnt=%u base0=0x%llx/0x%llx@0x%llx\n",
 +		    m30_irt_state, (unsigned long long)m30_irt_file_offset,
 +		    m30_irt_last_err, i, (unsigned long long)m30_irt_sym_vmaddr,
 +		    (unsigned long long)m30_irt_image_addr, m30_irt_map_hits,
++		    m30_irt_map_tries,
++		    (unsigned long long)m30_irt_sym_map_addr,
++		    (unsigned long long)m30_irt_sym_map_size,
++		    (unsigned long long)m30_irt_sym_map_fileoff,
++		    (unsigned long long)m30_irt_fallback_off,
 +		    m30_irt_base_map_cnt,
 +		    (unsigned long long)m30_irt_base_map_addr,
 +		    (unsigned long long)m30_irt_base_map_size,
@@ -815,7 +874,7 @@
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8485,32 @@
+@@ -7687,6 +8544,38 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  
@@ -834,7 +893,13 @@
 +			m30_irt_base_map_addr = 0;
 +			m30_irt_base_map_size = 0;
 +			m30_irt_base_map_off = 0;
++			m30_irt_sym_map_cnt = 0;
++			m30_irt_sym_map_addr = 0;
++			m30_irt_sym_map_size = 0;
++			m30_irt_sym_map_fileoff = 0;
++			m30_irt_fallback_off = 0;
 +			m30_irt_map_hits = 0;
++			m30_irt_map_tries = 0;
 +			m30_irt_last_err = 0;
 +			m30_irt_diag_seen = 0;
 +			m30_irt_thread_started = 0;
