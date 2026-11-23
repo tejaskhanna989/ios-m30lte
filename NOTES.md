@@ -1355,3 +1355,19 @@ authorization for a BOOT-only test of candidate v6.
   expect `diag 47/48`, `diag 39`, `diag 42`, `diag 13`, `diag 33`, then either
   `M30 IRT: patched ...` or a new precise failure.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v42 offline complete (MAIN only)
+
+- CI `45102718208` GREEN for `533fca1`. Kernel
+  `35178aa6f83d22060e4fa5d0d7edb3170572c33ca97d52a6830c9160d3034de4`;
+  payload `5ac8105713b4bb5556b76bbdb7c847cf8552f9b4ddc2cb856f4af1fc41856e66`;
+  shim-boot.img
+  `f451f7e8f7786c837d2544bce5c7de717fe43c54e7f57e1892028880586b4709`.
+- Validators all PASS: buildtree, kernel, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging, handoff 18/18, all applicable focused tests (0417 inapplicable).
+  Shim Image/ELF and the shim region in the BOOT image remain byte-identical to
+  the v31 reference.
+- Candidate: `validation/ios-candidate-v42-out/` with README. NOT physically
+  tested. NEXT: BOOT-only flash, capture pstore, expect absolute image paths
+  and either an IRT patch or a new precise failure.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
