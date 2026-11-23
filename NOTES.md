@@ -1704,10 +1704,17 @@ authorization for a BOOT-only test of candidate v6.
   waiting for the XCTEST retrigger, so the symbol patch can land before the
   SpringBoardUI probe. Wrong-magic vnodes still reset `NEED_DSC` for a later
   retry, and the XCTEST retrigger still resets state for diagnostics.
+- First CI `45156413249` FAILED to compile: the new fast-path hunk was
+  generated with `-U0`, so `patch` had no context to locate it after earlier
+  patches shifted line numbers, and `} else {` landed at `vm_fault.c:9729`.
+  Regenerated the patch from the actual v48 CI buildtree base with full
+  context; verified applying it reproduces the intended source byte-for-byte
+  and `git diff --check` stays clean. The fast-path hunk now uses `-`/`+`
+  pairs for its old lines so patch still gets matching context without
+  introducing space-before-tab warnings in the patch file itself.
 - Standalone syntax check PASS; patch dry-runs against the v48 buildtree and
   the 0425->0426 application order PASS; focused tests extended with v48
-  physical success evidence and a bitmap-fast-path coverage model. The new
-  fast-path hunk uses zero context so `git diff --check` stays clean.
-- NEXT: commit/push, CI, package v49, BOOT-only flash, capture pstore, check
-  whether the assertion is gone and whether SpringBoard progresses.
+  physical success evidence and a bitmap-fast-path coverage model.
+- NEXT: re-run CI, package v49, BOOT-only flash, capture pstore, check whether
+  the assertion is gone and whether SpringBoard progresses.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.

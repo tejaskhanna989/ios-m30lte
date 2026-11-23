@@ -1177,7 +1177,16 @@
  		if (block_buf != NULL) {
  			kfree_data(block_buf, CS_16K_BLOCK_SIZE);
  		}
-@@ -7717,0 +8871,15 @@
+@@ -7715,6 +8868,21 @@
+-{
+-	if (!vm_page_validate_cs_fast(page, fault_page_size, fault_phys_offset)) {
+-		vm_page_validate_cs_mapped_slow(page, kaddr);
+-	}
+-}
+-
++{
++	if (!vm_page_validate_cs_fast(page, fault_page_size, fault_phys_offset)) {
++		vm_page_validate_cs_mapped_slow(page, kaddr);
 +	} else {
 +		/* The validation bitmap fast path skips the slow function where
 +		 * the post-validation fix-ups live.  Replay both fix-ups here so
@@ -1193,3 +1202,6 @@
 +		m30_xctest_probe_fixup(kaddr, mo_offset);
 +		m30_internal_release_fixup(vnode, pager, mo_offset,
 +		    (void *)kaddr);
++	}
++}
++

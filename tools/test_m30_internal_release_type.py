@@ -212,6 +212,7 @@ def main():
     # fix-ups used to live.  Run both fix-ups on that path too.
     assert t.count("m30_xctest_probe_fixup(kaddr, mo_offset)") == 2
     assert t.count("m30_internal_release_fixup(vnode, pager, mo_offset,") == 2
+    assert "vm_page_validate_cs_fast(page, fault_page_size, fault_phys_offset)" in t
     assert "} else {" in t  # bitmap-fast-path branch added at the call site
     assert "validation bitmap fast path skips the slow function" in t
     assert "path=%s\\n" in t
