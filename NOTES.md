@@ -1592,3 +1592,18 @@ authorization for a BOOT-only test of candidate v6.
   `M30 IRT: patched (final ...)` or updated `M30 IRT final ... sc=... si=...`
   heartbeat, then inspect the next boot stage.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v47 offline complete (MAIN only)
+
+- CI `45135148861` GREEN for `3a98f3a6`. Kernel
+  `c2862edd5fba0993ede34876ee7776561fcb982c35a1a34fad9a5133cdda7d27`;
+  payload `26f769b6bccee46df8b04d5122919cc19aa7441ac98b216fe1051f0cad13fa93`;
+  shim-boot.img
+  `23e131d59da50441967018d523b6b1888db1168f6eaaa339847c2108cbd7374c`.
+- Validators all PASS: buildtree, kernel, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging, handoff 18/18, all applicable focused tests. Shim region remains
+  byte-identical to v31; entry VA unchanged at `0xfffffff007410488`.
+- Candidate: `validation/ios-candidate-v47-out/` with README. NOT physically
+  tested. NEXT: BOOT-only flash, capture pstore, read the updated heartbeat,
+  then inspect whether SpringBoard proceeds beyond loading.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
