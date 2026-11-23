@@ -1458,7 +1458,34 @@ authorization for a BOOT-only test of candidate v6.
   the v31 reference.
 - Kernel entry moved one page later to `0xfffffff007410488`; the shim consumes
   the payload header entry, so the handoff remains 18/18 PASS.
-- Candidate: `validation/ios-candidate-v44-out/` with README. NOT physically
-  tested. NEXT: BOOT-only flash, capture pstore, expect companion-map fallback
-  evidence and either an IRT patch or a new precise failure.
+- Candidate: `validation/ios-candidate-v44-out/` with README. Physically tested
+  below; BOOT-only flash, no readback, USERDATA/SYSTEM/RECOVERY untouched.
+
+## 2026-11-23 — v44 physical: companion map is only a 16 KB stub
+
+- BOOT-only flash succeeded. pstore
+  `e86672cb4ada0fb2376f223a9854df48d79cbf0d46b5b4f93ff9ba28985d6de6`
+  (16,372 B) captured the extended replay: `sym=0x1e1d3ad84
+  img=0x1d1c22000 hits=0 tries=138
+  symmap=0x22ade8000/0x4000@0x0 fb=0x0
+  base0=0x1ecc80000/0x62ac000@0x0`.
+- The `.symbols` companion's own mapping covers only 16 KB at a completely
+  different virtual base, so it cannot translate the nlist vmaddr. The
+  companion must come from the same live cache generation as the image list;
+  on iOS >=16 that is the Cryptex cache, not `/System`. SpringBoardUI assertion
+  persists. No UI success. BOOT readback SKIPPED.
+
+## 2026-11-23 — v45 fix in progress (MAIN only): Cryptex-first companion
+
+- Reordered companion selection to try the Cryptex `.symbols` file and Cryptex
+  main cache first, then the existing `/System` candidates. The selected
+  companion's base path now drives the image-list reopen, subcache search,
+  fallback target path, and `diag 18` base report.
+- Periodic status carries `comp=<candidate>` and `ls=0x...` so the chosen
+  companion is visible in the final pstore window.
+- Standalone syntax check clean; focused tests PASS with v44 physical evidence;
+  patch dry-runs cleanly against pristine and the v44 buildtree.
+- NEXT: CI GREEN, package v45 candidate, BOOT-only flash, capture pstore, read
+  `comp=`/`ls=`/`symmap=`/`fb=`, then either `M30 IRT: patched ...` or a new
+  precise failure.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.

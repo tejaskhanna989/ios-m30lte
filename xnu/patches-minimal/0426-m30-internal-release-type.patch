@@ -9,7 +9,7 @@
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,864 @@
+@@ -140,9 +142,898 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -195,6 +195,9 @@
 +{
 +	static const char symname[] = "_internal_release_type";
 +	static const char libname[] = "/usr/lib/system/libsystem_darwin.dylib";
++	static const char cryptex_base[] =
++	    "/private/preboot/Cryptexes/OS/System/Library/Caches/"
++	    "com.apple.dyld/dyld_shared_cache_arm64";
 +	/* dyld_cache_header fields for the current header version. */
 +	enum { M30_IMAGES_OFFSET = 448, M30_IMAGES_COUNT = 452,
 +	    M30_IMAGE_INFO_SIZE = 32, M30_SYMBOL_UUID_OFFSET = 400 };
@@ -203,7 +206,8 @@
 +	vnode_t imgvp = vp;         /* file used for image-list reads */
 +	int     imgvp_opened = 0, symvp_opened = 0;
 +	char    path[1024];
-+	size_t  path_n = 0, base_n = 0;
++	char    basepath[1024];
++	size_t  path_n = 0, base_n = 0, basepath_n = 0;
 +	char   *hdr = NULL;
 +	char   *lsi = NULL;
 +	char   *buf = NULL;
@@ -218,6 +222,7 @@
 +	char    target_path[1024];
 +	int     target_opened = 0, keep_target_open = 0;
 +	int     keep_faulted_ref = 0, keep_imgvp = 0;
++	int     comp_cand = -1;
 +
 +	/* dyld_cache_header: mappingOffset@16, mappingCount@20,
 +	 * localSymbolsOffset@72 (all little-endian). */
@@ -290,23 +295,39 @@
 +		printf("M30 IRT diag 32: base path len=%zu path=%.*s\n",
 +		    base_n, (int)base_n, path);
 +
-+		for (cand = 0; cand < 3 && !opened; cand++) {
++		for (cand = 0; cand < 5 && !opened; cand++) {
 +			size_t prefix;
 +			vnode_t tvp = (vnode_t)0;
 +
-+			if (cand == 0)      prefix = base_n;  /* <base>.symbols */
-+			else if (cand == 1) prefix = path_n;   /* <subcache>.symbols */
-+			else                prefix = base_n;  /* <base> main cache */
++			/* On iOS >=16 the live DSC lives under Cryptex.  Prefer
++			 * that companion so its nlist addresses, image list, and
++			 * mapping table all describe the same cache generation. */
++			if (cand == 0 || cand == 1) {
++				prefix = sizeof(cryptex_base) - 1;
++			} else {
++				prefix = (cand == 3) ? path_n : base_n;
++			}
 +			if (prefix == 0 ||
-+			    (cand < 2 && prefix + sizeof(symsuffix) > sizeof(sympath))) {
++			    ((cand == 0 || cand == 2 || cand == 3) &&
++			    prefix + sizeof(symsuffix) > sizeof(sympath))) {
 +				continue;
 +			}
-+			if (cand < 2) {
-+				memcpy(sympath, path, prefix);
-+				memcpy(sympath + prefix, symsuffix, sizeof(symsuffix));
++			if (cand == 0 || cand == 1) {
++				memcpy(sympath, cryptex_base, prefix);
++				if (cand == 0) {
++					memcpy(sympath + prefix, symsuffix,
++					    sizeof(symsuffix));
++				} else {
++					sympath[prefix] = '\0';
++				}
 +			} else {
 +				memcpy(sympath, path, prefix);
-+				sympath[prefix] = '\0';
++				if (cand == 2 || cand == 3) {
++					memcpy(sympath + prefix, symsuffix,
++					    sizeof(symsuffix));
++				} else {
++					sympath[prefix] = '\0';
++				}
 +			}
 +			if (vnode_open(sympath, 1 /* FREAD */, 0, 0, &tvp,
 +			    vfs_context_kernel()) != 0 || tvp == (vnode_t)0) {
@@ -342,6 +363,16 @@
 +			symvp = tvp;
 +			symvp_opened = 1;
 +			opened = 1;
++			comp_cand = cand;
++			if (cand <= 1) {
++				basepath_n = sizeof(cryptex_base) - 1;
++				memcpy(basepath, cryptex_base, basepath_n);
++			} else {
++				basepath_n = base_n;
++				if (basepath_n != 0) {
++					memcpy(basepath, path, basepath_n);
++				}
++			}
 +		}
 +		if (!opened) {
 +			M30_IRT_DIAG(24, "no companion with symbol table\n");
@@ -427,12 +458,13 @@
 +
 +	/* The image list lives in the main cache, not in a dyld4 subcache.
 +	 * Reopen the base path when the faulted vnode is a subcache. */
-+	if (base_n != 0 && base_n != path_n) {
++	if (basepath_n != 0 &&
++	    (basepath_n != path_n || memcmp(basepath, path, basepath_n) != 0)) {
 +		char mainpath[1024];
 +		vnode_t tvp = (vnode_t)0;
 +
-+		memcpy(mainpath, path, base_n);
-+		mainpath[base_n] = '\0';
++		memcpy(mainpath, basepath, basepath_n);
++		mainpath[basepath_n] = '\0';
 +		if (vnode_open(mainpath, 1 /* FREAD */, 0, 0, &tvp,
 +		    vfs_context_kernel()) != 0 || tvp == (vnode_t)0) {
 +			M30_IRT_DIAG(34, "open main cache failed path=%s\n",
@@ -620,9 +652,9 @@
 +		target_vp = imgvp;
 +		keep_imgvp = 1;
 +		found = 1;
-+		if (base_n != 0 && base_n < sizeof(target_path)) {
-+			memcpy(target_path, path, base_n);
-+			target_path[base_n] = '\0';
++		if (basepath_n != 0 && basepath_n < sizeof(target_path)) {
++			memcpy(target_path, basepath, basepath_n);
++			target_path[basepath_n] = '\0';
 +		}
 +	}
 +	if (!found) {
@@ -633,13 +665,13 @@
 +			int width;
 +
 +			for (width = 0; width < 2 && !found; width++) {
-+				size_t n = base_n;
++				size_t n = basepath_n;
 +				vnode_t tvp = (vnode_t)0;
 +
 +				if (n == 0 || n + 4 >= sizeof(subpath)) {
 +					break;
 +				}
-+				memcpy(subpath, path, n);
++				memcpy(subpath, basepath, n);
 +				subpath[n++] = '.';
 +				if (width == 1 && idx < 10) {
 +					subpath[n++] = '0';
@@ -713,9 +745,9 @@
 +			keep_faulted_ref = 1;
 +		} else {
 +			keep_imgvp = 1;
-+			if (base_n != 0 && base_n < sizeof(target_path)) {
-+				memcpy(target_path, path, base_n);
-+				target_path[base_n] = '\0';
++			if (basepath_n != 0 && basepath_n < sizeof(target_path)) {
++				memcpy(target_path, basepath, basepath_n);
++				target_path[basepath_n] = '\0';
 +			}
 +		}
 +		found = 1;
@@ -725,7 +757,7 @@
 +	if (!found) {
 +		M30_IRT_DIAG(18, "no real cache mapping contains vmaddr 0x%llx "
 +		    "(base=%.*s)\n", (unsigned long long)sym_vmaddr,
-+		    (int)base_n, path);
++		    (int)basepath_n, basepath);
 +		m30_irt_state = M30_IRT_STATE_FAILED;
 +		goto out;
 +	}
@@ -759,11 +791,13 @@
 +	for (i = 0; i < 30; i++) {
 +		delay(2000000);      /* 2 s */
 +		printf("M30 IRT status: state=%d off=0x%llx err=%d replay=%d "
-+		    "sym=0x%llx img=0x%llx hits=%d tries=%d "
++		    "comp=%d ls=0x%llx sym=0x%llx img=0x%llx hits=%d tries=%d "
 +		    "symmap=0x%llx/0x%llx@0x%llx fb=0x%llx "
 +		    "basecnt=%u base0=0x%llx/0x%llx@0x%llx\n",
 +		    m30_irt_state, (unsigned long long)m30_irt_file_offset,
-+		    m30_irt_last_err, i, (unsigned long long)m30_irt_sym_vmaddr,
++		    m30_irt_last_err, i, comp_cand,
++		    (unsigned long long)ls_off,
++		    (unsigned long long)m30_irt_sym_vmaddr,
 +		    (unsigned long long)m30_irt_image_addr, m30_irt_map_hits,
 +		    m30_irt_map_tries,
 +		    (unsigned long long)m30_irt_sym_map_addr,
@@ -874,7 +908,7 @@
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8544,38 @@
+@@ -7687,6 +8578,38 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  

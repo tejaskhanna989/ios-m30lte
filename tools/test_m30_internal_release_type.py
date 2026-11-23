@@ -33,6 +33,7 @@ PSTORE_V40 = ROOT / "validation/physical-boot-test/20261122-ios-v40-boot2/raw/pm
 PSTORE_V41 = ROOT / "validation/physical-boot-test/20261123-ios-v41-boot/raw/pmsg-ramoops-0"
 PSTORE_V42 = ROOT / "validation/physical-boot-test/20261123-ios-v42-boot/raw/pmsg-ramoops-0"
 PSTORE_V43 = ROOT / "validation/physical-boot-test/20261123-ios-v43-boot/raw/pmsg-ramoops-0"
+PSTORE_V44 = ROOT / "validation/physical-boot-test/20261123-ios-v44-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -103,7 +104,7 @@ def main():
     assert 'printf("M30 IRT diag 32: base path len=%zu' in t
     assert "path[base_n - 1] >= '0'" in t
     assert 'static const char symsuffix[] = ".symbols";' in t
-    assert "for (cand = 0; cand < 3 && !opened; cand++)" in t
+    assert "for (cand = 0; cand < 5 && !opened; cand++)" in t
     assert 'printf("M30 IRT diag 30: cand=%d map_off=0x%x map_cnt=%u' in t
     assert 'printf("M30 IRT diag 28: using symbols file vp=%p main=%p' in t
     assert "vnode_open(sympath, 1 /* FREAD */" in t
@@ -145,6 +146,14 @@ def main():
     assert 'M30_IRT_DIAG(53, "companion map fallback off=0x%llx\\n"' in t
     assert "for (idx = 0; idx < 512 && !found; idx++)" in t
     assert "symmap=0x%llx/0x%llx@0x%llx fb=0x%llx" in t
+    # v45: use the SAME cache base for the companion, the image list, and the
+    # real-cache mapping search.  On iOS >=16 the live cache is under Cryptex.
+    assert "for (cand = 0; cand < 5 && !opened; cand++)" in t
+    assert "if (cand == 0 || cand == 1) {" in t
+    assert "prefix = sizeof(cryptex_base) - 1;" in t
+    assert "if (cand <= 1) {" in t
+    assert "basepath_n = sizeof(cryptex_base) - 1;" in t
+    assert "comp=%d ls=0x%llx sym=0x%llx" in t
     # v37: retrigger gate, and retry with a later vnode on wrong magic.
     assert "m30_irt_retriggered && !m30_irt_thread_started" in t
     assert "path=%s\\n" in t
@@ -311,6 +320,17 @@ def main():
     assert b"This process should not be linking or loading SpringBoardUI.framewor" in d43
     assert b"M30 IRT: patched" not in d43
     print("[PASS] v43 pstore: companion vmaddr outside real mappings -> companion-map fallback")
+
+    # --- v44 physical: the companion's own mapping is a 16 KB stub, so it
+    # cannot translate the nlist value.  The companion itself must come from
+    # the same cache base as the live image list. ---
+    d44 = PSTORE_V44.read_bytes()
+    assert b"M30 IRT status: state=4 off=0x0 err=0 replay=13" in d44
+    assert b"sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138" in d44
+    assert b"symmap=0x22ade8000/0x4000@0x0 fb=0x0" in d44
+    assert b"This process should not be linking or loading SpringBoardUI.framewor" in d44
+    assert b"M30 IRT: patched" not in d44
+    print("[PASS] v44 pstore: companion map is a 16 KB stub -> select Cryptex companion")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global
