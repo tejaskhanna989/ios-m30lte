@@ -1720,7 +1720,25 @@ authorization for a BOOT-only test of candidate v6.
 - Standalone syntax check PASS; patch dry-runs against the v48 buildtree and
   the 0425->0426 application order PASS; focused tests extended with v48
   physical success evidence and a bitmap-fast-path coverage model.
-- NEXT: re-run CI, confirm 0426 was actually applied and entry VA is
-  `0xfffffff007410488`, package v49, BOOT-only flash, capture pstore, check
-  whether the assertion is gone and whether SpringBoard progresses.
+- Analysis while CI runs: the v48 pstore contains NO `M30 XCTEST: patched`
+  line and no `M30 IRT: retrigger` line, so the `XCTestConfiguration` literal
+  was never rewritten. The remaining validation path with no fix-ups is
+  `vm_page_validate_cs_mapped_chunk()` (called from `vm_fourk_pager.c:1027`),
+  which uses `cs_validate_range()` directly. If v49 still shows the assertion
+  and no XCTEST patch marker, v50 should add the same post-validation fix-ups
+  there, guarded by `validated`.
+- Third CI `45162621882` GREEN (17m3s): log shows `Applying patch: 0426`,
+  buildtree `vm_fault.c` matches the intended source byte-for-byte, and kernel
+  entry is back at `0xfffffff007410488`. Kernel
+  `f614daf731563f5ed34ed26e969e1a336e333b08fe2bc7ada4357ae7f87c0968`;
+  payload `aa7ad2f18c73b2719c873efad2ce8339d2ff509298d14c32eddb1321e140b6a3`;
+  shim-boot.img
+  `81b4626da7c3fbc787ef824e8c7d73470e04f5fea5ee60a4ed3d605c9e812c79`.
+- Validators all PASS: buildtree, kernel, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging, handoff 18/18, all applicable focused tests. Shim region remains
+  byte-identical to v31; entry VA unchanged.
+- Candidate: `validation/ios-candidate-v49-out/` with README. NOT physically
+  tested. NEXT: BOOT-only flash, capture pstore, check for `M30 XCTEST: patched`
+  markers, IRT ordering relative to the assertion, and any SpringBoard
+  progression.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
