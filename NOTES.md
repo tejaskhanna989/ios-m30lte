@@ -2036,3 +2036,5 @@ authorization for a BOOT-only test of candidate v6.
   physically proven.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED;
   USERDATA/SYSTEM/RECOVERY untouched.
+
+- v53 candidate committed/pushed as `6d0c4a19`.
