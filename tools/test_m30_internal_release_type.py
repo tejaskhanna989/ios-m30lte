@@ -25,6 +25,7 @@ PATCH_V50 = ROOT / "xnu/patches-minimal/0427-m30-irt-retrigger-gate.patch"
 PATCH_V51 = ROOT / "xnu/patches-minimal/0428-m30-xctest-chunk-path.patch"
 PATCH_V52 = ROOT / "xnu/patches-minimal/0429-m30-chunk-path-no-retrigger.patch"
 PATCH_V53 = ROOT / "xnu/patches-minimal/0430-m30-irt-early-dsc-gate.patch"
+PATCH_V54 = ROOT / "xnu/patches-minimal/0431-m30-irt-retryable-early-scan.patch"
 PSTORE_V30 = ROOT / "validation/physical-boot-test/20261122-ios-v30-boot/raw/pmsg-ramoops-0"
 PSTORE_V31 = ROOT / "validation/physical-boot-test/20261122-ios-v31-boot/raw/pmsg-ramoops-0"
 PSTORE_V32 = ROOT / "validation/physical-boot-test/20261122-ios-v32-boot/raw/pmsg-ramoops-0"
@@ -264,6 +265,35 @@ def main():
     assert "early scan started on" in v53
     assert "v49 started on the first arbitrary fault" in v53
     print("[PASS] v53 patch: early DSC-header gate preserves its own result")
+
+    # v54: the early DSC-header worker may fail before dyld/companion state is
+    # usable.  Convert that terminal state into a bounded retryable NEED_DSC;
+    # keep the v50 XCTEST fallback reachable after the budget is exhausted.
+    v54 = PATCH_V54.read_text()
+    assert "#define M30_IRT_MAX_EARLY_ATTEMPTS 4" in v54
+    assert "static int       m30_irt_early_started = 0;" in v54
+    assert "static int       m30_irt_early_attempts = 0;" in v54
+    assert "m30_irt_mark_failure(void)" in v54
+    removed_fail = [ln for ln in v54.splitlines()
+                    if ln.startswith("-") and
+                    "m30_irt_state = M30_IRT_STATE_FAILED;" in ln]
+    added_helper = [ln for ln in v54.splitlines()
+                    if ln.startswith("+") and
+                    "m30_irt_state = M30_IRT_STATE_FAILED;" in ln]
+    assert len(removed_fail) == 17 and len(added_helper) == 1
+    assert any(ln.startswith("+") and "m30_irt_mark_failure();" in ln
+               for ln in v54.splitlines())
+    assert "rearming NEED_DSC" in v54
+    assert "scan failed terminally state=%d err=%d early=%d" in v54
+    assert "m30_irt_early_started = dsc_header;" in v54
+    assert "DSC header off=0x%llx attempt=%d" in v54
+    assert "m30_irt_early_started = 0;" in v54
+    assert "Retry armed: this worker is done" in v54
+    for bad in ("cs_enforcement_disable", "amfi_get_out_of_my_way",
+                "CSDebugDisable", "launchd_unsecure_cache"):
+        assert bad not in v54, bad
+    print("[PASS] v54 patch: bounded retryable early scan; no check weakened")
+
     # v49: validation-bitmap fast paths skip the slow function where the
     # fix-ups used to live.  Run both fix-ups on that path too.
     assert t.count("m30_xctest_probe_fixup(kaddr, mo_offset)") == 2
@@ -1013,6 +1043,47 @@ def main():
             state = "SCANNING"
     assert (seen, retriggered, started, state) == (1, False, True, "SCANNING")
     print("[PASS] model: v53 DSC header starts scan before XCTest fallback")
+
+    # v54: an early DSC-header failure is retryable, arbitrary early faults
+    # still do not start the scan, and the retry budget is bounded so a late
+    # XCTEST-gated worker remains the proven fallback.
+    MAX_EARLY = 4
+
+    def mark_failure(state, early, attempts):
+        if early and attempts < MAX_EARLY:
+            return "NEED_DSC", attempts + 1
+        return "FAILED", attempts
+
+    state, attempts, early, started = "NEED_DSC", 0, False, False
+    for fault in ("launchd", "dyld_macho", "lockdownd"):
+        if fault == "dsc_header" and state == "NEED_DSC" and not started:
+            started, early = True, True
+            state = "SCANNING"
+    assert (state, attempts, started) == ("NEED_DSC", 0, False)
+
+    state, attempts, started = "NEED_DSC", 0, False
+    state, attempts, early = "SCANNING", attempts, True
+    started = True
+    for _ in range(MAX_EARLY):
+        state, attempts = mark_failure(state, early, attempts)
+        assert state == "NEED_DSC"
+        started = False               # failed worker rearmed the gate
+        state, started = "SCANNING", True  # a later DSC fault retries
+    state, attempts = mark_failure(state, early, attempts)
+    assert (state, attempts) == ("FAILED", MAX_EARLY)
+    print("[PASS] model: v54 early failures retry within a bounded budget")
+
+    # An XCTEST patch before the budget is exhausted clears the early flag;
+    # a failure of that late worker is terminal, as in v50.
+    state, attempts, early = "NEED_DSC", 0, False
+    state, early = "SCANNING", True
+    state, attempts = mark_failure(state, early, attempts)
+    assert (state, attempts) == ("NEED_DSC", 1)
+    early = False                     # XCTEST retrigger reopened the gate
+    state = "SCANNING"
+    state, attempts = mark_failure(state, early, attempts)
+    assert (state, attempts) == ("FAILED", 1)
+    print("[PASS] model: v54 keeps the v50 XCTEST fallback terminal")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 

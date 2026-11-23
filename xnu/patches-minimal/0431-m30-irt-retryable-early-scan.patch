@@ -1,0 +1,282 @@
+--- a/osfmk/vm/vm_fault.c
++++ b/osfmk/vm/vm_fault.c
+@@ -175,12 +175,19 @@
+ #define M30_IRT_STATE_DONE       3
+ #define M30_IRT_STATE_FAILED     4
+ 
++/* v54: a scan started on the early DSC-header fault can fail while dyld is
++ * still populating the cache.  Bound that path so an early failure is a
++ * retryable NEED_DSC state; only the last failure is terminal. */
++#define M30_IRT_MAX_EARLY_ATTEMPTS 4
++
+ static int       m30_irt_state = M30_IRT_STATE_NEED_DSC;
+ static uint64_t  m30_irt_file_offset = 0;
+ static int       m30_irt_last_err = 0;
+ static uint64_t  m30_irt_diag_seen = 0;
+ static int       m30_irt_retriggered = 0;   /* replay once after XCTEST patch */
+ static int       m30_irt_thread_started = 0;
++static int       m30_irt_early_started = 0; /* current worker came from DSC header */
++static int       m30_irt_early_attempts = 0;
+ static vnode_t   m30_irt_target_vp = NULL;     /* cache file containing the symbol */
+ static uint64_t  m30_irt_sym_vmaddr = 0;          /* nlist value for status replay */
+ static uint64_t  m30_irt_image_addr = 0;          /* image_info.address for status replay */
+@@ -243,10 +250,54 @@
+ 	m30_irt_last_err = 0;
+ 	m30_irt_diag_seen = 0;
+ 	m30_irt_thread_started = 0;
++	m30_irt_early_started = 0;
+ 	printf("M30 IRT: retrigger after XCTEST patch (total %lu)\n",
+ 	    m30_xctest_patch_count);
+ }
+ 
++/* Record a scan failure.  A worker started from an early DSC-header fault is
++ * retried on a later DSC fault while the budget lasts; the terminal path keeps
++ * the v50 XCTEST fallback reachable.  No state check is weakened: only the
++ * read-only scan is restarted. */
++static void
++m30_irt_mark_failure(void)
++{
++	if (m30_irt_early_started &&
++	    m30_irt_early_attempts < M30_IRT_MAX_EARLY_ATTEMPTS) {
++		m30_irt_early_attempts++;
++		printf("M30 IRT: early scan attempt %d failed state=%d err=%d; "
++		    "rearming NEED_DSC\n", m30_irt_early_attempts,
++		    m30_irt_state, m30_irt_last_err);
++		m30_irt_state = M30_IRT_STATE_NEED_DSC;
++		m30_irt_file_offset = 0;
++		m30_irt_target_vp = (vnode_t)0;
++		m30_irt_sym_vmaddr = 0;
++		m30_irt_image_addr = 0;
++		m30_irt_base_map_cnt = 0;
++		m30_irt_base_map_addr = 0;
++		m30_irt_base_map_size = 0;
++		m30_irt_base_map_off = 0;
++		m30_irt_sym_map_cnt = 0;
++		m30_irt_sym_map_addr = 0;
++		m30_irt_sym_map_size = 0;
++		m30_irt_sym_map_fileoff = 0;
++		m30_irt_fallback_off = 0;
++		m30_irt_map_hits = 0;
++		m30_irt_map_tries = 0;
++		m30_irt_last_err = 0;
++		m30_irt_diag_seen = 0;
++		m30_irt_proactive_tries = 0;
++		m30_irt_proactive_result = 0;
++		m30_irt_thread_started = 0;
++		return;
++	}
++	printf("M30 IRT: scan failed terminally state=%d err=%d early=%d\n",
++	    m30_irt_state, m30_irt_last_err, m30_irt_early_started);
++	m30_irt_state = M30_IRT_STATE_FAILED;
++	m30_irt_thread_started = 0;   /* leave the v50 fallback able to restart */
++	m30_irt_early_started = 0;
++}
++
+ /* One-shot diagnostics: every distinct failure reason is printed at most once
+  * so the ramoops pmsg ring is not flooded. */
+ #define M30_IRT_DIAG(n, fmt, ...) do {                                  \
+@@ -483,19 +534,20 @@
+ 	int     target_opened = 0, keep_target_open = 0;
+ 	int     keep_faulted_ref = 0, keep_imgvp = 0;
+ 	int     comp_cand = -1;
++	int     early_attempt = m30_irt_early_started;
+ 
+ 	/* dyld_cache_header: mappingOffset@16, mappingCount@20,
+ 	 * localSymbolsOffset@72 (all little-endian). */
+ 	hdr = kalloc_data(chunk, Z_NOWAIT);
+ 	if (hdr == NULL) {
+ 		M30_IRT_DIAG(19, "header buffer alloc failed\n");
+-		m30_irt_state = M30_IRT_STATE_FAILED;
++		m30_irt_mark_failure();
+ 		goto out;
+ 	}
+ 	if (m30_irt_read(vp, 0, hdr, 96) != 0) {
+ 		M30_IRT_DIAG(3, "header read failed err=%d\n",
+ 		    m30_irt_last_err);
+-		m30_irt_state = M30_IRT_STATE_FAILED;
++		m30_irt_mark_failure();
+ 		goto out;
+ 	}
+ 	if (memcmp(hdr, "dyld_v", 6) != 0) {
+@@ -506,9 +558,14 @@
+ 		    (unsigned char)hdr[0], (unsigned char)hdr[1],
+ 		    (unsigned char)hdr[2], (unsigned char)hdr[3], path);
+ 		/* Wrong vnode (e.g. a Mach-O at load_init_program): let a later
+-		 * post-retrigger fault try a different vnode. */
+-		m30_irt_state = M30_IRT_STATE_NEED_DSC;
+-		m30_irt_thread_started = 0;
++		 * DSC fault try a different vnode.  Account for the attempt so
++		 * the retry budget also bounds this path. */
++		if (early_attempt) {
++			m30_irt_mark_failure();
++		} else {
++			m30_irt_state = M30_IRT_STATE_NEED_DSC;
++			m30_irt_thread_started = 0;
++		}
+ 		goto out;
+ 	}
+ 	map_off   = *(uint32_t *)(hdr + 16);
+@@ -532,7 +589,7 @@
+ 		    plen >= (int)sizeof(path)) {
+ 			M30_IRT_DIAG(26, "vn_getpath failed err=%d\n",
+ 			    m30_irt_last_err);
+-			m30_irt_state = M30_IRT_STATE_FAILED;
++			m30_irt_mark_failure();
+ 			goto out;
+ 		}
+ 		/* vn_getpath() reports plen including the terminating NUL. */
+@@ -636,7 +693,7 @@
+ 		}
+ 		if (!opened) {
+ 			M30_IRT_DIAG(24, "no companion with symbol table\n");
+-			m30_irt_state = M30_IRT_STATE_FAILED;
++			m30_irt_mark_failure();
+ 			goto out;
+ 		}
+ 		fp = symvp;
+@@ -645,7 +702,7 @@
+ 	}
+ 	if (ls_off == 0 || map_off == 0 || map_cnt == 0) {
+ 		M30_IRT_DIAG(24, "header has no symbol table\n");
+-		m30_irt_state = M30_IRT_STATE_FAILED;
++		m30_irt_mark_failure();
+ 		goto out;
+ 	}
+ 
+@@ -656,7 +713,7 @@
+ 		M30_IRT_DIAG(20, "symbol buffers alloc failed lsi=%p "
+ 		    "buf=%p maps=%p\n", (void *)lsi, (void *)buf,
+ 		    (void *)maps);
+-		m30_irt_state = M30_IRT_STATE_FAILED;
++		m30_irt_mark_failure();
+ 		goto out;
+ 	}
+ 
+@@ -729,7 +786,7 @@
+ 		    vfs_context_kernel()) != 0 || tvp == (vnode_t)0) {
+ 			M30_IRT_DIAG(34, "open main cache failed path=%s\n",
+ 			    mainpath);
+-			m30_irt_state = M30_IRT_STATE_FAILED;
++			m30_irt_mark_failure();
+ 			goto out;
+ 		}
+ 		imgvp = tvp;
+@@ -738,14 +795,14 @@
+ 	if (m30_irt_read(imgvp, 0, hdr, 512) != 0) {
+ 		M30_IRT_DIAG(35, "main header read failed err=%d\n",
+ 		    m30_irt_last_err);
+-		m30_irt_state = M30_IRT_STATE_FAILED;
++		m30_irt_mark_failure();
+ 		goto out;
+ 	}
+ 	img_off = *(uint32_t *)(hdr + M30_IMAGES_OFFSET);
+ 	img_cnt = *(uint32_t *)(hdr + M30_IMAGES_COUNT);
+ 	M30_IRT_DIAG(36, "images off=0x%x cnt=%u\n", img_off, img_cnt);
+ 	if (img_off == 0 || img_cnt == 0) {
+-		m30_irt_state = M30_IRT_STATE_FAILED;
++		m30_irt_mark_failure();
+ 		goto out;
+ 	}
+ 
+@@ -787,7 +844,7 @@
+ 	if (image_index < 0) {
+ 		M30_IRT_DIAG(38, "libsystem_darwin image not found cnt=%u\n",
+ 		    img_cnt);
+-		m30_irt_state = M30_IRT_STATE_FAILED;
++		m30_irt_mark_failure();
+ 		goto out;
+ 	}
+ 	printf("M30 IRT diag 39: image index=%d path=%s\n",
+@@ -797,7 +854,7 @@
+ 	if (m30_irt_read(fp, ls_off, lsi, 24) != 0) {
+ 		M30_IRT_DIAG(9, "local symbols info read failed err=%d\n",
+ 		    m30_irt_last_err);
+-		m30_irt_state = M30_IRT_STATE_FAILED;
++		m30_irt_mark_failure();
+ 		goto out;
+ 	}
+ 	nlist_off  = *(uint32_t *)(lsi + 0);
+@@ -813,7 +870,7 @@
+ 	    (uint32_t)image_index >= entries_cnt) {
+ 		M30_IRT_DIAG(40, "no local symbols entry for image idx=%d cnt=%u\n",
+ 		    image_index, entries_cnt);
+-		m30_irt_state = M30_IRT_STATE_FAILED;
++		m30_irt_mark_failure();
+ 		goto out;
+ 	}
+ 
+@@ -825,7 +882,7 @@
+ 		    (uint64_t)image_index * 16, buf, 16) != 0) {
+ 			M30_IRT_DIAG(41, "local symbols entry read failed err=%d\n",
+ 			    m30_irt_last_err);
+-			m30_irt_state = M30_IRT_STATE_FAILED;
++			m30_irt_mark_failure();
+ 			goto out;
+ 		}
+ 		nlist_start = *(uint32_t *)(buf + 8);
+@@ -835,7 +892,7 @@
+ 		    (uint64_t)image_index * 12, buf, 12) != 0) {
+ 			M30_IRT_DIAG(41, "local symbols entry read failed err=%d\n",
+ 			    m30_irt_last_err);
+-			m30_irt_state = M30_IRT_STATE_FAILED;
++			m30_irt_mark_failure();
+ 			goto out;
+ 		}
+ 		nlist_start = *(uint32_t *)(buf + 4);
+@@ -845,7 +902,7 @@
+ 	    nlist_start, nlist_range);
+ 	if (nlist_range == 0 ||
+ 	    (uint64_t)nlist_start + nlist_range > nlist_cnt) {
+-		m30_irt_state = M30_IRT_STATE_FAILED;
++		m30_irt_mark_failure();
+ 		goto out;
+ 	}
+ 
+@@ -884,7 +941,7 @@
+ 	if (!found || sym_vmaddr == 0) {
+ 		M30_IRT_DIAG(15, "symbol not found in image nlist "
+ 		    "(start=%u cnt=%u)\n", nlist_start, nlist_range);
+-		m30_irt_state = M30_IRT_STATE_FAILED;
++		m30_irt_mark_failure();
+ 		goto out;
+ 	}
+ 	printf("M30 IRT diag 13: symbol vmaddr=0x%llx\n",
+@@ -1086,7 +1143,7 @@
+ 		M30_IRT_DIAG(18, "no real cache mapping contains vmaddr 0x%llx "
+ 		    "(base=%.*s)\n", (unsigned long long)sym_vmaddr,
+ 		    (int)basepath_n, basepath);
+-		m30_irt_state = M30_IRT_STATE_FAILED;
++		m30_irt_mark_failure();
+ 		goto out;
+ 	}
+ 	printf("M30 IRT diag 33: mapped via cache vp=%p off=0x%llx path=%s\n",
+@@ -1125,6 +1182,13 @@
+ 	if (vp != NULL && !keep_faulted_ref)
+ 		vnode_rele(vp);
+ 
++	if (early_attempt && m30_irt_early_attempts != 0 &&
++	    m30_irt_state == M30_IRT_STATE_NEED_DSC) {
++		/* Retry armed: this worker is done, and its compact heartbeat
++		 * would only overwrite the next attempt's evidence. */
++		return;
++	}
++
+ 	/* The 16 KB pmsg ring wraps well before SpringBoard loads.  Replay a
+ 	 * compact status line periodically for a bounded window so the final
+ 	 * result is always present in a freshly captured pstore. */
+@@ -1301,11 +1365,13 @@
+ 			    95 /* MAXPRI_KERNEL */, &th);
+ 			if (kr == KERN_SUCCESS) {
+ 				m30_irt_thread_started = 1;
++				m30_irt_early_started = dsc_header;
+ 				thread_deallocate(th);
+ 				if (dsc_header && !m30_irt_retriggered) {
+ 					printf("M30 IRT: early scan started on "
+-					    "DSC header off=0x%llx\n",
+-					    (unsigned long long)mo_offset);
++					    "DSC header off=0x%llx attempt=%d\n",
++					    (unsigned long long)mo_offset,
++					    m30_irt_early_attempts + 1);
+ 				}
+ 				M30_IRT_DIAG(21, "worker started vp=%p\n",
+ 				    (void *)vp);
