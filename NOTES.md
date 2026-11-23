@@ -2298,3 +2298,43 @@ authorization for a BOOT-only test of candidate v6.
   BOOT-only physical test under the existing authorization with the same
   identity/download-mode gates. Do not reflash v55. No UI/lock-screen claim
   without verifiable physical evidence.
+
+## 2026-11-23 - v56 STOPPED before flash; v57 offline (MAIN only)
+
+- v56 source (`989eb983`) and CI run `45229034214` were created, but an
+  independent source review found a stronger, code-proven hang that 0433 does
+  not fix. The CI run was cancelled (`conclusion=cancelled`) before completion
+  and **v56 was never flashed**. No physical evidence or candidate image was
+  produced for v56; it is not a validated candidate.
+- Proven chain:
+  `vm_page_map_and_validate_cs()` keeps the faulting page `vmp_busy` while
+  `vm_page_validate_cs_mapped_slow()` runs; v55/v56 16K `vn_rdwr()` covers that
+  page. Even with `IO_NOCACHE`, `cluster_read()` calls
+  `ubc_create_upl_kernel(..., UPL_FILE_IO | UPL_SET_LITE)`;
+  `vm_object_upl_request()` does `PAGE_SLEEP(object, dst_page, THREAD_UNINT)`
+  for `vmp_busy || vmp_cleaning`. The thread waiting on the UPL owns the busy
+  page, so it self-deadlocks. This also explains the absence of `M30 CS diag 0`:
+  that record is emitted only after `vn_rdwr()` returns.
+- New incremental patch
+  `xnu/patches-minimal/0434-m30-cs-16k-no-busy-upl.patch` (after 0433): allocate
+  with `Z_NOWAIT`; scan the four 4K slots; never include the busy faulting page
+  or any other busy/cleaning page in `vn_rdwr()`; read only absent slots, one
+  4K page at a time with the object lock dropped; use `kaddr` for the faulting
+  page and physical bytes for other resident pages; recheck
+  `object->pager == pager` and object life after every lock drop/reacquire;
+  fail closed on busy peer, short read, allocation failure or pager change.
+  `M30_CS_DIAG(5)` now records readback start before any I/O so the next
+  physical capture can distinguish an allocation failure from an I/O hang.
+- Offline checks PASS: 0433+0434 apply to the exact v55 CI buildtree and
+  reproduce modified `vm_fault.c` SHA256
+  `a10ab98b0506e521090402674b5ce533f1edb6e901350b39ce8c36e42365aa77`.
+  New `tools/test_m30_cs_16k_no_busy_upl.py` PASS; it models mixed
+  resident/absent slots, busy-page rejection before any I/O, short reads and
+  4K page reads. `tools/test_m30_cs_16k_nowait.py` remains as the historical
+  0433 gate. No signature, hash, AMFI, trust-cache or page-validation check is
+  weakened; no 0417, no OSX target, no branch or GitHub settings change.
+- NEXT: commit/push v57 source, run fresh CI with `XNU_TARGET=iphoneos`,
+  M30LTE, DEVELOPMENT; download/validate artifacts; package v57; then
+  autonomous BOOT-only physical test under the existing authorization with the
+  same identity/download-mode gates. Do not flash v56 or reflash v55. No
+  UI/lock-screen claim without verifiable physical evidence.

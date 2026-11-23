@@ -10,7 +10,10 @@ buffer with `kalloc_data(..., Z_WAITOK)` while the VM object lock is still
 held; that can sleep under the lock.  v56 uses `Z_NOWAIT`, fails closed on
 allocation failure, and rechecks the pager after the lock drop/reacquire.
 
-This test keeps all v55 validation semantics: the vnode is read only, the
+This is the historical gate for 0433 only.  v56 was cancelled before any
+physical flash because 0433 still lets `vn_rdwr()` create a UPL containing the
+busy faulting page; the final gate is `tools/test_m30_cs_16k_no_busy_upl.py`
+for 0434.  All v55 validation semantics remain: the vnode is read only, the
 resident bytes are overlaid before hashing, short reads fail closed, and no
 security check is weakened.
 """

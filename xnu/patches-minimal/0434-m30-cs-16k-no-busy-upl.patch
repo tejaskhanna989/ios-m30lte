@@ -1,0 +1,134 @@
+diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
+--- a/osfmk/vm/vm_fault.c
++++ b/osfmk/vm/vm_fault.c
+@@ -8966,9 +8966,11 @@
+ 			 * object lock is dropped for the read, which
+ 			 * vm_fault_cs_check_violation() explicitly permits; the
+ 			 * faulting page stays busy and the VM map holds a reference
+-			 * on the object.  IO_NOCACHE keeps the read out of the
+-			 * object's page cache so it cannot recurse into this fault
+-			 * path.  After re-locking, the actual bytes of every still
++			 * on the object.  IO_NOCACHE avoids a UBC cache copy, but
++			 * cluster_read() still creates a UPL on this object.  The
++			 * busy faulting page must therefore be excluded from the
++			 * I/O range; vm_object_upl_request() sleeps on vmp_busy.
++			 * After re-locking, the actual bytes of every still
+ 			 * resident page are copied over the file image before the
+ 			 * hash check.  Thus the signature is checked against what
+ 			 * is really mapped, never against a trusted file copy
+@@ -8976,9 +8978,12 @@
+ 			 * validation is skipped or weakened, and the file is never
+ 			 * written.
+ 			 */
+-			int resid = (int)CS_16K_BLOCK_SIZE;
+-			int err;
++			int resid = (int)PAGE_SIZE;
++			int err = 0;
+ 			char *readbuf;
++			boolean_t need_read[4];
++			boolean_t read_ok = TRUE;
++			int slot;
+ 
+ 			/* The object lock is still held here: Z_WAITOK can sleep. */
+ 			readbuf = kalloc_data(CS_16K_BLOCK_SIZE, Z_NOWAIT);
+@@ -8986,19 +8991,61 @@
+ 				m30_cs_block_read_fail++;
+ 				M30_CS_DIAG(3, "16K readback allocation failed\n");
+ 			} else {
+-				m30_cs_block_reads++;
+-				vm_object_unlock(object);
+-				err = vn_rdwr(UIO_READ, vnode, readbuf,
+-				    (int)CS_16K_BLOCK_SIZE, (off_t)block_mo,
+-				    UIO_SYSSPACE, IO_NOCACHE, kauth_cred_get(),
+-				    &resid, NULL);
+-				vm_object_lock(object);
+-				M30_CS_DIAG(0, "16K readback off=0x%llx err=%d resid=%d\n",
+-				    (unsigned long long)block_mo, err, resid);
+-				if (err == 0 && resid == 0 && object->alive &&
+-				    !object->terminating && object->pager == pager) {
++				/*
++				 * Never give the UBC UPL the busy faulting page or any
++				 * other busy/cleaning page.  Only absent slots are
++				 * fetched from the vnode; resident slots are copied
++				 * from their real bytes after the lock is reacquired.
++				 */
++				for (slot = 0; slot < 4; slot++) {
++					vm_page_t lp = vm_page_lookup(object,
++					    block_obj + (slot << PAGE_SHIFT));
++
++					if (lp == page) {
++						need_read[slot] = FALSE; /* kaddr below */
++					} else if (lp == VM_PAGE_NULL) {
++						need_read[slot] = TRUE;  /* file bytes */
++					} else if (lp->vmp_busy || lp->vmp_cleaning) {
++						read_ok = FALSE;
++						break;
++					} else {
++						need_read[slot] = FALSE; /* physical bytes */
++					}
++				}
++				if (read_ok) {
++					m30_cs_block_reads++;
++					for (slot = 0; slot < 4 && read_ok; slot++) {
++						if (!need_read[slot]) {
++							continue;
++						}
++						M30_CS_DIAG(5,
++						    "16K readback start slot=%d off=0x%llx\n",
++						    slot,
++						    (unsigned long long)(block_mo +
++						    (slot << PAGE_SHIFT)));
++						vm_object_unlock(object);
++						resid = (int)PAGE_SIZE;
++						err = vn_rdwr(UIO_READ, vnode,
++						    readbuf + (slot << PAGE_SHIFT),
++						    (int)PAGE_SIZE,
++						    (off_t)(block_mo + (slot << PAGE_SHIFT)),
++						    UIO_SYSSPACE, IO_NOCACHE,
++						    kauth_cred_get(), &resid, NULL);
++						vm_object_lock(object);
++						M30_CS_DIAG(0,
++						    "16K readback slot=%d err=%d resid=%d\n",
++						    slot, err, resid);
++						if (err != 0 || resid != 0 ||
++						    !object->alive || object->terminating ||
++						    object->pager != pager) {
++							read_ok = FALSE;
++						}
++					}
++				}
++				if (read_ok && object->alive && !object->terminating &&
++				    object->pager == pager) {
+ 					/*
+-					 * bpage[] was gathered before the lock drop and
++					 * bpage[] was gathered before the lock drops and
+ 					 * may be stale.  Re-look-up each 4K page and use
+ 					 * kaddr for the faulting page, which stayed busy
+ 					 * throughout.  Missing pages keep the file bytes.
+@@ -9007,11 +9054,15 @@
+ 						vm_page_t rpage = vm_page_lookup(object,
+ 						    block_obj + (i << PAGE_SHIFT));
+ 						if (rpage == VM_PAGE_NULL) {
+-							continue;
++							continue; /* keep file bytes */
+ 						}
+ 						if (rpage == page) {
+ 							memcpy(readbuf + (i << PAGE_SHIFT),
+ 							    (const void *)kaddr, PAGE_SIZE);
++						} else if (rpage->vmp_busy ||
++						    rpage->vmp_cleaning) {
++							read_ok = FALSE;
++							break;
+ 						} else {
+ 							vm_offset_t bva = (vm_map_offset_t)phystokv(
+ 							    (pmap_paddr_t)VM_PAGE_GET_PHYS_PAGE(rpage) << PAGE_SHIFT);
+@@ -9019,6 +9070,9 @@
+ 							    (const void *)bva, PAGE_SIZE);
+ 						}
+ 					}
++				}
++				if (read_ok && object->alive && !object->terminating &&
++				    object->pager == pager) {
+ 					block_buf = readbuf;
+ 					vdata = block_buf;
+ 					voff = block_mo;
