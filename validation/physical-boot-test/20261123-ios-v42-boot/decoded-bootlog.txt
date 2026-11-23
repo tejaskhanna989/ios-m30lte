@@ -1,0 +1,164 @@
+file: validation/physical-boot-test/20261123-ios-v42-boot/raw/pmsg-ramoops-0  bytes=16372  sha256=b8a9214a6d8ce8b5b17ee3d5b59b1249e4c7280c7ba84bc63d727bab0a29eba9
+records=161 issues=1
+  [000] @0x00004f XNU: M30 IRT diag 42: image nlist start=6047093 count=146
+  [001] @0x00009b XNU: M30 IRT diag 43: nlist strx=318698902
+  [002] @0x0000d8 XNU: M30 IRT diag 13: symbol vmaddr=0x1e1d3ad84
+  [003] @0x00011a XNU: M30 IRT diag 18: no real cache mapping contains vmaddr 0x1e1d3ad84 (base=/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64)
+  [004] @0x0001b9 XNU: SWEET Sandbox: logd privilege 1002 denied
+  [005] @0x0001fa XNU: CRASH SpringBoard[27] sig 6 code 0x0 sub 0x0 slide 0x36254000 mh 0x101210000
+  [006] @0x00025e XNU: CRASH SpringBoard pc 0x1f886b198 lr 0x207dfa5f8 sp 0x16ebe3470 fp 0x16ebe3490 far 0x1c3ef0d50
+  [007] @0x0002d3 XNU: CRASH SpringBoard bt 0x1c3eb04b8 0x207d32f54 0x207d23a4c 0x1b6326afc 0x207d32424 0x207d34da0 0x207d34d60 0x1b6321d58 0x1b7829810 0x227165138
+  [008] @0x000377 XNU: STR scan of SpringBoard heap
+  [009] @0x0003ab XNU: STR *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'This process should not be linking or loading SpringBoardUI.framewor
+  [010] @0x000466 XNU: STR *** First throw call stack:
+  [011] @0x00049d XNU: STR (0x1bd04540c 0x1b6321c28 0x1b7829810 0x227165138 0x1b631b5d4 0x1da868ddc 0x1da86c438 0x1da86c420 0x1da86c420 0x1da86c420 0x1da88c4b4 0x1da8714d4 0x1da8a29a0 0x
+  [012] @0x000558 XNU: STR *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'This process should not be linking or loading SpringBoardUI.framewor
+  [013] @0x000613 XNU: STR *** First throw call stack:
+  [014] @0x00064a XNU: STR (0x1bd04540c 0x1b6321c28 0x1b7829810 0x227165138 0x1b631b5d4 0x1da868ddc 0x1da86c438 0x1da86c420 0x1da86c420 0x1da86c420 0x1da88c4b4 0x1da8714d4 0x1da8a29a0 0x
+  [015] @0x000705 XNU: CODE SIGNING: cs_invalid_page(0x1b7478000): p=78[AppleCredentialM] final status 0x22000000, allowing (remove VALID) page
+  [016] @0x000795 XNU: CODE SIGNING: cs_invalid_page(0x1bc07e000): p=72[ptpd] final status 0x22000000, allowing (remove VALID) page
+  [017] @0x000819 XNU: SWEET WDT: watchdogd sel 0 in 0/0 out 1/0 -> ok
+  [018] @0x000860 XNU: CODE SIGNING: cs_invalid_page(0x1faeb0000): p=65[containermanager] final status 0x22000000, allowing (remove VALID) page
+  [019] @0x0008f0 XNU: CODE SIGNING: cs_invalid_page(0x1bc07f000): p=55[thermalmonitord] final status 0x22000000, allowing (remove VALID) page
+  [020] @0x00097f XNU: CODE SIGNING: cs_invalid_page(0x1bc087000): p=53[identityservices] final status 0x22000000, allowing (remove VALID) page
+  [021] @0x000a0f XNU: CODE SIGNING: cs_invalid_page(0x1bc332000): p=86[bluetoothd] final status 0x22000000, allowing (remove VALID) page
+  [022] @0x000a99 XNU: CODE SIGNING: cs_invalid_page(0x1bc611000): p=52[nfcd] final status 0x22000000, allowing (remove VALID) page
+  [023] @0x000b1d XNU: CODE SIGNING: cs_invalid_page(0x1bc119000): p=61[sharingd] final status 0x22000000, allowing (remove VALID) page
+  [024] @0x000ba5 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=0
+  [025] @0x000beb XNU: STR aThis process should not be linking or loading SpringBoardUI.framework (<rdar://problem/26143166>)
+  [026] @0x000c69 XNU: STR terminating due to uncaught exception of type NSException
+  [027] @0x000cbe XNU: CODE SIGNING: cs_invalid_page(0x1bd36a000): p=93[cfprefsd] final status 0x22000000, allowing (remove VALID) page
+  [028] @0x000d46 XNU: CODE SIGNING: cs_invalid_page(0x22c12d000): p=26[runningboardd] final status 0x22000000, allowing (remove VALID) page
+  [029] @0x000dd3 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=1
+  [030] @0x000e19 XNU: CODE SIGNING: cs_invalid_page(0x1b722c000): p=68[driverkitd] final status 0x22000000, allowing (remove VALID) page
+  [031] @0x000ea3 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=2
+  [032] @0x000ee9 XNU: CRASH driverkitd[68] sig 9 code 0x0 sub 0x0 slide 0x36254000 mh 0x100bd8000
+  [033] @0x000f4c XNU: CRASH driverkitd pc 0x1f8865d98 lr 0x1b73f83a4 sp 0x16f225200 fp 0x16f225270 far 0x15601b408
+  [034] @0x000fc0 XNU: CRASH driverkitd bt 0x1b73ed12c 0x1b73de514 0x100c766b4 0x100cc137c 0x100cc281c 0x100c0031c 0x100c5100c 0x100c6897c 0x100c7ecf8 0x100c7a4a8
+  [035] @0x001063 XNU: CRASH driverkitd reason ns 1 code 0x7: (none)
+  [036] @0x0010a8 XNU: SWEET Sandbox: mediaserverd privilege 1015 denied
+  [037] @0x0010f1 XNU: process mediaserverd[29] denied attempt to escape CPU monitor (missing required entitlement).
+  [038] @0x001166 XNU: CODE SIGNING: cs_invalid_page(0x1bbe6e000): p=97[MobileGestaltHel] final status 0x22000000, allowing (remove VALID) page
+  [039] @0x0011f6 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=3
+  [040] @0x00123c XNU: SWEET AKS: backboardd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [041] @0x00128c XNU: SWEET AKS: backboardd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [042] @0x0012e0 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=4
+  [043] @0x001326 XNU: SWEET HID: SweetHIDTouch open by IOHIDEventServiceUserClient -> 1
+  [044] @0x00137f XNU: SWEET HID: SweetHIDButtons open by IOHIDEventServiceUserClient -> 1
+  [045] @0x0013da XNU: SWEET Sandbox: distnoted op 28
+  [046] @0x001410 XNU: CODE SIGNING: cs_invalid_page(0x1c47d9000): p=39[powerd] final status 0x22000000, allowing (remove VALID) page
+  [047] @0x001496 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=5
+  [048] @0x0014dc XNU: SWEET AKS: powerd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [049] @0x001528 XNU: SWEET AKS: powerd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [050] @0x001574 XNU: CODE SIGNING: cs_invalid_page(0x1bcb44000): p=98[com.apple.datami] final status 0x22000000, allowing (remove VALID) page
+  [051] @0x001604 XNU: CODE SIGNING: cs_invalid_page(0x1c3ebc000): p=42[biomed] final status 0x22000000, allowing (remove VALID) page
+  [052] @0x00168a XNU: CODE SIGNING: cs_invalid_page(0x1e6af5000): p=76[aggregated] final status 0x22000000, allowing (remove VALID) page
+  [053] @0x001714 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=6
+  [054] @0x00175a XNU: CODE SIGNING: cs_invalid_page(0x1fcd90000): p=99[triald] final status 0x22000000, allowing (remove VALID) page
+  [055] @0x0017e0 XNU: CODE SIGNING: cs_invalid_page(0x1df6b8000): p=95[ReportCrash] final status 0x22000000, allowing (remove VALID) page
+  [056] @0x00186b XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [057] @0x0018bb XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [058] @0x00190b XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [059] @0x00195b XNU: CODE SIGNING: cs_invalid_page(0x209ffc000): p=96[ACCHWComponentAu] final status 0x22000000, allowing (remove VALID) page
+  [060] @0x0019eb XNU: SWEET AKS: ReportCrash sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [061] @0x001a3c XNU: SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [062] @0x001a91 XNU: SWEET AKS: ReportCrash sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [063] @0x001ae2 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [064] @0x001b32 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [065] @0x001b82 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [066] @0x001bd2 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=7
+  [067] @0x001c18 XNU: CODE SIGNING: cs_invalid_page(0x1c6d38000): p=104[PowerUIAgent] final status 0x22000000, allowing (remove VALID) page
+  [068] @0x001ca5 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=8
+  [069] @0x001ceb XNU: CODE SIGNING: cs_invalid_page(0x1c4360000): p=105[apsd] final status 0x22000000, allowing (remove VALID) page
+  [070] @0x001d70 XNU: CODE SIGNING: cs_invalid_page(0x22084d000): p=63[locationd] final status 0x22000000, allowing (remove VALID) page
+  [071] @0x001df9 XNU: SWEET AKS: coreduetd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [072] @0x001e48 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [073] @0x001e9b XNU: SWEET AKS: mediaserverd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [074] @0x001eed XNU: SWEET AKS: mediaserverd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [075] @0x001f3f XNU: CODE SIGNING: cs_invalid_page(0x1c6da3000): p=56[contextstored] final status 0x22000000, allowing (remove VALID) page
+  [076] @0x001fcc XNU: CODE SIGNING: cs_invalid_page(0x1d294c000): p=103[mobileassetd] final status 0x22000000, allowing (remove VALID) page
+  [077] @0x002059 XNU: SWEET Sandbox: cfprefsd op 12
+  [078] @0x00208e XNU: STR *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'This process should not be linking or loading SpringBoardUI.framewor
+  [079] @0x002149 XNU: SWEET AKS: contextstored sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [080] @0x00219c XNU: SWEET AKS: contextstored sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [081] @0x0021ef XNU: M30 IRT status: state=4 off=0x0 err=0 replay=9
+  [082] @0x002235 XNU: CODE SIGNING: cs_invalid_page(0x1f5f20000): p=73[passd] final status 0x22000000, allowing (remove VALID) page
+  [083] @0x0022ba XNU: SWEET AKS: triald sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [084] @0x002306 XNU: SWEET AKS: triald sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [085] @0x002352 XNU: CODE SIGNING: cs_invalid_page(0x1c9a21000): p=102[awdd] final status 0x22000000, allowing (remove VALID) page
+  [086] @0x0023d7 XNU: CODE SIGNING: cs_invalid_page(0x1c004e000): p=107[dmd] final status 0x22000000, allowing (remove VALID) page
+  [087] @0x00245b XNU: M30 IRT status: state=4 off=0x0 err=0 replay=10
+  [088] @0x0024a2 XNU: STR (0x1bd04540c 0x1b6321c28 0x1b7829810 0x227165138 0x1b631b5d4 0x1da868ddc 0x1da86c438 0x1da86c420 0x1da86c420 0x1da86c420 0x1da88c4b4 0x1da8714d4 0x1da8a29a0 0x
+  [089] @0x00255d XNU: SWEET AKS: passd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [090] @0x0025a8 XNU: SWEET AKS: passd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [091] @0x0025f7 XNU: SWEET AKS: passd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [092] @0x002642 XNU: SWEET AKS: passd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [093] @0x002691 XNU: CODE SIGNING: cs_invalid_page(0x1bd1de000): p=109[mDNSResponder] final status 0x22000000, allowing (remove VALID) page
+  [094] @0x00271f XNU: SWEET Sandbox: mDNSResponder op 22
+  [095] @0x002759 XNU: SWEET Sandbox: mDNSResponder op 1
+  [096] @0x002792 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=11
+  [097] @0x0027d9 XNU: CODE SIGNING: cs_invalid_page(0x1efc9c000): p=110[liveactivitiesd] final status 0x22000000, allowing (remove VALID) page
+  [098] @0x002869 XNU: SWEET AKS: liveactivitiesd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [099] @0x0028be XNU: SWEET AKS: liveactivitiesd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [100] @0x002913 XNU: SWEET FB: MobileGestaltHelper sel 8 in 0/0 out 2/0 -> 0x0
+  [101] @0x002964 XNU: SWEET FB: MobileGestaltHelper sel 28 in 0/0 out 1/0 -> 0x0
+  [102] @0x0029b6 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=12
+  [103] @0x0029fd XNU: SWEET Sandbox: containermanager op 16
+  [104] @0x002a3a XNU: SWEET Sandbox: containermanager op 15
+  [105] @0x002a77 XNU: SWEET AKS: containermanagerd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [106] @0x002ace XNU: SWEET AKS: containermanagerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [107] @0x002b29 XNU: SWEET AKS: mediaserverd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [108] @0x002b7b XNU: SWEET AKS: mediaserverd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [109] @0x002bd1 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=13
+  [110] @0x002c18 XNU: SWEET AKS: dmd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [111] @0x002c61 XNU: SWEET AKS: dmd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [112] @0x002cae XNU: SWEET AKS: dmd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [113] @0x002cf7 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=14
+  [114] @0x002d3e XNU: CODE SIGNING: cs_invalid_page(0x1bc09e000): p=38[tccd] final status 0x22000000, allowing (remove VALID) page
+  [115] @0x002dc2 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=15
+  [116] @0x002e09 XNU: CODE SIGNING: cs_invalid_page(0x1bc0ff000): p=111[bluetoothd] final status 0x22000000, allowing (remove VALID) page
+  [117] @0x002e94 XNU: CODE SIGNING: cs_invalid_page(0x1bc69b000): p=112[nehelper] final status 0x22000000, allowing (remove VALID) page
+  [118] @0x002f1d XNU: M30 IRT status: state=4 off=0x0 err=0 replay=16
+  [119] @0x002f64 XNU: CODE SIGNING: cs_invalid_page(0x1f873f000): p=113[symptomsd] final status 0x22000000, allowing (remove VALID) page
+  [120] @0x002fee XNU: CODE SIGNING: cs_invalid_page(0x1bc0f0000): p=114[fmflocatord] final status 0x22000000, allowing (remove VALID) page
+  [121] @0x00307a XNU: CODE SIGNING: cs_invalid_page(0x1bc68f000): p=115[findmydeviced] final status 0x22000000, allowing (remove VALID) page
+  [122] @0x003108 XNU: CODE SIGNING: cs_invalid_page(0x1bc1ad000): p=66[cloudpaird] final status 0x22000000, allowing (remove VALID) page
+  [123] @0x003192 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=17
+  [124] @0x0031d9 XNU: CODE SIGNING: cs_invalid_page(0x1bc31b000): p=116[apsd] final status 0x22000000, allowing (remove VALID) page
+  [125] @0x00325e XNU: CODE SIGNING: cs_invalid_page(0x1b767a000): p=70[bluetoothuserd] final status 0x22000000, allowing (remove VALID) page
+  [126] @0x0032ec XNU: SWEET AKS: bluetoothuserd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [127] @0x003340 XNU: SWEET AKS: bluetoothuserd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [128] @0x003394 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=18
+  [129] @0x0033db XNU: SWEET AKS: tccd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [130] @0x003425 XNU: SWEET AKS: tccd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [131] @0x00346f XNU: M30 IRT status: state=4 off=0x0 err=0 replay=19
+  [132] @0x0034b6 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=20
+  [133] @0x0034fd XNU: CODE SIGNING: cs_invalid_page(0x1bc3c4000): p=117[syncdefaultsd] final status 0x22000000, allowing (remove VALID) page
+  [134] @0x00358b XNU: M30 IRT status: state=4 off=0x0 err=0 replay=21
+  [135] @0x0035d2 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=22
+  [136] @0x003619 XNU: CODE SIGNING: cs_invalid_page(0x207df6000): p=89[fseventsd] final status 0x22000000, allowing (remove VALID) page
+  [137] @0x0036a2 XNU: CODE SIGNING: cs_invalid_page(0x207e3f000): p=92[logd_helper] final status 0x22000000, allowing (remove VALID) page
+  [138] @0x00372d XNU: CODE SIGNING: cs_invalid_page(0x1da883000): p=69[dasd] final status 0x22000000, allowing (remove VALID) page
+  [139] @0x0037b1 XNU: CODE SIGNING: cs_invalid_page(0x1b7eea000): p=94[lsd] final status 0x22000000, allowing (remove VALID) page
+  [140] @0x003834 XNU: CRASH lsd[94] sig 6 code 0x0 sub 0x0 slide 0x36254000 mh 0x100ef4000
+  [141] @0x003890 XNU: CRASH lsd pc 0x1f886b198 lr 0x207dfa5f8 sp 0x16ef0b700 fp 0x16ef0b720 far 0x1f886b190
+  [142] @0x0038fd XNU: CRASH lsd bt 0x1c3eb04b8 0x1b7ee92cc 0x1b7eee258 0x1c3dec780 0x1c3d99830 0x1b7eee088 0x1b7e74320 0x1b7ee9684 0x1b7f4064c 0x1da878344
+  [143] @0x003999 XNU: CRASH lsd reason ns 2 code 0x6: (none)
+  [144] @0x0039d7 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=23
+  [145] @0x003a1e XNU: CODE SIGNING: cs_invalid_page(0x1da877000): p=118[xpcproxy] final status 0x22000000, allowing (remove VALID) page
+  [146] @0x003aa7 XNU: CODE SIGNING: cs_invalid_page(0x1da873000): p=48[seld] final status 0x22000000, allowing (remove VALID) page
+  [147] @0x003b2b XNU: M30 IRT status: state=4 off=0x0 err=0 replay=24
+  [148] @0x003b72 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=25
+  [149] @0x003bb9 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=26
+  [150] @0x003c00 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=27
+  [151] @0x003c47 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=28
+  [152] @0x003c8e XNU: M30 IRT status: state=4 off=0x0 err=0 replay=29
+  [153] @0x003cd5 XNU: CODE SIGNING: cs_invalid_page(0x1da887000): p=41[WirelessRadioMan] final status 0x22000000, allowing (remove VALID) page
+  [154] @0x003d65 XNU: CODE SIGNING: cs_invalid_page(0x1da88c000): p=80[peakpowermanager] final status 0x22000000, allowing (remove VALID) page
+  [155] @0x003df5 XNU: CODE SIGNING: cs_invalid_page(0x1da8b4000): p=35[healthd] final status 0x22000000, allowing (remove VALID) page
+  [156] @0x003e7c XNU: CODE SIGNING: cs_invalid_page(0x1da8c9000): p=77[xpcproxy] final status 0x22000000, allowing (remove VALID) page
+  [157] @0x003f04 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x20
+  [158] @0x003f40 XNU: SWEET HID: key 0x30 down (1 clients)
+  [159] @0x003f7c XNU: A5XELTE KEYS: key=2 down=1 gpio=0x20
+  [160] @0x003fb8 XNU: SWEET HID: key 0xea down (1 clients)
+  ISSUE: gap at 0x0: skipped 79 bytes

@@ -9,7 +9,7 @@
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,712 @@
+@@ -140,9 +142,805 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -53,6 +53,13 @@
 +static int       m30_irt_retriggered = 0;   /* replay once after XCTEST patch */
 +static int       m30_irt_thread_started = 0;
 +static vnode_t   m30_irt_target_vp = NULL;     /* cache file containing the symbol */
++static uint64_t  m30_irt_sym_vmaddr = 0;          /* nlist value for status replay */
++static uint64_t  m30_irt_image_addr = 0;          /* image_info.address for status replay */
++static uint32_t  m30_irt_base_map_cnt = 0;
++static uint64_t  m30_irt_base_map_addr = 0;
++static uint64_t  m30_irt_base_map_size = 0;
++static uint64_t  m30_irt_base_map_off = 0;
++static int       m30_irt_map_hits = 0;
 +
 +/* One-shot diagnostics: every distinct failure reason is printed at most once
 + * so the ramoops pmsg ring is not flooded. */
@@ -145,6 +152,7 @@
 +		    sym_vmaddr < maddr + msize) {
 +			*file_off = *(uint64_t *)(maps + i * 32 + 16) +
 +			    (sym_vmaddr - maddr);
++			m30_irt_map_hits++;
 +			return 1;
 +		}
 +	}
@@ -354,6 +362,37 @@
 +		goto out;
 +	}
 +
++	/* Capture the real base cache mapping table for the status replay. */
++	{
++		uint32_t bmo = *(uint32_t *)(hdr + 16);
++		uint32_t bmc = *(uint32_t *)(hdr + 20);
++		uint32_t bn = MIN(bmc, (uint32_t)(chunk / 32));
++
++		m30_irt_base_map_cnt = bmc;
++		m30_irt_base_map_addr = 0;
++		m30_irt_base_map_size = 0;
++		m30_irt_base_map_off = 0;
++		if (bn != 0 && m30_irt_read(imgvp, bmo, maps,
++		    (size_t)bn * 32) == 0) {
++			uint64_t last = bn - 1;
++
++			m30_irt_base_map_addr = *(uint64_t *)(maps);
++			m30_irt_base_map_size = *(uint64_t *)(maps + 8);
++			m30_irt_base_map_off = *(uint64_t *)(maps + 16);
++			M30_IRT_DIAG(50, "base map off=0x%x cnt=%u first=0x%llx/"
++			    "0x%llx@0x%llx last=0x%llx/0x%llx@0x%llx\n",
++			    bmo, bmc, (unsigned long long)m30_irt_base_map_addr,
++			    (unsigned long long)m30_irt_base_map_size,
++			    (unsigned long long)m30_irt_base_map_off,
++			    (unsigned long long)*(uint64_t *)(maps + last * 32),
++			    (unsigned long long)*(uint64_t *)(maps + last * 32 + 8),
++			    (unsigned long long)*(uint64_t *)(maps + last * 32 + 16));
++		} else {
++			M30_IRT_DIAG(51, "base map read failed off=0x%x cnt=%u "
++			    "err=%d\n", bmo, bmc, m30_irt_last_err);
++		}
++	}
++
 +	/* The image list lives in the main cache, not in a dyld4 subcache.
 +	 * Reopen the base path when the faulted vnode is a subcache. */
 +	if (base_n != 0 && base_n != path_n) {
@@ -415,6 +454,9 @@
 +		}
 +		if (memcmp(hdr, libname, sizeof(libname)) == 0) {
 +			image_index = i;
++			m30_irt_image_addr = *(uint64_t *)buf;
++			M30_IRT_DIAG(49, "image addr=0x%llx pathFileOff=0x%x\n",
++			    (unsigned long long)m30_irt_image_addr, po);
 +			break;
 +		}
 +	}
@@ -523,6 +565,7 @@
 +	}
 +	printf("M30 IRT diag 13: symbol vmaddr=0x%llx\n",
 +	    (unsigned long long)sym_vmaddr);
++	m30_irt_sym_vmaddr = sym_vmaddr;
 +
 +	/* The symbol address must be resolved in a REAL cache file, not in the
 +	 * .symbols companion.  The companion maps the same address range but its
@@ -584,6 +627,49 @@
 +		}
 +	}
 +	if (!found) {
++		static const char cryptex[] =
++		    "/private/preboot/Cryptexes/OS/System/Library/Caches/"
++		    "com.apple.dyld/dyld_shared_cache_arm64";
++		char cpath[1024];
++		uint32_t idx;
++
++		for (idx = 0; idx < 256 && !found; idx++) {
++			int width;
++
++			for (width = 0; width < 2 && !found; width++) {
++				size_t n = sizeof(cryptex) - 1;
++				vnode_t tvp = (vnode_t)0;
++
++				if (n + 5 >= sizeof(cpath)) {
++					break;
++				}
++				memcpy(cpath, cryptex, n);
++				if (idx != 0) {
++					if (n + 5 >= sizeof(cpath)) {
++						break;
++					}
++					cpath[n++] = '.';
++					if (width == 1 && idx < 10) {
++						cpath[n++] = '0';
++					}
++					n = m30_irt_append_u32(cpath, n, idx);
++				} else {
++					cpath[n] = '\0';
++				}
++				if (m30_irt_map_vnode_open(cpath, sym_vmaddr,
++				    &file_off, hdr, maps, chunk, &tvp) == 0) {
++					continue;
++				}
++				target_vp = tvp;
++				target_opened = 1;
++				keep_target_open = 1;
++				found = 1;
++				memcpy(target_path, cpath,
++				    MIN(n + 1, (size_t)sizeof(target_path)));
++			}
++		}
++	}
++	if (!found) {
 +		M30_IRT_DIAG(18, "no real cache mapping contains vmaddr 0x%llx "
 +		    "(base=%.*s)\n", (unsigned long long)sym_vmaddr,
 +		    (int)base_n, path);
@@ -619,9 +705,16 @@
 +	 * result is always present in a freshly captured pstore. */
 +	for (i = 0; i < 30; i++) {
 +		delay(2000000);      /* 2 s */
-+		printf("M30 IRT status: state=%d off=0x%llx err=%d replay=%d\n",
++		printf("M30 IRT status: state=%d off=0x%llx err=%d replay=%d "
++		    "sym=0x%llx img=0x%llx hits=%d basecnt=%u "
++		    "base0=0x%llx/0x%llx@0x%llx\n",
 +		    m30_irt_state, (unsigned long long)m30_irt_file_offset,
-+		    m30_irt_last_err, i);
++		    m30_irt_last_err, i, (unsigned long long)m30_irt_sym_vmaddr,
++		    (unsigned long long)m30_irt_image_addr, m30_irt_map_hits,
++		    m30_irt_base_map_cnt,
++		    (unsigned long long)m30_irt_base_map_addr,
++		    (unsigned long long)m30_irt_base_map_size,
++		    (unsigned long long)m30_irt_base_map_off);
 +		if (m30_irt_state == M30_IRT_STATE_DONE) {
 +			break;
 +		}
@@ -722,7 +815,7 @@
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8392,25 @@
+@@ -7687,6 +8485,32 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  
@@ -735,6 +828,13 @@
 +			m30_irt_state = M30_IRT_STATE_NEED_DSC;
 +			m30_irt_file_offset = 0;
 +			m30_irt_target_vp = (vnode_t)0;
++			m30_irt_sym_vmaddr = 0;
++			m30_irt_image_addr = 0;
++			m30_irt_base_map_cnt = 0;
++			m30_irt_base_map_addr = 0;
++			m30_irt_base_map_size = 0;
++			m30_irt_base_map_off = 0;
++			m30_irt_map_hits = 0;
 +			m30_irt_last_err = 0;
 +			m30_irt_diag_seen = 0;
 +			m30_irt_thread_started = 0;

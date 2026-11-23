@@ -31,6 +31,7 @@ PSTORE_V38 = ROOT / "validation/physical-boot-test/20261122-ios-v38-boot/raw/pms
 PSTORE_V39 = ROOT / "validation/physical-boot-test/20261122-ios-v39-boot2/raw/pmsg-ramoops-0"
 PSTORE_V40 = ROOT / "validation/physical-boot-test/20261122-ios-v40-boot2/raw/pmsg-ramoops-0"
 PSTORE_V41 = ROOT / "validation/physical-boot-test/20261123-ios-v41-boot/raw/pmsg-ramoops-0"
+PSTORE_V42 = ROOT / "validation/physical-boot-test/20261123-ios-v42-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -128,6 +129,14 @@ def main():
     assert "m30_irt_map_vnode(" in t and "m30_irt_map_vnode_open(" in t
     assert "m30_irt_target_vp != (vnode_t)0 && vp != m30_irt_target_vp" in t
     assert 'printf("M30 IRT diag 33: mapped via cache vp=%p off=0x%llx path=%s\\n"' in t
+    # v43: mapping failure is now observable through the periodic status line,
+    # and real-cache lookup also covers the dyld4 Cryptex cache directory.
+    assert "m30_irt_base_map_cnt" in t and "m30_irt_map_hits" in t
+    assert 'M30_IRT_DIAG(50, "base map off=0x%x cnt=%u first=0x%llx/' in t
+    assert 'M30_IRT_DIAG(49, "image addr=0x%llx pathFileOff=0x%x\\n"' in t
+    assert "static const char cryptex[] =" in t
+    assert "/private/preboot/Cryptexes/OS/System/Library/Caches/" in t
+    assert "sym=0x%llx img=0x%llx hits=%d basecnt=%u" in t
     # v37: retrigger gate, and retry with a later vnode on wrong magic.
     assert "m30_irt_retriggered && !m30_irt_thread_started" in t
     assert "path=%s\\n" in t
@@ -272,6 +281,18 @@ def main():
     assert b"M30 IRT status: state=4 off=0x0 err=0 replay=0" in d41
     assert b"This process should not be linking or loading SpringBoardUI.framewor" in d41
     print("[PASS] v41 pstore: image list read OK; pathFileOffset guard rejected real paths")
+
+    # --- v42 physical: the image-scoped nlist scan finds the symbol, but the
+    # unslid vmaddr is not present in any tried real-cache mapping table. ---
+    d42 = PSTORE_V42.read_bytes()
+    assert b"M30 IRT diag 42: image nlist start=6047093 count=146" in d42
+    assert b"M30 IRT diag 43: nlist strx=318698902" in d42
+    assert b"M30 IRT diag 13: symbol vmaddr=0x1e1d3ad84" in d42
+    assert b"M30 IRT diag 18: no real cache mapping contains vmaddr 0x1e1d3ad84" in d42
+    assert b"M30 IRT status: state=4 off=0x0 err=0 replay=0" in d42
+    assert b"This process should not be linking or loading SpringBoardUI.framewor" in d42
+    assert b"M30 IRT: patched" not in d42
+    print("[PASS] v42 pstore: image-scoped symbol found; real-cache mapping missing -> v43 evidence")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global

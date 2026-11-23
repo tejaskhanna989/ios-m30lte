@@ -1367,7 +1367,36 @@ authorization for a BOOT-only test of candidate v6.
   packaging, handoff 18/18, all applicable focused tests (0417 inapplicable).
   Shim Image/ELF and the shim region in the BOOT image remain byte-identical to
   the v31 reference.
-- Candidate: `validation/ios-candidate-v42-out/` with README. NOT physically
-  tested. NEXT: BOOT-only flash, capture pstore, expect absolute image paths
-  and either an IRT patch or a new precise failure.
+- Candidate: `validation/ios-candidate-v42-out/` with README. Physically tested
+  below; BOOT-only flash, no readback, USERDATA/SYSTEM/RECOVERY untouched.
+
+## 2026-11-23 — v42 physical: image-scoped symbol found, mapping failed
+
+- BOOT-only flash succeeded. pstore
+  `b8a9214a6d8ce8b5b17ee3d5b59b1249e4c7280c7ba84bc63d727bab0a29eba9`
+  (16,372 B) captured records 0-3: `diag 42 image nlist start=6047093
+  count=146`, `diag 43 nlist strx=318698902`, `diag 13 symbol
+  vmaddr=0x1e1d3ad84`, then `diag 18 no real cache mapping contains vmaddr
+  0x1e1d3ad84`.
+- This proves the absolute `pathFileOffset` fix and the LiveContainer
+  image-scoped nlist scan. The symbol's unslid vmaddr is valid, but none of the
+  faulted vnode, base cache, or `.0`–`.63` subcaches has a mapping entry for it.
+  SpringBoardUI assertion and SpringBoard crash persist. No UI success.
+  BOOT readback SKIPPED.
+
+## 2026-11-23 — v43 fix in progress (MAIN only): mapping evidence + Cryptex
+
+- Added `diag 50` (base cache mapping table) and `diag 49` (image address and
+  pathFileOffset), and extended the periodic status replay with the symbol
+  vmaddr, image address, mapping-hit count, and base mapping range. This makes
+  the mapping failure observable even when the 16 KB pmsg ring wraps.
+- Real-cache lookup now also tries the dyld4 Cryptex directory
+  (`/private/preboot/Cryptexes/OS/System/Library/Caches/com.apple.dyld`) and
+  its numbered subcaches. All reads remain `UIO_READ`; patching still happens
+  only in memory after `cs_validate_page()`, gated on the target cache vnode.
+- Standalone syntax check clean; focused tests PASS with v42 physical evidence;
+  patch dry-runs cleanly against pristine and the v42 buildtree.
+- NEXT: CI GREEN, package v43 candidate, BOOT-only flash, capture pstore, read
+  `diag 49/50` and status `sym=... img=... hits=... basecnt=...`, then either
+  `M30 IRT: patched ...` or a new precise failure.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
