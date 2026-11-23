@@ -1648,3 +1648,20 @@ authorization for a BOOT-only test of candidate v6.
   `M30 IRT: patched ...` or `M30 IRT final ... pr=...`, then inspect the next
   boot stage.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v48 offline complete (MAIN only)
+
+- First CI `45142824836` failed only because `<sys/ubc_internal.h>` is not on
+  the osfmk include path; fixed by declaring `ubc_getobject()` locally. CI
+  `45145845104` GREEN for `9cad56bb`. Kernel
+  `4022004eb8387a42873698db9bfe4de7df9efb43b84553c126cfd688d0c94200`;
+  payload `18365562c7d8f2354d1476b1f8872ad20f0014c5abfef71084780ff7d50ecaaa`;
+  shim-boot.img
+  `4b56a629e7c1359d98008208bec4e865152e5aff995e896e50dc36c93c07579c`.
+- Validators all PASS: buildtree, kernel, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging, handoff 18/18, all applicable focused tests. Shim region remains
+  byte-identical to v31; entry VA unchanged at `0xfffffff007410488`.
+- Candidate: `validation/ios-candidate-v48-out/` with README. NOT physically
+  tested. NEXT: BOOT-only flash, capture pstore, read the resident-patch or
+  updated final heartbeat, then inspect whether SpringBoard proceeds.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
