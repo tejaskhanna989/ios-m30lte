@@ -2338,3 +2338,39 @@ authorization for a BOOT-only test of candidate v6.
   autonomous BOOT-only physical test under the existing authorization with the
   same identity/download-mode gates. Do not flash v56 or reflash v55. No
   UI/lock-screen claim without verifiable physical evidence.
+
+## 2026-11-23 - v57 CI GREEN and candidate packaged (MAIN only)
+
+- CI `45230106038` GREEN for source `60379849` (`XNU_TARGET=iphoneos`,
+  `M30LTE`, `DEVELOPMENT`). CI log explicitly applied
+  `0434-m30-cs-16k-no-busy-upl.patch`; `ios_define_present=True`,
+  `osx_define_present=False`, `PASS: iOS target selected`, and Cortex-A53 LSE
+  count 0. Buildtree `osfmk/vm/vm_fault.c` SHA256
+  `a10ab98b0506e521090402674b5ce533f1edb6e901350b39ce8c36e42365aa77`
+  matches the locally reproduced v57 source byte-for-byte.
+- Artifacts preserved under `milestone_artifacts/ci_45230106038/`. Kernel
+  SHA256 `3d3c58d6834a2af83d1480f6a74c6cc7047bdbee334f99eb6d3994b83844d827`.
+  `gh run download` needed `TMPDIR` pointed at the repo filesystem because the
+  small `/tmp` tmpfs hit its quota.
+- Candidate: `validation/ios-candidate-v57-out/` with README,
+  `entry-layout-check.txt`, `SHA256SUMS`, package/validate logs and 20/20
+  handoff verification. Payload
+  `ea47b84a1f0d353e5d3cfcdf8d992f42164c8269bd053bf0212eed00a024990d`;
+  `shim-boot.img`
+  `0b85cc7666a45c761abf29002f42b5f24b395f9d7386112e5ade8748b2fcca31`;
+  `ios-boot.img`
+  `a803796692f0560f5532dd723c7e94e5903da62c7f93e6207918f493ee1d6595`.
+- Layout unchanged from v55: entry `0xfffffff007411488`,
+  `_start_first_cpu` `0xfffffff0074130ec`, `__TEXT_EXEC __text` size
+  `0x008b4000`, kernel end `0xfffffff008454000`, ADT PA `0x82454000`,
+  boot_args PA `0x82458000`, payload 16,179,264 bytes. Shim Image/ELF unchanged.
+- Validators PASS: buildtree reverse-applies, kernel 6 checks, platform 9/9,
+  packaging `validation.json result=PASS`, handoff 20/20, all applicable
+  focused tests. `validate-repo.py` still reports only the pre-existing
+  patch-number-gap warnings. No QEMU result is claimed as evidence.
+- NEXT: positive device identity in TWRP, enter Samsung Download Mode, confirm
+  Heimdall detection, flash ONLY `shim-boot.img` to BOOT, resume, observe
+  ~180 s, pull pstore promptly, decode/analyze, and compare with
+  v45/v52/v54/v50/v55. Never USERDATA/SYSTEM/RECOVERY; never Fastboot. Do not
+  flash v56 or reflash v55. No UI/lock-screen claim without verifiable
+  physical evidence.
