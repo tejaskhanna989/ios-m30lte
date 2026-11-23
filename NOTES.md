@@ -2009,3 +2009,30 @@ authorization for a BOOT-only test of candidate v6.
   byte-for-byte; focused tests extended with the early-gate model.
 - NEXT: commit/push, run CI, then package/validate. Do not flash without
   explicit user approval. NO UI/lock-screen success claimed.
+
+## 2026-11-23 — v53 CI GREEN and candidate (MAIN only)
+
+- CI `45185667251` GREEN (18m51s) for source commit `ffcb6466`. Log shows
+  `Applying patch: 0426`, `0427`, `0428`, `0429`, and `0430`; buildtree
+  `osfmk/vm/vm_fault.c` matches `/tmp/m30_v53/modified.c` byte-for-byte.
+- Kernel
+  `de84396fb0268ac2129737af5ad37bfe2b8fba52da7bb9e93f840d6534f9dcf4`;
+  payload `3522a4447de58d8b23a11c06486d4452286247e54f93835e2e41a10f55c7bbba`;
+  shim-boot.img
+  `7cf35ab74045307f69f752eb6f6c1cfc638c402116a91f3e30f3ec5c1046df00`;
+  ios-boot.img
+  `94f04c6c654108b9272300dec631f8d60a835dfde86c8574cdc9a4a32ae3aafe`.
+- Validators all PASS: buildtree, kernel, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging, handoff 18/18, all applicable focused tests. Patch order
+  `0426 -> 0427 -> 0428 -> 0429 -> 0430` preflighted and verified to reproduce
+  the intended v53 source byte-for-byte.
+- Layout unchanged from v52: entry `0xfffffff007410488`, `_start_first_cpu`
+  `0xfffffff0074120ec`, `__TEXT_EXEC __text` size `0x008ae9d8`, ADT PA
+  `0x82450000`, boot_args PA `0x82454000`. Shim region remains byte-identical
+  to v31. Evidence in `validation/ios-candidate-v53-out/entry-layout-check.txt`.
+- Candidate: `validation/ios-candidate-v53-out/` with README. User authorized
+  automatic BOOT-only flash and full physical test. NEXT: flash, 180 s window,
+  return to TWRP, pull/decode pstore, record evidence, no UI claim unless
+  physically proven.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED;
+  USERDATA/SYSTEM/RECOVERY untouched.

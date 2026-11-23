@@ -1,0 +1,38 @@
+v53 kernel-entry and payload-layout check (MAIN only)
+=====================================================
+
+CI: 45185667251 (GREEN, source ffcb6466)
+Patches applied in CI log: 0426, 0427, 0428, 0429, 0430.
+Buildtree vm_fault.c matches /tmp/m30_v53/modified.c byte-for-byte.
+
+1) Kernel entry
+---------------
+v52 LC_UNIXTHREAD PC: 0xfffffff007410488
+v53 LC_UNIXTHREAD PC: 0xfffffff007410488   (unchanged)
+
+llvm-objdump -d --no-show-raw-insn \
+  --start-address=0xfffffff007410488 --stop-address=0xfffffff0074104c0 \
+  milestone_artifacts/ci_45185667251/xnu-kernel-macos-15-intel/mach.development.m30lte:
+
+  fffffff007410488 <__start>:
+  fffffff007410488:  b  0xfffffff0074120ec <_start_first_cpu>
+
+2) Section size
+---------------
+__TEXT_EXEC __text:
+  v52 vmaddr 0xfffffff007248000 size 0x008ae9d8
+  v53 vmaddr 0xfffffff007248000 size 0x008ae9d8   (unchanged)
+
+The early-gate change fits within the existing v52 layout.
+
+3) Payload layout
+-----------------
+mkpayload.py output for v53:
+  entry:         0xfffffff007410488
+  kernel_end:    0xfffffff008450000
+  ADT PA:        0x82450000
+  boot_args PA:  0x82454000
+
+verify_handoff_v53.py: 18/18 PASS.
+The shim Image/ELF and the shim region in shim-boot.img remain byte-identical
+to the v31 reference.
