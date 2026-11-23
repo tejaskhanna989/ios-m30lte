@@ -2038,3 +2038,34 @@ authorization for a BOOT-only test of candidate v6.
   USERDATA/SYSTEM/RECOVERY untouched.
 
 - v53 candidate committed/pushed as `6d0c4a19`.
+
+## 2026-11-23 — v53 physical result (MAIN only): REJECTED
+
+- Device was initially disconnected; after reconnection it was positively
+  identified in TWRP (`m30lte`, serial `320081735bb166a3`, `ro.twrp.boot=1`).
+  BOOT-only flash of `shim-boot.img`
+  `7cf35ab74045307f69f752eb6f6c1cfc638c402116a91f3e30f3ec5c1046df00` and
+  `heimdall print-pit --resume` both exited 0. No BOOT readback;
+  USERDATA/SYSTEM/RECOVERY untouched.
+- Window: resume `14:08:34Z`, end `14:11:34Z`; device returned to TWRP before
+  pstore collection.
+- pstore
+  `validation/physical-boot-test/20261123-ios-v53-boot/raw/pmsg-ramoops-0`
+  SHA256 `ade2f38b0262da9db0996b03bbc4f989235aa6f36ae27feb5c54a245ed893a1c`.
+  Decoded: 118 records, 1 wrap issue. Pre-flash pstore matched v52's result.
+- Observation: durable heartbeat is `M30 IRT final: state=4 ... hb=1` through
+  `hb=38`, with `xctest=1 xctchunk=0`. There is NO IRT patch marker, NO
+  `state=3`, NO `M30 IRT: early scan started on DSC header`, NO
+  `M30 IRT: XCTEST patch after early scan`, and NO `M30 IRT: retrigger` marker.
+- The SpringBoardUI `NSInternalInconsistencyException` remains at record `[042]`.
+  No `Early boot complete`; no UI/lock-screen evidence; no UI success claimed.
+- v53 is rejected. The captured ring has no one-shot diagnostics identifying
+  which failure path set `state=4`. Working hypothesis (NOT proven): the early
+  DSC-header fault is still too soon for Cryptex-first companion selection, or
+  the recovered vnode is not resolvable by the worker.
+- v52 remains the last physically successful IRT candidate (`state=3`, `oh=1`,
+  durable status replay). v51 and v53 are rejected. v50 remains the last
+  candidate with a full compact final heartbeat.
+- Active handoff: device is in TWRP. No further flash is queued. Next candidate
+  must be chosen from evidence; do not claim UI without physical proof.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.

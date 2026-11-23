@@ -48,6 +48,7 @@ PSTORE_V49 = ROOT / "validation/physical-boot-test/20261123-ios-v49-boot/raw/pms
 PSTORE_V50 = ROOT / "validation/physical-boot-test/20261123-ios-v50-boot/raw/pmsg-ramoops-0"
 PSTORE_V51 = ROOT / "validation/physical-boot-test/20261123-ios-v51-boot/raw/pmsg-ramoops-0"
 PSTORE_V52 = ROOT / "validation/physical-boot-test/20261123-ios-v52-boot/raw/pmsg-ramoops-0"
+PSTORE_V53 = ROOT / "validation/physical-boot-test/20261123-ios-v53-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -557,6 +558,19 @@ def main():
     assert b"This process should not be linking or loading SpringBoardUI.framework" in d52
     assert b"Early boot complete. Continuing system boot." not in d52
     print("[PASS] v52 pstore: IRT state=3 restored; assertion persists")
+
+    # --- v53 physical: early DSC-header gate failed with state=4. ---
+    d53 = PSTORE_V53.read_bytes()
+    assert len(d53) == 16372, "v53 pmsg ring should be full/wrapped"
+    assert d53.count(b"M30 IRT final: state=4") >= 30
+    assert b"M30 IRT: patched _internal_release_type" not in d53
+    assert b"M30 IRT status: state=3" not in d53
+    assert b"M30 IRT: early scan started on DSC header" not in d53
+    assert b"M30 IRT: XCTEST patch after early scan" not in d53
+    assert b"xctest=1 xctchunk=0" in d53
+    assert b"This process should not be linking or loading SpringBoardUI.framewor" in d53
+    assert b"Early boot complete. Continuing system boot." not in d53
+    print("[PASS] v53 pstore: early DSC gate failed; state=4, assertion persists")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global

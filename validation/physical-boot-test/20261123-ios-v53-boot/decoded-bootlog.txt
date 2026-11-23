@@ -1,0 +1,121 @@
+file: validation/physical-boot-test/20261123-ios-v53-boot/raw/pmsg-ramoops-0  bytes=16372  sha256=ade2f38b0262da9db0996b03bbc4f989235aa6f36ae27feb5c54a245ed893a1c
+records=118 issues=1
+  [000] @0x00003d XNU: SWEET Sandbox: rapportd privilege 1002 denied
+  [001] @0x000082 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=1 xctest=1 xctchunk=0
+  [002] @0x00013f XNU: CODE SIGNING: cs_invalid_page(0x19212d000): p=124[remotepairingdev] final status 0x22000000, allowing (remove VALID) page
+  [003] @0x0001d0 XNU: CODE SIGNING: cs_invalid_page(0x191f8f000): p=125[syncdefaultsd] final status 0x22000000, allowing (remove VALID) page
+  [004] @0x00025e XNU: SWEET AKS: CloudKeychainProxy sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [005] @0x0002b6 XNU: SWEET AKS: CloudKeychainProxy sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [006] @0x00030e XNU: SWEET AKS: seserviced sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [007] @0x00035e XNU: SWEET AKS: seserviced sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [008] @0x0003ae XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=2 xctest=1 xctchunk=0
+  [009] @0x00046b XNU: CRASH identityservices[53] sig 5 code 0x600000001 sub 0x19a0dab7c slide 0xbf8c000 mh 0x100788000
+  [010] @0x0004e3 XNU: CRASH identityservices pc 0x19a0dab7c lr 0x19a0dab7c sp 0x16f675e40 fp 0x16f675f30 far 0x1013f4000
+  [011] @0x00055d XNU: CRASH identityservices bt 0x19a0f991c 0x19a0d4f1c 0x10093b090 0x100e645b4 0x100e64358 0x199b24780 0x199ac564c 0x100e6430c 0x100afe5d8 0x100afdabc
+  [012] @0x000606 XNU: CRASH identityservices reason ns 2 code 0x5: (none)
+  [013] @0x000651 XNU: CODE SIGNING: cs_invalid_page(0x191dc3000): p=126[accountsd] final status 0x22000000, allowing (remove VALID) page
+  [014] @0x0006db XNU: CODE SIGNING: cs_invalid_page(0x192188000): p=127[identityservices] final status 0x22000000, allowing (remove VALID) page
+  [015] @0x00076c XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=3 xctest=1 xctchunk=0
+  [016] @0x000829 XNU: CODE SIGNING: cs_invalid_page(0x18cf43000): p=128[liveactivitiesd] final status 0x22000000, allowing (remove VALID) page
+  [017] @0x0008b9 XNU: CODE SIGNING: cs_invalid_page(0x199c28000): p=110[lsd] final status 0x22000000, allowing (remove VALID) page
+  [018] @0x00093d XNU: CRASH backboardd[115] sig 6 code 0x0 sub 0x0 slide 0xbf8c000 mh 0x100230000
+  [019] @0x0009a0 XNU: CRASH backboardd pc 0x1ce5a3198 lr 0x1ddb325f8 sp 0x16fbcf680 fp 0x16fbcf6a0 far 0x1eadfee28
+  [020] @0x000a14 XNU: CRASH backboardd bt 0x199be84b8 0x1dda6af54 0x1dda5ba4c 0x18c05eafc 0x1dda6a424 0x1dda6a3d4 0x199b24794 0x199ac564c 0x100239334 0x100239a00
+  [021] @0x000ab7 XNU: STR scan of backboardd heap
+  [022] @0x000aea XNU: STR dlopen(/System/Library/HIDPlugins/IOHIDKeyboardFilter.plugin/IOHIDKeyboardFilter, 0x0115): 
+  [023] @0x000b61 XNU: STR Version 16.7.16 (Build 20H392)
+  [024] @0x000b9b XNU: STR 7*** -[NSURL initFileURLWithPath:]: nil string parameter
+  [025] @0x000bef XNU: STR backboardd: backboardd + 37724
+  [026] @0x000c29 XNU: STR IOHIDService(0x10042e560) id:0x100000125 name:SweetHIDTouch
+  [027] @0x000c80 XNU: STR IOHIDService(0x100438c10) id:0x100000124 name:SweetHIDButtons
+  [028] @0x000cd9 XNU: STR dlsym(0x0, rosetta_is_current_process_translated): invalid handle
+  [029] @0x000d36 XNU: STR etta.dylib' (no such file), '/private/preboot/Cryptexes/OS/usr/lib/libRosetta.dylib' (no such file), '/usr/lib/libRosetta.dylib' (no such file, not in dyld cac
+  [030] @0x000df1 XNU: STR (0x192d7d40c 0x18c059c28 0x18d126f10 0x18d126ca0 0x199d38ee4 0x199d38f20 0x10024d858 0x199b24780 0x199ac564c 0x100239334 0x100239a00 0x1b05b0344)
+  [031] @0x000e9e XNU: CRASH lsd[110] sig 6 code 0x0 sub 0x0 slide 0xbf8c000 mh 0x100880000
+  [032] @0x000efa XNU: CRASH lsd pc 0x1ce5a3198 lr 0x1ddb325f8 sp 0x16f57f700 fp 0x16f57f720 far 0x1d0ca04da
+  [033] @0x000f67 XNU: CRASH lsd bt 0x199be84b8 0x18dc212cc 0x18dc26258 0x199b24780 0x199ad1830 0x18dc26088 0x18dbac320 0x18dc21684 0x18dc7864c 0x1b05b0344
+  [034] @0x001003 XNU: CRASH lsd reason ns 2 code 0x6: (none)
+  [035] @0x001041 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=4 xctest=1 xctchunk=0
+  [036] @0x0010fe XNU: CRASH securityd[114] sig 5 code 0x600000001 sub 0x19a0dab7c slide 0xbf8c000 mh 0x1000b8000
+  [037] @0x001170 XNU: CRASH securityd pc 0x19a0dab7c lr 0x19a0dab7c sp 0x16fdcea60 fp 0x16fdceb50 far 0x101870000
+  [038] @0x0011e3 XNU: CRASH securityd bt 0x19a0dbd60 0x10010f640 0x1000ff6ac 0x1000ff48c 0x10010f5c4 0x1000bf2a0 0x1001c9b8c 0x199b237a8 0x199b24780 0x199ad3bdc
+  [039] @0x001285 XNU: CRASH securityd reason ns 2 code 0x5: (none)
+  [040] @0x0012c9 XNU: Process[114] crashed: securityd. Too many corpses being created.
+  [041] @0x001321 XNU: CODE SIGNING: cs_invalid_page(0x1d38a4000): p=104[com.apple.datami] final status 0x22000000, allowing (remove VALID) page
+  [042] @0x0013b2 XNU: STR *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'This process should not be linking or loading SpringBoardUI.framewor
+  [043] @0x00146d XNU: STR !*** -[NSURL initFileURLWithPath:]
+  [044] @0x0014ab XNU: STR backboardd: backboardd + 37724
+  [045] @0x0014e5 XNU: STR IOHIDConnection process:backboardd pid:115 uuid:0365EA14-BC1C-4557-BF8E-FA30F86FC1A5 caller:backboardd: backboardd + 37724
+  [046] @0x00157b XNU: STR terminating due to uncaught exception of type NSException
+  [047] @0x0015d0 XNU: STR *** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '*** -[NSURL initFileURLWithPath:]: nil string parameter'
+  [048] @0x001679 XNU: STR *** First throw call stack:
+  [049] @0x0016b0 XNU: STR (0x192d7d40c 0x18c059c28 0x18d126f10 0x18d126ca0 0x199d38ee4 0x199d38f20 0x10024d858 0x199b24780 0x199ac564c 0x100239334 0x100239a00 0x1b05b0344)
+  [050] @0x00175d XNU: STR IOHIDConnection process:logd pid:25 uuid:6D3BEF16-A236-458F-B098-878A9F3AAA38 caller:logd: logd + 77196
+  [051] @0x0017e0 XNU: STR {"LatencyCopyPropertyBucketCount":25,"LatencyCopyPropertyBucketID":0,"LatencyCopyPropertyDescription":"{\n    DeviceUsagePairs =     (\n                {\n    
+  [052] @0x00189b XNU: STR {"LatencyCopyPropertyBucketCount":1,"LatencyCopyPropertyBucketID":1,"LatencyCopyPropertyDescription":"{\n    DeviceUsagePairs =     (\n                {\n     
+  [053] @0x001956 XNU: STR {"LatencyCopyPropertyBucketCount":1,"LatencyCopyPropertyBucketID":2,"LatencyCopyPropertyDescription":"{\n    DeviceUsagePairs =     (\n                {\n     
+  [054] @0x001a11 XNU: STR {"LatencyCopyPropertyBucketCount":1,"LatencyCopyPropertyBucketID":5,"LatencyCopyPropertyDescription":"{\n    DeviceUsagePairs =     (\n                {\n     
+  [055] @0x001acc XNU: STR {"LatencyCopyPropertyBucketCount":15,"LatencyCopyPropertyBucketID":9,"LatencyCopyPropertyDescription":"{\n    DeviceUsagePairs =     (\n                {\n    
+  [056] @0x001b87 XNU: STR {"LatencyServiceOpenBucketCount":1,"LatencyServiceOpenBucketID":9,"LatencyServiceOpenDescription":"{\n    DeviceUsagePairs =     (\n                {\n        
+  [057] @0x001c42 XNU: STR {"LatencyServiceInitBucketCount":1,"LatencyServiceInitBucketID":9,"LatencyServiceInitDescription":"{\n    DeviceUsagePairs =     (\n                {\n        
+  [058] @0x001cfd XNU: STR {"LatencySetPropertyBucketCount":4,"LatencySetPropertyBucketID":9,"LatencySetPropertyDescription":"{\n    DeviceUsagePairs =     (\n                {\n        
+  [059] @0x001db8 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=5 xctest=1 xctchunk=0
+  [060] @0x001e75 XNU: SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [061] @0x001eca XNU: CODE SIGNING: cs_invalid_page(0x1a066c000): p=129[xpcproxy] final status 0x22000000, allowing (remove VALID) page
+  [062] @0x001f53 XNU: CODE SIGNING: cs_invalid_page(0x19222c000): p=129[securityd] final status 0x22000000, allowing (remove VALID) page
+  [063] @0x001fdd XNU: CODE SIGNING: cs_invalid_page(0x1922fc000): p=38[tccd] final status 0x22000000, allowing (remove VALID) page
+  [064] @0x002061 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=6 xctest=1 xctchunk=0
+  [065] @0x00211e XNU: CODE SIGNING: cs_invalid_page(0x18dd34000): p=130[lsd] final status 0x22000000, allowing (remove VALID) page
+  [066] @0x0021a2 XNU: SWEET AKS: remotepairingdeviced sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [067] @0x0021fc XNU: SWEET AKS: remotepairingdeviced sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [068] @0x002256 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=7 xctest=1 xctchunk=0
+  [069] @0x002313 XNU: SWEET AKS: passd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [070] @0x00235e XNU: SWEET AKS: passd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [071] @0x0023ad XNU: SWEET AKS: passd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [072] @0x0023f8 XNU: SWEET AKS: tccd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [073] @0x002442 XNU: SWEET AKS: tccd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [074] @0x00248c XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=8 xctest=1 xctchunk=0
+  [075] @0x002549 XNU: SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [076] @0x00259e XNU: SWEET AKS: passd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [077] @0x0025ed XNU: SWEET AKS: corespeechd sel 17 arg0 18446744073709551115 in 1/0 out 0/4096 -> 0x0
+  [078] @0x002655 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=9 xctest=1 xctchunk=0
+  [079] @0x002712 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=10 xctest=1 xctchunk=0
+  [080] @0x0027d0 XNU: STR done: 9312 KiB scanned, 25 strings
+  [081] @0x00280e XNU: CRASH backboardd reason ns 2 code 0x6: (none)
+  [082] @0x002853 XNU: Process[115] crashed: backboardd. Too many corpses being created.
+  [083] @0x0028ac XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=11 xctest=1 xctchunk=0
+  [084] @0x00296a XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=12 xctest=1 xctchunk=0
+  [085] @0x002a28 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=13 xctest=1 xctchunk=0
+  [086] @0x002ae6 XNU: CODE SIGNING: cs_invalid_page(0x1ddb2e000): p=89[fseventsd] final status 0x22000000, allowing (remove VALID) page
+  [087] @0x002b6f XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=14 xctest=1 xctchunk=0
+  [088] @0x002c2d XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=15 xctest=1 xctchunk=0
+  [089] @0x002ceb XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=16 xctest=1 xctchunk=0
+  [090] @0x002da9 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=17 xctest=1 xctchunk=0
+  [091] @0x002e67 XNU: CODE SIGNING: cs_invalid_page(0x1b05a3000): p=34[misd] final status 0x22000000, allowing (remove VALID) page
+  [092] @0x002eeb XNU: CODE SIGNING: cs_invalid_page(0x1b05a3000): p=40[atc] final status 0x22000000, allowing (remove VALID) page
+  [093] @0x002f6e XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=18 xctest=1 xctchunk=0
+  [094] @0x00302c XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=19 xctest=1 xctchunk=0
+  [095] @0x0030ea XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=20 xctest=1 xctchunk=0
+  [096] @0x0031a8 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=21 xctest=1 xctchunk=0
+  [097] @0x003266 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=22 xctest=1 xctchunk=0
+  [098] @0x003324 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=23 xctest=1 xctchunk=0
+  [099] @0x0033e2 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=24 xctest=1 xctchunk=0
+  [100] @0x0034a0 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=25 xctest=1 xctchunk=0
+  [101] @0x00355e XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=26 xctest=1 xctchunk=0
+  [102] @0x00361c XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=27 xctest=1 xctchunk=0
+  [103] @0x0036da XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=28 xctest=1 xctchunk=0
+  [104] @0x003798 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=29 xctest=1 xctchunk=0
+  [105] @0x003856 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=30 xctest=1 xctchunk=0
+  [106] @0x003914 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=31 xctest=1 xctchunk=0
+  [107] @0x0039d2 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=32 xctest=1 xctchunk=0
+  [108] @0x003a90 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=33 xctest=1 xctchunk=0
+  [109] @0x003b4e XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=34 xctest=1 xctchunk=0
+  [110] @0x003c0c XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=35 xctest=1 xctchunk=0
+  [111] @0x003cca XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=36 xctest=1 xctchunk=0
+  [112] @0x003d88 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x20
+  [113] @0x003dc4 XNU: SWEET HID: key 0x30 down (0 clients)
+  [114] @0x003e00 XNU: A5XELTE KEYS: key=2 down=1 gpio=0x20
+  [115] @0x003e3c XNU: SWEET HID: key 0xea down (0 clients)
+  [116] @0x003e78 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=37 xctest=1 xctchunk=0
+  [117] @0x003f36 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x0 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 fb=0x0 hb=38 xctest=1 xctchunk=0
+  ISSUE: gap at 0x0: skipped 61 bytes
