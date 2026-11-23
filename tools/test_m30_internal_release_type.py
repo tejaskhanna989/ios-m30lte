@@ -44,6 +44,7 @@ PSTORE_V47 = ROOT / "validation/physical-boot-test/20261123-ios-v47-boot/raw/pms
 PSTORE_V48 = ROOT / "validation/physical-boot-test/20261123-ios-v48-boot/raw/pmsg-ramoops-0"
 PSTORE_V49 = ROOT / "validation/physical-boot-test/20261123-ios-v49-boot/raw/pmsg-ramoops-0"
 PSTORE_V50 = ROOT / "validation/physical-boot-test/20261123-ios-v50-boot/raw/pmsg-ramoops-0"
+PSTORE_V51 = ROOT / "validation/physical-boot-test/20261123-ios-v51-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -500,6 +501,19 @@ def main():
     assert b"This process should not be linking or loading SpringBoardUI.framework" in d50
     assert b"Early boot complete. Continuing system boot." not in d50
     print("[PASS] v50 pstore: state=3 restored, xctest=1, assertion persists")
+
+    # --- v51 physical: chunk-path retrigger regressed back to state=2. ---
+    d51 = PSTORE_V51.read_bytes()
+    assert len(d51) == 16372, "v51 pmsg ring should be full/wrapped"
+    assert b"M30 IRT: patched _internal_release_type" not in d51
+    assert b"M30 IRT: patched (final state=3" not in d51
+    assert b"M30 IRT final: state=2 off=0xa432d84" in d51
+    assert b"oh=0 pr=-5" in d51
+    assert b"hits=1 tries=29 sc=42 si=26" in d51
+    assert b"xctest=1" in d51, "v51 heartbeat still reports one class fix-up"
+    assert b"This process should not be linking or loading SpringBoardUI.framework" in d51
+    assert b"Early boot complete. Continuing system boot." not in d51
+    print("[PASS] v51 pstore: chunk-path hook regressed IRT to state=2")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global

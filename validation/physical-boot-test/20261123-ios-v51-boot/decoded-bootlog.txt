@@ -1,0 +1,104 @@
+file: validation/physical-boot-test/20261123-ios-v51-boot/raw/pmsg-ramoops-0  bytes=16372  sha256=ecf0c2ed5289be600e956a014ee4bd1b01fd8aec2391124b57b426a649efdebd
+records=101 issues=1
+  [000] @0x00002e XNU: SWEET Sandbox: mediaserverd privilege 1015 denied
+  [001] @0x000077 XNU: process mediaserverd[29] denied attempt to escape CPU monitor (missing required entitlement).
+  [002] @0x0000ec XNU: CODE SIGNING: cs_invalid_page(0x1b97c7000): p=78[AppleCredentialM] final status 0x22000000, allowing (remove VALID) page
+  [003] @0x00017c XNU: SWEET WDT: watchdogd sel 0 in 0/0 out 1/0 -> ok
+  [004] @0x0001c3 XNU: CODE SIGNING: cs_invalid_page(0x1b9dcb000): p=61[sharingd] final status 0x22000000, allowing (remove VALID) page
+  [005] @0x00024b XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=2 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=4584 vh=1082 oh=0 pr=-5 mo=0x130a000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc
+  [006] @0x000348 XNU: CRASH driverkitd[68] sig 9 code 0x0 sub 0x0 slide 0x33a78000 mh 0x100288000
+  [007] @0x0003ab XNU: CRASH driverkitd pc 0x1f6089d98 lr 0x1b4c1c3a4 sp 0x16fb75200 fp 0x16fb75270 far 0x11a01b408
+  [008] @0x00041f XNU: CRASH driverkitd bt 0x1b4c1112c 0x1b4c02514 0x1003266b4 0x10037137c 0x10037281c 0x1002b031c 0x10030100c 0x10031897c 0x10032ecf8 0x10032a4a8
+  [009] @0x0004c2 XNU: CRASH driverkitd reason ns 1 code 0x7: (none)
+  [010] @0x000507 XNU: CODE SIGNING: cs_invalid_page(0x1b97b5000): p=75[distnoted] final status 0x22000000, allowing (remove VALID) page
+  [011] @0x000590 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=3 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=6052 vh=1254 oh=0 pr=-5 mo=0x77f0000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc
+  [012] @0x00068d XNU: CODE SIGNING: cs_invalid_page(0x1d6164000): p=97[MobileGestaltHel] final status 0x22000000, allowing (remove VALID) page
+  [013] @0x00071d XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=4 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=7710 vh=1350 oh=0 pr=-5 mo=0x29b5000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc
+  [014] @0x00081a XNU: CODE SIGNING: cs_invalid_page(0x1b62f5000): p=36[configd] final status 0x22000000, allowing (remove VALID) page
+  [015] @0x0008a1 XNU: CODE SIGNING: cs_invalid_page(0x1e4319000): p=76[aggregated] final status 0x22000000, allowing (remove VALID) page
+  [016] @0x00092b XNU: SWEET AKS: powerd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [017] @0x000977 XNU: SWEET AKS: powerd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [018] @0x0009c3 XNU: CODE SIGNING: cs_invalid_page(0x1ba2f4000): p=39[powerd] final status 0x22000000, allowing (remove VALID) page
+  [019] @0x000a49 XNU: CODE SIGNING: cs_invalid_page(0x1c16e0000): p=42[biomed] final status 0x22000000, allowing (remove VALID) page
+  [020] @0x000acf XNU: CODE SIGNING: cs_invalid_page(0x1b9f04000): p=96[audioclocksyncd] final status 0x22000000, allowing (remove VALID) page
+  [021] @0x000b5e XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=5 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=9234 vh=1606 oh=0 pr=-5 mo=0x299e000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc
+  [022] @0x000c5b XNU: SWEET Sandbox: distnoted op 28
+  [023] @0x000c91 XNU: CODE SIGNING: cs_invalid_page(0x1dcedc000): p=95[ReportCrash] final status 0x22000000, allowing (remove VALID) page
+  [024] @0x000d1c XNU: CODE SIGNING: cs_invalid_page(0x1bbbd4000): p=24[UserEventAgent] final status 0x22000000, allowing (remove VALID) page
+  [025] @0x000daa XNU: CODE SIGNING: cs_invalid_page(0x1fa5b4000): p=98[triald] final status 0x22000000, allowing (remove VALID) page
+  [026] @0x000e30 XNU: SWEET AKS: ReportCrash sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [027] @0x000e81 XNU: SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [028] @0x000ed6 XNU: SWEET AKS: ReportCrash sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [029] @0x000f27 XNU: CODE SIGNING: cs_invalid_page(0x1d5e1c000): p=100[mobileassetd] final status 0x22000000, allowing (remove VALID) page
+  [030] @0x000fb4 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=6 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=10643 vh=1843 oh=0 pr=-5 mo=0x15be000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ec
+  [031] @0x0010b1 XNU: SWEET AKS: backboardd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [032] @0x001101 XNU: SWEET AKS: backboardd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [033] @0x001155 XNU: CODE SIGNING: cs_invalid_page(0x207820000): p=101[ACCHWComponentAu] final status 0x22000000, allowing (remove VALID) page
+  [034] @0x0011e6 XNU: SWEET HID: SweetHIDTouch open by IOHIDEventServiceUserClient -> 1
+  [035] @0x00123f XNU: SWEET HID: SweetHIDButtons open by IOHIDEventServiceUserClient -> 1
+  [036] @0x00129a XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=7 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=11973 vh=2077 oh=0 pr=-5 mo=0x1d000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc8
+  [037] @0x001397 XNU: CODE SIGNING: cs_invalid_page(0x2248b8000): p=53[identityservices] final status 0x22000000, allowing (remove VALID) page
+  [038] @0x001427 XNU: SWEET AKS: coreduetd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [039] @0x001476 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [040] @0x0014c9 XNU: CODE SIGNING: cs_invalid_page(0x1d2a5a000): p=103[coreduetd] final status 0x22000000, allowing (remove VALID) page
+  [041] @0x001553 XNU: SWEET AKS: mediaserverd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [042] @0x0015a5 XNU: SWEET AKS: mediaserverd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+  [043] @0x0015f7 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=8 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=13381 vh=2386 oh=0 pr=-5 mo=0x462f000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ec
+  [044] @0x0016f4 XNU: CODE SIGNING: cs_invalid_page(0x1d2a5b000): p=99[awdd] final status 0x22000000, allowing (remove VALID) page
+  [045] @0x001778 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [046] @0x0017c8 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [047] @0x001818 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [048] @0x001868 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [049] @0x0018b8 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [050] @0x001908 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [051] @0x001958 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=9 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=14542 vh=2590 oh=0 pr=-5 mo=0xd000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80
+  [052] @0x001a55 XNU: CODE SIGNING: cs_invalid_page(0x1c1bb0000): p=104[dmd] final status 0x22000000, allowing (remove VALID) page
+  [053] @0x001ad9 XNU: CODE SIGNING: cs_invalid_page(0x1c472f000): p=56[contextstored] final status 0x22000000, allowing (remove VALID) page
+  [054] @0x001b66 XNU: CODE SIGNING: cs_invalid_page(0x1f3744000): p=73[passd] final status 0x22000000, allowing (remove VALID) page
+  [055] @0x001beb XNU: CODE SIGNING: cs_invalid_page(0x224557000): p=106[PowerUIAgent] final status 0x22000000, allowing (remove VALID) page
+  [056] @0x001c78 XNU: CODE SIGNING: cs_invalid_page(0x22786c000): p=63[locationd] final status 0x22000000, allowing (remove VALID) page
+  [057] @0x001d01 XNU: STR aThis process should not be linking or loading SpringBoardUI.framework (<rdar://problem/26143166>)
+  [058] @0x001d7f XNU: STR terminating due to uncaught exception of type NSException
+  [059] @0x001dd4 XNU: STR (0x1ba86940c 0x1b3b45c28 0x1b504d810 0x224989138 0x1b3b3f5d4 0x1d808cddc 0x1d8090438 0x1d8090420 0x1d8090420 0x1d8090420 0x1d80b04b4 0x1d80954d4 0x1d80c69a0 0x
+  [060] @0x001e8f XNU: STR *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'This process should not be linking or loading SpringBoardUI.framewor
+  [061] @0x001f4a XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=10 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15367 vh=2799 oh=0 pr=-5 mo=0x2702000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [062] @0x002047 XNU: CODE SIGNING: cs_invalid_page(0x1f6089000): p=58[xpcproxy] final status 0x22000000, allowing (remove VALID) page
+  [063] @0x0020cf XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=11 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15460 vh=2804 oh=0 pr=-5 mo=0x5f6a000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [064] @0x0021cc XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=12 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15460 vh=2804 oh=0 pr=-5 mo=0x5f6a000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [065] @0x0022c9 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=13 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15460 vh=2804 oh=0 pr=-5 mo=0x5f6a000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [066] @0x0023c6 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=14 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15460 vh=2804 oh=0 pr=-5 mo=0x5f6a000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [067] @0x0024c3 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=15 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15460 vh=2804 oh=0 pr=-5 mo=0x5f6a000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [068] @0x0025c0 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=16 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15460 vh=2804 oh=0 pr=-5 mo=0x5f6a000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [069] @0x0026bd XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=17 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15460 vh=2804 oh=0 pr=-5 mo=0x5f6a000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [070] @0x0027ba XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=18 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15466 vh=2806 oh=0 pr=-5 mo=0x125e000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [071] @0x0028b7 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=19 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15466 vh=2806 oh=0 pr=-5 mo=0x125e000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [072] @0x0029b4 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=20 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15466 vh=2806 oh=0 pr=-5 mo=0x125e000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [073] @0x002ab1 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=21 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15466 vh=2806 oh=0 pr=-5 mo=0x125e000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [074] @0x002bae XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=22 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15466 vh=2806 oh=0 pr=-5 mo=0x125e000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [075] @0x002cab XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=23 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15466 vh=2806 oh=0 pr=-5 mo=0x125e000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [076] @0x002da8 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=24 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15466 vh=2806 oh=0 pr=-5 mo=0x125e000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [077] @0x002ea5 XNU: CODE SIGNING: cs_invalid_page(0x1d808a000): p=48[seld] final status 0x22000000, allowing (remove VALID) page
+  [078] @0x002f29 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=25 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15484 vh=2806 oh=0 pr=-5 mo=0x1263000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [079] @0x003026 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=26 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15536 vh=2812 oh=0 pr=-5 mo=0xd1000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc
+  [080] @0x003123 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=27 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15589 vh=2821 oh=0 pr=-5 mo=0x6db9000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [081] @0x003220 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=28 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15624 vh=2825 oh=0 pr=-5 mo=0x5f6a000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [082] @0x00331d XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=29 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=15624 vh=2825 oh=0 pr=-5 mo=0x5f6a000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1e
+  [083] @0x00341a XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=15624 vh=2825 oh=0 pr=-5 fb=0x0 hb=0 xctest=1
+  [084] @0x0034ec XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=15624 vh=2825 oh=0 pr=-5 fb=0x0 hb=1 xctest=1
+  [085] @0x0035be XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=15624 vh=2825 oh=0 pr=-5 fb=0x0 hb=2 xctest=1
+  [086] @0x003690 XNU: CODE SIGNING: cs_invalid_page(0x1c15c0000): p=84[mtmergeprops] final status 0x22000000, allowing (remove VALID) page
+  [087] @0x00371c XNU: CODE SIGNING: cs_invalid_page(0x1d8090000): p=69[dasd] final status 0x22000000, allowing (remove VALID) page
+  [088] @0x0037a0 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=15649 vh=2826 oh=0 pr=-5 fb=0x0 hb=3 xctest=1
+  [089] @0x003872 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=15649 vh=2826 oh=0 pr=-5 fb=0x0 hb=4 xctest=1
+  [090] @0x003944 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=15649 vh=2826 oh=0 pr=-5 fb=0x0 hb=5 xctest=1
+  [091] @0x003a16 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=15649 vh=2826 oh=0 pr=-5 fb=0x0 hb=6 xctest=1
+  [092] @0x003ae8 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=15649 vh=2826 oh=0 pr=-5 fb=0x0 hb=7 xctest=1
+  [093] @0x003bba XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=15649 vh=2826 oh=0 pr=-5 fb=0x0 hb=8 xctest=1
+  [094] @0x003c8c XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=15649 vh=2826 oh=0 pr=-5 fb=0x0 hb=9 xctest=1
+  [095] @0x003d5e XNU: A5XELTE KEYS: key=0 down=1 gpio=0x20
+  [096] @0x003d9a XNU: SWEET HID: key 0x30 down (1 clients)
+  [097] @0x003dd6 XNU: A5XELTE KEYS: key=2 down=1 gpio=0x20
+  [098] @0x003e12 XNU: SWEET HID: key 0xea down (1 clients)
+  [099] @0x003e4e XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=15649 vh=2826 oh=0 pr=-5 fb=0x0 hb=10 xctest=1
+  [100] @0x003f21 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=15649 vh=2826 oh=0 pr=-5 fb=0x0 hb=11 xctest=1
+  ISSUE: gap at 0x0: skipped 46 bytes

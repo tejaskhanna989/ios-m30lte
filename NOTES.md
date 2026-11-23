@@ -1861,3 +1861,31 @@ authorization for a BOOT-only test of candidate v6.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
 
 - v51 candidate committed/pushed as `581321f7`.
+
+## 2026-11-23 — v51 physical result (MAIN only): REJECTED
+
+- v51 BOOT-flashed with `shim-boot.img`
+  `7bcaa7359081edb851a07bcb304b4bdf9dc64cb8cb4ecac23cd4f0e6cbf342be` on the
+  positively identified M30 (`m30lte`, serial `320081735bb166a3`) in TWRP.
+  BOOT only; no BOOT readback; USERDATA/SYSTEM/RECOVERY untouched.
+- pstore `validation/physical-boot-test/20261123-ios-v51-boot/raw/pmsg-ramoops-0`
+  SHA256 `ecf0c2ed5289be600e956a014ee4bd1b01fd8aec2391124b57b426a649efdebd`.
+  Decoded: 101 records, 1 wrap issue. Final heartbeat is
+  `M30 IRT final: state=2 off=0xa432d84 ... hits=1 tries=29 sc=42 si=26
+  fo=15649 vh=2826 oh=0 pr=-5 ... hb=11 xctest=1`.
+- There is NO `M30 IRT: patched _internal_release_type`, NO
+  `M30 IRT: patched (final state=3 ...)`, NO `M30 XCTEST: patched`, and NO
+  `M30 IRT: retrigger` marker in the captured ring. The SpringBoardUI assertion
+  and reason string are still present; no `Early boot complete`.
+- v51 is a regression. Observation: the worker reached companion symbols but
+  never reached v50's `oh=1` / `mo=0xa432000` patch state. Working hypothesis
+  (NOT proven): calling `m30_irt_retrigger_after_xctest()` from the 4K chunk
+  path opened the DSC gate on an earlier/different validated page than the
+  v48/v50-proven slow/bitmap-fast path.
+- v50 remains the last physically successful IRT candidate (`state=3`, `oh=1`,
+  durable heartbeat through `hb=24`). v51 rejected for flashing.
+- Next (v52): keep the range-limited chunk-path literal rewrite, but REMOVE the
+  retrigger call from the chunk path so v50's gate timing is preserved. Consider
+  adding a separate chunk counter to the durable heartbeat to prove whether the
+  extra path fired. No 0417; no security check weakened.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
