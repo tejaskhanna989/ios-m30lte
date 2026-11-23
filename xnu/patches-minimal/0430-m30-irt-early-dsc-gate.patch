@@ -1,0 +1,73 @@
+diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
+index 9be995a..3de45e3 100644
+--- a/osfmk/vm/vm_fault.c
++++ b/osfmk/vm/vm_fault.c
+@@ -208,9 +208,10 @@ static int       m30_irt_proactive_result = 0;
+ static unsigned long m30_xctest_patch_count = 0;
+ static unsigned long m30_xctest_chunk_count = 0;
+ 
+-/* The XCTest literal patch is the proven "pager is ready" gate.  Replay the
+- * one-shot diagnostics and reopen the DSC scan once, whether the literal was
+- * rewritten on the slow validation path or on the bitmap fast path. */
++/* The XCTest literal patch used to be the "pager is ready" gate, but it faults
++ * in from SpringBoard itself and therefore lands after the SpringBoardUI probe.
++ * v53 starts the scan on the first genuine DSC header fault instead.  If that
++ * early scan already started, the later XCTest patch must NOT reset its state. */
+ static void
+ m30_irt_retrigger_after_xctest(void)
+ {
+@@ -218,6 +219,11 @@ m30_irt_retrigger_after_xctest(void)
+ 		return;
+ 	}
+ 	m30_irt_retriggered = 1;
++	if (m30_irt_thread_started) {
++		printf("M30 IRT: XCTEST patch after early scan; keeping state=%d\n",
++		    m30_irt_state);
++		return;
++	}
+ 	m30_irt_state = M30_IRT_STATE_NEED_DSC;
+ 	m30_irt_file_offset = 0;
+ 	m30_irt_target_vp = (vnode_t)0;
+@@ -1203,6 +1209,7 @@ m30_internal_release_fixup(vnode_t vp, memory_object_t pager,
+ 	memory_object_offset_t backing_off = 0;
+ 	kern_return_t kr;
+ 	thread_t th = THREAD_NULL;
++	int dsc_header = 0;
+ 
+ 	M30_IRT_DIAG(0, "enter state=%d vp=%p pager=%p mo=0x%llx "
+ 	    "kaddr[0:4]=%02x%02x%02x%02x\n", m30_irt_state, (void *)vp,
+@@ -1277,12 +1284,17 @@ m30_internal_release_fixup(vnode_t vp, memory_object_t pager,
+ 	}
+ 
+ 	/* Defer the read-only DSC symbol scan outside the object lock. */
+-	/* Only scan after the XCTEST patch retrigger: before that the pager
+-	 * hands us launchd/dyld Mach-O vnodes, never the DSC.  v49 started the
+-	 * worker on the first fault and it failed before the symbol scan; keep
+-	 * the v48-proven gate but let the fast path open it too. */
++	/* v49 started on the first arbitrary fault (launchd/dyld Mach-O) and
++	 * failed before the symbol scan.  Gate instead on the first page that
++	 * actually is a dyld shared-cache header (dyld_v at file offset 0).
++	 * That happens when dyld maps the cache, long before SpringBoard's
++	 * XCTest page fault.  Keep the v50 retrigger as a fallback. */
++	dsc_header = (mo_offset == 0 && kaddr != NULL &&
++	    memcmp(kaddr, "dyld_v", 6) == 0);
++
+ 	if (m30_irt_state == M30_IRT_STATE_NEED_DSC &&
+-	    m30_irt_retriggered && !m30_irt_thread_started) {
++	    !m30_irt_thread_started &&
++	    (dsc_header || m30_irt_retriggered)) {
+ 		if (vnode_ref(vp) == 0) {
+ 			kr = kernel_thread_start_priority(
+ 			    (thread_continue_t)m30_irt_worker, (void *)vp,
+@@ -1290,6 +1302,11 @@ m30_internal_release_fixup(vnode_t vp, memory_object_t pager,
+ 			if (kr == KERN_SUCCESS) {
+ 				m30_irt_thread_started = 1;
+ 				thread_deallocate(th);
++				if (dsc_header && !m30_irt_retriggered) {
++					printf("M30 IRT: early scan started on "
++					    "DSC header off=0x%llx\n",
++					    (unsigned long long)mo_offset);
++				}
+ 				M30_IRT_DIAG(21, "worker started vp=%p\n",
+ 				    (void *)vp);
+ 			} else {

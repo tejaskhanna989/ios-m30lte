@@ -24,6 +24,7 @@ PATCH = ROOT / "xnu/patches-minimal/0426-m30-internal-release-type.patch"
 PATCH_V50 = ROOT / "xnu/patches-minimal/0427-m30-irt-retrigger-gate.patch"
 PATCH_V51 = ROOT / "xnu/patches-minimal/0428-m30-xctest-chunk-path.patch"
 PATCH_V52 = ROOT / "xnu/patches-minimal/0429-m30-chunk-path-no-retrigger.patch"
+PATCH_V53 = ROOT / "xnu/patches-minimal/0430-m30-irt-early-dsc-gate.patch"
 PSTORE_V30 = ROOT / "validation/physical-boot-test/20261122-ios-v30-boot/raw/pmsg-ramoops-0"
 PSTORE_V31 = ROOT / "validation/physical-boot-test/20261122-ios-v31-boot/raw/pmsg-ramoops-0"
 PSTORE_V32 = ROOT / "validation/physical-boot-test/20261122-ios-v32-boot/raw/pmsg-ramoops-0"
@@ -249,6 +250,19 @@ def main():
     assert 'v48/v50 slow and bitmap-fast paths remain the only gates' in v52
     assert v52.count('xctchunk=%lu') == 2
     print("[PASS] v52 patch: chunk path rewrites but does not retrigger")
+
+    # v53: start the read-only IRT scan on the first genuine DSC header,
+    # not on the later SpringBoard XCTest page.  The XCTest retrigger must
+    # become a fallback and must not reset an early scan.
+    v53 = PATCH_V53.read_text()
+    assert "int dsc_header = 0;" in v53
+    assert 'memcmp(kaddr, "dyld_v", 6) == 0' in v53
+    assert "(dsc_header || m30_irt_retriggered)" in v53
+    assert "if (m30_irt_thread_started)" in v53
+    assert "keeping state=%d" in v53
+    assert "early scan started on" in v53
+    assert "v49 started on the first arbitrary fault" in v53
+    print("[PASS] v53 patch: early DSC-header gate preserves its own result")
     # v49: validation-bitmap fast paths skip the slow function where the
     # fix-ups used to live.  Run both fix-ups on that path too.
     assert t.count("m30_xctest_probe_fixup(kaddr, mo_offset)") == 2
@@ -954,6 +968,37 @@ def main():
         "xctest", seen3, retriggered3, started3)
     assert (seen3, retriggered3, started3) == (2, True, True)
     print("[PASS] model: v52 chunk rewrite defers gate to v50 path")
+
+    # v53: an arbitrary early fault must NOT start the scan (v49 failure), a
+    # real DSC header must start it, and the later XCTest patch must not reset
+    # the already-started state.
+    seen, retriggered, started, state = 0, False, False, "NEED_DSC"
+    for path in ("launchd", "dyld_macho", "lockdownd"):
+        if path in ("xctest", "bitmap_xctest"):
+            seen += 1
+            retriggered = True
+        if path == "dsc_header":
+            started = True
+            state = "SCANNING"
+        elif retriggered and not started:
+            started = True
+            state = "SCANNING"
+    assert (seen, retriggered, started, state) == (0, False, False, "NEED_DSC")
+
+    seen, retriggered, started, state = 0, False, False, "NEED_DSC"
+    for path in ("launchd", "dsc_header", "xctest"):
+        if path in ("xctest", "bitmap_xctest"):
+            seen += 1
+            if not started:
+                retriggered = True
+                started = True
+                state = "SCANNING"
+            # After an early scan, the retrigger is recorded but state is kept.
+        if path == "dsc_header" and not started:
+            started = True
+            state = "SCANNING"
+    assert (seen, retriggered, started, state) == (1, False, True, "SCANNING")
+    print("[PASS] model: v53 DSC header starts scan before XCTest fallback")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 

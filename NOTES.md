@@ -1980,3 +1980,32 @@ authorization for a BOOT-only test of candidate v6.
   weakened; no BOOT readback.
 
 - v52 physical evidence committed/pushed as `2ee5d54d`.
+
+## 2026-11-23 — v53 offline (MAIN only): early DSC-header gate
+
+- User explicitly rejected an observability-only candidate; this change is a
+  fix attempt, not a diagnostic build.
+- Root cause from v52: the IRT worker is still gated on the SpringBoard XCTest
+  literal page fault. That page faults in from SpringBoard itself, so the
+  symbol scan and `_internal_release_type` patch land after the SpringBoardUI
+  assertion. v49 proved that starting on the first arbitrary fault fails
+  (`state=4`) because the pager initially hands over launchd/dyld Mach-O
+  vnodes, not the DSC.
+- v53 (`0430-m30-irt-early-dsc-gate.patch`, incremental on 0426 + 0427 + 0428 +
+  0429):
+  1. Start the read-only IRT worker on the first validated page that is really
+     a dyld shared-cache header (`mo_offset == 0` and `dyld_v` at `kaddr[0:6]`).
+     This happens when dyld maps the cache, before SpringBoard loads.
+  2. Keep the v50 XCTest retrigger only as a fallback. If the early scan has
+     already started, the later XCTest patch records `m30_irt_retriggered`
+     but does NOT reset state or restart the worker.
+  3. Keep v52's range-limited chunk rewrite and no chunk-path retrigger.
+- All file access remains `UIO_READ`; the in-memory write is strictly
+  post-validation. No 0417; no AMFI, code-signing, trust-cache, page-validation
+  or other security check weakened. No disk write.
+- Offline checks PASS: standalone syntax check including both heartbeat format
+  strings; `git apply --check` for 0426 -> 0427 -> 0428 -> 0429 -> 0430 against
+  the exact v49 CI base; application reproduces the intended v53 source
+  byte-for-byte; focused tests extended with the early-gate model.
+- NEXT: commit/push, run CI, then package/validate. Do not flash without
+  explicit user approval. NO UI/lock-screen success claimed.
