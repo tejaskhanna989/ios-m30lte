@@ -1859,3 +1859,5 @@ authorization for a BOOT-only test of candidate v6.
   check `xctest=<count>` versus v50's `1`, XCTEST/retrigger markers, IRT
   `state=3`, and SpringBoardUI assertion ordering.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+- v51 candidate committed/pushed as `581321f7`.
