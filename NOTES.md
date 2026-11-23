@@ -1531,3 +1531,19 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: commit/push, CI GREEN, package v46, BOOT-only flash, capture pstore,
   read the heartbeat success/final line, then inspect the next boot stage.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v46 offline complete (MAIN only)
+
+- CI `45125633274` GREEN for `3771d76b`. Kernel
+  `9086e77ef607e3a722947373aa0028c15445ab4970942a9501cde06ed1d4ab55`;
+  payload `b5996a239fc04ef3807b220c44d044f5b060069b6b3fe6095f18be6b9eb409dd`;
+  shim-boot.img
+  `831fb5141ef91e90a6b534779f897944bf883a224f4823b86f83cf47390cb826`.
+- Validators all PASS: buildtree, kernel, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging, handoff 18/18, all applicable focused tests (0417 inapplicable).
+  Shim Image/ELF and the shim region in the BOOT image remain byte-identical to
+  the v31 reference. Kernel entry remains `0xfffffff007410488`.
+- Candidate: `validation/ios-candidate-v46-out/` with README. NOT physically
+  tested. NEXT: BOOT-only flash, capture pstore, read the durable heartbeat,
+  then inspect whether SpringBoard proceeds beyond loading.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
