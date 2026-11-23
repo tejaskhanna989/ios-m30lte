@@ -1,0 +1,1804 @@
+{
+  "input_bytes": 16372,
+  "input_sha256": "8c17a9ed26c055a5a02cbf1f5643009327aa8876bf8e5c7c3c34ca7b1faee969",
+  "record_count": 166,
+  "consumed": 16372,
+  "clean": false,
+  "records": [
+    {
+      "index": 0,
+      "offset": 53,
+      "length": 107,
+      "metadata_hex": "3d32373930352063736661696c3d313220",
+      "tag": "csvok=178243)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 1,
+      "offset": 178,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=171 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 2,
+      "offset": 305,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3137383237312900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 3,
+      "offset": 369,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 4,
+      "offset": 416,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=160 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 5,
+      "offset": 537,
+      "length": 107,
+      "metadata_hex": "3d32373937322063736661696c3d313220",
+      "tag": "csvok=178738)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 6,
+      "offset": 662,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=172 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 7,
+      "offset": 789,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3137383935302900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 8,
+      "offset": 853,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 9,
+      "offset": 900,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=172 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 10,
+      "offset": 1027,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3137383937352900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 11,
+      "offset": 1091,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 12,
+      "offset": 1138,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=161 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 13,
+      "offset": 1259,
+      "length": 107,
+      "metadata_hex": "3d32383033382063736661696c3d313220",
+      "tag": "csvok=179336)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 14,
+      "offset": 1384,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=173 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 15,
+      "offset": 1511,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3137393534362900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 16,
+      "offset": 1575,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 17,
+      "offset": 1622,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=173 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 18,
+      "offset": 1749,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3137393538332900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 19,
+      "offset": 1813,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 20,
+      "offset": 1860,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=162 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 21,
+      "offset": 1981,
+      "length": 107,
+      "metadata_hex": "3d32383139322063736661696c3d313220",
+      "tag": "csvok=180333)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 22,
+      "offset": 2106,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=174 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 23,
+      "offset": 2233,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3138303438352900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 24,
+      "offset": 2297,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 25,
+      "offset": 2344,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=174 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 26,
+      "offset": 2471,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3138303530392900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 27,
+      "offset": 2535,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 28,
+      "offset": 2582,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=163 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 29,
+      "offset": 2703,
+      "length": 107,
+      "metadata_hex": "3d32383238332063736661696c3d313220",
+      "tag": "csvok=180961)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 30,
+      "offset": 2828,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=175 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 31,
+      "offset": 2955,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3138313230342900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 32,
+      "offset": 3019,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 33,
+      "offset": 3066,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=175 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 34,
+      "offset": 3193,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3138313233352900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 35,
+      "offset": 3257,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 36,
+      "offset": 3304,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=164 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 37,
+      "offset": 3425,
+      "length": 107,
+      "metadata_hex": "3d32383430332063736661696c3d313220",
+      "tag": "csvok=181753)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 38,
+      "offset": 3550,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=176 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 39,
+      "offset": 3677,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3138313831332900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 40,
+      "offset": 3741,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 41,
+      "offset": 3788,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=176 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 42,
+      "offset": 3915,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3138313833392900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 43,
+      "offset": 3979,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 44,
+      "offset": 4026,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=165 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 45,
+      "offset": 4147,
+      "length": 107,
+      "metadata_hex": "3d32383439302063736661696c3d313220",
+      "tag": "csvok=182393)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 46,
+      "offset": 4272,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=177 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 47,
+      "offset": 4399,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3138323530322900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 48,
+      "offset": 4463,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 49,
+      "offset": 4510,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=177 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 50,
+      "offset": 4637,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3138323530322900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 51,
+      "offset": 4701,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 52,
+      "offset": 4748,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=166 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 53,
+      "offset": 4869,
+      "length": 107,
+      "metadata_hex": "3d32383536382063736661696c3d313220",
+      "tag": "csvok=182983)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 54,
+      "offset": 4994,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=178 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 55,
+      "offset": 5121,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3138333230352900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 56,
+      "offset": 5185,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 57,
+      "offset": 5232,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=178 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 58,
+      "offset": 5359,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3138333233332900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 59,
+      "offset": 5423,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 60,
+      "offset": 5470,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=167 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 61,
+      "offset": 5591,
+      "length": 107,
+      "metadata_hex": "3d32383637332063736661696c3d313220",
+      "tag": "csvok=183694)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 62,
+      "offset": 5716,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=179 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 63,
+      "offset": 5843,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3138333931322900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 64,
+      "offset": 5907,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 65,
+      "offset": 5954,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=0 nlist_range=0 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=179 xctest=1 xctchunk=0 csblk",
+      "message": ""
+    },
+    {
+      "index": 66,
+      "offset": 6081,
+      "length": 61,
+      "metadata_hex": "3132206373766f6b3d3138333934322900",
+      "tag": "l\ufffd",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (f"
+    },
+    {
+      "index": 67,
+      "offset": 6145,
+      "length": 32,
+      "metadata_hex": "73746174653d33206f66663d3078613433",
+      "tag": "2d84 sym=0x1e",
+      "message": ""
+    },
+    {
+      "index": 68,
+      "offset": 6192,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=168 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 69,
+      "offset": 6313,
+      "length": 107,
+      "metadata_hex": "3d32383736352063736661696c3d313220",
+      "tag": "csvok=184494)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 70,
+      "offset": 6438,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=169 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 71,
+      "offset": 6559,
+      "length": 107,
+      "metadata_hex": "3d32383835352063736661696c3d313220",
+      "tag": "csvok=185156)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 72,
+      "offset": 6684,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=170 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 73,
+      "offset": 6805,
+      "length": 107,
+      "metadata_hex": "3d32383836362063736661696c3d313220",
+      "tag": "csvok=185225)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 74,
+      "offset": 6930,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=171 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 75,
+      "offset": 7051,
+      "length": 107,
+      "metadata_hex": "3d32383930392063736661696c3d313220",
+      "tag": "csvok=185571)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 76,
+      "offset": 7176,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=172 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 77,
+      "offset": 7297,
+      "length": 107,
+      "metadata_hex": "3d32393130342063736661696c3d313220",
+      "tag": "csvok=186732)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 78,
+      "offset": 7422,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=173 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 79,
+      "offset": 7543,
+      "length": 107,
+      "metadata_hex": "3d32393235372063736661696c3d313220",
+      "tag": "csvok=187654)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 80,
+      "offset": 7668,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=174 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 81,
+      "offset": 7789,
+      "length": 107,
+      "metadata_hex": "3d32393431362063736661696c3d313220",
+      "tag": "csvok=188621)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 82,
+      "offset": 7914,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=175 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 83,
+      "offset": 8035,
+      "length": 107,
+      "metadata_hex": "3d32393535332063736661696c3d313220",
+      "tag": "csvok=189487)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 84,
+      "offset": 8160,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=176 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 85,
+      "offset": 8281,
+      "length": 107,
+      "metadata_hex": "3d32393632382063736661696c3d313220",
+      "tag": "csvok=189953)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 86,
+      "offset": 8406,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=177 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 87,
+      "offset": 8527,
+      "length": 107,
+      "metadata_hex": "3d32393736352063736661696c3d313220",
+      "tag": "csvok=190873)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 88,
+      "offset": 8652,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=178 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 89,
+      "offset": 8773,
+      "length": 107,
+      "metadata_hex": "3d32393932342063736661696c3d313220",
+      "tag": "csvok=191841)",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000M30 IRT: patched (final state=3 off=0xa432d84 sym=0"
+    },
+    {
+      "index": 90,
+      "offset": 8898,
+      "length": 115,
+      "metadata_hex": "3d307834303030206e6c6973745f636e74",
+      "tag": "=8705811 nlist_range=146 sc=42 si=26 fo=24622 vh=3792 oh=1 pr=-5 fb=0x0 hb=179 xctest=1 xctchunk",
+      "message": ""
+    },
+    {
+      "index": 91,
+      "offset": 9019,
+      "length": 107,
+      "metadata_hex": "3d33303032352063736661696c3d313220",
+      "tag": "csvok=192519)",
+      "message": "lS\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/409"
+    },
+    {
+      "index": 92,
+      "offset": 9135,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 93,
+      "offset": 9218,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 94,
+      "offset": 9326,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 95,
+      "offset": 9409,
+      "length": 79,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: maild sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 96,
+      "offset": 9488,
+      "length": 70,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET Sandbox: accountsd privilege 1002 denied"
+    },
+    {
+      "index": 97,
+      "offset": 9558,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: remindd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 98,
+      "offset": 9635,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: remindd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 99,
+      "offset": 9712,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: remindd sel 35 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 100,
+      "offset": 9793,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: remindd sel 35 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 101,
+      "offset": 9874,
+      "length": 145,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1a18a2000): p=206[networkservicepr] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 102,
+      "offset": 10019,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=1 gpio=0xa0"
+    },
+    {
+      "index": 103,
+      "offset": 10079,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea down (1 clients)"
+    },
+    {
+      "index": 104,
+      "offset": 10139,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=0 gpio=0xe0"
+    },
+    {
+      "index": 105,
+      "offset": 10199,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea up (1 clients)"
+    },
+    {
+      "index": 106,
+      "offset": 10257,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 107,
+      "offset": 10365,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: networkserviceproxy sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 108,
+      "offset": 10454,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: networkserviceproxy sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 109,
+      "offset": 10543,
+      "length": 91,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: WirelessRadioManagerd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 110,
+      "offset": 10634,
+      "length": 95,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: WirelessRadioManagerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 111,
+      "offset": 10729,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ScreenTimeAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 112,
+      "offset": 10818,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1ba7ec000): p=209[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 113,
+      "offset": 10959,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 114,
+      "offset": 11067,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: findmydeviced sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 115,
+      "offset": 11150,
+      "length": 87,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: findmydeviced sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 116,
+      "offset": 11237,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1a1d0d000): p=213[searchpartyd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 117,
+      "offset": 11378,
+      "length": 133,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1a1685000): p=215[fmfd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 118,
+      "offset": 11511,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1e4888000): p=216[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 119,
+      "offset": 11652,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1004f1000): p=203[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 120,
+      "offset": 11791,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x100874000): p=218[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 121,
+      "offset": 11930,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 122,
+      "offset": 12038,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: fmfd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 123,
+      "offset": 12112,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: fmfd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 124,
+      "offset": 12186,
+      "length": 115,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH coreduetd[108] sig 5 code 0x600000001 sub 0x1a98eeb7c slide 0x1b7a0000 mh 0x1007f0000"
+    },
+    {
+      "index": 125,
+      "offset": 12301,
+      "length": 115,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH coreduetd pc 0x1a98eeb7c lr 0x1a98eeb7c sp 0x16f696600 fp 0x16f6966f0 far 0x100920000"
+    },
+    {
+      "index": 126,
+      "offset": 12416,
+      "length": 162,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH coreduetd bt 0x1a990d91c 0x1a98e8f1c 0x1ac2f2014 0x1ac2f4a5c 0x1ac2de224 0x1ac3b1358 0x1a93377a8 0x1a9338780 0x1a92de298 0x1a92ded70"
+    },
+    {
+      "index": 127,
+      "offset": 12578,
+      "length": 68,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH coreduetd reason ns 2 code 0x5: (none)"
+    },
+    {
+      "index": 128,
+      "offset": 12646,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 129,
+      "offset": 12731,
+      "length": 110,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH fmfd[215] sig 5 code 0x600000001 sub 0x1a98eeb7c slide 0x1b7a0000 mh 0x10075c000"
+    },
+    {
+      "index": 130,
+      "offset": 12841,
+      "length": 110,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH fmfd pc 0x1a98eeb7c lr 0x1a98eeb7c sp 0x16f6a3780 fp 0x16f6a3870 far 0x100b08000"
+    },
+    {
+      "index": 131,
+      "offset": 12951,
+      "length": 157,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH fmfd bt 0x1a98efd60 0x100763320 0x100763284 0x1a9338780 0x1a92d964c 0x10076326c 0x10076a850 0x10076986c 0x10077e244 0x100761998"
+    },
+    {
+      "index": 132,
+      "offset": 13108,
+      "length": 63,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH fmfd reason ns 2 code 0x5: (none)"
+    },
+    {
+      "index": 133,
+      "offset": 13171,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 134,
+      "offset": 13256,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1ba7ce000): p=223[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 135,
+      "offset": 13397,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 136,
+      "offset": 13505,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1ef931000): p=226[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 137,
+      "offset": 13646,
+      "length": 88,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: UserEventAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 138,
+      "offset": 13734,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x102029000): p=227[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 139,
+      "offset": 13875,
+      "length": 82,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: profiled sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 140,
+      "offset": 13957,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x100b65000): p=228[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 141,
+      "offset": 14094,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1017c5000): p=228[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 142,
+      "offset": 14233,
+      "length": 134,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1b7ec1000): p=99[triald] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 143,
+      "offset": 14367,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1a2958000): p=229[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 144,
+      "offset": 14504,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1c75fb000): p=229[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 145,
+      "offset": 14645,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1ed255000): p=230[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 146,
+      "offset": 14782,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 147,
+      "offset": 14890,
+      "length": 82,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: searchpartyd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 148,
+      "offset": 14972,
+      "length": 86,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: searchpartyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 149,
+      "offset": 15058,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=1 gpio=0xa0"
+    },
+    {
+      "index": 150,
+      "offset": 15118,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea down (1 clients)"
+    },
+    {
+      "index": 151,
+      "offset": 15178,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=0 gpio=0xe0"
+    },
+    {
+      "index": 152,
+      "offset": 15238,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea up (1 clients)"
+    },
+    {
+      "index": 153,
+      "offset": 15296,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=1 gpio=0xa0"
+    },
+    {
+      "index": 154,
+      "offset": 15356,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea down (1 clients)"
+    },
+    {
+      "index": 155,
+      "offset": 15416,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=0 gpio=0xe0"
+    },
+    {
+      "index": 156,
+      "offset": 15476,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea up (1 clients)"
+    },
+    {
+      "index": 157,
+      "offset": 15534,
+      "length": 142,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x100f6c000): p=156[webbookmarksd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 158,
+      "offset": 15676,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101bfd000): p=231[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 159,
+      "offset": 15817,
+      "length": 86,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: searchpartyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 160,
+      "offset": 15903,
+      "length": 140,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x19d100000): p=85[usermanagerd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 161,
+      "offset": 16043,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ScreenTimeAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 162,
+      "offset": 16132,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x20"
+    },
+    {
+      "index": 163,
+      "offset": 16192,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 164,
+      "offset": 16252,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=1 gpio=0x20"
+    },
+    {
+      "index": 165,
+      "offset": 16312,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea down (1 clients)"
+    }
+  ],
+  "issues": [
+    {
+      "offset": 0,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x33"
+    },
+    {
+      "offset": 160,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 293,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 366,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 401,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 531,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 644,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 777,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 850,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 885,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 1015,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 1088,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 1123,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 1253,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 1366,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 1499,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 1572,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 1607,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 1737,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 1810,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 1845,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 1975,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 2088,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 2221,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 2294,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 2329,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 2459,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 2532,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 2567,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 2697,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 2810,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 2943,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 3016,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 3051,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 3181,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 3254,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 3289,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 3419,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 3532,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 3665,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 3738,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 3773,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 3903,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 3976,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 4011,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 4141,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 4254,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 4387,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 4460,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 4495,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 4625,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 4698,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 4733,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 4863,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 4976,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 5109,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 5182,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 5217,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 5347,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 5420,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 5455,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 5585,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 5698,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 5831,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 5904,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 5939,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 6069,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 6142,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x69"
+    },
+    {
+      "offset": 6177,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x31"
+    },
+    {
+      "offset": 6307,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 6420,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 6553,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 6666,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 6799,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 6912,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 7045,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 7158,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 7291,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 7404,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 7537,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 7650,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 7783,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 7896,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 8029,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 8142,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 8275,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 8388,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 8521,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 8634,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 8767,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 8880,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    },
+    {
+      "offset": 9013,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3d"
+    },
+    {
+      "offset": 9126,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x36"
+    }
+  ]
+}

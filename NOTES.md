@@ -2403,3 +2403,42 @@ authorization for a BOOT-only test of candidate v6.
   v45/v52/v54/v50/v55, and commit the final physical README/handoff update.
   Still no UI/lock-screen success claim from the boot upload or observation
   alone.
+
+## 2026-11-24 - v57 physical result (MAIN only): CS fix VALIDATED, Apple logo reached
+
+- Device returned to TWRP and pstore pulled:
+  `validation/physical-boot-test/20261123-ios-v57-boot/raw/pmsg-ramoops-0` is
+  16,372 bytes, SHA256
+  `8c17a9ed26c055a5a02cbf1f5643009327aa8876bf8e5c7c3c34ca7b1faee969`.
+  `tools/decode_pmsg.py` decoded 166/166 records over all bytes with
+  `clean=False` because the 16 KB ring wrapped during the long userspace boot;
+  `tools/m30_bootlog.py inspect` produced the full decoded log. One-shot
+  `M30 CS diag` records were overwritten, but durable IRT counters survived.
+- Final replayed heartbeat: `M30 IRT: patched (final state=3 ... hb=179
+  xctest=1 xctchunk=0 csblk=30025 csfail=12 csvok=192519)`. Repeated heartbeats
+  from `csblk=27905 csfail=12 csvok=178243` upward show the 16K readback path
+  ran continuously: 30,025 block readbacks, 192,519 successful full-block
+  validations, only 12 fail-closed rejections. No terminal `state=4`.
+- No `SpringBoard`, `NSInternalInconsistencyException`, or SpringBoard
+  `cs_invalid_page` record in the captured window. The 19 `cs_invalid_page`
+  records are for auxiliary daemons (`fairplayd.H2`, `xpcproxy`, `bluetoothd`,
+  `searchpartyd`, `fmfd`, `networkserviceproxy`, `webbookmarksd`,
+  `usermanagerd`), and 8 `CRASH` records are for `coreduetd` and `fmfd`. These
+  are residual userspace issues, not the SpringBoard entitlement failure.
+- User observed continuing console text, “booting system started”, and an
+  **Apple logo** that remained visible. Combined with the pstore counters, this
+  is the first verified visible iOS UI milestone on the M30 and proves the
+  v45/v55 CS_VALID loss is fixed. No lock screen, home screen, or fully usable
+  iOS is claimed; no framebuffer screenshot was captured.
+- Comparison: v45 had SpringBoard `cs_invalid_page` after `Early boot complete`;
+  v52 showed the SpringBoardUI assertion before the IRT marker; v54 had IRT
+  `state=3` but no CS counters and no UI; v55 had no IRT/CS telemetry and
+  stopped after `load_init_program`; v57 has deep userspace, healthy full-block
+  validation counters, and a visible Apple logo. PHYSICALLY ACCEPTED for the
+  CS root-cause fix and UI milestone. USERDATA/SYSTEM/RECOVERY untouched, no
+  Fastboot, no BOOT readback.
+- Final evidence: `validation/physical-boot-test/20261123-ios-v57-boot/README.md`,
+  `analysis.txt`, decoded logs, `SHA256SUMS` and `raw/SHA256SUMS`. Commit this
+  final handoff. Optional follow-up work is residual daemon crashes/entitlement
+  noise (NOT required for the UI milestone); do not reflash a validated v57
+  without a new root cause and explicit candidate.
