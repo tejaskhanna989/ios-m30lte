@@ -1,0 +1,113 @@
+file: validation/physical-boot-test/20261123-ios-v46-boot/raw/pmsg-ramoops-0  bytes=16372  sha256=391ee54587d62b41209660ae10842b051c986bee5232723016e459d3b64df6b8
+records=110 issues=1
+  [000] @0x00002e XNU: STR dlsym(0x0, rosetta_is_current_process_translated): invalid handle
+  [001] @0x00008b XNU: STR etta.dylib' (no such file), '/private/preboot/Cryptexes/OS/usr/lib/libRosetta.dylib' (no such file), '/usr/lib/libRosetta.dylib' (no such file, not in dyld cac
+  [002] @0x000146 XNU: STR IOHIDConnection process:logd pid:25 uuid:69508426-8EBE-46D3-A634-C76E1F1C4CF7 caller:logd: logd + 77196
+  [003] @0x0001c9 XNU: STR backboardd: backboardd + 37724
+  [004] @0x000203 XNU: STR IOHIDConnection process:backboardd pid:57 uuid:CAD404C2-CD20-4B8C-BD53-3F96A326E808 caller:backboardd: backboardd + 37724
+  [005] @0x000298 XNU: STR IOHIDConnection process:powerd pid:39 uuid:1D2A3E67-D0AC-4380-99EF-CA7A1527D4A2 caller:powerd: powerd + 307560
+  [006] @0x000322 XNU: STR !*** -[NSURL initFileURLWithPath:]
+  [007] @0x000360 XNU: STR 7*** -[NSURL initFileURLWithPath:]: nil string parameter
+  [008] @0x0003b4 XNU: STR terminating due to uncaught exception of type NSException
+  [009] @0x000409 XNU: STR (0x1cbde940c 0x1c50c5c28 0x1c6192f10 0x1c6192ca0 0x1d2da4ee4 0x1d2da4f20 0x100ef1858 0x1d2b90780 0x1d2b3164c 0x100edd334 0x100edda00 0x1e961c344)
+  [010] @0x0004b6 XNU: STR *** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: '*** -[NSURL initFileURLWithPath:]: nil string parameter'
+  [011] @0x00055f XNU: STR *** First throw call stack:
+  [012] @0x000596 XNU: STR (0x1cbde940c 0x1c50c5c28 0x1c6192f10 0x1c6192ca0 0x1d2da4ee4 0x1d2da4f20 0x100ef1858 0x1d2b90780 0x1d2b3164c 0x100edd334 0x100edda00 0x1e961c344)
+  [013] @0x000643 XNU: STR  { count = 7, transaction: 0, voucher = 0x0, contents =
+  [014] @0x000696 XNU: STR "ContainerClass" => <uint64: 0xb70148312a65c807>: 12
+  [015] @0x0006e6 XNU: STR "Platform" => <uint64: 0xb70148312a65c877>: 2
+  [016] @0x00072f XNU: STR "Flags" => <uint64: 0xb70148792a65c87f>: 38654705667
+  [017] @0x00077f XNU: STR "Explicit" => <uint64: 0xb70148312a65c977>: 34
+  [018] @0x0007c9 XNU: STR "PrivateFlags" => <uint64: 0xb70148312a65c87f>: 3
+  [019] @0x000816 XNU: STR "Transient" => <bool: 0x21fb56e20>: false
+  [020] @0x00085b XNU: STR "Command" => <uint64: 0xb70148312a65c95f>: 39
+  [021] @0x0008a4 XNU: SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+  [022] @0x0008f9 XNU: CODE SIGNING: cs_invalid_page(0x1fcea2000): p=115[aggregated] final status 0x22000000, allowing (remove VALID) page
+  [023] @0x000984 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=13 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [024] @0x000a5c XNU: CODE SIGNING: cs_invalid_page(0x1cb3f3000): p=116[seserviced] final status 0x22000000, allowing (remove VALID) page
+  [025] @0x000ae7 XNU: CODE SIGNING: cs_invalid_page(0x204c8f000): p=110[findmydeviced] final status 0x22000000, allowing (remove VALID) page
+  [026] @0x000b75 XNU: STR done: 9312 KiB scanned, 26 strings
+  [027] @0x000bb3 XNU: CRASH backboardd reason ns 2 code 0x6: (none)
+  [028] @0x000bf8 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=14 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [029] @0x000cd0 XNU: CODE SIGNING: cs_invalid_page(0x1d96d3000): p=33[xpcproxy] final status 0x22000000, allowing (remove VALID) page
+  [030] @0x000d58 XNU: CODE SIGNING: cs_invalid_page(0x1d2b4e000): p=102[com.apple.datami] final status 0x22000000, allowing (remove VALID) page
+  [031] @0x000de9 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=15 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [032] @0x000ec1 XNU: CODE SIGNING: cs_invalid_page(0x1e960c000): p=38[tccd] final status 0x22000000, allowing (remove VALID) page
+  [033] @0x000f45 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=16 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [034] @0x00101d XNU: CODE SIGNING: cs_invalid_page(0x1e960c000): p=35[healthd] final status 0x22000000, allowing (remove VALID) page
+  [035] @0x0010a4 XNU: CODE SIGNING: cs_invalid_page(0x1e960c000): p=82[safetyalertsd] final status 0x22000000, allowing (remove VALID) page
+  [036] @0x001131 XNU: CODE SIGNING: cs_invalid_page(0x1e960c000): p=67[nanoprefsyncd] final status 0x22000000, allowing (remove VALID) page
+  [037] @0x0011be XNU: M30 IRT status: state=4 off=0x0 err=0 replay=17 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [038] @0x001296 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=18 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [039] @0x00136e XNU: M30 IRT status: state=4 off=0x0 err=0 replay=19 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [040] @0x001446 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=20 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [041] @0x00151e XNU: M30 IRT status: state=4 off=0x0 err=0 replay=21 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [042] @0x0015f6 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=22 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [043] @0x0016ce XNU: M30 IRT status: state=4 off=0x0 err=0 replay=23 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [044] @0x0017a6 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=24 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [045] @0x00187e XNU: M30 IRT status: state=4 off=0x0 err=0 replay=25 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [046] @0x001956 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=26 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [047] @0x001a2e XNU: M30 IRT status: state=4 off=0x0 err=0 replay=27 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [048] @0x001b06 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=28 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [049] @0x001bde XNU: M30 IRT status: state=4 off=0x0 err=0 replay=29 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=0 tries=138 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc80000/0x62ac000@0x0
+  [050] @0x001cb6 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=0
+  [051] @0x001d52 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=1
+  [052] @0x001dee XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=2
+  [053] @0x001e8a XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=3
+  [054] @0x001f26 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=4
+  [055] @0x001fc2 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=5
+  [056] @0x00205e XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=6
+  [057] @0x0020fa XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=7
+  [058] @0x002196 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=8
+  [059] @0x002232 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=9
+  [060] @0x0022ce XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=10
+  [061] @0x00236b XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=11
+  [062] @0x002408 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=12
+  [063] @0x0024a5 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=13
+  [064] @0x002542 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=14
+  [065] @0x0025df XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=15
+  [066] @0x00267c XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=16
+  [067] @0x002719 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=17
+  [068] @0x0027b6 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=18
+  [069] @0x002853 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=19
+  [070] @0x0028f0 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=20
+  [071] @0x00298d XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=21
+  [072] @0x002a2a XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=22
+  [073] @0x002ac7 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=23
+  [074] @0x002b64 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=24
+  [075] @0x002c01 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=25
+  [076] @0x002c9e XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=26
+  [077] @0x002d3b XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=27
+  [078] @0x002dd8 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=28
+  [079] @0x002e75 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=29
+  [080] @0x002f12 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=30
+  [081] @0x002faf XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=31
+  [082] @0x00304c XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=32
+  [083] @0x0030e9 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=33
+  [084] @0x003186 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=34
+  [085] @0x003223 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=35
+  [086] @0x0032c0 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=36
+  [087] @0x00335d XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=37
+  [088] @0x0033fa XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=38
+  [089] @0x003497 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=39
+  [090] @0x003534 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=40
+  [091] @0x0035d1 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=41
+  [092] @0x00366e XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=42
+  [093] @0x00370b XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=43
+  [094] @0x0037a8 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=44
+  [095] @0x003845 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=45
+  [096] @0x0038e2 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=46
+  [097] @0x00397f XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=47
+  [098] @0x003a1c XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=48
+  [099] @0x003ab9 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=49
+  [100] @0x003b56 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=50
+  [101] @0x003bf3 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=51
+  [102] @0x003c90 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=52
+  [103] @0x003d2d XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=53
+  [104] @0x003dca XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=54
+  [105] @0x003e67 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x20
+  [106] @0x003ea3 XNU: SWEET HID: key 0x30 down (0 clients)
+  [107] @0x003edf XNU: A5XELTE KEYS: key=2 down=1 gpio=0x20
+  [108] @0x003f1b XNU: SWEET HID: key 0xea down (0 clients)
+  [109] @0x003f57 XNU: M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=55
+  ISSUE: gap at 0x0: skipped 46 bytes

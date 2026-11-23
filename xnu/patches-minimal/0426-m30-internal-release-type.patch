@@ -9,7 +9,7 @@
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,928 @@
+@@ -140,9 +142,1002 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -66,6 +66,8 @@
 +static uint64_t  m30_irt_sym_map_fileoff = 0;
 +static uint64_t  m30_irt_fallback_off = 0;
 +static int       m30_irt_map_tries = 0;
++static uint32_t  m30_irt_subcache_cnt = 0;
++static int       m30_irt_subcache_index = -1;
 +
 +/* One-shot diagnostics: every distinct failure reason is printed at most once
 + * so the ramoops pmsg ring is not flooded. */
@@ -657,6 +659,74 @@
 +			target_path[basepath_n] = '\0';
 +		}
 +	}
++	/* dyld4 subcache names are not always numeric.  The real cache header
++	 * carries an array of dyld_subcache_entry records whose fileSuffix can
++	 * be e.g. ".03.development" or ".25.data".  Use that authoritative list
++	 * before falling back to the old numeric .0-.511 guessing. */
++	if (!found) {
++		char subpath[1024];
++		uint32_t sc_off, sc_cnt, idx;
++
++		/* `hdr` was overwritten by image-path reads; reload the main
++		 * header so the subcache-array offsets are available. */
++		if (m30_irt_read(imgvp, 0, hdr, 552) == 0 &&
++		    memcmp(hdr, "dyld_v", 6) == 0) {
++			sc_off = *(uint32_t *)(hdr + 392);
++			sc_cnt = *(uint32_t *)(hdr + 396);
++			m30_irt_subcache_cnt = sc_cnt;
++			M30_IRT_DIAG(55, "subcache array off=0x%x cnt=%u\n",
++			    sc_off, sc_cnt);
++			for (idx = 0; idx < sc_cnt && !found; idx++) {
++				char sf[33];
++				size_t sf_len = 0, n;
++				vnode_t tvp = (vnode_t)0;
++				uint64_t eoff = (uint64_t)sc_off +
++				    (uint64_t)idx * 56;
++
++				if (m30_irt_read(imgvp, eoff, buf, 56) != 0) {
++					M30_IRT_DIAG(57, "subcache entry %u read "
++					    "failed err=%d\n", idx,
++					    m30_irt_last_err);
++					break;
++				}
++				memcpy(sf, buf + 24, 32);
++				sf[32] = '\0';
++				while (sf_len < 32 && sf[sf_len] != '\0' &&
++				    sf[sf_len] != '/') {
++					sf_len++;
++				}
++				if (sf_len == 0 || sf[sf_len] != '\0' ||
++				    sf[0] != '.') {
++					continue;
++				}
++				n = basepath_n;
++				if (n == 0 || n + sf_len + 1 >=
++				    sizeof(subpath)) {
++					continue;
++				}
++				memcpy(subpath, basepath, n);
++				memcpy(subpath + n, sf, sf_len + 1);
++				if (m30_irt_map_vnode_open(subpath, sym_vmaddr,
++				    &file_off, hdr, maps, chunk, &tvp) == 0) {
++					continue;
++				}
++				target_vp = tvp;
++				target_opened = 1;
++				keep_target_open = 1;
++				found = 1;
++				m30_irt_subcache_index = (int)idx;
++				M30_IRT_DIAG(56, "subcache idx=%u suffix=%s "
++				    "mapped off=0x%llx\n", idx, sf,
++				    (unsigned long long)file_off);
++				memcpy(target_path, subpath,
++				    MIN(n + sf_len + 1,
++				    (size_t)sizeof(target_path)));
++			}
++		} else {
++			M30_IRT_DIAG(58, "main header reload failed err=%d\n",
++			    m30_irt_last_err);
++		}
++	}
 +	if (!found) {
 +		char subpath[1024];
 +		uint32_t idx;
@@ -792,14 +862,15 @@
 +		delay(2000000);      /* 2 s */
 +		printf("M30 IRT status: state=%d off=0x%llx err=%d replay=%d "
 +		    "comp=%d ls=0x%llx sym=0x%llx img=0x%llx hits=%d tries=%d "
-+		    "symmap=0x%llx/0x%llx@0x%llx fb=0x%llx "
++		    "sc=%u si=%d symmap=0x%llx/0x%llx@0x%llx fb=0x%llx "
 +		    "basecnt=%u base0=0x%llx/0x%llx@0x%llx\n",
 +		    m30_irt_state, (unsigned long long)m30_irt_file_offset,
 +		    m30_irt_last_err, i, comp_cand,
 +		    (unsigned long long)ls_off,
 +		    (unsigned long long)m30_irt_sym_vmaddr,
 +		    (unsigned long long)m30_irt_image_addr, m30_irt_map_hits,
-+		    m30_irt_map_tries,
++		    m30_irt_map_tries, m30_irt_subcache_cnt,
++		    m30_irt_subcache_index,
 +		    (unsigned long long)m30_irt_sym_map_addr,
 +		    (unsigned long long)m30_irt_sym_map_size,
 +		    (unsigned long long)m30_irt_sym_map_fileoff,
@@ -820,18 +891,20 @@
 +		if (m30_irt_state == M30_IRT_STATE_DONE) {
 +			printf("M30 IRT: patched (final state=%d off=0x%llx "
 +			    "sym=0x%llx comp=%d ls=0x%llx "
-+			    "nlist_cnt=%u nlist_range=%u fb=0x%llx hb=%d)\n",
++			    "nlist_cnt=%u nlist_range=%u sc=%u si=%d "
++			    "fb=0x%llx hb=%d)\n",
 +			    m30_irt_state,
 +			    (unsigned long long)m30_irt_file_offset,
 +			    (unsigned long long)m30_irt_sym_vmaddr,
 +			    comp_cand, (unsigned long long)ls_off,
-+			    nlist_cnt, nlist_range,
++			    nlist_cnt, nlist_range, m30_irt_subcache_cnt,
++			    m30_irt_subcache_index,
 +			    (unsigned long long)m30_irt_fallback_off, i);
 +		} else {
 +			printf("M30 IRT final: state=%d off=0x%llx err=%d "
 +			    "sym=0x%llx comp=%d ls=0x%llx "
 +			    "nlist_cnt=%u nlist_range=%u hits=%d tries=%d "
-+			    "fb=0x%llx hb=%d\n",
++			    "sc=%u si=%d fb=0x%llx hb=%d\n",
 +			    m30_irt_state,
 +			    (unsigned long long)m30_irt_file_offset,
 +			    m30_irt_last_err,
@@ -839,6 +912,7 @@
 +			    comp_cand, (unsigned long long)ls_off,
 +			    nlist_cnt, nlist_range,
 +			    m30_irt_map_hits, m30_irt_map_tries,
++			    m30_irt_subcache_cnt, m30_irt_subcache_index,
 +			    (unsigned long long)m30_irt_fallback_off, i);
 +		}
 +	}
@@ -938,7 +1012,7 @@
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8608,38 @@
+@@ -7687,6 +8682,38 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  

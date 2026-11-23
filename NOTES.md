@@ -1553,3 +1553,42 @@ authorization for a BOOT-only test of candidate v6.
   `validation/ios-candidate-v46-out/shim-boot.img` and capture pstore. Read the
   durable heartbeat, then inspect whether SpringBoard proceeds beyond loading.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v46 physical: decisive failure, heartbeat worked
+
+- Device positively identified before flashing: ADB serial
+  `320081735bb166a3`, product `m30lte`, state `recovery`, `ro.twrp.boot=1`.
+  BOOT-only flash succeeded; no readback; USERDATA/SYSTEM/RECOVERY untouched.
+- pstore
+  `391ee54587d62b41209660ae10842b051c986bee5232723016e459d3b64df6b8`
+  (16,372 B, 110 records, 1 gap). Evidence preserved in
+  `validation/physical-boot-test/20261123-ios-v46-boot/`.
+- No `M30 IRT: patched` marker. The durable final heartbeat survived from
+  `hb=0` through `hb=55`:
+  `M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 tries=138 fb=0x0 hb=55`.
+- The Cryptex `.symbols` companion was used and the image-scoped local-symbol
+  lookup succeeded, but no real cache mapping contained the symbol vmaddr.
+  `_internal_release_type` was **not** patched. The exact cause is that only
+  numeric `.0`-`.511` subcache names were tried; dyld4 subcaches can have
+  suffixed names recorded in the main cache header's subcache-entry array.
+- The final window has `CRASH backboardd` and an `NSInvalidArgumentException`
+  for a nil `NSURL` path, but no `Early boot complete`, no SpringBoard code
+  signing line, and no SpringBoardUI assertion. No UI/lock-screen success.
+  BOOT readback SKIPPED.
+
+## 2026-11-23 — v47 in progress (MAIN only): authoritative subcache names
+
+- Keep v46 Cryptex-first companion, symbol lookup, and durable heartbeat.
+- Read `subCacheArrayOffset@392` and `subCacheArrayCount@396` from the main
+  cache header; enumerate `dyld_subcache_entry.fileSuffix` values and try each
+  exact `<basepath><suffix>` before the old numeric fallback. Reject suffixes
+  containing `/` and require a leading `.`.
+- Add `sc=<count>` and `si=<index>` to full status and both heartbeat forms,
+  plus one-shot `diag 55`/`diag 56` for subcache-array discovery and the
+  successful subcache name.
+- Standalone syntax check PASS; patch dry-run against v46 buildtree PASS;
+  focused tests extended with v46 physical failure evidence.
+- NEXT: commit/push, CI, package v47, BOOT-only flash, capture pstore, read the
+  `M30 IRT: patched (final ...)` or updated `M30 IRT final ... sc=... si=...`
+  heartbeat, then inspect the next boot stage.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.

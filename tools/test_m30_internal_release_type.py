@@ -35,6 +35,7 @@ PSTORE_V42 = ROOT / "validation/physical-boot-test/20261123-ios-v42-boot/raw/pms
 PSTORE_V43 = ROOT / "validation/physical-boot-test/20261123-ios-v43-boot/raw/pmsg-ramoops-0"
 PSTORE_V44 = ROOT / "validation/physical-boot-test/20261123-ios-v44-boot/raw/pmsg-ramoops-0"
 PSTORE_V45 = ROOT / "validation/physical-boot-test/20261123-ios-v45-boot/raw/pmsg-ramoops-0"
+PSTORE_V46 = ROOT / "validation/physical-boot-test/20261123-ios-v46-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -160,9 +161,18 @@ def main():
     hb = t[t.index("for (i = 0; i < 180; i++)"):]
     assert "delay(2000000)" in hb
     assert 'M30 IRT: patched (final state=%d off=0x%llx' in hb
-    assert "nlist_cnt=%u nlist_range=%u fb=0x%llx hb=%d" in hb
+    assert "nlist_cnt=%u nlist_range=%u sc=%u si=%d " in hb
+    assert "fb=0x%llx hb=%d)\\n" in hb
     assert 'M30 IRT final: state=%d off=0x%llx err=%d' in hb
     assert "break;" not in hb
+    # v47: enumerate dyld4 subcache files from the header instead of guessing
+    # only numeric suffixes; the target subcache can be ".03.development".
+    assert "hdr + 392" in t and "hdr + 396" in t
+    assert "M30_IRT_DIAG(55, \"subcache array" in t
+    assert "M30_IRT_DIAG(56, \"subcache idx=%u suffix=%s" in t
+    assert "sf[0] != '.'" in t and "sf[sf_len] != '/'" in t
+    assert "m30_irt_subcache_cnt" in t and "m30_irt_subcache_index" in t
+    assert "sc=%u si=%d symmap=" in t
     # v37: retrigger gate, and retry with a later vnode on wrong magic.
     assert "m30_irt_retriggered && !m30_irt_thread_started" in t
     assert "path=%s\\n" in t
@@ -351,6 +361,24 @@ def main():
     assert b"This process should not be linking or loading SpringBoardUI.framewor" not in d45
     assert b"M30 IRT" not in d45, "v45 final window lost all IRT replay lines"
     print("[PASS] v45 pstore: assertion absent, launchd early boot complete, SpringBoard loaded")
+
+    # --- v46 physical: the durable heartbeat proves the patch did NOT happen.
+    # The symbol and its local-symbol range were found, but no real cache file
+    # mapping contained that vmaddr; only numeric subcache names were tried. ---
+    d46 = PSTORE_V46.read_bytes()
+    assert len(d46) == 16372, "v46 pmsg ring should be full/wrapped"
+    assert b"M30 IRT: patched" not in d46
+    assert b"M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 " \
+           b"comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 " \
+           b"tries=138" in d46
+    assert b"M30 IRT final: state=4 off=0x0 err=0 sym=0x1e1d3ad84 " \
+           b"comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=0 " \
+           b"tries=138 sc=" not in d46, "v46 must not contain v47 fields"
+    assert b"hb=55" in d46, "final heartbeat must survive ring wrap"
+    assert b"Early boot complete. Continuing system boot." not in d46
+    assert b"SpringBoardUI.framework" not in d46
+    assert b"CRASH backboardd" in d46
+    print("[PASS] v46 pstore: durable final state=4, hits=0/tries=138, no patch")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global
@@ -629,6 +657,31 @@ def main():
     assert candidates[0].endswith("dyld_shared_cache_arm64.symbols")
     assert candidates[1].endswith("dyld_shared_cache_arm64.31.symbols")
     print("[PASS] model: strip .31 subcache index to find main cache symbols")
+
+    # --- behavioural model: exact dyld4 subcache names from the header. ---
+    import struct
+    header = bytearray(552)
+    header[:6] = b"dyld_v"
+    struct.pack_into("<I", header, 392, 0x1000)   # subCacheArrayOffset
+    struct.pack_into("<I", header, 396, 2)        # subCacheArrayCount
+    entries = bytearray(2 * 56)
+    entries[0*56+24:0*56+24+15] = b".03.development"
+    entries[1*56+24:1*56+24+8] = b".25.data"
+    assert struct.unpack_from("<I", header, 392)[0] == 0x1000
+    assert struct.unpack_from("<I", header, 396)[0] == 2
+    suffixes = []
+    for i in range(2):
+        raw = bytes(entries[i*56+24:(i+1)*56])
+        sf = raw.split(b"\x00", 1)[0].decode()
+        assert sf.startswith(".") and "/" not in sf
+        suffixes.append(sf)
+    assert suffixes == [".03.development", ".25.data"]
+    base = "/private/preboot/Cryptexes/OS/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64"
+    exact_paths = [base + s for s in suffixes]
+    numeric_paths = [base + ".%d" % i for i in range(512)]
+    assert exact_paths[0] not in numeric_paths
+    assert exact_paths[0].endswith("dyld_shared_cache_arm64.03.development")
+    print("[PASS] model: header subcache suffixes reach non-numeric cache files")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 
