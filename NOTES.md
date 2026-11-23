@@ -1943,3 +1943,38 @@ authorization for a BOOT-only test of candidate v6.
   success claimed. BOOT readback SKIPPED; USERDATA/SYSTEM/RECOVERY untouched.
 
 - v52 candidate committed/pushed as `ff043ccd`.
+
+## 2026-11-23 — v52 physical result (MAIN only): IRT restored, no UI
+
+- First Heimdall attempt found no download-mode device and performed no write;
+  log preserved as `heimdall-flash-failed-download-detect.log`. The device was
+  then put into download mode with `adb reboot download`; `heimdall detect`
+  succeeded. BOOT-only flash of `shim-boot.img`
+  `d2e46bc18c161e9cd4c2c04f0c6eec96dc4166c479298f59285ac46bd2695cda` and
+  `heimdall print-pit --resume` both exited 0. No BOOT readback;
+  USERDATA/SYSTEM/RECOVERY untouched.
+- Fixed window: resume `13:27:04Z`, window end `13:30:04Z`; device returned to
+  TWRP before pstore collection.
+- pstore
+  `validation/physical-boot-test/20261123-ios-v52-boot/raw/pmsg-ramoops-0`
+  SHA256 `409c2f25233750cc6e78b476c8e849207d8294e629b3a508d9e2c2f7e605de51`.
+  Decoded: 124 records, 1 wrap issue. Pre-flash pstore still matched v51's
+  result (`ecf0c2ed5289be600e956a014ee4bd1b01fd8aec2391124b57b426a649efdebd`).
+- Observation: `M30 IRT: patched _internal_release_type off 0xa432d84 (0 -> 3)`
+  is present once, followed by 10 `M30 IRT status: state=3` lines with
+  `oh=1 pr=-5 mo=0xa432000`, covering `replay=10` through `replay=19`.
+  There is NO `M30 IRT final: state=2`, so v51's regression is gone.
+- The capture ends during the 30-iteration status loop. It has no
+  `M30 IRT: patched (final state=3 ...)`, no `M30 IRT final: ...`, and no
+  `xctest=`/`xctchunk=` fields; the new chunk counter cannot be evaluated from
+  this window. This is capture timing, not a `state=2` failure.
+- SpringBoardUI `NSInternalInconsistencyException` remains at records `[024]`,
+  `[027]`, and `[089]`, all before the IRT patch marker at `[092]`. No
+  `Early boot complete`; no UI or lock-screen evidence; no UI success claimed.
+- v52 is NOT rejected on IRT correctness. v50 remains the last candidate with a
+  full compact final heartbeat (`hb=24`, `xctest=1`). v51 remains rejected.
+- Next: keep behaviour unchanged and first make the chunk rewrite observable
+  inside the status loop (e.g. `xctchunk=` in the status line or a one-shot
+  chunk marker), so the fixed 180 s capture can prove whether the new path
+  fired before changing gate behaviour again. No 0417; no security check
+  weakened; no BOOT readback.

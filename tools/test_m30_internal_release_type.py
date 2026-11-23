@@ -46,6 +46,7 @@ PSTORE_V48 = ROOT / "validation/physical-boot-test/20261123-ios-v48-boot/raw/pms
 PSTORE_V49 = ROOT / "validation/physical-boot-test/20261123-ios-v49-boot/raw/pmsg-ramoops-0"
 PSTORE_V50 = ROOT / "validation/physical-boot-test/20261123-ios-v50-boot/raw/pmsg-ramoops-0"
 PSTORE_V51 = ROOT / "validation/physical-boot-test/20261123-ios-v51-boot/raw/pmsg-ramoops-0"
+PSTORE_V52 = ROOT / "validation/physical-boot-test/20261123-ios-v52-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -525,6 +526,23 @@ def main():
     assert b"This process should not be linking or loading SpringBoardUI.framework" in d51
     assert b"Early boot complete. Continuing system boot." not in d51
     print("[PASS] v51 pstore: chunk-path hook regressed IRT to state=2")
+
+    # --- v52 physical: deferred gate restores the patch; capture ends in
+    # --- the status loop, so no final heartbeat/counter is observable. ---
+    d52 = PSTORE_V52.read_bytes()
+    assert len(d52) == 16372, "v52 pmsg ring should be full/wrapped"
+    assert b"M30 IRT: patched _internal_release_type off 0xa432d84 (0 -> 3)" in d52
+    assert d52.count(b"M30 IRT status: state=3 off=0xa432d84") >= 10
+    assert b"oh=1 pr=-5 mo=0xa432000" in d52
+    assert b"M30 IRT final: state=2" not in d52
+    assert b"M30 IRT: patched (final state=3" not in d52
+    assert b"xctest=" not in d52
+    assert b"xctchunk=" not in d52
+    assert b"M30 XCTEST: patched" not in d52
+    assert b"M30 IRT: retrigger" not in d52
+    assert b"This process should not be linking or loading SpringBoardUI.framework" in d52
+    assert b"Early boot complete. Continuing system boot." not in d52
+    print("[PASS] v52 pstore: IRT state=3 restored; assertion persists")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global
