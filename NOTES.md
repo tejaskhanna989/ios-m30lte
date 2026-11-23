@@ -1772,3 +1772,19 @@ authorization for a BOOT-only test of candidate v6.
   and a fast-path-gate model.
 - NEXT: commit/push v50 source, run CI, then package/validate/boot as before.
 - NO UI/lock-screen success claimed.
+- CI `45169239555` GREEN (12m16s) for source commit `4adddb7e`. Log shows both
+  `Applying patch: 0426` and `Applying patch: 0427`; buildtree `vm_fault.c`
+  matches the intended v50 source byte-for-byte; entry VA remains
+  `0xfffffff007410488`. Kernel
+  `a439f7070b90577e53703a1190ddad06c3b0d40e2b7fce8d6a19acf6e7168a41`;
+  payload `609b10f498b0b501db86ed378f46cc844da27dd26470c9b2e372147965af3b01`;
+  shim-boot.img
+  `859b5d08dab9dd2f7a9aff80eb9c5f2c77ea6677969480f8ece332b7de74b07a`.
+- Validators all PASS: buildtree, kernel, platform 9/9, CPU 17/17, ADT 22/22,
+  packaging, handoff 18/18, all applicable focused tests. Shim region remains
+  byte-identical to v31; entry VA unchanged.
+- Candidate: `validation/ios-candidate-v50-out/` with README. NOT physically
+  tested. NEXT: BOOT-only flash, capture pstore, read `xctest=<count>` and
+  `state=3` from the heartbeat, check XCTEST/retrigger markers and ordering
+  relative to any SpringBoardUI assertion.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.
