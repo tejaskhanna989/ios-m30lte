@@ -2128,3 +2128,56 @@ authorization for a BOOT-only test of candidate v6.
 - Result: durable M30 IRT patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 ... oh=1 pr=-5 fb=0x0 hb=15..39 xctest=1 xctchunk=0), 75 full status replay lines; no state=4 in captured ring. v53 regression is cleared at the IRT-state level.
 - One-shot early-start/retry/patch-marker records and the SpringBoardUI assertion wrapped out of the 16 KB ring. Their absence is NOT evidence the assertion is fixed, and the captured ring cannot prove whether the early retry path or the v50 XCTEST fallback started the successful worker. No Early boot complete and no lock-screen evidence. NO UI/lock-screen success claimed.
 - Focused tests extended with the v54 pstore evidence model and PASS. Physical README: validation/physical-boot-test/20261123-ios-v54-boot/README.md. No further flash queued; any new physical test needs explicit approval.
+
+## 2026-11-23 - v55 offline (MAIN only): validate the full 16K CS block on first fault
+
+- New explicit authorization supersedes per-flash approval for v55 and later
+  validated candidates: autonomous physical testing is allowed, but every
+  write still requires positive device identity (SM-M305F, serial
+  `320081735bb166a3`) and Samsung Download Mode confirmation; BOOT only via
+  Heimdall; never USERDATA/SYSTEM/RECOVERY; never Fastboot. MAIN only; no
+  GitHub settings changes; no OSX/XNU-target switch; no security weakening.
+- Evidence chain: v45 pstore `[177]` SpringBoard `cs_invalid_page` final
+  status `0x22000000 ... (remove VALID) page` after `Early boot complete`;
+  willowios proved that exact CS_VALID loss drops the
+  `com.apple.springboard-ui.client` entitlement and triggers the
+  `+[SpringBoardUI load]` assertion. v52 ordered that assertion before the IRT
+  patch marker; v30 proved literal string rewriting alone cannot fix it.
+- Code cause in the v54 buildtree: `vm_page_validate_cs_mapped_slow()`
+  assembles a 16K validation block only when all four resident 4K pages are
+  present. The first fault of a 16K-hashed page has one resident page, so it
+  falls back to `vsize = PAGE_SIZE`, `validated` stays 0, and
+  `vm_fault_cs_check_violation()` calls `cs_invalid_page()`.
+- New patch `0432-m30-cs-16k-block-readback.patch` (incremental on v54):
+  1. When the block is not fully resident, read the exact 16K bytes from the
+     code-signed vnode with `vn_rdwr(UIO_READ, ..., IO_NOCACHE, ...)` while
+     temporarily dropping the VM object lock. This is explicitly permitted by
+     the `vm_fault_cs_check_violation()` comment; the faulting page stays busy
+     and the VM map keeps an object reference. This also fixes the v34 panic
+     cause (I/O while holding the object lock).
+  2. After re-locking, re-look-up every 4K page and copy its actual bytes into
+     the file block before hashing; the busy faulting page is copied from
+     `kaddr`. The signature is therefore checked against what is really
+     mapped, never against a trusted on-disk copy alone. A tampered page fails
+     closed. The object-alive/pager checks are repeated after the unlock.
+  3. `cs_validate_page()` still hashes the whole 16K block. Short/failed reads
+     fall back to one mapped page, which cannot match a 16K hash and fails
+     closed. No disk write occurs.
+  4. Durable `csblk`/`csfail`/`csvok` counters and one-shot `M30 CS diag`
+     records are replayed in the v54 IRT heartbeat so the physical result is
+     visible even after the 16 KB pmsg ring wraps.
+- v54 retryable early IRT scan, v45 Cryptex-first lookup, 4K config, v18
+  baseline and all post-validation in-memory fix-ups are preserved. No
+  AMFI/trust-cache/signature/hash/page-validation bypass, no 0417, no disk
+  write, no OSX target, no branch/settings changes.
+- Offline checks PASS: patch applies cleanly to the exact v54 CI buildtree and
+  reproduces modified `vm_fault.c` SHA256
+  `ab3cf37eac16a1dbf91472335153ce6b92ef8daa3e5565103b8a92b75afe62dd`;
+  standalone syntax check of the inserted block is clean; new
+  `tools/test_m30_cs_16k_readback.py` PASS including tampered-page, short-read
+  and held-lock failure models; all other applicable focused PASS
+  (`test_m30_16k_pages.py` remains inapplicable without 0417);
+  `validate-repo.py` reports only the pre-existing patch-number-gap warnings.
+- NEXT: CI with `XNU_TARGET=iphoneos`, package/validate v55, then autonomous
+  BOOT-only physical test under the new authorization. No UI/lock-screen
+  milestone is claimed without verifiable physical evidence.

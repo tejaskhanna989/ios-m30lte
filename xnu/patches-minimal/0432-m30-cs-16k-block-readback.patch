@@ -1,0 +1,220 @@
+diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
+--- a/osfmk/vm/vm_fault.c
++++ b/osfmk/vm/vm_fault.c
+@@ -215,6 +215,32 @@
+ static unsigned long m30_xctest_patch_count = 0;
+ static unsigned long m30_xctest_chunk_count = 0;
+ 
++/*
++ * v55: a 16K code directory on this 4K kernel needs the whole four-page
++ * hash block before cs_validate_page() can validate anything.  On the first
++ * fault of such a page the other three pages are not resident, so v54 skipped
++ * validation and cs_invalid_page() stripped CS_VALID from the process (v45
++ * pstore: p=26[SpringBoard] ... (remove VALID) page).  Read the exact block
++ * from the code-signed vnode with the object lock dropped.  These counters
++ * are replayed in the durable IRT heartbeat so the physical result is known
++ * even after the 16 KB pmsg ring wraps.
++ */
++static unsigned long m30_cs_block_reads = 0;
++static unsigned long m30_cs_block_read_fail = 0;
++static unsigned long m30_cs_block_validated = 0;
++static uint64_t  m30_cs_diag_seen = 0;
++
++#ifndef IO_NOCACHE
++#define IO_NOCACHE 0x0800       /* bsd/sys/vnode.h: do not touch UBC cache */
++#endif
++
++#define M30_CS_DIAG(n, fmt, ...) do {                                   \
++	if ((m30_cs_diag_seen & (1ULL << (n))) == 0) {                       \
++		m30_cs_diag_seen |= (1ULL << (n));                               \
++		printf("M30 CS diag %d: " fmt, (n), ##__VA_ARGS__);            \
++	}                                                                   \
++} while (0)
++
+ /* The XCTest literal patch used to be the "pager is ready" gate, but it faults
+  * in from SpringBoard itself and therefore lands after the SpringBoardUI probe.
+  * v53 starts the scan on the first genuine DSC header fault instead.  If that
+@@ -1231,7 +1257,8 @@
+ 			    "sym=0x%llx comp=%d ls=0x%llx "
+ 			    "nlist_cnt=%u nlist_range=%u sc=%u si=%d "
+ 			    "fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d "
+-			    "xctest=%lu xctchunk=%lu)\n",
++			    "xctest=%lu xctchunk=%lu csblk=%lu csfail=%lu "
++			    "csvok=%lu)\n",
+ 			    m30_irt_state,
+ 			    (unsigned long long)m30_irt_file_offset,
+ 			    (unsigned long long)m30_irt_sym_vmaddr,
+@@ -1241,13 +1268,16 @@
+ 			    m30_irt_target_vp_hits, m30_irt_offset_hits,
+ 			    m30_irt_proactive_result,
+ 			    (unsigned long long)m30_irt_fallback_off, i,
+-			    m30_xctest_patch_count, m30_xctest_chunk_count);
++			    m30_xctest_patch_count, m30_xctest_chunk_count,
++			    m30_cs_block_reads, m30_cs_block_read_fail,
++			    m30_cs_block_validated);
+ 		} else {
+ 			printf("M30 IRT final: state=%d off=0x%llx err=%d "
+ 			    "sym=0x%llx comp=%d ls=0x%llx "
+ 			    "nlist_cnt=%u nlist_range=%u hits=%d tries=%d "
+ 			    "sc=%u si=%d fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d "
+-			    "xctest=%lu xctchunk=%lu\n",
++			    "xctest=%lu xctchunk=%lu csblk=%lu csfail=%lu "
++			    "csvok=%lu\n",
+ 			    m30_irt_state,
+ 			    (unsigned long long)m30_irt_file_offset,
+ 			    m30_irt_last_err,
+@@ -1259,7 +1289,9 @@
+ 			    m30_irt_haveoff_faults, m30_irt_target_vp_hits,
+ 			    m30_irt_offset_hits, m30_irt_proactive_result,
+ 			    (unsigned long long)m30_irt_fallback_off, i,
+-			    m30_xctest_patch_count, m30_xctest_chunk_count);
++			    m30_xctest_patch_count, m30_xctest_chunk_count,
++			    m30_cs_block_reads, m30_cs_block_read_fail,
++			    m30_cs_block_validated);
+ 		}
+ 	}
+ }
+@@ -8879,17 +8911,19 @@
+ 	 * A single 4K mapping cannot be compared to a 16K hash, so gather the
+ 	 * whole 16K block from the object's resident 4K pages via the permanent
+ 	 * 1-to-1 physical mapping (the same mapping vm_paging_map_object uses
+-	 * for a single page). The object lock is held throughout, so the pages
+-	 * are stable. If any page is absent, fall back to the one mapped page:
+-	 * cs_validate_hash then fails securely (no validation, no taint).
++	 * for a single page). If a page is absent, v55 reads that block from
++	 * the code-signed vnode with the object lock briefly dropped and
++	 * overlays every still-resident page's actual bytes before hashing.
++	 * A mismatch therefore fails closed instead of validating a page that
++	 * differs from its signature.
+ 	 */
+ 	{
+ 		vm_object_offset_t      block_mo, block_obj;
+ 		vm_page_t               bpage[4];
+ 		char                    *block_buf = NULL;
+-		const void              *vdata;
+-		memory_object_offset_t  voff;
+-		vm_size_t               vsize;
++		const void              *vdata = NULL;
++		memory_object_offset_t  voff = mo_offset;
++		vm_size_t               vsize = PAGE_SIZE;
+ 		int                     i;
+ 
+ 		block_mo = mo_offset & ~((vm_object_offset_t)CS_16K_BLOCK_MASK);
+@@ -8907,20 +8941,92 @@
+ 			}
+ 		}
+ 		if (i == 4) {
+-			/* non-blocking: do not sleep while holding the object lock */
++			/* all four pages resident: non-blocking copy */
+ 			block_buf = kalloc_data(CS_16K_BLOCK_SIZE, Z_NOWAIT);
++			if (block_buf != NULL) {
++				for (i = 0; i < 4; i++) {
++					vm_offset_t bva = (vm_map_offset_t)phystokv(
++					    (pmap_paddr_t)VM_PAGE_GET_PHYS_PAGE(bpage[i]) << PAGE_SHIFT);
++					memcpy(block_buf + (i << PAGE_SHIFT),
++					    (const void *)bva, PAGE_SIZE);
++				}
++				vdata = block_buf;
++				voff = block_mo;
++				vsize = CS_16K_BLOCK_SIZE;
++			}
++		}
++		if (vdata == NULL && vnode != NULL && block_obj != ~0ULL) {
++			/*
++			 * v55: the first fault of a 16K-hashed page only has one
++			 * resident 4K page.  Skipping validation made
++			 * cs_invalid_page() strip CS_VALID from SpringBoard
++			 * (v45 pstore record [177]) and lose its
++			 * com.apple.springboard-ui.client entitlement.  Read the
++			 * exact 16K block from the code-signed vnode instead.  The
++			 * object lock is dropped for the read, which
++			 * vm_fault_cs_check_violation() explicitly permits; the
++			 * faulting page stays busy and the VM map holds a reference
++			 * on the object.  IO_NOCACHE keeps the read out of the
++			 * object's page cache so it cannot recurse into this fault
++			 * path.  After re-locking, the actual bytes of every still
++			 * resident page are copied over the file image before the
++			 * hash check.  Thus the signature is checked against what
++			 * is really mapped, never against a trusted file copy
++			 * alone; no signature, hash, AMFI, trust-cache or page
++			 * validation is skipped or weakened, and the file is never
++			 * written.
++			 */
++			int resid = (int)CS_16K_BLOCK_SIZE;
++			int err;
++			char *readbuf = kalloc_data(CS_16K_BLOCK_SIZE, Z_WAITOK);
++
++			m30_cs_block_reads++;
++			vm_object_unlock(object);
++			err = vn_rdwr(UIO_READ, vnode, readbuf,
++			    (int)CS_16K_BLOCK_SIZE, (off_t)block_mo,
++			    UIO_SYSSPACE, IO_NOCACHE, kauth_cred_get(),
++			    &resid, NULL);
++			vm_object_lock(object);
++			M30_CS_DIAG(0, "16K readback off=0x%llx err=%d resid=%d\n",
++			    (unsigned long long)block_mo, err, resid);
++			if (err == 0 && resid == 0 && object->alive &&
++			    !object->terminating && object->pager != NULL) {
++				/*
++				 * bpage[] was gathered before the lock drop and
++				 * may be stale.  Re-look-up each 4K page and use
++				 * kaddr for the faulting page, which stayed busy
++				 * throughout.  Missing pages keep the file bytes.
++				 */
++				for (i = 0; i < 4; i++) {
++					vm_page_t rpage = vm_page_lookup(object,
++					    block_obj + (i << PAGE_SHIFT));
++					if (rpage == VM_PAGE_NULL) {
++						continue;
++					}
++					if (rpage == page) {
++						memcpy(readbuf + (i << PAGE_SHIFT),
++						    (const void *)kaddr, PAGE_SIZE);
++					} else {
++						vm_offset_t bva = (vm_map_offset_t)phystokv(
++						    (pmap_paddr_t)VM_PAGE_GET_PHYS_PAGE(rpage) << PAGE_SHIFT);
++						memcpy(readbuf + (i << PAGE_SHIFT),
++						    (const void *)bva, PAGE_SIZE);
++					}
++				}
++				block_buf = readbuf;
++				vdata = block_buf;
++				voff = block_mo;
++				vsize = CS_16K_BLOCK_SIZE;
++				M30_CS_DIAG(1, "16K block ready off=0x%llx\n",
++				    (unsigned long long)block_mo);
++			} else {
++				kfree_data(readbuf, CS_16K_BLOCK_SIZE);
++				m30_cs_block_read_fail++;
++			}
+ 		}
+-		if (block_buf != NULL) {
+-			for (i = 0; i < 4; i++) {
+-				vm_offset_t bva = (vm_map_offset_t)phystokv(
+-				    (pmap_paddr_t)VM_PAGE_GET_PHYS_PAGE(bpage[i]) << PAGE_SHIFT);
+-				memcpy(block_buf + (i << PAGE_SHIFT),
+-				    (const void *)bva, PAGE_SIZE);
+-			}
+-			vdata = block_buf;
+-			voff = block_mo;
+-			vsize = CS_16K_BLOCK_SIZE;
+-		} else {
++		if (vdata == NULL) {
++			/* Secure fallback: one mapped page, so cs_validate_hash
++			 * fails closed (no validation, no taint). */
+ 			vdata = (const void *)((const char *)kaddr);
+ 			voff = mo_offset;
+ 			vsize = PAGE_SIZE;
+@@ -8933,6 +9039,12 @@
+ 		cs_validate_page(vnode, pager, voff, vdata, vsize,
+ 		    &validated, &tainted, &nx);
+ 
++		if (vsize == CS_16K_BLOCK_SIZE && validated != 0) {
++			m30_cs_block_validated++;
++			M30_CS_DIAG(2, "validated=0x%x tainted=0x%x off=0x%llx\n",
++			    validated, tainted, (unsigned long long)block_mo);
++		}
++
+ 		/* Userspace class-name fix-up, strictly after validation. */
+ 		m30_xctest_probe_fixup(kaddr, mo_offset);
+ 
