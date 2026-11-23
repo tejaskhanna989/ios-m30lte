@@ -1543,7 +1543,13 @@ authorization for a BOOT-only test of candidate v6.
   packaging, handoff 18/18, all applicable focused tests (0417 inapplicable).
   Shim Image/ELF and the shim region in the BOOT image remain byte-identical to
   the v31 reference. Kernel entry remains `0xfffffff007410488`.
-- Candidate: `validation/ios-candidate-v46-out/` with README. NOT physically
-  tested. NEXT: BOOT-only flash, capture pstore, read the durable heartbeat,
-  then inspect whether SpringBoard proceeds beyond loading.
+- Candidate: `validation/ios-candidate-v46-out/` with README. Physical test was
+  attempted but blocked before any device operation: `adb devices -l` showed no
+  device, `heimdall detect` found no download-mode device, and `lsusb` showed no
+  Samsung/M30 USB device. The M30 could not be positively identified, so no
+  flash was performed.
+- NEXT: reconnect the M30 in TWRP, re-check serial `320081735bb166a3` /
+  product `m30lte`, then BOOT-only flash
+  `validation/ios-candidate-v46-out/shim-boot.img` and capture pstore. Read the
+  durable heartbeat, then inspect whether SpringBoard proceeds beyond loading.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
