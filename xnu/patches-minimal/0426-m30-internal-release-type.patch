@@ -9,7 +9,7 @@
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,1122 @@
+@@ -140,9 +142,1127 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -88,8 +88,13 @@
 +
 +/* <sys/vnode.h> is not self-contained in this build (uid_t/gid_t unknown). */
 +#include <sys/vfs_context.h>
-+#include <sys/ubc_internal.h> /* ubc_getobject() for the resident file object */
 +#include <kern/clock.h>       /* delay() for bounded status replay */
++/* <sys/ubc_internal.h> is a BSD-only header and is not on the osfmk include
++ * path.  Declare the one accessor used to reach the target file's VM object. */
++#ifndef UBC_FLAGS_NONE
++#define UBC_FLAGS_NONE 0
++#endif
++extern memory_object_control_t ubc_getobject(vnode_t, int);
 +extern int vnode_ref(vnode_t);
 +extern void vnode_rele(vnode_t);
 +extern uint32_t vnode_vid(vnode_t);
@@ -1132,7 +1137,7 @@
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8802,38 @@
+@@ -7687,6 +8807,38 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  

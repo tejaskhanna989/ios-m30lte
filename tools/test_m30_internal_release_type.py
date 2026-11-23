@@ -190,7 +190,7 @@ def main():
     # v48: the target page was almost certainly faulted before the offset was
     # known, so patch the already-resident page via the vnode's VM object.
     # This is the same post-validation in-memory write as the fault path.
-    assert "#include <sys/ubc_internal.h>" in t
+    assert "extern memory_object_control_t ubc_getobject(vnode_t, int);" in t
     assert "m30_irt_patch_resident_page(void)" in t
     assert "ubc_getobject(m30_irt_target_vp, UBC_FLAGS_NONE)" in t
     assert "memory_object_control_to_vm_object(" in t
