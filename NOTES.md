@@ -1607,3 +1607,44 @@ authorization for a BOOT-only test of candidate v6.
   tested. NEXT: BOOT-only flash, capture pstore, read the updated heartbeat,
   then inspect whether SpringBoard proceeds beyond loading.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v47 physical: subcache mapping found, patch still not applied
+
+- Device positively identified before flashing: ADB serial
+  `320081735bb166a3`, product `m30lte`, state `recovery`, `ro.twrp.boot=1`.
+  BOOT-only flash succeeded; no readback; USERDATA/SYSTEM/RECOVERY untouched.
+- pstore
+  `da5de4e93fc6a37d836b270f670b1d36f98a0c8466c269415e2d5e619cc0797e`
+  (16,372 B, 94 records, 2 gaps). Evidence preserved in
+  `validation/physical-boot-test/20261123-ios-v47-boot/`.
+- The authoritative subcache list worked: `sc=42`, `si=26`, `hits=1`,
+  `tries=29`, and a real file offset `off=0xa432d84`. Final heartbeat:
+  `M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fb=0x0 hb=67`.
+- No `M30 IRT: patched` marker. State remained `HAVE_OFF` (`state=2`), so the
+  page write never fired. Most likely the target page was already resident
+  before the deferred symbol scan learned its file offset, so no later fault
+  visited that vnode. Pointer-only target matching may also have missed a
+  pager alias.
+- No `Early boot complete`, no SpringBoard code-signing line, no
+  SpringBoardUI assertion, and no UI/lock-screen evidence.
+- BOOT readback SKIPPED.
+
+## 2026-11-23 — v48 in progress (MAIN only): resident-page patch
+
+- Keep v47 subcache enumeration and all earlier companion/symbol logic.
+- Add strict `(mount, vnode id)` identity matching for a pager alias, plus
+  HAVE_OFF fault / target-match / offset-match counters (`fo`, `vh`, `oh`).
+- Add a direct resident-page patch after the file offset is known: resolve the
+  target vnode's VM object with `ubc_getobject()`, look up the page with
+  `vm_page_lookup()`, require `VMP_CS_VALIDATED()`, wire it, write `3` through
+  `phystokv()` of its physical page, then unwire. This is the same
+  post-validation in-memory-only write as the fault path; no file write and no
+  security check is weakened.
+- Add `pr=<resident-patch result>` to the heartbeat/status lines and one-shot
+  diagnostics for missing object/page or an unvalidated page.
+- Standalone syntax check PASS; patch dry-run against the v47 buildtree PASS;
+  focused tests extended with v47 physical evidence and resident-page gating.
+- NEXT: commit/push, CI, package v48, BOOT-only flash, capture pstore, read
+  `M30 IRT: patched ...` or `M30 IRT final ... pr=...`, then inspect the next
+  boot stage.
+- NO UI/lock-screen success claimed. BOOT readback SKIPPED.

@@ -9,7 +9,7 @@
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,1002 @@
+@@ -140,9 +142,1122 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -68,6 +68,14 @@
 +static int       m30_irt_map_tries = 0;
 +static uint32_t  m30_irt_subcache_cnt = 0;
 +static int       m30_irt_subcache_index = -1;
++static uint32_t  m30_irt_target_vid = 0;
++static void     *m30_irt_target_mount = NULL;
++static uint32_t  m30_irt_haveoff_faults = 0;
++static uint32_t  m30_irt_target_vp_hits = 0;
++static uint32_t  m30_irt_offset_hits = 0;
++static uint64_t  m30_irt_last_mo = 0;
++static uint32_t  m30_irt_proactive_tries = 0;
++static int       m30_irt_proactive_result = 0;
 +
 +/* One-shot diagnostics: every distinct failure reason is printed at most once
 + * so the ramoops pmsg ring is not flooded. */
@@ -80,9 +88,12 @@
 +
 +/* <sys/vnode.h> is not self-contained in this build (uid_t/gid_t unknown). */
 +#include <sys/vfs_context.h>
++#include <sys/ubc_internal.h> /* ubc_getobject() for the resident file object */
 +#include <kern/clock.h>       /* delay() for bounded status replay */
 +extern int vnode_ref(vnode_t);
 +extern void vnode_rele(vnode_t);
++extern uint32_t vnode_vid(vnode_t);
++extern void *vnode_mount(vnode_t);
 +extern int vn_getpath(struct vnode *, char *, int *);
 +extern int vnode_open(const char *, int, int, int, vnode_t *, vfs_context_t);
 +extern int vnode_close(vnode_t, int, vfs_context_t);
@@ -111,6 +122,78 @@
 +		return -1;
 +	}
 +	m30_irt_last_err = 0;
++	return 0;
++}
++
++/* The target page was most likely faulted before the symbol scan finished,
++ * so no later vm_fault() may ever visit it.  Patch the already-resident page
++ * directly through the vnode's VM object.  This is the same in-memory-only
++ * write as the fault path: it happens only after code signing validated the
++ * page, and it never issues a write to the backing file. */
++static int
++m30_irt_patch_resident_page(void)
++{
++	vm_object_t        obj;
++	vm_page_t          page;
++	vm_object_offset_t page_off;
++	size_t             po;
++	uint32_t          *loc;
++	pmap_paddr_t       pa;
++	vm_offset_t        kva;
++
++	if (m30_irt_target_vp == (vnode_t)0 || m30_irt_file_offset == 0) {
++		return -1;
++	}
++	page_off = m30_irt_file_offset & ~((vm_object_offset_t)PAGE_SIZE - 1);
++	po = (size_t)(m30_irt_file_offset - page_off);
++	if (po + sizeof(uint32_t) > PAGE_SIZE) {
++		return -2;
++	}
++
++	obj = memory_object_control_to_vm_object(
++	    ubc_getobject(m30_irt_target_vp, UBC_FLAGS_NONE));
++	if (obj == VM_OBJECT_NULL) {
++		M30_IRT_DIAG(60, "no VM object for target vnode=%p\n",
++		    (void *)m30_irt_target_vp);
++		return -3;
++	}
++
++	vm_object_lock(obj);
++	vm_page_lockspin_queues();
++	page = vm_page_lookup(obj, page_off);
++	if (page == VM_PAGE_NULL) {
++		vm_page_unlock_queues();
++		vm_object_unlock(obj);
++		M30_IRT_DIAG(61, "resident page missing off=0x%llx\n",
++		    (unsigned long long)page_off);
++		return -4;
++	}
++	if (!VMP_CS_VALIDATED(page, PAGE_SIZE, 0)) {
++		vm_page_unlock_queues();
++		vm_object_unlock(obj);
++		M30_IRT_DIAG(62, "resident page not validated off=0x%llx\n",
++		    (unsigned long long)page_off);
++		return -5;
++	}
++	vm_page_wire(page, VM_KERN_MEMORY_OSFMK, FALSE);
++	vm_page_unlock_queues();
++	vm_object_unlock(obj);
++
++	pa = (pmap_paddr_t)VM_PAGE_GET_PHYS_PAGE(page) << PAGE_SHIFT;
++	kva = phystokv(pa);
++	loc = (uint32_t *)(kva + po);
++	printf("M30 IRT: patched resident page off=0x%llx pa=0x%llx "
++	    "(%u -> 3)\n", (unsigned long long)m30_irt_file_offset,
++	    (unsigned long long)pa, *loc);
++	*loc = 3;
++	m30_irt_offset_hits++;
++	m30_irt_state = M30_IRT_STATE_DONE;
++
++	vm_object_lock(obj);
++	vm_page_lockspin_queues();
++	vm_page_unwire(page, TRUE);
++	vm_page_unlock_queues();
++	vm_object_unlock(obj);
 +	return 0;
 +}
 +
@@ -834,12 +917,24 @@
 +	printf("M30 IRT diag 33: mapped via cache vp=%p off=0x%llx path=%s\n",
 +	    (void *)target_vp, (unsigned long long)file_off, target_path);
 +	m30_irt_target_vp = target_vp;
++	/* Record stable vnode identity as well as the pointer: the pager can
++	 * hand us a different vnode instance for the same cache file. */
++	m30_irt_target_vid = vnode_vid(target_vp);
++	m30_irt_target_mount = vnode_mount(target_vp);
 +
 +	m30_irt_file_offset = file_off;
 +	m30_irt_state = M30_IRT_STATE_HAVE_OFF;
 +	printf("M30 IRT: found _internal_release_type vmaddr 0x%llx "
 +	    "file off 0x%llx\n", (unsigned long long)sym_vmaddr,
 +	    (unsigned long long)file_off);
++
++	/* Most DSC pages were faulted before this worker knew the file offset.
++	 * Patch the resident copy now; the fault path remains as a fallback for
++	 * a later fault on the same vnode. */
++	m30_irt_proactive_tries++;
++	m30_irt_proactive_result = m30_irt_patch_resident_page();
++	M30_IRT_DIAG(63, "resident patch result=%d state=%d\n",
++	    m30_irt_proactive_result, m30_irt_state);
 +
 +out:
 +	if (hdr != NULL)  kfree_data(hdr, chunk);
@@ -862,7 +957,8 @@
 +		delay(2000000);      /* 2 s */
 +		printf("M30 IRT status: state=%d off=0x%llx err=%d replay=%d "
 +		    "comp=%d ls=0x%llx sym=0x%llx img=0x%llx hits=%d tries=%d "
-+		    "sc=%u si=%d symmap=0x%llx/0x%llx@0x%llx fb=0x%llx "
++		    "sc=%u si=%d fo=%u vh=%u oh=%u pr=%d mo=0x%llx "
++		    "symmap=0x%llx/0x%llx@0x%llx fb=0x%llx "
 +		    "basecnt=%u base0=0x%llx/0x%llx@0x%llx\n",
 +		    m30_irt_state, (unsigned long long)m30_irt_file_offset,
 +		    m30_irt_last_err, i, comp_cand,
@@ -870,7 +966,10 @@
 +		    (unsigned long long)m30_irt_sym_vmaddr,
 +		    (unsigned long long)m30_irt_image_addr, m30_irt_map_hits,
 +		    m30_irt_map_tries, m30_irt_subcache_cnt,
-+		    m30_irt_subcache_index,
++		    m30_irt_subcache_index, m30_irt_haveoff_faults,
++		    m30_irt_target_vp_hits, m30_irt_offset_hits,
++		    m30_irt_proactive_result,
++		    (unsigned long long)m30_irt_last_mo,
 +		    (unsigned long long)m30_irt_sym_map_addr,
 +		    (unsigned long long)m30_irt_sym_map_size,
 +		    (unsigned long long)m30_irt_sym_map_fileoff,
@@ -892,19 +991,21 @@
 +			printf("M30 IRT: patched (final state=%d off=0x%llx "
 +			    "sym=0x%llx comp=%d ls=0x%llx "
 +			    "nlist_cnt=%u nlist_range=%u sc=%u si=%d "
-+			    "fb=0x%llx hb=%d)\n",
++			    "fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d)\n",
 +			    m30_irt_state,
 +			    (unsigned long long)m30_irt_file_offset,
 +			    (unsigned long long)m30_irt_sym_vmaddr,
 +			    comp_cand, (unsigned long long)ls_off,
 +			    nlist_cnt, nlist_range, m30_irt_subcache_cnt,
-+			    m30_irt_subcache_index,
++			    m30_irt_subcache_index, m30_irt_haveoff_faults,
++			    m30_irt_target_vp_hits, m30_irt_offset_hits,
++			    m30_irt_proactive_result,
 +			    (unsigned long long)m30_irt_fallback_off, i);
 +		} else {
 +			printf("M30 IRT final: state=%d off=0x%llx err=%d "
 +			    "sym=0x%llx comp=%d ls=0x%llx "
 +			    "nlist_cnt=%u nlist_range=%u hits=%d tries=%d "
-+			    "sc=%u si=%d fb=0x%llx hb=%d\n",
++			    "sc=%u si=%d fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d\n",
 +			    m30_irt_state,
 +			    (unsigned long long)m30_irt_file_offset,
 +			    m30_irt_last_err,
@@ -913,6 +1014,8 @@
 +			    nlist_cnt, nlist_range,
 +			    m30_irt_map_hits, m30_irt_map_tries,
 +			    m30_irt_subcache_cnt, m30_irt_subcache_index,
++			    m30_irt_haveoff_faults, m30_irt_target_vp_hits,
++			    m30_irt_offset_hits, m30_irt_proactive_result,
 +			    (unsigned long long)m30_irt_fallback_off, i);
 +		}
 +	}
@@ -960,10 +1063,25 @@
 +
 +	/* File offset known: patch only this already-faulted in-memory page. */
 +	if (m30_irt_state == M30_IRT_STATE_HAVE_OFF) {
-+		if (m30_irt_target_vp != (vnode_t)0 && vp != m30_irt_target_vp) {
-+			M30_IRT_DIAG(46, "waiting for target vp=%p got vp=%p "
-+			    "off=0x%llx mo=0x%llx\n",
-+			    (void *)m30_irt_target_vp, (void *)vp,
++		int vp_match;
++
++		m30_irt_haveoff_faults++;
++		m30_irt_last_mo = mo_offset;
++		/* Accept the same file by (mount, vnode id) if the pager hands
++		 * back a different vnode instance than vnode_open() did. */
++		vp_match = (vp == m30_irt_target_vp) ||
++		    (m30_irt_target_vid != 0 && vp != NULL &&
++		    vnode_vid(vp) == m30_irt_target_vid &&
++		    vnode_mount(vp) == m30_irt_target_mount);
++		if (vp_match) {
++			m30_irt_target_vp_hits++;
++		} else {
++			M30_IRT_DIAG(46, "waiting for target vp=%p vid=%u mp=%p "
++			    "got vp=%p vid=%u mp=%p off=0x%llx mo=0x%llx\n",
++			    (void *)m30_irt_target_vp, m30_irt_target_vid,
++			    m30_irt_target_mount, (void *)vp,
++			    vp != NULL ? vnode_vid(vp) : 0,
++			    vp != NULL ? vnode_mount(vp) : NULL,
 +			    (unsigned long long)m30_irt_file_offset,
 +			    (unsigned long long)mo_offset);
 +			return;
@@ -973,6 +1091,8 @@
 +			size_t po = (size_t)(m30_irt_file_offset - mo_offset);
 +			if (po + sizeof(uint32_t) <= PAGE_SIZE) {
 +				uint32_t *loc = (uint32_t *)((char *)kaddr + po);
++
++				m30_irt_offset_hits++;
 +				printf("M30 IRT: patched _internal_release_type "
 +				    "off 0x%llx (%u -> 3)\n",
 +				    (unsigned long long)m30_irt_file_offset, *loc);
@@ -1012,7 +1132,7 @@
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8682,38 @@
+@@ -7687,6 +8802,38 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  

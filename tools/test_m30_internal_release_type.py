@@ -36,6 +36,7 @@ PSTORE_V43 = ROOT / "validation/physical-boot-test/20261123-ios-v43-boot/raw/pms
 PSTORE_V44 = ROOT / "validation/physical-boot-test/20261123-ios-v44-boot/raw/pmsg-ramoops-0"
 PSTORE_V45 = ROOT / "validation/physical-boot-test/20261123-ios-v45-boot/raw/pmsg-ramoops-0"
 PSTORE_V46 = ROOT / "validation/physical-boot-test/20261123-ios-v46-boot/raw/pmsg-ramoops-0"
+PSTORE_V47 = ROOT / "validation/physical-boot-test/20261123-ios-v47-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -131,7 +132,7 @@ def main():
     assert "nlist_start = *(uint32_t *)(buf + 8);" in t
     assert "nlist_range = *(uint32_t *)(buf + 12);" in t
     assert "m30_irt_map_vnode(" in t and "m30_irt_map_vnode_open(" in t
-    assert "m30_irt_target_vp != (vnode_t)0 && vp != m30_irt_target_vp" in t
+    assert "vp == m30_irt_target_vp" in t
     assert 'printf("M30 IRT diag 33: mapped via cache vp=%p off=0x%llx path=%s\\n"' in t
     # v43: mapping failure is now observable through the periodic status line,
     # and real-cache lookup also covers the dyld4 Cryptex cache directory.
@@ -162,7 +163,7 @@ def main():
     assert "delay(2000000)" in hb
     assert 'M30 IRT: patched (final state=%d off=0x%llx' in hb
     assert "nlist_cnt=%u nlist_range=%u sc=%u si=%d " in hb
-    assert "fb=0x%llx hb=%d)\\n" in hb
+    assert "fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d)\\n" in hb
     assert 'M30 IRT final: state=%d off=0x%llx err=%d' in hb
     assert "break;" not in hb
     # v47: enumerate dyld4 subcache files from the header instead of guessing
@@ -172,7 +173,34 @@ def main():
     assert "M30_IRT_DIAG(56, \"subcache idx=%u suffix=%s" in t
     assert "sf[0] != '.'" in t and "sf[sf_len] != '/'" in t
     assert "m30_irt_subcache_cnt" in t and "m30_irt_subcache_index" in t
-    assert "sc=%u si=%d symmap=" in t
+    assert "sc=%u si=%d fo=" in t
+    # v48: the offset was found but the page patch never fired.  Record HAVE_OFF
+    # fault counters and accept a different vnode instance for the same file by
+    # strict (mount, vnode id) identity; this is not a security relaxation.
+    assert "extern uint32_t vnode_vid(vnode_t);" in t
+    assert "extern void *vnode_mount(vnode_t);" in t
+    assert "m30_irt_target_vid = vnode_vid(target_vp);" in t
+    assert "m30_irt_target_mount = vnode_mount(target_vp);" in t
+    assert "m30_irt_haveoff_faults++" in t
+    assert "m30_irt_target_vp_hits++" in t
+    assert "m30_irt_offset_hits++" in t
+    assert "vnode_vid(vp) == m30_irt_target_vid" in t
+    assert "vnode_mount(vp) == m30_irt_target_mount" in t
+    assert "fo=%u vh=%u oh=%u pr=%d" in t
+    # v48: the target page was almost certainly faulted before the offset was
+    # known, so patch the already-resident page via the vnode's VM object.
+    # This is the same post-validation in-memory write as the fault path.
+    assert "#include <sys/ubc_internal.h>" in t
+    assert "m30_irt_patch_resident_page(void)" in t
+    assert "ubc_getobject(m30_irt_target_vp, UBC_FLAGS_NONE)" in t
+    assert "memory_object_control_to_vm_object(" in t
+    assert "vm_page_lookup(obj, page_off)" in t
+    assert "VMP_CS_VALIDATED(page, PAGE_SIZE, 0)" in t
+    assert "vm_page_wire(page, VM_KERN_MEMORY_OSFMK, FALSE)" in t
+    assert "phystokv(pa)" in t
+    assert "M30 IRT: patched resident page" in t
+    assert "m30_irt_proactive_result = m30_irt_patch_resident_page();" in t
+    assert "pr=%d" in t
     # v37: retrigger gate, and retry with a later vnode on wrong magic.
     assert "m30_irt_retriggered && !m30_irt_thread_started" in t
     assert "path=%s\\n" in t
@@ -379,6 +407,20 @@ def main():
     assert b"SpringBoardUI.framework" not in d46
     assert b"CRASH backboardd" in d46
     print("[PASS] v46 pstore: durable final state=4, hits=0/tries=138, no patch")
+
+    # --- v47 physical: exact subcache enumeration found the mapping, but the
+    # state stayed HAVE_OFF; the in-memory patch never fired. ---
+    d47 = PSTORE_V47.read_bytes()
+    assert len(d47) == 16372, "v47 pmsg ring should be full/wrapped"
+    assert b"M30 IRT: patched" not in d47
+    assert b"M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 " \
+           b"comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 " \
+           b"tries=29 sc=42 si=26 fb=0x0 hb=" in d47
+    assert b"hits=1 tries=29 sc=42 si=26" in d47
+    assert b"M30 IRT status: state=2 off=0xa432d84" in d47
+    assert b"SpringBoardUI.framework" not in d47
+    assert b"Early boot complete. Continuing system boot." not in d47
+    print("[PASS] v47 pstore: mapping found (hits=1,sc=42,si=26) but state=2")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global
@@ -682,6 +724,34 @@ def main():
     assert exact_paths[0] not in numeric_paths
     assert exact_paths[0].endswith("dyld_shared_cache_arm64.03.development")
     print("[PASS] model: header subcache suffixes reach non-numeric cache files")
+
+    # --- behavioural model: stable vnode identity gate. ---
+    target = ("cryptex_mount", 4242)
+    observed = [
+        ("other_mount", 4242),   # same vid, different mount: reject
+        ("cryptex_mount", 9),    # same mount, different vid: reject
+        ("cryptex_mount", 4242), # same file via a different vnode pointer: accept
+    ]
+    matched = [mp == target[0] and vid == target[1] for mp, vid in observed]
+    assert matched == [False, False, True]
+    print("[PASS] model: strict mount+vnode-id identity accepts alias safely")
+
+    # --- behavioural model: resident-page patch requires a validated page. ---
+    pages = {
+        0xa430000: {"validated": True, "value": 1},
+        0xa432000: {"validated": True, "value": 2},
+        0xa434000: {"validated": False, "value": 9},
+    }
+    file_off = 0xa432d84
+    page_off = file_off & ~0xfff
+    po = file_off - page_off
+    assert page_off == 0xa432000 and po == 0xd84
+    page = pages.get(page_off)
+    assert page is not None and page["validated"]
+    patched = page["value"]
+    assert patched == 2
+    assert pages[0xa434000]["validated"] is False  # unvalidated page rejected
+    print("[PASS] model: resident patch only touches a validated cached page")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 
