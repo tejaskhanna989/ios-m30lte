@@ -1,0 +1,1 @@
+0b85cc7666a45c761abf29002f42b5f24b395f9d7386112e5ade8748b2fcca31  validation/ios-candidate-v57-out/shim-boot.img

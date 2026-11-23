@@ -2374,3 +2374,32 @@ authorization for a BOOT-only test of candidate v6.
   v45/v52/v54/v50/v55. Never USERDATA/SYSTEM/RECOVERY; never Fastboot. Do not
   flash v56 or reflash v55. No UI/lock-screen claim without verifiable
   physical evidence.
+
+## 2026-11-23/24 - v57 physical boot in progress (MAIN only): APPLE LOGO OBSERVED
+
+- Device positively re-identified in TWRP before Download Mode (`SM-M305F`,
+  `m30lte`, bootloader `M305FDDU8CVK1`, `ro.twrp.boot=1`), and Heimdall
+  confirmed Download Mode immediately before the write. BOOT-only flash of
+  `validation/ios-candidate-v57-out/shim-boot.img` SHA256
+  `0b85cc7666a45c761abf29002f42b5f24b395f9d7386112e5ade8748b2fcca31`
+  completed `18:06:56Z..18:07:01Z`; USERDATA/SYSTEM/RECOVERY untouched, no
+  Fastboot, no BOOT readback. Correct `heimdall print-pit --resume` at
+  `18:07:23Z` reported `Rebooting device...`.
+- The 180 s observation window ended `18:10:38Z`. The user reports continuing
+  console text, “booting system started”, and finally an **Apple logo** on the
+  device. This is the first visible iOS UI milestone observed in this bring-up
+  and is far beyond v55, which produced no post-`load_init_program` text and
+  no logo. It remains a user observation until pstore confirms internal state;
+  no lock-screen claim is made.
+- The device has not returned to ADB recovery and is not in Download Mode, so
+  `/sys/fs/pstore/pmsg-ramoops-0` cannot be pulled yet. Watchers waited for
+  recovery ADB but timed out. A new watcher is armed to pull/hash pstore the
+  moment recovery reappears. Evidence and hashes so far are in
+  `validation/physical-boot-test/20261123-ios-v57-boot/README.md` and
+  `raw/SHA256SUMS.partial`.
+- NEXT: user forces TWRP with the established hardware-key method; then decode
+  pstore, check `M30 CS diag 5`, `csblk`/`csfail`/`csvok`, progress past
+  `load_init_program`, `Early boot complete`, SpringBoard/UI state, compare to
+  v45/v52/v54/v50/v55, and commit the final physical README/handoff update.
+  Still no UI/lock-screen success claim from the boot upload or observation
+  alone.
