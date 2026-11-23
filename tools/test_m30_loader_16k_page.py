@@ -18,7 +18,7 @@ from __future__ import annotations
 from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0422-m30-loader-16k-initial-page.patch"
-BT = ROOT / "milestone_artifacts/ci_44992538618/buildtree/unpacked/xnu"
+BT = ROOT / "milestone_artifacts/ci_45219943492/buildtree/unpacked/xnu"
 PSTORE = ROOT / "validation/physical-boot-test/20261122-ios-v23-boot/raw/pmsg-ramoops-0"
 
 def main():

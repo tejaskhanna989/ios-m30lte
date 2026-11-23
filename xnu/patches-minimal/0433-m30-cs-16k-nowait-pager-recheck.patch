@@ -1,0 +1,104 @@
+diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
+--- a/osfmk/vm/vm_fault.c
++++ b/osfmk/vm/vm_fault.c
+@@ -8978,50 +8978,59 @@
+ 			 */
+ 			int resid = (int)CS_16K_BLOCK_SIZE;
+ 			int err;
+-			char *readbuf = kalloc_data(CS_16K_BLOCK_SIZE, Z_WAITOK);
++			char *readbuf;
+ 
+-			m30_cs_block_reads++;
+-			vm_object_unlock(object);
+-			err = vn_rdwr(UIO_READ, vnode, readbuf,
+-			    (int)CS_16K_BLOCK_SIZE, (off_t)block_mo,
+-			    UIO_SYSSPACE, IO_NOCACHE, kauth_cred_get(),
+-			    &resid, NULL);
+-			vm_object_lock(object);
+-			M30_CS_DIAG(0, "16K readback off=0x%llx err=%d resid=%d\n",
+-			    (unsigned long long)block_mo, err, resid);
+-			if (err == 0 && resid == 0 && object->alive &&
+-			    !object->terminating && object->pager != NULL) {
+-				/*
+-				 * bpage[] was gathered before the lock drop and
+-				 * may be stale.  Re-look-up each 4K page and use
+-				 * kaddr for the faulting page, which stayed busy
+-				 * throughout.  Missing pages keep the file bytes.
+-				 */
+-				for (i = 0; i < 4; i++) {
+-					vm_page_t rpage = vm_page_lookup(object,
+-					    block_obj + (i << PAGE_SHIFT));
+-					if (rpage == VM_PAGE_NULL) {
+-						continue;
+-					}
+-					if (rpage == page) {
+-						memcpy(readbuf + (i << PAGE_SHIFT),
+-						    (const void *)kaddr, PAGE_SIZE);
+-					} else {
+-						vm_offset_t bva = (vm_map_offset_t)phystokv(
+-						    (pmap_paddr_t)VM_PAGE_GET_PHYS_PAGE(rpage) << PAGE_SHIFT);
+-						memcpy(readbuf + (i << PAGE_SHIFT),
+-						    (const void *)bva, PAGE_SIZE);
++			/* The object lock is still held here: Z_WAITOK can sleep. */
++			readbuf = kalloc_data(CS_16K_BLOCK_SIZE, Z_NOWAIT);
++			if (readbuf == NULL) {
++				m30_cs_block_read_fail++;
++				M30_CS_DIAG(3, "16K readback allocation failed\n");
++			} else {
++				m30_cs_block_reads++;
++				vm_object_unlock(object);
++				err = vn_rdwr(UIO_READ, vnode, readbuf,
++				    (int)CS_16K_BLOCK_SIZE, (off_t)block_mo,
++				    UIO_SYSSPACE, IO_NOCACHE, kauth_cred_get(),
++				    &resid, NULL);
++				vm_object_lock(object);
++				M30_CS_DIAG(0, "16K readback off=0x%llx err=%d resid=%d\n",
++				    (unsigned long long)block_mo, err, resid);
++				if (err == 0 && resid == 0 && object->alive &&
++				    !object->terminating && object->pager == pager) {
++					/*
++					 * bpage[] was gathered before the lock drop and
++					 * may be stale.  Re-look-up each 4K page and use
++					 * kaddr for the faulting page, which stayed busy
++					 * throughout.  Missing pages keep the file bytes.
++					 */
++					for (i = 0; i < 4; i++) {
++						vm_page_t rpage = vm_page_lookup(object,
++						    block_obj + (i << PAGE_SHIFT));
++						if (rpage == VM_PAGE_NULL) {
++							continue;
++						}
++						if (rpage == page) {
++							memcpy(readbuf + (i << PAGE_SHIFT),
++							    (const void *)kaddr, PAGE_SIZE);
++						} else {
++							vm_offset_t bva = (vm_map_offset_t)phystokv(
++							    (pmap_paddr_t)VM_PAGE_GET_PHYS_PAGE(rpage) << PAGE_SHIFT);
++							memcpy(readbuf + (i << PAGE_SHIFT),
++							    (const void *)bva, PAGE_SIZE);
++						}
+ 					}
++					block_buf = readbuf;
++					vdata = block_buf;
++					voff = block_mo;
++					vsize = CS_16K_BLOCK_SIZE;
++					M30_CS_DIAG(1, "16K block ready off=0x%llx\n",
++					    (unsigned long long)block_mo);
++				} else {
++					kfree_data(readbuf, CS_16K_BLOCK_SIZE);
++					m30_cs_block_read_fail++;
++					M30_CS_DIAG(4, "16K readback rejected err=%d resid=%d pager_same=%d\n",
++					    err, resid, object->pager == pager);
+ 				}
+-				block_buf = readbuf;
+-				vdata = block_buf;
+-				voff = block_mo;
+-				vsize = CS_16K_BLOCK_SIZE;
+-				M30_CS_DIAG(1, "16K block ready off=0x%llx\n",
+-				    (unsigned long long)block_mo);
+-			} else {
+-				kfree_data(readbuf, CS_16K_BLOCK_SIZE);
+-				m30_cs_block_read_fail++;
+ 			}
+ 		}
+ 		if (vdata == NULL) {

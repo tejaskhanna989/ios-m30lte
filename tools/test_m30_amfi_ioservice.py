@@ -28,7 +28,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0415-m30-amfi-ioservice-standin.patch"
-BT = ROOT / "milestone_artifacts/ci_44941797998/buildtree/unpacked/xnu"
+BT = ROOT / "milestone_artifacts/ci_45219943492/buildtree/unpacked/xnu"
 PSTORE = ROOT / "validation/physical-boot-test/20261122-ios-v16-boot/raw/pmsg-ramoops-0"
 LOADER_STRINGS = "/tmp/dyldtest/launchd_cache_loader"
 

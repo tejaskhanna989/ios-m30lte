@@ -36,7 +36,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0411-m30-builtin-amfi.patch"
-BT = ROOT / "milestone_artifacts/ci_44927412685/buildtree/unpacked/xnu"
+BT = ROOT / "milestone_artifacts/ci_45219943492/buildtree/unpacked/xnu"
 
 # Faithful model of the faulting access. In the real amfi_t the
 # OSEntitlements.adjustContextWithMonitor callback pointer lives at offset

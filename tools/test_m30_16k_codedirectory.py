@@ -30,7 +30,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0413-m30-accept-16k-code-directory.patch"
-BT = ROOT / "milestone_artifacts/ci_44934162919/buildtree/unpacked/xnu"
+BT = ROOT / "milestone_artifacts/ci_45219943492/buildtree/unpacked/xnu"
 PSTORE = ROOT / "validation/physical-boot-test/20261122-ios-v14-boot/raw/pmsg-ramoops-0"
 
 MODEL = r"""

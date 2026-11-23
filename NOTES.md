@@ -2262,3 +2262,39 @@ authorization for a BOOT-only test of candidate v6.
 - `git gc` repacked 403 loose objects (381.67 MiB) into packs; `.git` is 1.7G.
   Filesystem went from 17G free to 32G free. No history rewrite and no tracked
   evidence deleted.
+- The cleanup removed untracked buildtrees that several focused tests used as
+  source-of-truth inputs, so those tests were repointed to the retained v55
+  buildtree (`ci_45219943492`). Full rerun: all applicable tests PASS; only
+  `test_m30_16k_pages.py` remains inapplicable because 0417 is intentionally
+  absent. `validate-repo.py` still reports only the pre-existing
+  patch-number-gap warnings.
+
+## 2026-11-23 - v56 offline (MAIN only): non-sleeping 16K CS readback
+
+- Root-cause hypothesis from v55: `vm_page_validate_cs_mapped_slow()` called
+  `kalloc_data(CS_16K_BLOCK_SIZE, Z_WAITOK)` while still holding the VM object
+  lock. v54 explicitly uses `Z_NOWAIT` there with a “do not sleep while holding
+  the object lock” comment. The v55 physical capture ended immediately after
+  `load_init_program` with no IRT/CS telemetry and no ring wrap, consistent
+  with a sleep/deadlock on the first code-signing validation.
+- New incremental patch
+  `xnu/patches-minimal/0433-m30-cs-16k-nowait-pager-recheck.patch` (applied
+  after 0432): allocate the 16K readback buffer with `Z_NOWAIT`; if allocation
+  fails, increment `csfail`, emit `M30 CS diag 3`, and fall back to the secure
+  one-page path; after the lock drop/reacquire require `object->pager == pager`
+  (not merely non-NULL) before accepting the read; emit `M30 CS diag 4` on any
+  rejection. All v55 hash/resident-byte overlay behaviour is unchanged.
+- Offline checks PASS: 0433 applies to the exact v55 CI buildtree
+  `ab3cf37e...` and reproduces modified `vm_fault.c` SHA256
+  `2d9997b3f7b72d82576ccb404193a924ca147236c70ef667ee6f3edd52db2775`.
+  New `tools/test_m30_cs_16k_nowait.py` PASS (patch structure, v55 pstore
+  evidence, exact-SHA application, behavioural model for allocation failure,
+  pager change and tamper). Original `tools/test_m30_cs_16k_readback.py`
+  still PASS. All other applicable focused tests PASS after the retained-tree
+  repoint. No security check is weakened; no 0417, no OSX target, no branch or
+  GitHub settings change.
+- NEXT: commit/push this source, run CI with `XNU_TARGET=iphoneos`, M30LTE,
+  DEVELOPMENT; download/validate artifacts; package v56; then autonomous
+  BOOT-only physical test under the existing authorization with the same
+  identity/download-mode gates. Do not reflash v55. No UI/lock-screen claim
+  without verifiable physical evidence.

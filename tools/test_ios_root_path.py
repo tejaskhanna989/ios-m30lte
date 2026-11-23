@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BT = ROOT / "milestone_artifacts/ci_44893471750/buildtree/unpacked/xnu"
+BT = ROOT / "milestone_artifacts/ci_45219943492/buildtree/unpacked/xnu"
 
 # From hfs_format.h in this exact buildtree.
 K_HFS_PLUS_SIG = 0x482B

@@ -24,7 +24,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0416-m30-skip-16k-cs-page-validate.patch"
-BT = ROOT / "milestone_artifacts/ci_44944125727/buildtree/unpacked/xnu"
+BT = ROOT / "milestone_artifacts/ci_45219943492/buildtree/unpacked/xnu"
 PSTORE = ROOT / "validation/physical-boot-test/20261122-ios-v17-boot/raw/pmsg-ramoops-0"
 
 MODEL = r"""

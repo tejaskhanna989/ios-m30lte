@@ -15,7 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0419-m30-amfi-platform-binaries.patch"
-BT = ROOT / "milestone_artifacts/ci_44953949472/buildtree/unpacked/xnu"
+BT = ROOT / "milestone_artifacts/ci_45219943492/buildtree/unpacked/xnu"
 PSTORE = ROOT / "validation/physical-boot-test/20261122-ios-v20-boot/raw/pmsg-ramoops-0"
 
 
