@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0426-m30-internal-release-type.patch"
 PATCH_V50 = ROOT / "xnu/patches-minimal/0427-m30-irt-retrigger-gate.patch"
 PATCH_V51 = ROOT / "xnu/patches-minimal/0428-m30-xctest-chunk-path.patch"
+PATCH_V52 = ROOT / "xnu/patches-minimal/0429-m30-chunk-path-no-retrigger.patch"
 PSTORE_V30 = ROOT / "validation/physical-boot-test/20261122-ios-v30-boot/raw/pmsg-ramoops-0"
 PSTORE_V31 = ROOT / "validation/physical-boot-test/20261122-ios-v31-boot/raw/pmsg-ramoops-0"
 PSTORE_V32 = ROOT / "validation/physical-boot-test/20261122-ios-v32-boot/raw/pmsg-ramoops-0"
@@ -237,6 +238,16 @@ def main():
     assert "(size_t)chunk_size" in v51
     assert "never reaches either vm_page_validate_cs_mapped()" in v51
     print("[PASS] v51 patch: chunk path rewrites only the validated range")
+
+    # v52: keep the chunk rewrite but restore v50's gate timing.  The chunk
+    # path must not open the DSC scan; only the slow/bitmap-fast paths do.
+    v52 = PATCH_V52.read_text()
+    assert "m30_xctest_chunk_count" in v52
+    assert "m30_xctest_patch_count - before" in v52
+    assert "-		m30_irt_retrigger_after_xctest();" in v52
+    assert 'v48/v50 slow and bitmap-fast paths remain the only gates' in v52
+    assert v52.count('xctchunk=%lu') == 2
+    print("[PASS] v52 patch: chunk path rewrites but does not retrigger")
     # v49: validation-bitmap fast paths skip the slow function where the
     # fix-ups used to live.  Run both fix-ups on that path too.
     assert t.count("m30_xctest_probe_fixup(kaddr, mo_offset)") == 2
@@ -852,12 +863,14 @@ def main():
         "bitmap_fast_before": ["bitmap_ok"],
         "bitmap_fast_v49": ["bitmap_ok", "xctest_fixup", "irt_fixup"],
         "chunk_v51": ["cs_validate_range", "xctest_fixup_range", "retrigger"],
+        "chunk_v52": ["cs_validate_range", "xctest_fixup_range"],
     }
     assert paths["bitmap_fast_before"] == ["bitmap_ok"]
     assert paths["bitmap_fast_v49"] == [
         "bitmap_ok", "xctest_fixup", "irt_fixup"]
     assert set(paths["slow"][1:]) == set(paths["bitmap_fast_v49"][1:])
     assert "xctest_fixup_range" in paths["chunk_v51"]
+    assert paths["chunk_v52"] == ["cs_validate_range", "xctest_fixup_range"]
     print("[PASS] model: bitmap fast path covers both post-validation fix-ups")
     print("[PASS] model: chunk path added on top of validated range")
 
@@ -900,6 +913,29 @@ def main():
     seen2, retriggered2, started2 = run_fault("bitmap_xctest", seen2, retriggered2, started2)
     assert (seen2, retriggered2, started2) == (1, True, True)
     print("[PASS] model: fast-path XCTest patch opens the same DSC scan gate")
+
+    # v52: the chunk path may rewrite the literal, but only the v50-proven
+    # slow/bitmap-fast patch may open the gate.  The later v50 patch still
+    # opens it even if the chunk path saw the literal first.
+    def run_fault_v52(path, seen, retriggered, started):
+        if path == "chunk_xctest":
+            seen += 1
+        elif path in ("xctest", "bitmap_xctest"):
+            seen += 1
+            if not retriggered:
+                retriggered = True
+        if retriggered and not started:
+            started = True
+        return seen, retriggered, started
+
+    seen3, retriggered3, started3 = 0, False, False
+    seen3, retriggered3, started3 = run_fault_v52(
+        "chunk_xctest", seen3, retriggered3, started3)
+    assert (seen3, retriggered3, started3) == (1, False, False)
+    seen3, retriggered3, started3 = run_fault_v52(
+        "xctest", seen3, retriggered3, started3)
+    assert (seen3, retriggered3, started3) == (2, True, True)
+    print("[PASS] model: v52 chunk rewrite defers gate to v50 path")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 

@@ -1,0 +1,63 @@
+diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
+index 7ed9c1a..9be995a 100644
+--- a/osfmk/vm/vm_fault.c
++++ b/osfmk/vm/vm_fault.c
+@@ -206,6 +206,7 @@ static uint64_t  m30_irt_last_mo = 0;
+ static uint32_t  m30_irt_proactive_tries = 0;
+ static int       m30_irt_proactive_result = 0;
+ static unsigned long m30_xctest_patch_count = 0;
++static unsigned long m30_xctest_chunk_count = 0;
+ 
+ /* The XCTest literal patch is the proven "pager is ready" gate.  Replay the
+  * one-shot diagnostics and reopen the DSC scan once, whether the literal was
+@@ -1160,7 +1161,7 @@ out:
+ 			    "sym=0x%llx comp=%d ls=0x%llx "
+ 			    "nlist_cnt=%u nlist_range=%u sc=%u si=%d "
+ 			    "fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d "
+-			    "xctest=%lu)\n",
++			    "xctest=%lu xctchunk=%lu)\n",
+ 			    m30_irt_state,
+ 			    (unsigned long long)m30_irt_file_offset,
+ 			    (unsigned long long)m30_irt_sym_vmaddr,
+@@ -1170,13 +1171,13 @@ out:
+ 			    m30_irt_target_vp_hits, m30_irt_offset_hits,
+ 			    m30_irt_proactive_result,
+ 			    (unsigned long long)m30_irt_fallback_off, i,
+-			    m30_xctest_patch_count);
++			    m30_xctest_patch_count, m30_xctest_chunk_count);
+ 		} else {
+ 			printf("M30 IRT final: state=%d off=0x%llx err=%d "
+ 			    "sym=0x%llx comp=%d ls=0x%llx "
+ 			    "nlist_cnt=%u nlist_range=%u hits=%d tries=%d "
+ 			    "sc=%u si=%d fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d "
+-			    "xctest=%lu\n",
++			    "xctest=%lu xctchunk=%lu\n",
+ 			    m30_irt_state,
+ 			    (unsigned long long)m30_irt_file_offset,
+ 			    m30_irt_last_err,
+@@ -1188,7 +1189,7 @@ out:
+ 			    m30_irt_haveoff_faults, m30_irt_target_vp_hits,
+ 			    m30_irt_offset_hits, m30_irt_proactive_result,
+ 			    (unsigned long long)m30_irt_fallback_off, i,
+-			    m30_xctest_patch_count);
++			    m30_xctest_patch_count, m30_xctest_chunk_count);
+ 		}
+ 	}
+ }
+@@ -9060,10 +9061,15 @@ vm_page_validate_cs_mapped_chunk(
+ 		 * 16K source page. */
+ 		memory_object_offset_t mo_offset =
+ 		    object->paging_offset + offset + offset_in_page;
++		unsigned long before = m30_xctest_patch_count;
++
+ 		m30_xctest_probe_fixup_range(
+ 		    (void *)((char *)kaddr + offset_in_page),
+ 		    (uint64_t)mo_offset, (size_t)chunk_size);
+-		m30_irt_retrigger_after_xctest();
++		m30_xctest_chunk_count += m30_xctest_patch_count - before;
++		/* Do not retrigger here.  v51 proved that opening the DSC gate
++		 * from the 4K chunk path starts the worker too early.  The
++		 * v48/v50 slow and bitmap-fast paths remain the only gates. */
+ 		*validated_p = TRUE;
+ 	}
+ 	if (tainted) {

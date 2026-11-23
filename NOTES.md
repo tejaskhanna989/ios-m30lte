@@ -1889,3 +1889,24 @@ authorization for a BOOT-only test of candidate v6.
   adding a separate chunk counter to the durable heartbeat to prove whether the
   extra path fired. No 0417; no security check weakened.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v52 offline (MAIN only): chunk rewrite without chunk gate
+
+- v51 physical result: `state=2`, `oh=0`, no IRT patch marker, `xctest=1`,
+  assertion persists. v50 remains the last good IRT candidate. The working
+  hypothesis is that `m30_irt_retrigger_after_xctest()` on the 4K chunk path
+  opened the DSC gate too early.
+- v52 (`0429-m30-chunk-path-no-retrigger.patch`, incremental on 0426 + 0427 +
+  0428):
+  1. KEEP the range-limited `m30_xctest_probe_fixup_range()` call on the 4K
+     chunk path, so the SpringBoardUI literal can still be rewritten there.
+  2. REMOVE `m30_irt_retrigger_after_xctest()` from the chunk path. Only the
+     v48/v50-proven slow and bitmap-fast paths may open the DSC scan gate.
+  3. Add `m30_xctest_chunk_count` and `xctchunk=<count>` to both durable
+     heartbeat forms, so a later capture proves whether the chunk rewrite fired.
+- Offline checks PASS: standalone syntax check including both heartbeat format
+  strings; `git apply --check` for 0426 -> 0427 -> 0428 -> 0429 against the exact
+  v49 CI base; application reproduces the intended v52 source byte-for-byte;
+  focused tests extended with the deferred-gate model.
+- NEXT: commit/push, run CI, then package/validate/boot as before.
+- NO UI/lock-screen success claimed.
