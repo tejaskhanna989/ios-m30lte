@@ -2501,3 +2501,34 @@ authorization for a BOOT-only test of candidate v6.
   DEVELOPMENT; validate artifacts; package v58 with the cmdline above; then
   autonomous BOOT-only physical test with the same identity/download-mode
   gates. No lock-screen claim without a visible persistent render plus logs.
+
+## 2026-11-24 - v58 CI GREEN and candidate packaged (MAIN only)
+
+- CI `45245697689` GREEN for source `8724a1a0` (`XNU_TARGET=iphoneos`,
+  `M30LTE`, `DEVELOPMENT`). CI log explicitly applied
+  `0435-m30-springboard-visibility.patch`; iOS target selection passed and
+  Cortex-A53 LSE count was 0. Buildtree source hashes match the locally
+  reproduced v58 files: `vm_fault.c`
+  `9193cd37cf769a68b362dffe8a48c3d7b443cd7a7202d409ea941ab7bac5339a`,
+  `a5xelte_emmc.c`
+  `d15f61b44050bafb36162bb3124c9a2b4dd355c04f91b2a76cba4e5e133c6bbe`.
+- Artifacts preserved under `milestone_artifacts/ci_45245697689/`. Kernel
+  `5aaacba0ffe49ba021c86f8fd491aba9ff6f65a5514f7b7a2db0e8b1b5693cd2`.
+- Candidate `validation/ios-candidate-v58-out/` packaged with cmdline
+  `debug=0xc serial=3 cpus=6 keepsyms=1 maxmem=292 rd=emmcroot0
+  emmcroot=USERDATA emmcprobe=1 emmcwrite=1 sweetfb_noconsole=1`. Payload
+  `90f5e612a144e7e42411c664bca92820189e4cf0533eaa5794ccf3e74d6fcf8f`;
+  `shim-boot.img`
+  `2ef2e3a09cb501fb4b4ed4dd8e888441fe7d5895f29fb6b73397be1d982f783d`;
+  `ios-boot.img`
+  `88300d77aa45a57f3a8ca387e39fbd26f570ddf2421472801936f481b449a3ed`.
+  Layout unchanged from v57; ADT unchanged; shim unchanged.
+- Validators PASS: buildtree, kernel 6 checks, platform 9/9, packaging,
+  handoff 22/22 (includes cpus=6 and sweetfb_noconsole=1), all applicable
+  focused tests. No QEMU claim.
+- NEXT: autonomous BOOT-only physical test under the existing authorization:
+  confirm identity/Download Mode, verify `shim-boot.img` hash, flash BOOT only,
+  capture pstore at ~90 s and at the end of the window, look for `SMP
+  SpringBoard`/`SMP backboardd`, `M30 IRT` counters, SpringBoard CRASH/assertion
+  strings, and take a screen photo if a lock screen appears. No UI claim
+  without a persistent visible render plus supporting logs.
