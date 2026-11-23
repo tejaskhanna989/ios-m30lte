@@ -30,6 +30,7 @@ PSTORE_V37 = ROOT / "validation/physical-boot-test/20261122-ios-v37-boot/raw/pms
 PSTORE_V38 = ROOT / "validation/physical-boot-test/20261122-ios-v38-boot/raw/pmsg-ramoops-0"
 PSTORE_V39 = ROOT / "validation/physical-boot-test/20261122-ios-v39-boot2/raw/pmsg-ramoops-0"
 PSTORE_V40 = ROOT / "validation/physical-boot-test/20261122-ios-v40-boot2/raw/pmsg-ramoops-0"
+PSTORE_V41 = ROOT / "validation/physical-boot-test/20261123-ios-v41-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -116,6 +117,12 @@ def main():
     assert "M30_IMAGES_OFFSET = 448" in t
     assert "M30_SYMBOL_UUID_OFFSET = 400" in t
     assert "image_index" in t and "libsystem_darwin.dylib" in t
+    # v42: pathFileOffset is an absolute cache file offset, not a 4 KiB
+    # buffer offset.  The v41 `po >= chunk` guard skipped every real path.
+    assert "if (po == 0) {" in t
+    assert "po >= chunk" not in t
+    assert 'M30_IRT_DIAG(47, "image 0 path=%s\\n"' in t
+    assert 'M30_IRT_DIAG(48, "libsystem candidate i=%d path=%s\\n"' in t
     assert "nlist_start = *(uint32_t *)(buf + 8);" in t
     assert "nlist_range = *(uint32_t *)(buf + 12);" in t
     assert "m30_irt_map_vnode(" in t and "m30_irt_map_vnode_open(" in t
@@ -252,6 +259,19 @@ def main():
     assert b"M30 IRT diag 15: symbol not found in nlist" in d40
     assert b"This process should not be linking or loading SpringBoardUI.framewor" in d40
     print("[PASS] v40 pstore: .symbols opened; global strx scan is ambiguous -> v41 image-scoped scan")
+
+    # --- v41 physical: the image list is readable, but every pathFileOffset
+    # was rejected by the accidental po >= chunk guard. ---
+    d41 = PSTORE_V41.read_bytes()
+    assert b"M30 XCTEST: patched ascii off" in d41
+    assert b"M30 IRT: retrigger after XCTEST patch" in d41
+    assert b"M30 IRT diag 30: cand=0 map_off=0x200 map_cnt=1 ls_off=0x4000" in d41
+    assert b"M30 IRT diag 28: using symbols file vp=0x" in d41
+    assert b"M30 IRT diag 36: images off=0x270 cnt=2710" in d41
+    assert b"M30 IRT diag 38: libsystem_darwin image not found cnt=2710" in d41
+    assert b"M30 IRT status: state=4 off=0x0 err=0 replay=0" in d41
+    assert b"This process should not be linking or loading SpringBoardUI.framewor" in d41
+    print("[PASS] v41 pstore: image list read OK; pathFileOffset guard rejected real paths")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global

@@ -9,7 +9,7 @@
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,703 @@
+@@ -140,9 +142,712 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -397,13 +397,22 @@
 +			break;
 +		}
 +		po = *(uint32_t *)(buf + 24);
-+		if (po == 0 || po >= chunk) {
++		/* pathFileOffset is an absolute file offset in the main cache,
++		 * not an offset into the 4 KiB read buffer. */
++		if (po == 0) {
 +			continue;
 +		}
 +		if (m30_irt_read(imgvp, po, hdr, 255) != 0) {
 +			continue;
 +		}
 +		hdr[255] = '\0';
++		if (i == 0) {
++			M30_IRT_DIAG(47, "image 0 path=%s\n", hdr);
++		}
++		if (memcmp(hdr, "/usr/lib/system/libsystem", 24) == 0) {
++			M30_IRT_DIAG(48, "libsystem candidate i=%d path=%s\n",
++			    i, hdr);
++		}
 +		if (memcmp(hdr, libname, sizeof(libname)) == 0) {
 +			image_index = i;
 +			break;
@@ -713,7 +722,7 @@
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8383,25 @@
+@@ -7687,6 +8392,25 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  

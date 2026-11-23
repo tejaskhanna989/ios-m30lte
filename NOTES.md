@@ -1327,7 +1327,31 @@ authorization for a BOOT-only test of candidate v6.
   packaging, handoff 18/18, all applicable focused tests (0417 inapplicable).
   Shim Image/ELF and the shim region in the BOOT image remain byte-identical to
   the v31 reference.
-- Candidate: `validation/ios-candidate-v41-out/` with README. NOT physically
-  tested. NEXT: BOOT-only flash, capture pstore, expect image-scoped lookup
-  diagnostics and either an IRT patch or a new precise failure.
+- Candidate: `validation/ios-candidate-v41-out/` with README. Physically tested
+  below; BOOT-only flash, no readback, USERDATA/SYSTEM/RECOVERY untouched.
+
+## 2026-11-23 — v41 physical: image list read, path guard was wrong
+
+- BOOT-only flash succeeded. pstore
+  `f8f8562cdb7a9224c904606b56aba81c2b2a39f975bca9d160e1c0bc19cafcdd`
+  (16,372 B) captured records 92-105: XCTEST retrigger, `.31` subcache vnode,
+  stripped base companion path, `diag 36 images off=0x270 cnt=2710`, then
+  `diag 38 libsystem_darwin image not found cnt=2710`.
+- Diagnosis: `dyld_cache_image_info.pathFileOffset` is an absolute offset in
+  the main cache file. The v41 guard `po >= chunk` incorrectly treated it as
+  an offset into the 4 KiB scratch buffer, so all 2,710 image paths were
+  skipped before the path read. SpringBoardUI assertion persists. No UI
+  success. BOOT readback SKIPPED.
+
+## 2026-11-23 — v42 fix in progress (MAIN only): absolute image path offset
+
+- Removed the `po >= chunk` guard; image paths are now read with
+  `vn_rdwr(UIO_READ)` at the absolute `pathFileOffset`. Added one-shot
+  `diag 47` (first image path) and `diag 48` (libsystem-prefixed candidate) so
+  the next boot proves the comparison data.
+- Standalone syntax check clean; focused tests PASS with v41 physical
+  evidence. Patch dry-runs cleanly against pristine.
+- NEXT: CI GREEN, package v42 candidate, BOOT-only flash, capture pstore,
+  expect `diag 47/48`, `diag 39`, `diag 42`, `diag 13`, `diag 33`, then either
+  `M30 IRT: patched ...` or a new precise failure.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
