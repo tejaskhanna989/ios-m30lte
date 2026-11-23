@@ -2069,3 +2069,5 @@ authorization for a BOOT-only test of candidate v6.
 - Active handoff: device is in TWRP. No further flash is queued. Next candidate
   must be chosen from evidence; do not claim UI without physical proof.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+- v53 physical evidence committed/pushed as `c1f38f96`.
