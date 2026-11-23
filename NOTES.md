@@ -2071,3 +2071,39 @@ authorization for a BOOT-only test of candidate v6.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
 
 - v53 physical evidence committed/pushed as `c1f38f96`.
+
+## 2026-11-23 - v54 offline (MAIN only): bounded retry for early IRT scan
+
+- User asked to implement the fix direction from the v53 evidence: keep the
+  early DSC-header start, but make an early scan failure retryable instead of
+  terminal, so a later DSC fault can retry before SpringBoard reaches the probe.
+- v53 physical evidence: durable state=4, comp=0, ls=0x4000, but img=0,
+  sym=0, hits=0, tries=0, nlist_cnt=0, nlist_range=0, err=0. The worker chose
+  the Cryptex .symbols companion but failed before resolving an image or a
+  symbol. Exact branch remains unproven; this change addresses the
+  terminal-state behaviour, not the unknown root cause.
+- New patch 0431-m30-irt-retryable-early-scan.patch (incremental on
+  0426 + 0427 + 0428 + 0429 + 0430):
+  1. m30_irt_mark_failure() converts a failure of an early, DSC-header-
+     started worker into NEED_DSC with thread_started=0 and clears the
+     one-shot diag mask, up to M30_IRT_MAX_EARLY_ATTEMPTS=4.
+  2. A later genuine DSC-header fault starts a new worker. Wrong-magic
+     vnodes take the same retryable path when the worker was early.
+  3. After the budget is exhausted, the failure is terminal but leaves the
+     v50 XCTEST fallback able to restart. A worker started only by XCTEST
+     remains terminal on failure (v50 behaviour preserved).
+  4. Failed early attempts with a retry armed skip the long heartbeat loops
+     so they cannot overwrite the next attempt diagnostics in pstore.
+  5. Early start markers are numbered (attempt=N) for physical evidence.
+- No security check weakened: all file reads are UIO_READ; the only write
+  remains the post-validation in-memory uint32 page patch. No 0417; no disk
+  write; v18 baseline/4K config unchanged.
+- Offline checks PASS: standalone syntax check of the IRT block; patch chain
+  0426 -> 0427 -> 0428 -> 0429 -> 0430 -> 0431 applies to the exact v49 CI
+  base and reproduces /tmp/m30_v54/modified.c byte-for-byte; focused
+  tools/test_m30_internal_release_type.py PASS including new v54 patch and
+  bounded-retry model tests. validate-repo.py reports only its pre-existing
+  patch-number-gap warnings.
+- Commit for source/patch/tests: d2a4854d (pushed).
+- NEXT: run CI, then package/validate. Do NOT flash without explicit user
+  approval. No UI/lock-screen success claimed.
