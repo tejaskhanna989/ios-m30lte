@@ -1,0 +1,179 @@
+{
+  "result": "PASS",
+  "source_kernel": {
+    "path": "validation/ios-candidate-v43-out/inputs/kernel.development.m30lte",
+    "size_bytes": 16805728,
+    "sha256": "1a2290a37abe15ad40fdb6738e48ca6f35831650c522dd832f1ba3805f72ef6f",
+    "expected_sha256": "1a2290a37abe15ad40fdb6738e48ca6f35831650c522dd832f1ba3805f72ef6f",
+    "hash_matches_expected": true
+  },
+  "shim": {
+    "image_path": "validation/ios-candidate-v43-out/build/shim_fixed.Image",
+    "size_bytes": 5456,
+    "sha256": "2d7aea8036feac3b8b2dd64e08e788ae3e660300f00d9ce53686be423e1ce2ff",
+    "elf_path": "validation/ios-candidate-v43-out/build/shim_fixed.elf",
+    "elf_sha256": "a3fd265382b2229e6b785a882d599e3f597ddc9a77874fe3a00f20bd422c51ea",
+    "entry": "0x80080000",
+    "linked_and_header_address_match": true,
+    "image_is_elf_binary_projection": true,
+    "elf_footprint": {
+      "load_start": "0x80080000",
+      "load_file_end": "0x80081550",
+      "load_mem_end": "0x80081550",
+      "linked_end": "0x80092000",
+      "footprint_end": "0x80092000",
+      "stack_top": "0x80089550",
+      "size_bytes": 73728
+    },
+    "payload_after_complete_elf_footprint": true
+  },
+  "raw_combined": {
+    "size_bytes": 16292640,
+    "sha256": "492e11b9fe3383c5619e633283748dba04ef537aac0e9a51e15de2306db44cfc",
+    "is_android_boot_image": false,
+    "shim_offset": 0,
+    "zero_padding_offset": 5456,
+    "zero_padding_size_bytes": 125616,
+    "payload_offset": 131072,
+    "payload_size_bytes": 16161568,
+    "payload_sha256": "b3348e9f1afd21f1754e6a84e5c99bcbf158d60fc8c48238e033828b6f8f189d"
+  },
+  "payload_source": {
+    "kernel_sha256": "1a2290a37abe15ad40fdb6738e48ca6f35831650c522dd832f1ba3805f72ef6f",
+    "adt_path": "validation/ios-candidate-v43-out/inputs/m30lte-corrected.adt",
+    "adt_sha256": "2dc36c056e62a563bc5b2262c296d8731e1d8ad9e804d388054c156cec7bd577",
+    "regenerated_from_source_kernel_and_adt": true,
+    "independently_checked_against_source_macho_and_adt": true
+  },
+  "manifest": {
+    "path": "validation/ios-candidate-v43-out/manifest.json",
+    "sha256": "947d4c85d5d87edc1176be4e72cedc7953a13994304abd7cd68202d7961e23b1",
+    "path_base": "project_root",
+    "kernel_source_matches": true,
+    "payload_source_matches": true,
+    "shim_matches": true,
+    "elf_footprint_matches": true,
+    "runtime_layout_matches": true,
+    "header_and_component_metadata_matches": true,
+    "image_hashes_match": true
+  },
+  "xnu_payload_header": {
+    "version": 1,
+    "segment_count": 10,
+    "virt_base": 18446744005090738176,
+    "entry_va": 18446744005111772296,
+    "adt_offset": 16151376,
+    "adt_size": 10180,
+    "kernel_end_va": 18446744005128814592,
+    "phys_base": 2147483648,
+    "mem_size": 1032847360,
+    "cmdline": "debug=0xc serial=3 cpus=1 keepsyms=1 maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1"
+  },
+  "images": [
+    {
+      "path": "shim-boot.img",
+      "size_bytes": 16295936,
+      "sha256": "f605a5d46ca4e9a7e2421c53ccaf1a8254c043c5b9ae226a4ebc1f76d8283b09",
+      "header": {
+        "version": 0,
+        "page_size": 2048,
+        "kernel_size": 16292640,
+        "kernel_addr": "0x80080000",
+        "ramdisk_size": 0,
+        "ramdisk_addr": "0x0",
+        "second_size": 0,
+        "second_addr": "0x0",
+        "tags_addr": "0x80000100",
+        "os_version_raw": "0x14000145",
+        "board": "m30lte",
+        "cmdline": "console=null",
+        "image_id_sha1": "774fb93780608c31c8451205f3a95953015c8625"
+      },
+      "components": {
+        "header": {
+          "offset": 0,
+          "size_bytes": 2048,
+          "end": 2048
+        },
+        "kernel": {
+          "offset": 2048,
+          "size_bytes": 16292640,
+          "end": 16294688
+        },
+        "ramdisk": {
+          "offset": 16295936,
+          "size_bytes": 0,
+          "end": 16295936
+        },
+        "second": {
+          "offset": 16295936,
+          "size_bytes": 0,
+          "end": 16295936
+        }
+      },
+      "partition_limit_bytes": 33554432,
+      "partition_size_compatible": true,
+      "combined_kernel_exact": true,
+      "payload_offset_in_kernel": 131072,
+      "payload_size_bytes": 16161568,
+      "payload_sha256": "b3348e9f1afd21f1754e6a84e5c99bcbf158d60fc8c48238e033828b6f8f189d",
+      "structurally_valid_generic_android_v0": true,
+      "sboot_compatible": "unknown; no exact SM-M305F acceptance evidence"
+    },
+    {
+      "path": "ios-boot.img",
+      "size_bytes": 16295936,
+      "sha256": "6a942aebee34bb68d688c4d95700d6bb3871b8e6d8d323e98404a827649ceddc",
+      "header": {
+        "version": 0,
+        "page_size": 2048,
+        "kernel_size": 16292640,
+        "kernel_addr": "0x80080000",
+        "ramdisk_size": 0,
+        "ramdisk_addr": "0x0",
+        "second_size": 0,
+        "second_addr": "0x0",
+        "tags_addr": "0x80000100",
+        "os_version_raw": "0x14000145",
+        "board": "m30lte",
+        "cmdline": "debug=0xc serial=3 keepsyms=1",
+        "image_id_sha1": "774fb93780608c31c8451205f3a95953015c8625"
+      },
+      "components": {
+        "header": {
+          "offset": 0,
+          "size_bytes": 2048,
+          "end": 2048
+        },
+        "kernel": {
+          "offset": 2048,
+          "size_bytes": 16292640,
+          "end": 16294688
+        },
+        "ramdisk": {
+          "offset": 16295936,
+          "size_bytes": 0,
+          "end": 16295936
+        },
+        "second": {
+          "offset": 16295936,
+          "size_bytes": 0,
+          "end": 16295936
+        }
+      },
+      "partition_limit_bytes": 33554432,
+      "partition_size_compatible": true,
+      "combined_kernel_exact": true,
+      "payload_offset_in_kernel": 131072,
+      "payload_size_bytes": 16161568,
+      "payload_sha256": "b3348e9f1afd21f1754e6a84e5c99bcbf158d60fc8c48238e033828b6f8f189d",
+      "structurally_valid_generic_android_v0": true,
+      "sboot_compatible": "unknown; no exact SM-M305F acceptance evidence"
+    }
+  ],
+  "limitations": [
+    "Generic Android boot-image structure does not establish Samsung S-Boot acceptance.",
+    "The linked shim address is not proof of actual M30 S-Boot load or entry state.",
+    "No physical boot, flash, or device operation was performed."
+  ]
+}
