@@ -1,0 +1,192 @@
+file: validation/physical-boot-test/20261123-ios-v45-boot/raw/pmsg-ramoops-0  bytes=16372  sha256=c3a897cba60b96c66ddfec30d533845ed48fa2350b094e079c6603ef7376d4da
+records=189 issues=1
+  [000] @0x000034 XNU: CODE SIGNING: cs_invalid_page(0x1cd2d6000): p=12[keybagd] final status 0x22000000, allowing (remove VALID) page
+  [001] @0x0000bb XNU: ****** IN MKB_INIT ****
+  [002] @0x0000ea XNU: SWEET AKS: keybagd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [003] @0x000137 XNU: SWEET AKS: keybagd sel 14 arg0 0 in 0/0 out 1/0 -> 0x0
+  [004] @0x000185 XNU: SWEET AKS: keybagd sel 14 arg0 0 in 0/0 out 1/0 -> 0x0
+  [005] @0x0001d3 XNU: MKB_INIT: mount is with NO CPROTECT:0x1480d000 on  (/private/var/)
+  [006] @0x00022d XNU: MKB_INIT: mount point (/private/var/) does not support Data Protection
+  [007] @0x00028b XNU: MKB_INIT: System Keybag loaded
+  [008] @0x0002c1 XNU: MKB_INIT: Could not get options entry from the device tree
+  [009] @0x000313 XNU: Unable to set /private/var//tmp to class D!****** DONE MKB_INIT ****
+  [010] @0x00036f XNU: com.apple.xpc.launchd|1969-12-31 16:00:05.351384 (usermanagerd) <Notice>: Doing boot task
+  [011] @0x0003e0 XNU: CODE SIGNING: cs_invalid_page(0x1cd058000): p=13[usermanagerd] final status 0x22000000, allowing (remove VALID) page
+  [012] @0x00046c XNU: ****** IN UMD_INIT ****
+  [013] @0x00049b XNU: ****** STARTING EARLYBOOT SETUP ****
+  [014] @0x0004d7 XNU: UMD_INIT: STARTING EARLYBOOT SETUP
+  [015] @0x000511 XNU: UMD_INIT: LOADING USER SESSIONS
+  [016] @0x000548 XNU: UMD_INIT: Device Configuration Type:0
+  [017] @0x000585 XNU: UMD_INIT: BOOTEDUSER is:501
+  [018] @0x0005b8 XNU: UMD_INIT: diskLoadUserSessions, APNSID:, set to 18446744073709551615
+  [019] @0x000614 XNU: UMD_INIT: Reloaded _gUserSessionTable (
+  [020] @0x000653 XNU:         {
+  [021] @0x000674 XNU:         MKBUserSessionCreateTimeStamp = "1970-01-01 00:00:05 +0000";
+  [022] @0x0006d0 XNU:         MKBUserSessionDirty = 0;
+  [023] @0x000708 XNU:         MKBUserSessionDisplayName = mobile;
+  [024] @0x00074b XNU:         MKBUserSessionFirstName = mobile;
+  [025] @0x00078c XNU:         MKBUserSessionForeground = 1;
+  [026] @0x0007c9 XNU:         MKBUserSessionGroupID = 501;
+  [027] @0x000805 XNU:         MKBUserSessionID = 501;
+  [028] @0x00083c XNU:         MKBUserSessionLanguage = "en_US";
+  [029] @0x00087d XNU:         MKBUserSessionLastName = mobile;
+  [030] @0x0008bd XNU:         MKBUserSessionLibinfoHomeDir = "/var/mobile";
+  [031] @0x00090a XNU:         MKBUserSessionLoginTimeStamp = "1970-01-01 00:00:05 +0000";
+  [032] @0x000965 XNU:         MKBUserSessionLoginUser = 0;
+  [033] @0x0009a1 XNU:         MKBUserSessionName = mobile;
+  [034] @0x0009dd XNU:         MKBUserSessionNeedsMount = 1;
+  [035] @0x000a1a XNU:         MKBUserSessionShortName = mobile;
+  [036] @0x000a5b XNU:         MKBUserSessionType = UserSessionOther;
+  [037] @0x000aa1 XNU:         MKBUserSessionUUID = "A156A4E1-43EF-4E91-9DA6-6DB1F5DA0A30";
+  [038] @0x000afd XNU:         MKBUserSessionVolumeFSType = UserVolumeAPFSNative;
+  [039] @0x000b4f XNU:         MKBUserSessionisAdminKey = 1;
+  [040] @0x000b8c XNU:         MKBUserSessionisPrimary = 1;
+  [041] @0x000bc8 XNU:     }
+  [042] @0x000be5 XNU: )
+  [043] @0x000bfe XNU: UMD_INIT: FOUND NO SYNC BUBBLE UIDS:0
+  [044] @0x000c3b XNU: UMD_INIT: FOUND NO LRU TABLE UIDS:0
+  [045] @0x000c76 XNU: UMD_INIT: FOUND NO VOLUMETYPE, setting up volume type
+  [046] @0x000cc3 XNU: UMD_INIT: Set the new volume type to APFSNativeDevice
+  [047] @0x000d10 XNU: UMD_INIT: SAVING SESSION TODISK
+  [048] @0x000d47 XNU: UMD_INIT: SESSION TABLE TO BLOB
+  [049] @0x000d7e XNU: UMD_INIT: NOTHING TO SAVE IN LRU UID LIST
+  [050] @0x000dbf XNU: UMD_INIT: diskSaveUserSessions Success
+  [051] @0x000dfd XNU: UMD_INIT: Read user sessions in _gUserSessionTable (
+  [052] @0x000e49 XNU:         {
+  [053] @0x000e6a XNU:         MKBUserSessionCreateTimeStamp = "1970-01-01 00:00:05 +0000";
+  [054] @0x000ec6 XNU:         MKBUserSessionDirty = 0;
+  [055] @0x000efe XNU:         MKBUserSessionDisplayName = mobile;
+  [056] @0x000f41 XNU:         MKBUserSessionFirstName = mobile;
+  [057] @0x000f82 XNU:         MKBUserSessionForeground = 1;
+  [058] @0x000fbf XNU:         MKBUserSessionGroupID = 501;
+  [059] @0x000ffb XNU:         MKBUserSessionID = 501;
+  [060] @0x001032 XNU:         MKBUserSessionLanguage = "en_US";
+  [061] @0x001073 XNU:         MKBUserSessionLastName = mobile;
+  [062] @0x0010b3 XNU:         MKBUserSessionLibinfoHomeDir = "/var/mobile";
+  [063] @0x001100 XNU:         MKBUserSessionLoginTimeStamp = "1970-01-01 00:00:05 +0000";
+  [064] @0x00115b XNU:         MKBUserSessionLoginUser = 0;
+  [065] @0x001197 XNU:         MKBUserSessionName = mobile;
+  [066] @0x0011d3 XNU:         MKBUserSessionNeedsMount = 1;
+  [067] @0x001210 XNU:         MKBUserSessionShortName = mobile;
+  [068] @0x001251 XNU:         MKBUserSessionType = UserSessionOther;
+  [069] @0x001297 XNU:         MKBUserSessionUUID = "A156A4E1-43EF-4E91-9DA6-6DB1F5DA0A30";
+  [070] @0x0012f3 XNU:         MKBUserSessionVolumeFSType = UserVolumeAPFSNative;
+  [071] @0x001345 XNU:         MKBUserSessionisAdminKey = 1;
+  [072] @0x001382 XNU:         MKBUserSessionisPrimary = 1;
+  [073] @0x0013be XNU:     }
+  [074] @0x0013db XNU: )
+  [075] @0x0013f4 XNU: UMD_INIT: LOADED USER SESSIONS
+  [076] @0x00142a XNU: UMD_INIT: failed to read nextsession dict
+  [077] @0x00146b XNU: UMD_INIT: Unable to Obtained foreground, curFG:502, nextID:-1
+  [078] @0x0014c0 XNU: UMD_INIT: Failed to get next session, booting with default id to be Loginwindow UID
+  [079] @0x00152b XNU: UMD_INIT: BootedUser is:501
+  [080] @0x00155e XNU: UMD_INIT: Regular mode Setup for user:501: Num Sessions:1, CurrentsessionID:-1
+  [081] @0x0015c4 XNU: UMD_INIT: Set Foreground ID + multiuser in commpage successfully
+  [082] @0x00161c XNU: UMD_INIT: LOADING PERSONA..
+  [083] @0x00164f XNU: UMD_INIT: Manifest version: 1
+  [084] @0x001684 XNU: UMD_INIT: Loaded Persona Generation ID from manifest:1
+  [085] @0x0016d2 XNU: UMD_INIT: Adding 200 entry to persona Table for user:A156A4E1-43EF-4E91-9DA6-6DB1F5DA0A30
+  [086] @0x001743 XNU: UMD_INIT: Adding 100 entry to persona Table for user:A156A4E1-43EF-4E91-9DA6-6DB1F5DA0A30
+  [087] @0x0017b4 XNU: UMD_INIT: Adding 0 entry to persona Table for user:A156A4E1-43EF-4E91-9DA6-6DB1F5DA0A30
+  [088] @0x001823 XNU: UMD_INIT: Adding 1000 entry to persona Table for user:A156A4E1-43EF-4E91-9DA6-6DB1F5DA0A30
+  [089] @0x001895 XNU: UMD_INIT: Adding 99 entry to persona Table for user:FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF
+  [090] @0x001905 XNU: UMD_INIT: Adding 199 entry to persona Table for user:FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF
+  [091] @0x001976 XNU: UMD_INIT: Loaded persona manifest
+  [092] @0x0019af XNU: UMD_INIT: Failed to retrieve info for kernel persona 99: No such process
+  [093] @0x001a0f XNU: UMD_INIT: PersonaID:99 not loaded, loading..
+  [094] @0x001a53 XNU: UMD_INIT: Allocated kernel persona with ID: 99, Type: 4, UID: 4294967295
+  [095] @0x001ab3 XNU: UMD_INIT: Failed to retrieve info for kernel persona 199: No such process
+  [096] @0x001b14 XNU: UMD_INIT: PersonaID:199 not loaded, loading..
+  [097] @0x001b59 XNU: UMD_INIT: Allocated kernel persona with ID: 199, Type: 6, UID: 4294967295
+  [098] @0x001bba XNU: UMD_INIT: Failed to retrieve info for kernel persona 200: No such process
+  [099] @0x001c1b XNU: UMD_INIT: PersonaID:200 not loaded, loading..
+  [100] @0x001c60 XNU: UMD_INIT: Allocated kernel persona with ID: 200, Type: 6, UID: 501
+  [101] @0x001cba XNU: UMD_INIT: Failed to retrieve info for kernel persona 100: No such process
+  [102] @0x001d1b XNU: UMD_INIT: PersonaID:100 not loaded, loading..
+  [103] @0x001d60 XNU: UMD_INIT: Allocated kernel persona with ID: 100, Type: 4, UID: 501
+  [104] @0x001dba XNU: UMD_INIT: Failed to retrieve info for kernel persona 1000: No such process
+  [105] @0x001e1c XNU: UMD_INIT: PersonaID:1000 not loaded, loading..
+  [106] @0x001e62 XNU: UMD_INIT: Allocated kernel persona with ID: 1000, Type: 5, UID: 501
+  [107] @0x001ebd XNU: UMD_INIT: setup kernel personas
+  [108] @0x001ef4 XNU: UMD_INIT: Failed to notify_register_check com.apple.mobile.usermanagerd.personageneration_changed: 8
+  [109] @0x001f70 XNU: UMD_INIT: Failed to notify generation changed: Failed to register for darwin notification token
+  [110] @0x001fe7 XNU: UMD_INIT: DONE EARLYBOOT SETUP
+  [111] @0x00201d XNU: ****** DONE EARLYBOOT SETUP ****
+  [112] @0x002055 XNU: ****** DONE UMD_INIT ****
+  [113] @0x002086 XNU: com.apple.xpc.launchd|1969-12-31 16:00:06.198528 (dirs_cleaner) <Notice>: Doing boot task
+  [114] @0x0020f7 XNU: dc_reset: /tmp: Invalid argument
+  [115] @0x00212f XNU: dc_reset: /var/run: Invalid argument
+  [116] @0x00216b XNU: CODE SIGNING: cs_invalid_page(0x1cd682000): p=16[init_featureflag] final status 0x22000000, allowing (remove VALID) page
+  [117] @0x0021fb XNU: [System Event] [399690710] [INFO] [Subsystem: launchd] [Event: fsck] Doing boot task
+  [118] @0x002267 XNU: [System Event] [399702907] [INFO] [Subsystem: launchd] [Event: mount-phase-1] Doing boot task
+  [119] @0x0022dc XNU: [System Event] [399714445] [INFO] [Subsystem: launchd] [Event: data-protection] Doing boot task
+  [120] @0x002353 XNU: [System Event] [399726093] [INFO] [Subsystem: launchd] [Event: finish-obliteration] Doing boot task
+  [121] @0x0023ce XNU: [System Event] [399737746] [INFO] [Subsystem: launchd] [Event: detect-installed-roots] Doing boot task
+  [122] @0x00244c XNU: [System Event] [399753461] [INFO] [Subsystem: launchd] [Event: commit-boot-mode] Doing boot task
+  [123] @0x0024c4 XNU: [System Event] [399767202] [INFO] [Subsystem: launchd] [Event: restore-datapartition] Doing boot task
+  [124] @0x002541 XNU: [System Event] [399779356] [INFO] [Subsystem: launchd] [Event: restore-datapartition] optional boot task not present
+  [125] @0x0025cd XNU: [System Event] [399792015] [INFO] [Subsystem: launchd] [Event: mount-phase-2] Doing boot task
+  [126] @0x002642 XNU: [System Event] [400362802] [INFO] [Subsystem: launchd] [Event: init-with-data-volume] Doing boot task
+  [127] @0x0026bf XNU: [System Event] [400375368] [INFO] [Subsystem: launchd] [Event: MSUEarlyBootTask] Doing boot task
+  [128] @0x002737 XNU: [System Event] [400386786] [INFO] [Subsystem: launchd] [Event: fips] Doing boot task
+  [129] @0x0027a3 XNU: [System Event] [400397525] [INFO] [Subsystem: launchd] [Event: keybag] Doing boot task
+  [130] @0x002811 XNU: [System Event] [400408407] [INFO] [Subsystem: launchd] [Event: usermanagerd] Doing boot task
+  [131] @0x002885 XNU: [System Event] [400419494] [INFO] [Subsystem: launchd] [Event: dirs_cleaner] Doing boot task
+  [132] @0x0028f9 XNU: com.apple.xpc.launchd|1969-12-31 16:00:06.223575 <Notice>: launchd logging initialized. name: com.apple.xpc.launchd pid: 1
+  [133] @0x00298b XNU: com.apple.xpc.launchd|1969-12-31 16:00:06.223583 (xpcroleaccountd) <Notice>: Doing boot task
+  [134] @0x0029ff XNU: [System Event] [400452753] [INFO] [Subsystem: launchd] [Event: xpcroleaccountd] Doing boot task
+  [135] @0x002a76 XNU: com.apple.xpc.launchd|1969-12-31 16:00:06.258825 (init_featureflags) <Notice>: Doing boot task
+  [136] @0x002aec XNU: [System Event] [401832529] [INFO] [Subsystem: launchd] [Event: init_featureflags] Doing boot task
+  [137] @0x002b65 XNU: com.apple.xpc.launchd|1969-12-31 16:00:06.924298 (auearlyboot) <Notice>: Doing boot task
+  [138] @0x002bd5 XNU: [System Event] [432803199] [INFO] [Subsystem: launchd] [Event: auearlyboot] Doing boot task
+  [139] @0x002c48 XNU: CODE SIGNING: cs_invalid_page(0x241060000): p=17[auearlyboot] final status 0x22000000, allowing (remove VALID) page
+  [140] @0x002cd3 XNU: auearlyboot: -[FudEarlyBoot doFUDEarlyBoot:](): Starting Early Boot
+  [141] @0x002d2e XNU: auearlyboot: -[AppleFirmwareUpdateController getEarlyBootListInternal:]: Pending critical earlyBoot entries (
+  [142] @0x002db3 XNU: )
+  [143] @0x002dcc XNU: auearlyboot: No Early Boot Accessories
+  [144] @0x002e0a XNU: auearlyboot: -[FudEarlyBoot calculateTimeTakenForEarlyBootEntries] Time Taken to wait for critical earlyBoot entries: 0.000000 sec
+  [145] @0x002ea4 XNU: auearlyboot: -[FudEarlyBoot doFUDEarlyBoot:](): End Early Boot
+  [146] @0x002efa XNU: auearlyboot: Exitng Early Boot
+  [147] @0x002f30 XNU: com.apple.xpc.launchd|1969-12-31 16:00:07.072643 (tzinit) <Notice>: Doing boot task
+  [148] @0x002f9b XNU: [System Event] [442075777] [INFO] [Subsystem: launchd] [Event: tzinit] Doing boot task
+  [149] @0x003009 XNU: com.apple.xpc.launchd|1969-12-31 16:00:07.098050 (finish-restore) <Notice>: Doing boot task
+  [150] @0x00307c XNU: [System Event] [443664554] [INFO] [Subsystem: launchd] [Event: finish-restore] Doing boot task
+  [151] @0x0030f2 XNU: com.apple.xpc.launchd|1969-12-31 16:00:07.112199 (finish-demo-restore) <Notice>: Doing boot task
+  [152] @0x00316a XNU: [System Event] [444548382] [INFO] [Subsystem: launchd] [Event: finish-demo-restore] Doing boot task
+  [153] @0x0031e5 XNU: CODE SIGNING: cs_invalid_page(0x1cd498000): p=20[finish_demo_rest] final status 0x22000000, allowing (remove VALID) page
+  [154] @0x003275 XNU: com.apple.xpc.launchd|1969-12-31 16:00:07.154146 (sysstatuscheck) <Notice>: Doing boot task
+  [155] @0x0032e8 XNU: [System Event] [447168953] [INFO] [Subsystem: launchd] [Event: sysstatuscheck] Doing boot task
+  [156] @0x00335e XNU: com.apple.xpc.launchd|1969-12-31 16:00:07.182124 (prng_seedctl) <Notice>: Doing boot task
+  [157] @0x0033cf XNU: [System Event] [448917396] [INFO] [Subsystem: launchd] [Event: prng_seedctl] Doing boot task
+  [158] @0x003443 XNU: kern.prng.user_reseed_count: (-1) (2) No such file or directory
+  [159] @0x00349a XNU: failed to load virtual random: (-147) (-536870212)
+  [160] @0x0034e4 XNU: com.apple.xpc.launchd|1969-12-31 16:00:07.211413 (launchd_cache_loader) <Notice>: Doing boot task
+  [161] @0x00355d XNU: [System Event] [450748061] [INFO] [Subsystem: launchd] [Event: launchd_cache_loader] Doing boot task
+  [162] @0x0035d9 XNU: CODE SIGNING: cs_invalid_page(0x1f3068000): p=23[launchd_cache_lo] final status 0x22000000, allowing (remove VALID) page
+  [163] @0x003669 XNU: 0 Found valid port: 7683 Valid: 1
+  [164] @0x0036a2 XNU: 1 Found valid port: 0 Valid: 0
+  [165] @0x0036d8 XNU: 2 Found valid port: 0 Valid: 0
+  [166] @0x00370e XNU: Using default cache paths
+  [167] @0x00373f XNU: Code: /System/Library/xpc/launchd.plist Sig: /System/Library/xpc/launchd.plist.sig
+  [168] @0x0037a9 XNU: SWEET AMFI UC: launchd_cache_loader sel 6 in 1/20 out 0/0 -> ok
+  [169] @0x003800 XNU: cdhash: {length = 20, bytes = 0x17f4f2e748701d9e2d79ec16fdfd96a76e528bc2} is trusted
+  [170] @0x00386c XNU: Attached signature to file, checking ...
+  [171] @0x0038ac XNU: Trying to send bytes to launchd: 7683 16384
+  [172] @0x0038ef XNU: Sending validated cache to launchd
+  [173] @0x003929 XNU: Cache sent to launchd successfully
+  [174] @0x003963 XNU: com.apple.xpc.launchd|1969-12-31 16:00:08.210657 <Notice>: launchd UUID: 5C15DB07-B3BC-3DF3-B62F-3E498B993B8E
+  [175] @0x0039e8 XNU: com.apple.xpc.launchd|1969-12-31 16:00:08.210701 (boot) <Notice>: Early boot complete. Continuing system boot.
+  [176] @0x003a6e XNU: [System Event] [532930160] [INFO] [Subsystem: launchd] [Event: boot] Early boot complete. Continuing system boot.
+  [177] @0x003af7 XNU: CODE SIGNING: cs_invalid_page(0x1d5839000): p=26[SpringBoard] final status 0x22000000, allowing (remove VALID) page
+  [178] @0x003b82 XNU: SWEET AKS: keybagd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+  [179] @0x003bcf XNU: A5XELTE KEYS: key=0 down=1 gpio=0x20
+  [180] @0x003c0b XNU: SWEET HID: key 0x30 down (0 clients)
+  [181] @0x003c47 XNU: A5XELTE KEYS: key=2 down=1 gpio=0x20
+  [182] @0x003c83 XNU: SWEET HID: key 0xea down (0 clients)
+  [183] @0x003cbf XNU: CODE SIGNING: cs_invalid_page(0x1c7264000): p=36[configd] final status 0x22000000, allowing (remove VALID) page
+  [184] @0x003d46 XNU: CODE SIGNING: cs_invalid_page(0x1d4d90000): p=85[usermanagerd] final status 0x22000000, allowing (remove VALID) page
+  [185] @0x003dd2 XNU: CODE SIGNING: cs_invalid_page(0x1cd4a2000): p=29[mediaserverd] final status 0x22000000, allowing (remove VALID) page
+  [186] @0x003e5e XNU: CODE SIGNING: cs_invalid_page(0x1cd6ac000): p=60[timed] final status 0x22000000, allowing (remove VALID) page
+  [187] @0x003ee3 XNU: CODE SIGNING: cs_invalid_page(0x1cd7a4000): p=43[remoted] final status 0x22000000, allowing (remove VALID) page
+  [188] @0x003f6a XNU: CODE SIGNING: cs_invalid_page(0x1cd120000): p=68[driverkitd] final status 0x22000000, allowing (remove VALID) page
+  ISSUE: gap at 0x0: skipped 52 bytes

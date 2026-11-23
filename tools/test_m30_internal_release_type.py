@@ -34,6 +34,7 @@ PSTORE_V41 = ROOT / "validation/physical-boot-test/20261123-ios-v41-boot/raw/pms
 PSTORE_V42 = ROOT / "validation/physical-boot-test/20261123-ios-v42-boot/raw/pmsg-ramoops-0"
 PSTORE_V43 = ROOT / "validation/physical-boot-test/20261123-ios-v43-boot/raw/pmsg-ramoops-0"
 PSTORE_V44 = ROOT / "validation/physical-boot-test/20261123-ios-v44-boot/raw/pmsg-ramoops-0"
+PSTORE_V45 = ROOT / "validation/physical-boot-test/20261123-ios-v45-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -154,6 +155,14 @@ def main():
     assert "if (cand <= 1) {" in t
     assert "basepath_n = sizeof(cryptex_base) - 1;" in t
     assert "comp=%d ls=0x%llx sym=0x%llx" in t
+    # v46: a compact 2 s heartbeat carries the final IRT state (including the
+    # local-symbol counts) into the wrapped 16 KB pstore window.
+    hb = t[t.index("for (i = 0; i < 180; i++)"):]
+    assert "delay(2000000)" in hb
+    assert 'M30 IRT: patched (final state=%d off=0x%llx' in hb
+    assert "nlist_cnt=%u nlist_range=%u fb=0x%llx hb=%d" in hb
+    assert 'M30 IRT final: state=%d off=0x%llx err=%d' in hb
+    assert "break;" not in hb
     # v37: retrigger gate, and retry with a later vnode on wrong magic.
     assert "m30_irt_retriggered && !m30_irt_thread_started" in t
     assert "path=%s\\n" in t
@@ -331,6 +340,17 @@ def main():
     assert b"This process should not be linking or loading SpringBoardUI.framewor" in d44
     assert b"M30 IRT: patched" not in d44
     print("[PASS] v44 pstore: companion map is a 16 KB stub -> select Cryptex companion")
+
+    # --- v45 physical: deeper userspace, but the decisive IRT lines were
+    # overwritten.  The assertion is absent only from the captured window. ---
+    d45 = PSTORE_V45.read_bytes()
+    assert len(d45) == 16372, "v45 pmsg ring should be full/wrapped"
+    assert b"Early boot complete. Continuing system boot." in d45
+    assert b"p=26[SpringBoard]" in d45
+    assert b"mediaserverd" in d45 and b"driverkitd" in d45
+    assert b"This process should not be linking or loading SpringBoardUI.framewor" not in d45
+    assert b"M30 IRT" not in d45, "v45 final window lost all IRT replay lines"
+    print("[PASS] v45 pstore: assertion absent, launchd early boot complete, SpringBoard loaded")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global

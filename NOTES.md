@@ -1502,7 +1502,32 @@ authorization for a BOOT-only test of candidate v6.
   Shim Image/ELF and the shim region in the BOOT image remain byte-identical to
   the v31 reference. Kernel entry is unchanged from v44 at
   `0xfffffff007410488`.
-- Candidate: `validation/ios-candidate-v45-out/` with README. NOT physically
-  tested. NEXT: BOOT-only flash, capture pstore, expect Cryptex companion
-  evidence and either an IRT patch or a new precise failure.
+- Candidate: `validation/ios-candidate-v45-out/` with README. Physically tested
+  below; BOOT-only flash, no readback, USERDATA/SYSTEM/RECOVERY untouched.
+
+## 2026-11-23 — v45 physical: deeper userspace, IRT lines overwritten
+
+- BOOT-only flash succeeded. pstore
+  `c3a897cba60b96c66ddfec30d533845ed48fa2350b094e079c6603ef7376d4da`
+  (16,372 B, 189 records) contains launchd `Early boot complete. Continuing
+  system boot.`, `CODE SIGNING: ... p=26[SpringBoard]`, and later daemons
+  including mediaserverd and driverkitd.
+- The SpringBoardUI assertion is absent from the captured final window, but
+  every `M30 IRT` line was overwritten by the deeper userspace log volume.
+  This is forward progress, not proof of `_internal_release_type` patching or
+  UI startup. BOOT readback SKIPPED.
+
+## 2026-11-23 — v46 fix in progress (MAIN only): durable IRT heartbeat
+
+- Keep the Cryptex-first companion and all v45 lookup/mapping logic.
+- After the 30 x 2 s full status replay, emit a compact heartbeat every 2 s
+  for another 6 min. Success prints `M30 IRT: patched (final state=... off=...
+  sym=... comp=... ls=... nlist_cnt=... nlist_range=... fb=... hb=...)`;
+  failure prints `M30 IRT final: ...` with the same decisive fields.
+- This makes the patch result, companion, local-symbol count, and fallback
+  state observable in the final pstore window even after heavy daemon logging.
+- Standalone syntax check clean; focused tests PASS with v45 physical evidence;
+  patch dry-runs cleanly against pristine and the v45 buildtree.
+- NEXT: commit/push, CI GREEN, package v46, BOOT-only flash, capture pstore,
+  read the heartbeat success/final line, then inspect the next boot stage.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.

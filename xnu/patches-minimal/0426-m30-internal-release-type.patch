@@ -9,7 +9,7 @@
  #include <sys/reason.h>
  #include <sys/signalvar.h>
  
-@@ -140,9 +142,898 @@
+@@ -140,9 +142,928 @@
  
  extern void throttle_lowpri_io(int);
  
@@ -808,8 +808,38 @@
 +		    (unsigned long long)m30_irt_base_map_addr,
 +		    (unsigned long long)m30_irt_base_map_size,
 +		    (unsigned long long)m30_irt_base_map_off);
++	}
++
++	/* A full status line every 2 s for 60 s is still overwritten once
++	 * SpringBoard and its daemons start logging heavily.  Keep a compact
++	 * heartbeat every 2 s for another 6 min so the final result, including
++	 * the local-symbol range used to find the symbol, is present in the
++	 * captured 16 KB ring. */
++	for (i = 0; i < 180; i++) {
++		delay(2000000);      /* 2 s */
 +		if (m30_irt_state == M30_IRT_STATE_DONE) {
-+			break;
++			printf("M30 IRT: patched (final state=%d off=0x%llx "
++			    "sym=0x%llx comp=%d ls=0x%llx "
++			    "nlist_cnt=%u nlist_range=%u fb=0x%llx hb=%d)\n",
++			    m30_irt_state,
++			    (unsigned long long)m30_irt_file_offset,
++			    (unsigned long long)m30_irt_sym_vmaddr,
++			    comp_cand, (unsigned long long)ls_off,
++			    nlist_cnt, nlist_range,
++			    (unsigned long long)m30_irt_fallback_off, i);
++		} else {
++			printf("M30 IRT final: state=%d off=0x%llx err=%d "
++			    "sym=0x%llx comp=%d ls=0x%llx "
++			    "nlist_cnt=%u nlist_range=%u hits=%d tries=%d "
++			    "fb=0x%llx hb=%d\n",
++			    m30_irt_state,
++			    (unsigned long long)m30_irt_file_offset,
++			    m30_irt_last_err,
++			    (unsigned long long)m30_irt_sym_vmaddr,
++			    comp_cand, (unsigned long long)ls_off,
++			    nlist_cnt, nlist_range,
++			    m30_irt_map_hits, m30_irt_map_tries,
++			    (unsigned long long)m30_irt_fallback_off, i);
 +		}
 +	}
 +}
@@ -908,7 +938,7 @@
  /*
   * M30 iOS userspace compatibility for +[SpringBoardUI load].
   *
-@@ -7687,6 +8578,38 @@
+@@ -7687,6 +8608,38 @@
  		/* Userspace class-name fix-up, strictly after validation. */
  		m30_xctest_probe_fixup(kaddr, mo_offset);
  
