@@ -1941,3 +1941,5 @@ authorization for a BOOT-only test of candidate v6.
   `Early boot complete`. Do not equate SpringBoard loading with visible UI.
 - v50 remains the last physically successful IRT candidate. No UI/lock-screen
   success claimed. BOOT readback SKIPPED; USERDATA/SYSTEM/RECOVERY untouched.
+
+- v52 candidate committed/pushed as `ff043ccd`.
