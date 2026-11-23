@@ -1810,3 +1810,26 @@ authorization for a BOOT-only test of candidate v6.
   `m30_irt_retrigger_after_xctest()` on both existing paths. No 0417, no
   security check weakened.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v51 offline (MAIN only): chunk-path XCTest fix-up
+
+- v50 physical result: IRT patch restored (`state=3`, `xctest=1`, durable
+  heartbeat), but SpringBoardUI assertion persists and appears before the patch
+  marker. The one class-name rewrite was too late or on the wrong page/process.
+- The remaining unpatched validation path is `vm_page_validate_cs_mapped_chunk()`
+  (called from `vm_fourk_pager.c:1027`), which calls `cs_validate_range()`
+  directly and never reaches either `vm_page_validate_cs_mapped()` fix-up.
+- v51 (`0428-m30-xctest-chunk-path.patch`, incremental on 0426 + 0427):
+  1. Split the class-name scanner into `m30_xctest_probe_fixup_range(kaddr,
+     page_offset, len)`; the existing full-page wrapper passes `PAGE_SIZE`.
+  2. On successful chunk validation, call the range scanner with `chunk_size`
+     and the exact `object->paging_offset + offset + offset_in_page` file
+     offset, then call `m30_irt_retrigger_after_xctest()`.
+  3. Strictly range-limited: bytes outside the just-validated chunk are never
+     written. No 0417, no security check weakened, no disk write.
+- Offline checks PASS: standalone syntax check for IRT + xctest + chunk blocks;
+  `git apply --check` for 0426 then 0427 then 0428 against the exact v49 CI
+  base; application reproduces the intended v51 source byte-for-byte; focused
+  tests extended with chunk-path and range-boundary models.
+- NEXT: commit/push, run CI, then package/validate/boot as before.
+- NO UI/lock-screen success claimed.

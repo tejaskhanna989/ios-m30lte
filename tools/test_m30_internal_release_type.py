@@ -22,6 +22,7 @@ import textwrap
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0426-m30-internal-release-type.patch"
 PATCH_V50 = ROOT / "xnu/patches-minimal/0427-m30-irt-retrigger-gate.patch"
+PATCH_V51 = ROOT / "xnu/patches-minimal/0428-m30-xctest-chunk-path.patch"
 PSTORE_V30 = ROOT / "validation/physical-boot-test/20261122-ios-v30-boot/raw/pmsg-ramoops-0"
 PSTORE_V31 = ROOT / "validation/physical-boot-test/20261122-ios-v31-boot/raw/pmsg-ramoops-0"
 PSTORE_V32 = ROOT / "validation/physical-boot-test/20261122-ios-v32-boot/raw/pmsg-ramoops-0"
@@ -223,6 +224,18 @@ def main():
     assert v50.count("xctest=%lu") == 2  # success and failure heartbeats
     assert "v49 started the" in v50
     print("[PASS] v50 patch: retrigger gate restored and fast path opens it")
+
+    # v51: the last unpatched validation path is the 4K subpage chunk path,
+    # which calls cs_validate_range() directly.  Scan only the validated chunk.
+    v51 = PATCH_V51.read_text()
+    assert "m30_xctest_probe_fixup_range" in v51
+    assert "size_t len" in v51
+    assert "i + sizeof(probe_ascii) <= len" in v51
+    assert "i + sizeof(probe_utf16) + 1 <= len" in v51
+    assert "object->paging_offset + offset + offset_in_page" in v51
+    assert "(size_t)chunk_size" in v51
+    assert "never reaches either vm_page_validate_cs_mapped()" in v51
+    print("[PASS] v51 patch: chunk path rewrites only the validated range")
     # v49: validation-bitmap fast paths skip the slow function where the
     # fix-ups used to live.  Run both fix-ups on that path too.
     assert t.count("m30_xctest_probe_fixup(kaddr, mo_offset)") == 2
@@ -824,12 +837,32 @@ def main():
         "slow": ["cs_validate_page", "xctest_fixup", "irt_fixup"],
         "bitmap_fast_before": ["bitmap_ok"],
         "bitmap_fast_v49": ["bitmap_ok", "xctest_fixup", "irt_fixup"],
+        "chunk_v51": ["cs_validate_range", "xctest_fixup_range", "retrigger"],
     }
     assert paths["bitmap_fast_before"] == ["bitmap_ok"]
     assert paths["bitmap_fast_v49"] == [
         "bitmap_ok", "xctest_fixup", "irt_fixup"]
     assert set(paths["slow"][1:]) == set(paths["bitmap_fast_v49"][1:])
+    assert "xctest_fixup_range" in paths["chunk_v51"]
     print("[PASS] model: bitmap fast path covers both post-validation fix-ups")
+    print("[PASS] model: chunk path added on top of validated range")
+
+    # The chunk fix-up must not write into bytes outside cs_validate_range().
+    probe = b"XCTestConfiguration"
+    repl = b"NSObject"
+    data = bytearray(b"A" * 32)
+    data[2:2 + len(probe)] = probe
+    def fixup_range(buf, start, length):
+        for i in range(start, min(start + length, len(buf)) - len(probe) + 1):
+            if buf[i:i + len(probe)] == probe:
+                buf[i:i + len(probe)] = repl + b"\0" * (len(probe) - len(repl))
+    before = bytes(data)
+    fixup_range(data, 0, 16)         # literal straddles the validated boundary
+    assert bytes(data) == before
+    fixup_range(data, 0, 24)         # now fully inside the validated range
+    assert bytes(data[2:2 + len(probe)]) == repl + b"\0" * (len(probe) - len(repl))
+    assert data[24:] == b"A" * (len(data) - 24), "bytes past len must be untouched"
+    print("[PASS] model: xctest range fix-up never writes past validated len")
 
     # --- behavioural model: only the XCTest patch opens the DSC scan gate. ---
     def run_fault(path, xctest_seen, retriggered, started):

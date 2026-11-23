@@ -1,0 +1,66 @@
+diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
+index 4669ab0..7ed9c1a 100644
+--- a/osfmk/vm/vm_fault.c
++++ b/osfmk/vm/vm_fault.c
+@@ -1327,7 +1327,7 @@ m30_internal_release_fixup(vnode_t vp, memory_object_t pager,
+  * the object offset and a running total for physical diagnostics.
+  */
+ static void
+-m30_xctest_probe_fixup(void *kaddr, uint64_t page_offset)
++m30_xctest_probe_fixup_range(void *kaddr, uint64_t page_offset, size_t len)
+ {
+ 	static const char probe_ascii[] = "XCTestConfiguration";
+ 	static const char repl_ascii[]  = "NSObject";
+@@ -1341,8 +1341,8 @@ m30_xctest_probe_fixup(void *kaddr, uint64_t page_offset)
+ 		return;
+ 	}
+ 
+-	/* ASCII C-string literal: patch EVERY occurrence on this page. */
+-	for (i = 0; i + sizeof(probe_ascii) <= PAGE_SIZE; i++) {
++	/* ASCII C-string literal: patch EVERY occurrence in this range. */
++	for (i = 0; i + sizeof(probe_ascii) <= len; i++) {
+ 		if (p[i] != 'X') {
+ 			continue;
+ 		}
+@@ -1357,8 +1357,8 @@ m30_xctest_probe_fixup(void *kaddr, uint64_t page_offset)
+ 		}
+ 	}
+ 
+-	/* UTF-16LE NSString literal: patch EVERY occurrence on this page. */
+-	for (i = 0; i + sizeof(probe_utf16) + 1 <= PAGE_SIZE; i++) {
++	/* UTF-16LE NSString literal: patch EVERY occurrence in this range. */
++	for (i = 0; i + sizeof(probe_utf16) + 1 <= len; i++) {
+ 		if (p[i] != 'X') {
+ 			continue;
+ 		}
+@@ -1375,6 +1375,13 @@ m30_xctest_probe_fixup(void *kaddr, uint64_t page_offset)
+ 	}
+ }
+ 
++/* Full-page wrapper used by the normal mapped-validation paths. */
++static void
++m30_xctest_probe_fixup(void *kaddr, uint64_t page_offset)
++{
++	m30_xctest_probe_fixup_range(kaddr, page_offset, PAGE_SIZE);
++}
++
+ 
+ uint64_t vm_hard_throttle_threshold;
+ 
+@@ -9047,6 +9054,16 @@ vm_page_validate_cs_mapped_chunk(
+ 	    chunk_size,
+ 	    &tainted);
+ 	if (validated) {
++		/* The 4K subpage path calls cs_validate_range() directly, so it
++		 * never reaches either vm_page_validate_cs_mapped() fix-up.
++		 * Rewrite only the just-validated chunk, never the rest of the
++		 * 16K source page. */
++		memory_object_offset_t mo_offset =
++		    object->paging_offset + offset + offset_in_page;
++		m30_xctest_probe_fixup_range(
++		    (void *)((char *)kaddr + offset_in_page),
++		    (uint64_t)mo_offset, (size_t)chunk_size);
++		m30_irt_retrigger_after_xctest();
+ 		*validated_p = TRUE;
+ 	}
+ 	if (tainted) {
