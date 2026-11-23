@@ -219,7 +219,7 @@ def main():
     assert "m30_xctest_patch_count == 0 || m30_irt_retriggered" in v50
     assert "m30_irt_retriggered && !m30_irt_thread_started" in v50
     assert v50.count("m30_irt_retrigger_after_xctest();") == 2
-    assert "xctest=%lu" in v50
+    assert v50.count("xctest=%lu") == 2  # success and failure heartbeats
     assert "v49 started the" in v50
     print("[PASS] v50 patch: retrigger gate restored and fast path opens it")
     # v49: validation-bitmap fast paths skip the slow function where the
