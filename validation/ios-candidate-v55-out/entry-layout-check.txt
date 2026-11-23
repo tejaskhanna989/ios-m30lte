@@ -1,0 +1,55 @@
+v55 kernel-entry and payload-layout check (MAIN only)
+=====================================================
+
+CI: 45219943492 (GREEN, source 28a8a1ee)
+Patches applied in CI log: 0426, 0427, 0428, 0429, 0430, 0431, 0432.
+Buildtree osfmk/vm/vm_fault.c matches the locally reproduced v55 source
+byte-for-byte (SHA256 ab3cf37eac16a1dbf91472335153ce6b92ef8daa3e5565103b8a92b75afe62dd).
+
+1) Kernel entry
+---------------
+v54 LC_UNIXTHREAD PC: 0xfffffff007411488
+v55 LC_UNIXTHREAD PC: 0xfffffff007411488   (unchanged)
+
+llvm-objdump -d --no-show-raw-insn \
+  --start-address=0xfffffff007411488 --stop-address=0xfffffff0074114c0 \
+  milestone_artifacts/ci_45219943492/xnu-kernel-macos-15-intel/mach.development.m30lte:
+
+  fffffff007411488 <__start>:
+  fffffff007411488:  b  0xfffffff0074130ec <_start_first_cpu>
+
+The 16K CS readback bookkeeping added no linked entry-page shift. The shim
+reads entry_va from the payload header, so no shim rebuild is needed.
+
+2) Section size
+---------------
+__TEXT_EXEC __text:
+  v54 vmaddr 0xfffffff007248000 size 0x008b4000
+  v55 vmaddr 0xfffffff007248000 size 0x008b4000
+
+3) Payload layout
+-----------------
+mkpayload.py output for v55:
+  entry:         0xfffffff007411488
+  kernel_end:    0xfffffff008454000
+  ADT PA:        0x82454000
+  boot_args PA:  0x82458000
+  payload size:  16179264 bytes (v54: 16178944, +320)
+  kernel binary: 16807032 bytes
+  cmdline:       debug=0xc serial=3 cpus=1 keepsyms=1 maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1
+
+ADT and boot_args remain unchanged from v54 because kernel_end is unchanged.
+Both addresses are inside RAM (mem_size 0x3d900000) and well above the loaded
+kernel image. The payload runtime address is 0x800a0000, after the complete
+shim footprint ending at 0x80092000.
+
+4) Shim identity
+----------------
+shim_fixed.Image / shim_fixed.elf are unchanged from v54/v53/v31:
+  Image SHA256 2d7aea8036feac3b8b2dd64e08e788ae3e660300f00d9ce53686be423e1ce2ff
+  ELF   SHA256 a3fd265382b2229e6b785a882d599e3f597ddc9a77874fe3a00f20bd422c51ea
+
+The first 5456 bytes of the combined kernel region in shim-boot.img are
+byte-identical to the reference shim region.
+
+verify_handoff_v55.py: 20/20 PASS.

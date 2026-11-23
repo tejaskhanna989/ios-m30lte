@@ -2181,3 +2181,40 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: CI with `XNU_TARGET=iphoneos`, package/validate v55, then autonomous
   BOOT-only physical test under the new authorization. No UI/lock-screen
   milestone is claimed without verifiable physical evidence.
+
+## 2026-11-23 - v55 CI GREEN and candidate packaged (MAIN only)
+
+- CI `45219943492` GREEN for source `28a8a1ee` (`XNU_TARGET=iphoneos`,
+  `M30LTE`, `DEVELOPMENT`). CI log explicitly applied
+  `0432-m30-cs-16k-block-readback.patch`. Buildtree
+  `osfmk/vm/vm_fault.c` SHA256
+  `ab3cf37eac16a1dbf91472335153ce6b92ef8daa3e5565103b8a92b75afe62dd`
+  matches the locally reproduced v55 source byte-for-byte.
+- Candidate: `validation/ios-candidate-v55-out/` with README,
+  `entry-layout-check.txt`, `SHA256SUMS`, package/validate logs, and the
+  compressed QEMU smoke trace summary. Kernel
+  `16fbec8acd87de5c34bc3487097dcea24e3fcd608a270de6f7de955eca0112cb`;
+  payload `0718b348b3ffa691ac89bb502ae81b02af61ff0ef5e886ee4749023fe47fd343`;
+  `shim-boot.img`
+  `e58de8b007ad1d9149d5161fb3ba2b7aef698c7177130257a8463e230ca0550b`;
+  `ios-boot.img`
+  `17328c3f3e76340ea1060d53bc94c206288a832bbcb0895865c1d019004efccc`.
+- Layout unchanged from v54: entry `0xfffffff007411488`,
+  `_start_first_cpu` `0xfffffff0074130ec`, `__TEXT_EXEC __text` size
+  `0x008b4000`, kernel end `0xfffffff008454000`, ADT PA `0x82454000`,
+  boot_args PA `0x82458000`. Payload grew by 320 bytes to 16,179,264.
+  Shim Image/ELF remain byte-identical to v54/v53/v31.
+- Validators PASS: buildtree, kernel (6 checks), platform 9/9, packaging,
+  handoff 20/20, all applicable focused tests (`test_m30_16k_pages.py`
+  intentionally inapplicable without 0417), and CI A53 compatibility.
+  `validate-repo.py` still reports only its pre-existing patch-number-gap
+  warnings. Generic QEMU was non-authoritative and its trace was compressed.
+- Device identity re-confirmed in TWRP before any write: `m30lte`,
+  `ro.boot.em.model=SM-M305F`, bootloader `M305FDDU8CVK1`, serial
+  `320081735bb166a3`, `ro.twrp.boot=1`. Download Mode must be confirmed
+  immediately before the BOOT write. No flash has been performed yet.
+- NEXT: enter Samsung Download Mode via ADB only, verify Heimdall detection,
+  then flash ONLY the validated `shim-boot.img` to BOOT, resume, observe
+  ~180 s, return to recovery, pull/decode pstore, and compare with
+  v45/v52/v54/v50. Never USERDATA/SYSTEM/RECOVERY; never Fastboot. No
+  UI/lock-screen milestone claim without verifiable physical evidence.

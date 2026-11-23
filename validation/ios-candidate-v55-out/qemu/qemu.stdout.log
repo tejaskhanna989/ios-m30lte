@@ -1,0 +1,5 @@
+[*] Found QEMU: QEMU emulator version 11.1.3
+[*] CPU model cortex-a76 supported
+phys_base=0x80000000 boot_args=0x82458000 entry=0x81411488
+{"status": "blank_screen", "unknown_glyphs": 0, "snapshot_only": true}
+/home/tejas/Projects/m30lte-ios/validation/ios-candidate-v55-out/qemu/fb.png  /home/tejas/Projects/m30lte-ios/validation/ios-candidate-v55-out/qemu/regs.txt  /home/tejas/Projects/m30lte-ios/validation/ios-candidate-v55-out/qemu/qemu.log
