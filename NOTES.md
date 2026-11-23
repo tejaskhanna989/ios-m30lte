@@ -2107,3 +2107,15 @@ authorization for a BOOT-only test of candidate v6.
 - Commit for source/patch/tests: d2a4854d (pushed).
 - NEXT: run CI, then package/validate. Do NOT flash without explicit user
   approval. No UI/lock-screen success claimed.
+
+## 2026-11-23 - v54 CI GREEN and candidate packaged (MAIN only)
+
+- CI 45206251994 GREEN for source 25b905f8 (patch d2a4854d). Applying patch 0431 confirmed in CI log; kernel built with XNU_TARGET=iphoneos. Buildtree vm_fault.c matches /tmp/m30_v54/modified.c byte-for-byte (SHA256 152edc1a...).
+- Candidate: validation/ios-candidate-v54-out/ with README and entry-layout-check.txt.
+  Kernel 4327c4c9fda0f3c6d50c5d65beaab74ab42af985e7569f4a5b93ffac3d3610e5;
+  payload a69480ebee4a7b90108f4b63c96e33a8f9c3168e8bd7ae738ea210947c743543;
+  shim-boot.img 1da365a3b352575a366d2d8e898e0a8585afc56fd917ca95c5e122af0aeb4d5c;
+  ios-boot.img 0f5af834c16bcac89c28da139340f28c10987e485de7541924b798c95bb3ac32.
+- Layout changed: entry VA 0xfffffff007411488 (v53 0xfffffff007410488), _start_first_cpu 0xfffffff0074130ec, __TEXT_EXEC __text size 0x008b4000; ADT PA 0x82454000 and boot_args PA 0x82458000. Shim reads entry/ADT/boot_args from payload header; shim Image/ELF and 5456-byte shim region in shim-boot.img are byte-identical to v53/v31.
+- Validators PASS: buildtree, kernel (6 checks), platform 9/9, packaging, handoff 18/18, all applicable focused tests (test_m30_16k_pages.py skipped as inapplicable). validate-repo.py has only pre-existing patch-number-gap warnings. CI A53 compatibility check passed.
+- Status: candidate packaged/validated, NOT physically tested. Device in TWRP; no flash queued. Next physical step requires EXPLICIT user approval: BOOT-only shim-boot.img flash, resume, ~180 s window, return to TWRP, pull/decode pstore. Check numbered early-start/retry markers, patch marker, state=3, and assertion timing. No UI/lock-screen success claimed. BOOT readback skipped; USERDATA/SYSTEM/RECOVERY untouched.

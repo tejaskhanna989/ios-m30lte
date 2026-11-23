@@ -1,0 +1,51 @@
+v54 kernel-entry and payload-layout check (MAIN only)
+=====================================================
+
+CI: 45206251994 (GREEN, source 25b905f8; patch source d2a4854d)
+Patches applied in CI log: 0426, 0427, 0428, 0429, 0430, 0431.
+Buildtree osfmk/vm/vm_fault.c matches /tmp/m30_v54/modified.c byte-for-byte
+(SHA256 152edc1a03a149c48bea7eec9650b9a8f774bac97f8a9d588463ef10418fca4f).
+
+1) Kernel entry
+---------------
+v53 LC_UNIXTHREAD PC: 0xfffffff007410488
+v54 LC_UNIXTHREAD PC: 0xfffffff007411488   (+0x1000)
+
+llvm-objdump -d --no-show-raw-insn \
+  --start-address=0xfffffff007411488 --stop-address=0xfffffff0074114c0 \
+  milestone_artifacts/ci_45206251994/xnu-kernel-macos-15-intel/mach.development.m30lte:
+
+  fffffff007411488 <__start>:
+  fffffff007411488:  b  0xfffffff0074130ec <_start_first_cpu>
+
+The extra retry bookkeeping grew the linked __TEXT_EXEC section by one page of
+alignment, moving __start and _start_first_cpu together by 0x1000. The shim
+reads entry_va from the payload header, so no shim rebuild is needed.
+
+2) Section size
+---------------
+__TEXT_EXEC __text:
+  v53 vmaddr 0xfffffff007248000 size 0x008ae9d8
+  v54 vmaddr 0xfffffff007248000 size 0x008b4000
+
+3) Payload layout
+-----------------
+mkpayload.py output for v54:
+  entry:         0xfffffff007411488
+  kernel_end:    0xfffffff008454000
+  ADT PA:        0x82454000 (v53: 0x82450000)
+  boot_args PA:  0x82458000 (v53: 0x82454000)
+  payload size:  16178944 bytes (v53: 16162432)
+  cmdline:       debug=0xc serial=3 cpus=1 keepsyms=1 maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1
+
+ADT and boot_args move with kernel_end; shim/loader.c derives both from the
+payload header, so the handoff remains valid. Both addresses remain inside
+RAM (mem_size 0x3d900000) and well above the loaded kernel image.
+
+4) Shim identity
+----------------
+shim_fixed.Image / shim_fixed.elf are unchanged from v53 and v31.
+The first 5456 bytes of the combined kernel region in shim-boot.img are
+byte-identical to the v53 shim region.
+
+verify_handoff_v54.py: 18/18 PASS.
