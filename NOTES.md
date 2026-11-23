@@ -2218,3 +2218,47 @@ authorization for a BOOT-only test of candidate v6.
   ~180 s, return to recovery, pull/decode pstore, and compare with
   v45/v52/v54/v50. Never USERDATA/SYSTEM/RECOVERY; never Fastboot. No
   UI/lock-screen milestone claim without verifiable physical evidence.
+
+## 2026-11-23 - v55 physical result (MAIN only): early regression
+
+- Device positively re-identified in TWRP (`SM-M305F`, `m30lte`, serial
+  `320081735bb166a3`, bootloader `M305FDDU8CVK1`, `ro.twrp.boot=1`) and
+  Heimdall detected Samsung Download Mode immediately before the write.
+  BOOT-only flash of `shim-boot.img` `e58de8b0...` succeeded at
+  `17:17:38Z..17:17:43Z`; USERDATA/SYSTEM/RECOVERY untouched, no Fastboot.
+- The first resume attempt used invalid standalone `heimdall --resume` and only
+  printed usage; a corrected `print-pit --resume` found the device had already
+  left Download Mode, so the flash had booted automatically. Full 180 s window
+  `17:17:53Z..17:21:00Z`; device later returned to TWRP ADB and pstore was
+  pulled immediately.
+- `validation/physical-boot-test/20261123-ios-v55-boot/raw/pmsg-ramoops-0` is
+  12,402 bytes, SHA256
+  `a0897bebe812f89006b0dfaba4c4484d0bdb96c3f9a0ef720ec5c193323fdbef`.
+  `tools/decode_pmsg.py` decoded 154/154 records, consumed all bytes,
+  `clean=true`, zero issues. Unlike v54, this capture is complete and un-wrapped.
+- The boot reached HFS root mount and both `load_init_program` attempts, then
+  only hardware-key events from forcing recovery. There are ZERO records for
+  `M30 IRT`, `csblk`/`csfail`/`csvok`, `M30 CS diag`, `CODE SIGNING`,
+  `cs_invalid_page`, `SpringBoard`, `NSInternalInconsistencyException`, `CRASH`,
+  or `Early boot complete`. v55 therefore regressed earlier than v54/v52 and
+  did not reach the stage the CS fix was meant to affect. PHYSICALLY REJECTED.
+- Code-supported hypothesis: v55 allocates the 16K readback buffer with
+  `kalloc_data(..., Z_WAITOK)` at `vm_fault.c:8981` while the VM object lock is
+  still held. v54 used `Z_NOWAIT` there with an explicit “do not sleep while
+  holding the object lock” comment. A sleeping allocation under the object
+  lock plausibly hangs the first code-signing validation before launchd.
+- NEXT: v56 patch changing that allocation to `Z_NOWAIT`, failing closed on
+  allocation failure, and checking `object->pager == pager` after the
+  lock drop/reacquire; then focused tests, CI, packaging, and a new BOOT-only
+  physical test. Do not reflash unchanged v55. No UI/lock-screen claim.
+
+## 2026-11-23 - local storage cleanup (approved)
+
+- Removed 48 stale, untracked `milestone_artifacts/ci_*` directories (~14.2G),
+  keeping 9 buildtree runs covering v18 (`44946634655`), v45 (`45121370706`),
+  v49 (`45162621882`), v50 (`45169239555`), v51 (`45173700250`),
+  v52 (`45179499798`), v53 (`45185667251`), v54 (`45206251994`) and
+  v55 (`45219943492`). `milestone_artifacts/` is now 2.9G.
+- `git gc` repacked 403 loose objects (381.67 MiB) into packs; `.git` is 1.7G.
+  Filesystem went from 17G free to 32G free. No history rewrite and no tracked
+  evidence deleted.

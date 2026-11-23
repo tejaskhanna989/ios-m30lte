@@ -1,0 +1,1 @@
+identity_recheck: SM-M305F / m30lte / 320081735bb166a3 / M305FDDU8CVK1 (TWRP, immediately pre-download)

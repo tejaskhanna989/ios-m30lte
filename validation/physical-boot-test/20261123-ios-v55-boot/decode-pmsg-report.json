@@ -1,0 +1,1242 @@
+{
+  "input_bytes": 12402,
+  "input_sha256": "a0897bebe812f89006b0dfaba4c4484d0bdb96c3f9a0ef720ec5c193323fdbef",
+  "record_count": 154,
+  "consumed": 12402,
+  "clean": true,
+  "records": [
+    {
+      "index": 0,
+      "offset": 0,
+      "length": 48,
+      "metadata_hex": "0000001b0b001d0b7975046bbf77b31904",
+      "tag": "adbd",
+      "message": "initializing functionfs"
+    },
+    {
+      "index": 1,
+      "offset": 48,
+      "length": 70,
+      "metadata_hex": "0000001b0b001d0b7975046b9af1b41904",
+      "tag": "adbd",
+      "message": "opening control endpoint /dev/usb-ffs/adb/ep0"
+    },
+    {
+      "index": 2,
+      "offset": 118,
+      "length": 60,
+      "metadata_hex": "0000001b0b001d0b7975046bf004c01904",
+      "tag": "adbd",
+      "message": "functionfs successfully initialized"
+    },
+    {
+      "index": 3,
+      "offset": 178,
+      "length": 50,
+      "metadata_hex": "0000001b0b001d0b7975046b9ed2c01904",
+      "tag": "adbd",
+      "message": "registering usb transport"
+    },
+    {
+      "index": 4,
+      "offset": 228,
+      "length": 88,
+      "metadata_hex": "0000001b0b001f0b7975046b303ac71906",
+      "tag": "cutils-trace",
+      "message": "Error opening trace file: No such file or directory (2)"
+    },
+    {
+      "index": 5,
+      "offset": 316,
+      "length": 159,
+      "metadata_hex": "0000001a0b001a0b7975046bfa09ee3204",
+      "tag": "ArmToArm64Assembler",
+      "message": "generated scanline__00000077:03010101_00008001_00000000 [195 ipp] (241 ins) at [0x7367f003c0:0x7367f00784] in 68653 ns\n"
+    },
+    {
+      "index": 6,
+      "offset": 475,
+      "length": 158,
+      "metadata_hex": "0000001a0b001a0b7975046b8b52ff3704",
+      "tag": "ArmToArm64Assembler",
+      "message": "generated scanline__00000077:03545405_00000000_00000000 [ 65 ipp] (94 ins) at [0x7367f00790:0x7367f00908] in 48885 ns\n"
+    },
+    {
+      "index": 7,
+      "offset": 633,
+      "length": 159,
+      "metadata_hex": "0000001a0b001a0b7a75046b57d8fa0004",
+      "tag": "ArmToArm64Assembler",
+      "message": "generated scanline__00000077:03545405_00000A01_00000000 [ 69 ipp] (113 ins) at [0x7367f00910:0x7367f00ad4] in 70000 ns\n"
+    },
+    {
+      "index": 8,
+      "offset": 792,
+      "length": 159,
+      "metadata_hex": "0000001a0b001a0b7a75046b85f7dd0104",
+      "tag": "ArmToArm64Assembler",
+      "message": "generated scanline__00000077:03545405_00000A08_00000000 [ 69 ipp] (116 ins) at [0x7367f00ae0:0x7367f00cb0] in 56461 ns\n"
+    },
+    {
+      "index": 9,
+      "offset": 951,
+      "length": 113,
+      "metadata_hex": "0000001b0b00200b8675046bd05acc2e06",
+      "tag": "adbd",
+      "message": "aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 10,
+      "offset": 1064,
+      "length": 109,
+      "metadata_hex": "0000001b0b00200b8675046b4438cd2e06",
+      "tag": "adbd",
+      "message": "remote usb: read terminated (message): Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 11,
+      "offset": 1173,
+      "length": 53,
+      "metadata_hex": "0000001b0b001b0b8675046b2fc1d22e04",
+      "tag": "adbd",
+      "message": "closing functionfs transport"
+    },
+    {
+      "index": 12,
+      "offset": 1226,
+      "length": 48,
+      "metadata_hex": "0000001b0b001d0b8675046b7e24fd3404",
+      "tag": "adbd",
+      "message": "initializing functionfs"
+    },
+    {
+      "index": 13,
+      "offset": 1274,
+      "length": 60,
+      "metadata_hex": "0000001b0b001d0b8675046bafb0ff3404",
+      "tag": "adbd",
+      "message": "functionfs successfully initialized"
+    },
+    {
+      "index": 14,
+      "offset": 1334,
+      "length": 50,
+      "metadata_hex": "0000001b0b001d0b8675046b9bfdff3404",
+      "tag": "adbd",
+      "message": "registering usb transport"
+    },
+    {
+      "index": 15,
+      "offset": 1384,
+      "length": 113,
+      "metadata_hex": "0000001b0b00740b4676046b41131d1006",
+      "tag": "adbd",
+      "message": "aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 16,
+      "offset": 1497,
+      "length": 109,
+      "metadata_hex": "0000001b0b00740b4676046bb30a1e1006",
+      "tag": "adbd",
+      "message": "remote usb: read terminated (message): Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 17,
+      "offset": 1606,
+      "length": 53,
+      "metadata_hex": "0000001b0b001b0b4676046b2278241004",
+      "tag": "adbd",
+      "message": "closing functionfs transport"
+    },
+    {
+      "index": 18,
+      "offset": 1659,
+      "length": 48,
+      "metadata_hex": "0000001b0b001d0b4676046b2bb1f41604",
+      "tag": "adbd",
+      "message": "initializing functionfs"
+    },
+    {
+      "index": 19,
+      "offset": 1707,
+      "length": 60,
+      "metadata_hex": "0000001b0b001d0b4676046b35f7f71604",
+      "tag": "adbd",
+      "message": "functionfs successfully initialized"
+    },
+    {
+      "index": 20,
+      "offset": 1767,
+      "length": 50,
+      "metadata_hex": "0000001b0b001d0b4676046b1e7bf81604",
+      "tag": "adbd",
+      "message": "registering usb transport"
+    },
+    {
+      "index": 21,
+      "offset": 1817,
+      "length": 113,
+      "metadata_hex": "0000001b0b00950b9976046be400101306",
+      "tag": "adbd",
+      "message": "aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 22,
+      "offset": 1930,
+      "length": 109,
+      "metadata_hex": "0000001b0b00950b9976046bf3fe101306",
+      "tag": "adbd",
+      "message": "remote usb: read terminated (message): Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 23,
+      "offset": 2039,
+      "length": 53,
+      "metadata_hex": "0000001b0b001b0b9976046b6255161304",
+      "tag": "adbd",
+      "message": "closing functionfs transport"
+    },
+    {
+      "index": 24,
+      "offset": 2092,
+      "length": 48,
+      "metadata_hex": "0000001b0b001d0b9976046b79626d1704",
+      "tag": "adbd",
+      "message": "initializing functionfs"
+    },
+    {
+      "index": 25,
+      "offset": 2140,
+      "length": 60,
+      "metadata_hex": "0000001b0b001d0b9976046b4166701704",
+      "tag": "adbd",
+      "message": "functionfs successfully initialized"
+    },
+    {
+      "index": 26,
+      "offset": 2200,
+      "length": 50,
+      "metadata_hex": "0000001b0b001d0b9976046ba2f3701704",
+      "tag": "adbd",
+      "message": "registering usb transport"
+    },
+    {
+      "index": 27,
+      "offset": 2250,
+      "length": 105,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "Darwin Kernel Version 22.6.0: Mon Aug 14 05:06:07 UTC 2023; runner:xnu-8796.141.3"
+    },
+    {
+      "index": 28,
+      "offset": 2355,
+      "length": 71,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "pmap_startup() init/release time: 3662 microsec"
+    },
+    {
+      "index": 29,
+      "offset": 2426,
+      "length": 70,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "pmap_startup() delayed init/release of 0 pages"
+    },
+    {
+      "index": 30,
+      "offset": 2496,
+      "length": 115,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "vm_page_bootstrap: 64337 free pages, 10415 wired pages, (up to 0 of which are delayed free)"
+    },
+    {
+      "index": 31,
+      "offset": 2611,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "VM boostrap: 51 maps, 153 entries and 128 holes available"
+    },
+    {
+      "index": 32,
+      "offset": 2692,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "Maximum number of VM swap files: 5"
+    },
+    {
+      "index": 33,
+      "offset": 2750,
+      "length": 95,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "mb                      : 0xfffffff0008b7000 - 0xfffffff0048b7000 (64M)"
+    },
+    {
+      "index": 34,
+      "offset": 2845,
+      "length": 95,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zones                   : 0xfffffff041800000 - 0xfffffff641800000 (24G)"
+    },
+    {
+      "index": 35,
+      "offset": 2940,
+      "length": 96,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "bufferhdr               : 0xfffffff641800000 - 0xfffffff6418bd000 (756K)"
+    },
+    {
+      "index": 36,
+      "offset": 3036,
+      "length": 94,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "io_submap               : 0xfffffff6418bd000 - 0xfffffff6420bd000 (8M)"
+    },
+    {
+      "index": 37,
+      "offset": 3130,
+      "length": 94,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "ipc_kernel_copy_map     : 0xfffffff6420bd000 - 0xfffffff6428bd000 (8M)"
+    },
+    {
+      "index": 38,
+      "offset": 3224,
+      "length": 95,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zone_meta               : 0xfffffff6428bd000 - 0xfffffff6489c3000 (97M)"
+    },
+    {
+      "index": 39,
+      "offset": 3319,
+      "length": 94,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "bsd_pageable            : 0xfffffff6489c3000 - 0xfffffff649245000 (8M)"
+    },
+    {
+      "index": 40,
+      "offset": 3413,
+      "length": 95,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "gIOKitPageableFixed3    : 0xfffffff649245000 - 0xfffffff64f245000 (96M)"
+    },
+    {
+      "index": 41,
+      "offset": 3508,
+      "length": 97,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "kmem_ptr_range_meta     : 0xfffffff64f245000 - 0xfffffff64f34e000 (1060K)"
+    },
+    {
+      "index": 42,
+      "offset": 3605,
+      "length": 95,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "ipc_kernel_map          : 0xfffffff64f34e000 - 0xfffffff65334e000 (64M)"
+    },
+    {
+      "index": 43,
+      "offset": 3700,
+      "length": 95,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "gIOKitPageableFixed2    : 0xfffffff65334e000 - 0xfffffff65934e000 (96M)"
+    },
+    {
+      "index": 44,
+      "offset": 3795,
+      "length": 94,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "kmem_ptr_range          : 0xfffffff65934e000 - 0xfffffff7ba40e000 (5G)"
+    },
+    {
+      "index": 45,
+      "offset": 3889,
+      "length": 96,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "kmem_sprayqtn_range     : 0xfffffff7ba40e000 - 0xfffffff7c23c4000 (127M)"
+    },
+    {
+      "index": 46,
+      "offset": 3985,
+      "length": 95,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "kmem_data_range         : 0xfffffff7c23c4000 - 0xfffffffbdd9bb000 (16G)"
+    },
+    {
+      "index": 47,
+      "offset": 4080,
+      "length": 95,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "gIOKitPageableFixed1    : 0xfffffffbdd9bb000 - 0xfffffffbe39bb000 (96M)"
+    },
+    {
+      "index": 48,
+      "offset": 4175,
+      "length": 95,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "gIOKitPageableFixed0    : 0xfffffffbe39bb000 - 0xfffffffbe99bb000 (96M)"
+    },
+    {
+      "index": 49,
+      "offset": 4270,
+      "length": 96,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "compressor              : 0xfffffffbe99bb000 - 0xfffffffbfbdfc000 (292M)"
+    },
+    {
+      "index": 50,
+      "offset": 4366,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "kmem_large_ranges[1]    : 0 - 0 (0B)"
+    },
+    {
+      "index": 51,
+      "offset": 4426,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "kmem_large_ranges[2]    : 0 - 0 (0B)"
+    },
+    {
+      "index": 52,
+      "offset": 4486,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "kmem_large_ranges[3]    : 0 - 0 (0B)"
+    },
+    {
+      "index": 53,
+      "offset": 4546,
+      "length": 96,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "kmem_large_ranges[4]    : 0xfffffff7bb404c00 - 0xfffffff7c23c4000 (111M)"
+    },
+    {
+      "index": 54,
+      "offset": 4642,
+      "length": 95,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "kmem_large_ranges[5]    : 0xfffffff845a82e00 - 0xfffffffbdd9bb000 (14G)"
+    },
+    {
+      "index": 55,
+      "offset": 4737,
+      "length": 49,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "\"vm_compressor_mode\" is 0"
+    },
+    {
+      "index": 56,
+      "offset": 4786,
+      "length": 100,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zone_init: pgzalloc  0xfffffff041800000:0xfffffff04187f000 (508K) [63 slots]"
+    },
+    {
+      "index": 57,
+      "offset": 4886,
+      "length": 90,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zone_init: map VM    0xfffffff04187f000:0xfffffff127ed2000 (3686M)"
+    },
+    {
+      "index": 58,
+      "offset": 4976,
+      "length": 90,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zone_init: map RO    0xfffffff127ed2000:0xfffffff174b98000 (1228M)"
+    },
+    {
+      "index": 59,
+      "offset": 5066,
+      "length": 90,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zone_init: map GEN0  0xfffffff174b98000:0xfffffff25b1eb000 (3686M)"
+    },
+    {
+      "index": 60,
+      "offset": 5156,
+      "length": 90,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zone_init: map GEN1  0xfffffff25b1eb000:0xfffffff34183e000 (3686M)"
+    },
+    {
+      "index": 61,
+      "offset": 5246,
+      "length": 90,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zone_init: map GEN2  0xfffffff34183e000:0xfffffff427e91000 (3686M)"
+    },
+    {
+      "index": 62,
+      "offset": 5336,
+      "length": 90,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zone_init: map GEN3  0xfffffff427e91000:0xfffffff50e4e5000 (3686M)"
+    },
+    {
+      "index": 63,
+      "offset": 5426,
+      "length": 90,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zone_init: map DATA  0xfffffff50e4e5000:0xfffffff641800000 (4915M)"
+    },
+    {
+      "index": 64,
+      "offset": 5516,
+      "length": 88,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zone_init: metadata  0xfffffff6428cd000:0xfffffff6488cd000 (96M)"
+    },
+    {
+      "index": 65,
+      "offset": 5604,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zone_init: metabits  0xfffffff6488cd000:0xfffffff6489b3000 (920K)"
+    },
+    {
+      "index": 66,
+      "offset": 5693,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "zone_init: extra     0:0 (0B)"
+    },
+    {
+      "index": 67,
+      "offset": 5746,
+      "length": 82,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "VM bootstrap done: 39 maps, 112 entries and 117 holes left"
+    },
+    {
+      "index": 68,
+      "offset": 5828,
+      "length": 102,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "Log queues configured: slot count: 8, per-slot size: 32768, total size: 262144"
+    },
+    {
+      "index": 69,
+      "offset": 5930,
+      "length": 66,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "Firehose configured: 16 chunks, 8 io pages"
+    },
+    {
+      "index": 70,
+      "offset": 5996,
+      "length": 86,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "OSLog stream configured: stream: 8192 bytes, cache: 2112 bytes"
+    },
+    {
+      "index": 71,
+      "offset": 6082,
+      "length": 52,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "OSLog stream verification: 0"
+    },
+    {
+      "index": 72,
+      "offset": 6134,
+      "length": 65,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "Long logs support configured: size: 16384"
+    },
+    {
+      "index": 73,
+      "offset": 6199,
+      "length": 64,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "standard timeslicing quantum is 10000 us"
+    },
+    {
+      "index": 74,
+      "offset": 6263,
+      "length": 62,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "standard background quantum is 2500 us"
+    },
+    {
+      "index": 75,
+      "offset": 6325,
+      "length": 70,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "mig_table_max_displ = 54 mach_kobj_count = 374"
+    },
+    {
+      "index": 76,
+      "offset": 6395,
+      "length": 51,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "kdp_core zlib memory 0x7000"
+    },
+    {
+      "index": 77,
+      "offset": 6446,
+      "length": 132,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "Serial requested, consistent debug disabled or debug boot arg not present, configuring debugging over serial"
+    },
+    {
+      "index": 78,
+      "offset": 6578,
+      "length": 50,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "iBoot version: m30lte-shim"
+    },
+    {
+      "index": 79,
+      "offset": 6628,
+      "length": 41,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "\"name\" not a kext"
+    },
+    {
+      "index": 80,
+      "offset": 6669,
+      "length": 49,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "\"AAPL,phandle\" not a kext"
+    },
+    {
+      "index": 81,
+      "offset": 6718,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AMFI: built-in interface registered (XML entitlements)"
+    },
+    {
+      "index": 82,
+      "offset": 6802,
+      "length": 59,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "calling mpo_policy_init for vnguard"
+    },
+    {
+      "index": 83,
+      "offset": 6861,
+      "length": 78,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "Security policy loaded: Guarded vnode policy (vnguard)"
+    },
+    {
+      "index": 84,
+      "offset": 6939,
+      "length": 62,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "calling mpo_policy_init for SWEET AMFI"
+    },
+    {
+      "index": 85,
+      "offset": 7001,
+      "length": 97,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "Security policy loaded: SWEET built-in Mobile File Integrity (SWEET AMFI)"
+    },
+    {
+      "index": 86,
+      "offset": 7098,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AMFI: platform binary policy registered (0)"
+    },
+    {
+      "index": 87,
+      "offset": 7171,
+      "length": 59,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "calling mpo_policy_init for Sandbox"
+    },
+    {
+      "index": 88,
+      "offset": 7230,
+      "length": 91,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "Security policy loaded: SWEET permissive sandbox stand-in (Sandbox)"
+    },
+    {
+      "index": 89,
+      "offset": 7321,
+      "length": 71,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET Sandbox: permissive policy registered (0)"
+    },
+    {
+      "index": 90,
+      "offset": 7392,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET: trust caches unavailable (Image4/AMFI not installed)"
+    },
+    {
+      "index": 91,
+      "offset": 7475,
+      "length": 90,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "keepsyms boot arg specified; keeping linkedit segment for symbols."
+    },
+    {
+      "index": 92,
+      "offset": 7565,
+      "length": 45,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "No POST boot-arg set."
+    },
+    {
+      "index": 93,
+      "offset": 7610,
+      "length": 66,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "Copyright (c) 1982, 1986, 1989, 1991, 1993"
+    },
+    {
+      "index": 94,
+      "offset": 7676,
+      "length": 90,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "\tThe Regents of the University of California. All rights reserved."
+    },
+    {
+      "index": 95,
+      "offset": 7766,
+      "length": 62,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "MAC Framework successfully initialized"
+    },
+    {
+      "index": 96,
+      "offset": 7828,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "using 1307 buffer headers and 1307 cluster IO buffer headers"
+    },
+    {
+      "index": 97,
+      "offset": 7912,
+      "length": 61,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 BSD: IOKitInitializeTime returned"
+    },
+    {
+      "index": 98,
+      "offset": 7973,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "IOResources: not registry member at registerService()"
+    },
+    {
+      "index": 99,
+      "offset": 8050,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "ktriage_register_subsystem_strings: set subsystem 8 strings"
+    },
+    {
+      "index": 100,
+      "offset": 8133,
+      "length": 49,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 BSD: vfsinit returned"
+    },
+    {
+      "index": 101,
+      "offset": 8182,
+      "length": 59,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HFS: hfs-627.100.6 registered"
+    },
+    {
+      "index": 102,
+      "offset": 8241,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 BSD: sweet_hfs registered"
+    },
+    {
+      "index": 103,
+      "offset": 8294,
+      "length": 70,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "mcache: 1 CPU(s), 64 bytes CPU cache line size"
+    },
+    {
+      "index": 104,
+      "offset": 8364,
+      "length": 43,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "waitForSystemMapper"
+    },
+    {
+      "index": 105,
+      "offset": 8407,
+      "length": 106,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "Backtrace 0xfffffff007703358 0xfffffff007a6c220 0xfffffff007413860 0x0 0x0 0x0 0x0"
+    },
+    {
+      "index": 106,
+      "offset": 8513,
+      "length": 118,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "         can't perform kext scan: no kext summaryA5XELTE: starting device-tree platform expert"
+    },
+    {
+      "index": 107,
+      "offset": 8631,
+      "length": 75,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "mbinit: done [64 MB total pool size, (42/21) split]"
+    },
+    {
+      "index": 108,
+      "offset": 8706,
+      "length": 113,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "dlil_init: Waiting for all the create dlil kernel threads to get scheduled at least once."
+    },
+    {
+      "index": 109,
+      "offset": 8819,
+      "length": 117,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "dlil_init: All the created dlil kernel threads have been scheduled at least once. Proceeding."
+    },
+    {
+      "index": 110,
+      "offset": 8936,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 BSD: calling bsd_autoconf"
+    },
+    {
+      "index": 111,
+      "offset": 8989,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "IOResources: not registry member at registerService()"
+    },
+    {
+      "index": 112,
+      "offset": 9066,
+      "length": 54,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 BSD: bsd_autoconf returned"
+    },
+    {
+      "index": 113,
+      "offset": 9120,
+      "length": 129,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "ifnet_attach: All kernel threads created for interface lo0 have been scheduled at least once. Proceeding."
+    },
+    {
+      "index": 114,
+      "offset": 9249,
+      "length": 127,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "ifnet_attach: Waiting for all kernel threads created for interface gif0 to get scheduled at least once."
+    },
+    {
+      "index": 115,
+      "offset": 9376,
+      "length": 130,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "ifnet_attach: All kernel threads created for interface gif0 have been scheduled at least once. Proceeding."
+    },
+    {
+      "index": 116,
+      "offset": 9506,
+      "length": 174,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "skip attaching fsw to lo0 using legacy TX modelifnet_attach: Waiting for all kernel threads created for interface stf0 to get scheduled at least once."
+    },
+    {
+      "index": 117,
+      "offset": 9680,
+      "length": 130,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "ifnet_attach: All kernel threads created for interface stf0 have been scheduled at least once. Proceeding."
+    },
+    {
+      "index": 118,
+      "offset": 9810,
+      "length": 55,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 ROOT: IOFindBSDRoot entered"
+    },
+    {
+      "index": 119,
+      "offset": 9865,
+      "length": 59,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE: platform expert registered"
+    },
+    {
+      "index": 120,
+      "offset": 9924,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: AppleKeyStore registered (no passcode, unlocked)"
+    },
+    {
+      "index": 121,
+      "offset": 10007,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET WDT: IOWatchdog registered (accepts check-ins, never fires)"
+    },
+    {
+      "index": 122,
+      "offset": 10096,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AMFI: AppleMobileFileIntegrity IOService registered"
+    },
+    {
+      "index": 123,
+      "offset": 10177,
+      "length": 64,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: IOCoreSurfaceRoot registered"
+    },
+    {
+      "index": 124,
+      "offset": 10241,
+      "length": 70,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: buttons registered (test every 0 s)"
+    },
+    {
+      "index": 125,
+      "offset": 10311,
+      "length": 51,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: touch registered"
+    },
+    {
+      "index": 126,
+      "offset": 10362,
+      "length": 122,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: AppleCLCD 1080x2340 stride 4320 at 0xec000000, default surface 1, presented as 1080x2340"
+    },
+    {
+      "index": 127,
+      "offset": 10484,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE FB: requested 30 Hz, effective 30 Hz, copy timing on"
+    },
+    {
+      "index": 128,
+      "offset": 10568,
+      "length": 80,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 ROOT: waitForMatchingService(IOBSD) returned service"
+    },
+    {
+      "index": 129,
+      "offset": 10648,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 ROOT: A5XELTE keys/emmc stage (rdBootVar='emmcroot0')"
+    },
+    {
+      "index": 130,
+      "offset": 10729,
+      "length": 80,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30LTE KEYS: GPA1 con=0 dat=0xe0 pud=0x11111 (read only)"
+    },
+    {
+      "index": 131,
+      "offset": 10809,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE eMMC: host ctrl=10 status=8906 clk=1 hcon=8e42541"
+    },
+    {
+      "index": 132,
+      "offset": 10890,
+      "length": 92,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE eMMC: GPT USERDATA first=10729472 sectors=111403008 writable"
+    },
+    {
+      "index": 133,
+      "offset": 10982,
+      "length": 86,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 ROOT: A5XELTE keys/emmc stage done (rdBootVar='emmcroot0')"
+    },
+    {
+      "index": 134,
+      "offset": 11068,
+      "length": 92,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE eMMC: GPT USERDATA first=10729472 sectors=111403008 writable"
+    },
+    {
+      "index": 135,
+      "offset": 11160,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE eMMC: /dev/emmcroot0 ready, GPT USERDATA writable"
+    },
+    {
+      "index": 136,
+      "offset": 11241,
+      "length": 61,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "BSD root: emmcroot0, major 1, minor 0"
+    },
+    {
+      "index": 137,
+      "offset": 11302,
+      "length": 62,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "hfs: mounted iOSRoot on device b(1, 0)"
+    },
+    {
+      "index": 138,
+      "offset": 11364,
+      "length": 97,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE: root volume is not authenticated (error 25); continuing unsealed"
+    },
+    {
+      "index": 139,
+      "offset": 11461,
+      "length": 45,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "No POST boot-arg set."
+    },
+    {
+      "index": 140,
+      "offset": 11506,
+      "length": 105,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "load_init_program: attempting to load /usr/appleinternal/sbin/launchd.development"
+    },
+    {
+      "index": 141,
+      "offset": 11611,
+      "length": 75,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "load_init_program: attempting to load /sbin/launchd"
+    },
+    {
+      "index": 142,
+      "offset": 11686,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 143,
+      "offset": 11746,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (0 clients)"
+    },
+    {
+      "index": 144,
+      "offset": 11806,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=1 gpio=0x20"
+    },
+    {
+      "index": 145,
+      "offset": 11866,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea down (0 clients)"
+    },
+    {
+      "index": 146,
+      "offset": 11926,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xe0"
+    },
+    {
+      "index": 147,
+      "offset": 11986,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (0 clients)"
+    },
+    {
+      "index": 148,
+      "offset": 12044,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=0 gpio=0xe0"
+    },
+    {
+      "index": 149,
+      "offset": 12104,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea up (0 clients)"
+    },
+    {
+      "index": 150,
+      "offset": 12162,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x20"
+    },
+    {
+      "index": 151,
+      "offset": 12222,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (0 clients)"
+    },
+    {
+      "index": 152,
+      "offset": 12282,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=1 gpio=0x20"
+    },
+    {
+      "index": 153,
+      "offset": 12342,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea down (0 clients)"
+    }
+  ],
+  "issues": []
+}
