@@ -37,6 +37,7 @@ PSTORE_V44 = ROOT / "validation/physical-boot-test/20261123-ios-v44-boot/raw/pms
 PSTORE_V45 = ROOT / "validation/physical-boot-test/20261123-ios-v45-boot/raw/pmsg-ramoops-0"
 PSTORE_V46 = ROOT / "validation/physical-boot-test/20261123-ios-v46-boot/raw/pmsg-ramoops-0"
 PSTORE_V47 = ROOT / "validation/physical-boot-test/20261123-ios-v47-boot/raw/pmsg-ramoops-0"
+PSTORE_V48 = ROOT / "validation/physical-boot-test/20261123-ios-v48-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -421,6 +422,24 @@ def main():
     assert b"SpringBoardUI.framework" not in d47
     assert b"Early boot complete. Continuing system boot." not in d47
     print("[PASS] v47 pstore: mapping found (hits=1,sc=42,si=26) but state=2")
+
+    # --- v48 physical: the IRT page patch finally fired. ---
+    d48 = PSTORE_V48.read_bytes()
+    assert len(d48) == 16372, "v48 pmsg ring should be full/wrapped"
+    assert b"M30 IRT: patched _internal_release_type off 0xa432d84 (0 -> 3)" in d48
+    assert b"M30 IRT: patched (final state=3 off=0xa432d84" in d48
+    assert b"nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=19821 " \
+           b"vh=3493 oh=1 pr=-5 fb=0x0 hb=" in d48
+    assert b"M30 IRT status: state=3 off=0xa432d84" in d48
+    assert b"M30 IRT final:" not in d48
+    # The resident-page shortcut was rejected (pr=-5: page not validated), but
+    # the strict alias identity let a later normal fault patch the page.
+    assert b"pr=-5" in d48 and b"oh=1" in d48
+    # The SpringBoardUI assertion is still present and precedes the patch, so
+    # no UI/user-space success is claimed.
+    assert b"This process should not be linking or loading SpringBoardUI.framework" in d48
+    assert b"Early boot complete. Continuing system boot." not in d48
+    print("[PASS] v48 pstore: IRT patch fired (state=3, oh=1), assertion persists")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global

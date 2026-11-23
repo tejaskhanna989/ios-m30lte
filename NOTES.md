@@ -1665,3 +1665,27 @@ authorization for a BOOT-only test of candidate v6.
   tested. NEXT: BOOT-only flash, capture pstore, read the resident-patch or
   updated final heartbeat, then inspect whether SpringBoard proceeds.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v48 physical: IRT patch confirmed, assertion still early
+
+- Device positively identified before flashing: ADB serial
+  `320081735bb166a3`, product `m30lte`, state `recovery`, `ro.twrp.boot=1`.
+  BOOT-only flash succeeded; no readback; USERDATA/SYSTEM/RECOVERY untouched.
+- pstore
+  `ea99ef076996bd636f19516f7a34d815119bbcfd913d3a952e1badffd6679b03`
+  (16,372 B, 116 records, 3 gaps). Evidence preserved in
+  `validation/physical-boot-test/20261123-ios-v48-boot/`.
+- `_internal_release_type` was patched in memory:
+  `M30 IRT: patched _internal_release_type off 0xa432d84 (0 -> 3)`. Durable
+  success heartbeat survived through `hb=22`:
+  `M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=19821 vh=3493 oh=1 pr=-5 fb=0x0 hb=22`.
+- The direct resident-page shortcut was rejected (`pr=-5`, page not validated)
+  and correctly not used. The strict alias match plus fault-path fallback did
+  fire (`oh=1`, `mo=0xa432000`), so the IRT milestone is proven physically.
+- The SpringBoardUI assertion and `NSInternalInconsistencyException` are still
+  present and appear before the patch marker. No `Early boot complete` and no
+  UI/lock-screen evidence. The next likely correction is to run the
+  post-validation fix-ups on the code-signing bitmap fast path too and to
+  start the IRT scan before the XCTEST retrigger so the patch lands before the
+  SpringBoardUI probe.
+- BOOT readback SKIPPED.
