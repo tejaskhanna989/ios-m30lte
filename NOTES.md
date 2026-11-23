@@ -1742,3 +1742,33 @@ authorization for a BOOT-only test of candidate v6.
   markers, IRT ordering relative to the assertion, and any SpringBoard
   progression.
 - NO UI/lock-screen success claimed. BOOT readback SKIPPED.
+
+## 2026-11-23 — v49 physical result and v50 offline (MAIN only)
+
+- v49 was BOOT-flashed with `shim-boot.img`
+  `81b4626da7c3fbc787ef824e8c7d73470e04f5fea5ee60a4ed3d605c9e812c79` on the
+  positively identified M30 (`m30lte`, serial `320081735bb166a3`) in TWRP.
+  BOOT only; no BOOT readback; USERDATA/SYSTEM/RECOVERY untouched.
+- pstore `validation/physical-boot-test/20261123-ios-v49-boot/raw/pmsg-ramoops-0`
+  SHA256 `fd517375e9dbab5561cb9511808a33b96f6b35b3d32eaf79a348fc28a0370e0e`.
+  Decoded log: `state=4`, `off=0x0`, `hits=0`, `tries=0`, `fo=0`, `vh=0`,
+  `oh=0`, `err=0`. No `M30 IRT: patched`, no `M30 XCTEST: patched`, no
+  `M30 IRT: retrigger`, no `Early boot complete`.
+- The change that started the IRT worker on the first dyld-pager fault is a
+  regression: the worker failed before reaching the symbol scan. This confirms
+  the v48 XCTEST retrigger gate is required. The 30 full status replay lines
+  also wrapped most of the one-shot diagnostics out of the 16 KB ring.
+- v50 (`0427-m30-irt-retrigger-gate.patch`, incremental on v49/0426):
+  1. Restore the exact v48 `m30_irt_retriggered && !m30_irt_thread_started`
+     worker gate.
+  2. Factor the retrigger reset into `m30_irt_retrigger_after_xctest()` and call
+     it from BOTH validation paths, so a bitmap-fast-path XCTest patch opens the
+     same gate instead of being ignored.
+  3. Add `xctest=<count>` to both durable heartbeat forms so the captured pmsg
+     ring proves whether the class-name fix-up fired even after wrap.
+- Offline checks PASS: standalone syntax check; `git apply --check` for 0426 then
+  0427 against the exact v49 CI base; application reproduces the intended v50
+  `vm_fault.c` byte-for-byte; focused tests extended with v49 physical evidence
+  and a fast-path-gate model.
+- NEXT: commit/push v50 source, run CI, then package/validate/boot as before.
+- NO UI/lock-screen success claimed.

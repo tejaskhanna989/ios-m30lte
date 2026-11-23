@@ -1,0 +1,158 @@
+diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
+index 4528b79..4669ab0 100644
+--- a/osfmk/vm/vm_fault.c
++++ b/osfmk/vm/vm_fault.c
+@@ -205,6 +205,40 @@ static uint32_t  m30_irt_offset_hits = 0;
+ static uint64_t  m30_irt_last_mo = 0;
+ static uint32_t  m30_irt_proactive_tries = 0;
+ static int       m30_irt_proactive_result = 0;
++static unsigned long m30_xctest_patch_count = 0;
++
++/* The XCTest literal patch is the proven "pager is ready" gate.  Replay the
++ * one-shot diagnostics and reopen the DSC scan once, whether the literal was
++ * rewritten on the slow validation path or on the bitmap fast path. */
++static void
++m30_irt_retrigger_after_xctest(void)
++{
++	if (m30_xctest_patch_count == 0 || m30_irt_retriggered) {
++		return;
++	}
++	m30_irt_retriggered = 1;
++	m30_irt_state = M30_IRT_STATE_NEED_DSC;
++	m30_irt_file_offset = 0;
++	m30_irt_target_vp = (vnode_t)0;
++	m30_irt_sym_vmaddr = 0;
++	m30_irt_image_addr = 0;
++	m30_irt_base_map_cnt = 0;
++	m30_irt_base_map_addr = 0;
++	m30_irt_base_map_size = 0;
++	m30_irt_base_map_off = 0;
++	m30_irt_sym_map_cnt = 0;
++	m30_irt_sym_map_addr = 0;
++	m30_irt_sym_map_size = 0;
++	m30_irt_sym_map_fileoff = 0;
++	m30_irt_fallback_off = 0;
++	m30_irt_map_hits = 0;
++	m30_irt_map_tries = 0;
++	m30_irt_last_err = 0;
++	m30_irt_diag_seen = 0;
++	m30_irt_thread_started = 0;
++	printf("M30 IRT: retrigger after XCTEST patch (total %lu)\n",
++	    m30_xctest_patch_count);
++}
+ 
+ /* One-shot diagnostics: every distinct failure reason is printed at most once
+  * so the ramoops pmsg ring is not flooded. */
+@@ -1125,7 +1159,8 @@ out:
+ 			printf("M30 IRT: patched (final state=%d off=0x%llx "
+ 			    "sym=0x%llx comp=%d ls=0x%llx "
+ 			    "nlist_cnt=%u nlist_range=%u sc=%u si=%d "
+-			    "fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d)\n",
++			    "fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d "
++			    "xctest=%lu)\n",
+ 			    m30_irt_state,
+ 			    (unsigned long long)m30_irt_file_offset,
+ 			    (unsigned long long)m30_irt_sym_vmaddr,
+@@ -1134,12 +1169,14 @@ out:
+ 			    m30_irt_subcache_index, m30_irt_haveoff_faults,
+ 			    m30_irt_target_vp_hits, m30_irt_offset_hits,
+ 			    m30_irt_proactive_result,
+-			    (unsigned long long)m30_irt_fallback_off, i);
++			    (unsigned long long)m30_irt_fallback_off, i,
++			    m30_xctest_patch_count);
+ 		} else {
+ 			printf("M30 IRT final: state=%d off=0x%llx err=%d "
+ 			    "sym=0x%llx comp=%d ls=0x%llx "
+ 			    "nlist_cnt=%u nlist_range=%u hits=%d tries=%d "
+-			    "sc=%u si=%d fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d\n",
++			    "sc=%u si=%d fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d "
++			    "xctest=%lu\n",
+ 			    m30_irt_state,
+ 			    (unsigned long long)m30_irt_file_offset,
+ 			    m30_irt_last_err,
+@@ -1150,7 +1187,8 @@ out:
+ 			    m30_irt_subcache_cnt, m30_irt_subcache_index,
+ 			    m30_irt_haveoff_faults, m30_irt_target_vp_hits,
+ 			    m30_irt_offset_hits, m30_irt_proactive_result,
+-			    (unsigned long long)m30_irt_fallback_off, i);
++			    (unsigned long long)m30_irt_fallback_off, i,
++			    m30_xctest_patch_count);
+ 		}
+ 	}
+ }
+@@ -1237,12 +1275,13 @@ m30_internal_release_fixup(vnode_t vp, memory_object_t pager,
+ 		return;
+ 	}
+ 
+-	/* Defer the read-only DSC symbol scan outside the object lock.  Start on
+-	 * the first dyld-pager fault rather than waiting for the XCTEST patch:
+-	 * the SpringBoardUI probe can fire before that retrigger.  Wrong-magic
+-	 * vnodes reset NEED_DSC, so a later DSC fault retries safely. */
++	/* Defer the read-only DSC symbol scan outside the object lock. */
++	/* Only scan after the XCTEST patch retrigger: before that the pager
++	 * hands us launchd/dyld Mach-O vnodes, never the DSC.  v49 started the
++	 * worker on the first fault and it failed before the symbol scan; keep
++	 * the v48-proven gate but let the fast path open it too. */
+ 	if (m30_irt_state == M30_IRT_STATE_NEED_DSC &&
+-	    !m30_irt_thread_started) {
++	    m30_irt_retriggered && !m30_irt_thread_started) {
+ 		if (vnode_ref(vp) == 0) {
+ 			kr = kernel_thread_start_priority(
+ 			    (thread_continue_t)m30_irt_worker, (void *)vp,
+@@ -1287,8 +1326,6 @@ m30_internal_release_fixup(vnode_t vp, memory_object_t pager,
+  * within a page is rewritten (not just the first).  Each patch is logged with
+  * the object offset and a running total for physical diagnostics.
+  */
+-static unsigned long m30_xctest_patch_count = 0;
+-
+ static void
+ m30_xctest_probe_fixup(void *kaddr, uint64_t page_offset)
+ {
+@@ -8808,34 +8845,11 @@ vm_page_validate_cs_mapped_slow(
+ 		/* Userspace class-name fix-up, strictly after validation. */
+ 		m30_xctest_probe_fixup(kaddr, mo_offset);
+ 
+-		/* The ramoops pmsg ring wraps early in a deep iOS boot.  When the
+-		 * SpringBoard-related XCTest literal is first patched, replay the
+-		 * IRT state machine and its one-shot diagnostics once so the result
+-		 * is visible in the captured log window. */
+-		if (m30_xctest_patch_count != 0 && !m30_irt_retriggered) {
+-			m30_irt_retriggered = 1;
+-			m30_irt_state = M30_IRT_STATE_NEED_DSC;
+-			m30_irt_file_offset = 0;
+-			m30_irt_target_vp = (vnode_t)0;
+-			m30_irt_sym_vmaddr = 0;
+-			m30_irt_image_addr = 0;
+-			m30_irt_base_map_cnt = 0;
+-			m30_irt_base_map_addr = 0;
+-			m30_irt_base_map_size = 0;
+-			m30_irt_base_map_off = 0;
+-			m30_irt_sym_map_cnt = 0;
+-			m30_irt_sym_map_addr = 0;
+-			m30_irt_sym_map_size = 0;
+-			m30_irt_sym_map_fileoff = 0;
+-			m30_irt_fallback_off = 0;
+-			m30_irt_map_hits = 0;
+-			m30_irt_map_tries = 0;
+-			m30_irt_last_err = 0;
+-			m30_irt_diag_seen = 0;
+-			m30_irt_thread_started = 0;
+-			printf("M30 IRT: retrigger after XCTEST patch (total %lu)\n",
+-			    m30_xctest_patch_count);
+-		}
++		/* The ramoops pmsg ring wraps early in a deep iOS boot.  Replay
++		 * the IRT state machine and its one-shot diagnostics once the
++		 * XCTest literal is patched, so the result is visible in the
++		 * captured log window. */
++		m30_irt_retrigger_after_xctest();
+ 
+ 		/* LiveContainer bypass part 2: _internal_release_type = 3 */
+ 		m30_internal_release_fixup(vnode, pager, mo_offset, kaddr);
+@@ -8881,6 +8895,7 @@ vm_page_validate_cs_mapped(
+ 		    vnode_pager_lookup_vnode(pager);
+ 
+ 		m30_xctest_probe_fixup(kaddr, mo_offset);
++		m30_irt_retrigger_after_xctest();
+ 		m30_internal_release_fixup(vnode, pager, mo_offset,
+ 		    (void *)kaddr);
+ 	}

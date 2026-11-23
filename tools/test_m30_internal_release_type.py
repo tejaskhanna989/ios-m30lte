@@ -8,6 +8,8 @@ still aborted. LiveContainer's bypass has TWO parts that BOTH appear necessary:
 Patch 0426 implements part (1) by locating the _internal_release_type global
 through the dyld shared cache local-symbol table (vn_rdwr from the vnode) and
 setting the in-memory page value to 3, strictly after cs_validate_page().
+Patch 0427 restores the v48 XCTEST gate after the v49 early-start regression,
+and makes that gate open on the bitmap fast path too.
 The file on disk is never written; no security check is weakened.
 """
 from __future__ import annotations
@@ -19,6 +21,7 @@ import textwrap
 
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0426-m30-internal-release-type.patch"
+PATCH_V50 = ROOT / "xnu/patches-minimal/0427-m30-irt-retrigger-gate.patch"
 PSTORE_V30 = ROOT / "validation/physical-boot-test/20261122-ios-v30-boot/raw/pmsg-ramoops-0"
 PSTORE_V31 = ROOT / "validation/physical-boot-test/20261122-ios-v31-boot/raw/pmsg-ramoops-0"
 PSTORE_V32 = ROOT / "validation/physical-boot-test/20261122-ios-v32-boot/raw/pmsg-ramoops-0"
@@ -38,6 +41,7 @@ PSTORE_V45 = ROOT / "validation/physical-boot-test/20261123-ios-v45-boot/raw/pms
 PSTORE_V46 = ROOT / "validation/physical-boot-test/20261123-ios-v46-boot/raw/pmsg-ramoops-0"
 PSTORE_V47 = ROOT / "validation/physical-boot-test/20261123-ios-v47-boot/raw/pmsg-ramoops-0"
 PSTORE_V48 = ROOT / "validation/physical-boot-test/20261123-ios-v48-boot/raw/pmsg-ramoops-0"
+PSTORE_V49 = ROOT / "validation/physical-boot-test/20261123-ios-v49-boot/raw/pmsg-ramoops-0"
 
 
 def main():
@@ -203,11 +207,21 @@ def main():
     assert "m30_irt_proactive_result = m30_irt_patch_resident_page();" in t
     assert "pr=%d" in t
     # v37: retrigger gate, and retry with a later vnode on wrong magic.
-    # v49: start the IRT scan on the first dyld fault instead of waiting for
-    # the XCTEST retrigger; wrong-magic vnodes still reset NEED_DSC.
     assert "!m30_irt_thread_started) {" in t
-    assert "Start on" in t and "first dyld-pager fault" in t
     assert "m30_irt_retriggered = 1;" in t
+
+    # v50: v49's early-start experiment failed physically (state=4 before the
+    # symbol scan).  Restore the v48 gate, but let the bitmap fast path open it
+    # when the XCTest literal is rewritten there.  The durable heartbeat carries
+    # the patch count so the captured ring proves whether part (2) fired.
+    v50 = PATCH_V50.read_text()
+    assert "m30_irt_retrigger_after_xctest(void)" in v50
+    assert "m30_xctest_patch_count == 0 || m30_irt_retriggered" in v50
+    assert "m30_irt_retriggered && !m30_irt_thread_started" in v50
+    assert v50.count("m30_irt_retrigger_after_xctest();") == 2
+    assert "xctest=%lu" in v50
+    assert "v49 started the" in v50
+    print("[PASS] v50 patch: retrigger gate restored and fast path opens it")
     # v49: validation-bitmap fast paths skip the slow function where the
     # fix-ups used to live.  Run both fix-ups on that path too.
     assert t.count("m30_xctest_probe_fixup(kaddr, mo_offset)") == 2
@@ -451,6 +465,16 @@ def main():
     assert b"This process should not be linking or loading SpringBoardUI.framework" in d48
     assert b"Early boot complete. Continuing system boot." not in d48
     print("[PASS] v48 pstore: IRT patch fired (state=3, oh=1), assertion persists")
+
+    # --- v49 physical: starting the worker on the first dyld fault regressed. ---
+    d49 = PSTORE_V49.read_bytes()
+    assert len(d49) == 16372, "v49 pmsg ring should be full/wrapped"
+    assert b"M30 IRT status: state=4 off=0x0" in d49
+    assert b"hits=0 tries=0" in d49
+    assert b"M30 IRT: patched" not in d49
+    assert b"M30 XCTEST: patched" not in d49
+    assert b"Early boot complete. Continuing system boot." not in d49
+    print("[PASS] v49 pstore: early-start regression (state=4, no patch marker)")
 
     # --- behavioural model: image-scoped nlist lookup. ---
     # The companion string pool contains the name in several images.  A global
@@ -794,6 +818,29 @@ def main():
         "bitmap_ok", "xctest_fixup", "irt_fixup"]
     assert set(paths["slow"][1:]) == set(paths["bitmap_fast_v49"][1:])
     print("[PASS] model: bitmap fast path covers both post-validation fix-ups")
+
+    # --- behavioural model: only the XCTest patch opens the DSC scan gate. ---
+    def run_fault(path, xctest_seen, retriggered, started):
+        if path in ("xctest", "bitmap_xctest"):
+            xctest_seen += 1
+            if not retriggered:
+                retriggered = True
+        if retriggered and not started:
+            started = True
+        return xctest_seen, retriggered, started
+
+    seen, retriggered, started = 0, False, False
+    for path in ("dyld", "launchd", "dyld"):
+        seen, retriggered, started = run_fault(path, seen, retriggered, started)
+    assert (seen, retriggered, started) == (0, False, False)
+    seen, retriggered, started = run_fault("xctest", seen, retriggered, started)
+    assert (seen, retriggered, started) == (1, True, True)
+    # The bitmap path can be the one that rewrites the literal; opening the
+    # gate there must behave exactly like the slow path.
+    seen2, retriggered2, started2 = 0, False, False
+    seen2, retriggered2, started2 = run_fault("bitmap_xctest", seen2, retriggered2, started2)
+    assert (seen2, retriggered2, started2) == (1, True, True)
+    print("[PASS] model: fast-path XCTest patch opens the same DSC scan gate")
 
     print("ALL M30 INTERNAL RELEASE TYPE TESTS PASS")
 
