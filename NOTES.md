@@ -2961,3 +2961,32 @@ authorization for a BOOT-only test of candidate v6.
   from v62 with `serial=3` restored + this diagnostic patch, then BOOT-only
   physical test with the identity/Download Mode gate. Accept only a persistent
   visible lock screen plus logs.
+
+## 2026-11-24 - v64 CI GREEN and candidate packaged (MAIN only)
+
+- CI `45408136163` GREEN for source `49e8e046` (`XNU_TARGET=iphoneos`, M30LTE,
+  DEVELOPMENT). All build, source-verification, artifact and Cortex-A53 LSE
+  steps passed. Artifacts preserved under `milestone_artifacts/ci_45408136163/`.
+- CI buildtree source diff versus v62 is exactly two files:
+  `pexpert/arm/pe_serial.c`
+  `3a85e204a5a90639b8a60ee52be27e7ab40e0b959e4e191e35b1614d2263aa03` and
+  `bsd/kern/sys_generic.c`
+  `438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f`, both
+  matching `tools/test_m30_stderr_capture.py`. No security patch changed.
+- Candidate `validation/ios-candidate-v64-out/`: linked kernel
+  `6423955750328015b6bbbd9a395acdb1b5487c157ad1111708f9fae8fe1fffae`, payload
+  `379e59d855e5d7a79949f197406f9c9bf91675ab803ad54afca5fbf63677c59e`,
+  `shim-boot.img`
+  `d396bb549000993a009f7febf2e879f42626d6c7b0af5b34d8fe127f452d8960`,
+  `ios-boot.img`
+  `d401a26494b26981edd5c6a9f75f16a8ce69680058dc70df8b791736eb43232b`.
+  Payload cmdline is unchanged from v62, including `serial=3`.
+- Validation: `validate_boot_images.py` PASS, `verify_handoff_v64.py` 25/25 PASS,
+  buildtree verifier PASS, kernel verifier 6/6 PASS, platform match 9/9 PASS,
+  focused tests 25 PASS / 1 FAIL (pre-existing missing
+  `0417-m30-16k-pages.patch`). Evidence: `validation/ios-candidate-v64-out/`.
+- Device is currently in TWRP from the read-only symbol scan. NEXT: re-verify
+  positive device identity and Samsung Download Mode, then BOOT-only flash the
+  v64 `shim-boot.img` with Heimdall. No USERDATA/SYSTEM/RECOVERY write, no
+  Fastboot. v64 is diagnostic only; accept no lock-screen success without a
+  persistent visible lock-screen render plus logs.

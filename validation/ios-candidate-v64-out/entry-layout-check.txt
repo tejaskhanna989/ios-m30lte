@@ -1,0 +1,32 @@
+v64 candidate layout / provenance check
+=======================================
+
+CI run: 45408136163 (GREEN), source commit 49e8e046
+XNU target: iphoneos, machine M30LTE, config DEVELOPMENT
+
+Buildtree source diff versus v62 CI 45356410574:
+  only bsd/kern/sys_generic.c and pexpert/arm/pe_serial.c differ
+  sys_generic.c SHA256 438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f
+  pe_serial.c   SHA256 3a85e204a5a90639b8a60ee52be27e7ab40e0b959e4e191e35b1614d2263aa03
+  both match tools/test_m30_stderr_capture.py expected results
+
+Linked kernel:
+  SHA256 6423955750328015b6bbbd9a395acdb1b5487c157ad1111708f9fae8fe1fffae
+  size 16823776 bytes
+  contains SBERR and BBERR diagnostic tags
+  board-critical kernel verifier: PASS (6 checks)
+  platform match: 9/9 PASS
+
+Payload layout (unchanged geometry):
+  virt_base 0xfffffff006000000
+  entry 0xfffffff007411488
+  kernel_end 0xfffffff008454000
+  ADT PA 0x82454000, boot_args PA 0x82458000
+  ADT SHA256 2dc36c056e62a563bc5b2262c296d8731e1d8ad9e804d388054c156cec7bd577
+  payload SHA256 379e59d855e5d7a79949f197406f9c9bf91675ab803ad54afca5fbf63677c59e
+  cmdline debug=0xc serial=3 cpus=6 keepsyms=1 maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1 a5fb_noconsole=1 a5fb_keep_on=1
+
+Security state:
+  patch 0441 only copies bounded fd-2 writes into the existing pstore ring.
+  No CS / AMFI / code-signing / trust-cache / page-validation mutation.
+  serial=3 retained; no security weakening.
