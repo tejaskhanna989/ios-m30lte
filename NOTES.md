@@ -2883,3 +2883,29 @@ authorization for a BOOT-only test of candidate v6.
   `osfmk/arm/arm_init.c`; `fprintf_stderr` writes fd 2 there and can block with
   no serial drain. Kernel pstore logging remains active via
   `a5xelte_log_append()` in `_cnputs()`, independent of serial output.
+
+## 2026-11-24 - v63 candidate (MAIN only): serial console removed
+
+- CI `45394800402` GREEN for source `26008593` (`XNU_TARGET=iphoneos`, M30LTE,
+  DEVELOPMENT); all build, source-verification, artifact and Cortex-A53 LSE
+  checks passed. Buildtree `bsd/dev/sweet_sample.c` SHA256
+  `c7e92cc467a5c0fe062d8f4cd77dbe99c10a3909a4287dcd78c517963489fcf0`,
+  unchanged from v62.
+- CI kernel hash `6c71d45b9200590ef2d31577c8de00fe2cd85acbeb210471da22e06c16a039d3`
+  differs from v62 only in two Mach-O `__LINKEDIT` size bytes and compressed
+  debug metadata; bytes `0x4000..0xBDC000` (all code/data segments) are identical.
+  v63 reuses the physically booted v62 kernel
+  `45aff1b01f85b1dbe5a77903050005333eb858980cd1118465c3f11f02bda13d`.
+- Candidate `validation/ios-candidate-v63-out/`: payload
+  `ee089617767ca71311fc3e6cd853565693b7531cbb2adb9f1b09978a1e7678a2`,
+  `shim-boot.img`
+  `37c6c85af81e45c4ae687f8d36b8eada82cb2f3f3b843595c7502e1559654c13`,
+  ios-boot.img `5597d450fbb48fbd203010da58de5c93eebe4ba64013df7ede6c349ab9856705`.
+- Cmdline is v62 with only `serial=3` removed: `debug=0xc cpus=6 keepsyms=1
+  maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1
+  a5fb_noconsole=1 a5fb_keep_on=1`. Pstore logs remain enabled.
+- Validation: boot-image checks PASS; `verify_handoff_v63.py` 25/25 PASS;
+  focused tests 24/25 PASS (only the pre-existing missing-patch
+  `test_m30_16k_pages.py` failure). NEXT: commit/push, then BOOT-only physical
+  test with full identity/Download Mode gate. No lock-screen claim without a
+  persistent visible render plus logs.

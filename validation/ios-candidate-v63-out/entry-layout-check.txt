@@ -1,0 +1,24 @@
+v63 kernel-entry and payload-layout check (MAIN only)
+=====================================================
+
+CI: 45394800402 GREEN for source 26008593 (XNU_TARGET=iphoneos, M30LTE,
+DEVELOPMENT). All build/verification/LSE steps passed. Buildtree
+bsd/dev/sweet_sample.c SHA256
+c7e92cc467a5c0fe062d8f4cd77dbe99c10a3909a4287dcd78c517963489fcf0,
+unchanged from v62.
+
+CI 45394800402 kernel SHA256:
+6c71d45b9200590ef2d31577c8de00fe2cd85acbeb210471da22e06c16a039d3.
+v62 CI 45356410574 kernel SHA256:
+45aff1b01f85b1dbe5a77903050005333eb858980cd1118465c3f11f02bda13d.
+The two kernels have identical size and zero differing bytes from 0x4000
+through 0xBDC000 (all executable code/data segments). The only differences are
+two Mach-O load-command bytes for __LINKEDIT size and compressed LINKEDIT/debug
+metadata. v63 therefore reuses the byte-identical, physically booted v62 kernel
+45aff1b0... so the only candidate change is the payload cmdline.
+
+Entry/layout unchanged: entry 0xfffffff007411488, __TEXT_EXEC size 0x008b4000,
+kernel end 0xfffffff008454000, ADT PA 0x82454000, boot_args PA 0x82458000,
+payload 16179504 bytes. Cmdline removes only serial=3 and keeps
+a5fb_noconsole=1 a5fb_keep_on=1 plus debug=0xc keepsyms=1 for pstore logs.
+ADT/shim unchanged. verify_handoff_v63.py: 25/25 PASS.
