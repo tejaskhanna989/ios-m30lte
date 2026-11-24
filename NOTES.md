@@ -2862,8 +2862,15 @@ authorization for a BOOT-only test of candidate v6.
   Only crash was `driverkitd[68] sig 9`; no SpringBoard/backboardd crash, no
   `NSInternal`, no `state=4`.
 - Evidence: `validation/physical-boot-test/20261124-ios-v62-boot/`.
-- Visual result still requires user confirmation; no lock-screen claim is made
-  from logs/PIDs/framebuffer activity. Next technical step: symbolicate the
-  repeated SpringBoard PC/LR using the genuine iOS 16 dyld symbol cache from
-  USERDATA, then make the targeted fix. Device disconnected during an initial
-  read-only HFSX catalog inspection; reconnect needed for that extraction.
+- User confirmed the visual result: **no lock screen**; v62 stayed on the Apple
+  logo after console logs. This is a definitive physical rejection for the
+  lock-screen objective. Process liveness, IRT state and framebuffer activity
+  are NOT accepted as success.
+- Next technical step: symbolicate the repeated SpringBoard PC/LR using the
+  genuine iOS 16 dyld symbol cache from USERDATA, then make the targeted fix.
+  The read-only HFSX parser found that the catalog's dyld `.symbols` entry is
+  an old-style `hlnk`/`hfs+` stub with linkRef `0x279b3e30` (664485424); its
+  real data fork is the `iNode664485424` file (fileID 318463) in the private
+  file-hardlink directory (parent 18). A reusable read-only tool was added at
+  `tools/m30_hfsx_read.py`; device extraction still needs the M30 reconnected
+  in TWRP after the server restart disconnected it.
