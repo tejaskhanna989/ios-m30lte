@@ -1,0 +1,8 @@
+IDENTITY_RECHECK=PASS
+ro.boot.em.model=SM-M305F
+ro.product.device=m30lte
+ro.boot.bootloader=M305FDDU8CVK1
+ro.twrp.boot=1
+ro.serialno=<redacted>
+ro.boot.serialno=<redacted>
+time=2026-11-24T17:27:02Z

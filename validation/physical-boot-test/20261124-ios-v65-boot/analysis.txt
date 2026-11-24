@@ -1,0 +1,28 @@
+v65 physical result: REJECTED for the lock-screen objective.
+
+Final visual (user-confirmed at ~2026-11-24T17:22Z): Apple logo only, no
+persistent lock screen. Apple logo, process liveness, IRT state, and framebuffer
+activity are not acceptance evidence.
+
+Pstore evidence:
+- Raw read-only pull: 16462 bytes, SHA256
+  1fb9d253fae8364c721690fb5b1a61479f1481584f27d20eb1506e3ac2820931.
+- Decoder consumed 16372 bytes; 167 records, all XNU-tagged; clean=False
+  (16 KB pmsg ring wrapped, expected for a ~15 minute run).
+- 50 M30 FB records survive. Final periodic record:
+  M30 FB: v=26400 sw=6 pr=5 copied=50544000 skip=15 last=1 dirty=0 power=0 cl=1 ticks=2
+  Interpretation: 6 staged swaps, 5 present() copies of 10108800 bytes each,
+  15 skipped layer entries, last skip reason 1. From v=6000 through v=26400
+  the staged/present counters and copied-byte total are frozen; no further
+  panel commit occurred while the screen remained on the Apple logo.
+- M30 UI: sb=27 bb=102 reason=none. SpringBoard and backboardd were alive;
+  no NS exception reason was captured.
+- M30 IRT final surviving record: state=2, csblk=3831 csfail=9 csvok=36517
+  cfa=4 (remaining fields truncated by the 253-byte pmsg record cap).
+- SBERR=0 and BBERR=0 records survived the wrapped ring. No NSInternal or
+  SpringBoard crash strings were found in the captured records. Absence is not
+  proof they never occurred; it is only what survived in the ring.
+
+Conclusion: v65 confirms the commit path stalls after the initial Apple-logo
+frames. It does not produce a lock-screen render and is rejected. No security
+state was weakened; v62 remains the known-good BOOT rollback.

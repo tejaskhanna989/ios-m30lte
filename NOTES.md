@@ -3178,3 +3178,26 @@ authorization for a BOOT-only test of candidate v6.
 - v65 interim visual at `17:12:47Z` (~5 min after resume): user reported
   **Apple logo only, no lock screen**. Insufficient for acceptance; observation
   continues to ~`17:22Z` before TWRP pstore pull.
+
+## 2026-11-24 - v65 physically rejected; framebuffer commit path stalls (MAIN only)
+
+- Final visual after ~15 min: user confirmed **Apple logo only**, no lock
+  screen. v65 is REJECTED for the lock-screen objective.
+- Read-only pstore pull from TWRP after identity recheck PASS. Raw
+  `pmsg-ramoops-0` 16462 bytes, SHA256
+  `1fb9d253fae8364c721690fb5b1a61479f1481584f27d20eb1506e3ac2820931`;
+  decoded 167 records / 167 `XNU:`, `clean=False` (ring wrap expected).
+- Durable `M30 FB` telemetry survived: 50 records. Final:
+  `v=26400 sw=6 pr=5 copied=50544000 skip=15 last=1 dirty=0 power=0 cl=1 ticks=2`.
+  Only 6 staged swaps and 5 `present()` copies occurred; counters and copied
+  bytes then froze from v=6000 through v=26400 while the screen stayed on the
+  Apple logo. This is direct evidence the panel commit path stops before any
+  lock-screen content can be presented.
+- `M30 UI: sb=27 bb=102 reason=none`; SpringBoard and backboardd alive, no NS
+  exception reason. Surviving IRT final was `state=2`, `csblk=3831 csfail=9
+  csvok=36517 cfa=4` (further fields truncated by the 253-byte record cap).
+  `SBERR=0`, `BBERR=0`, no `NSInternal` or SpringBoard crash strings survived.
+  These are liveness/ring observations, not lock-screen evidence.
+- No security weakening. NEXT: restore v62 BOOT-only after a fresh identity and
+  Download Mode gate. v65 evidence preserved under
+  `validation/physical-boot-test/20261124-ios-v65-boot/`.
