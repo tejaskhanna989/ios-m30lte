@@ -1,0 +1,7 @@
+ro.boot.em.model=SM-M305F
+ro.product.model=omni_m30lte
+ro.product.device=m30lte
+ro.boot.bootloader=M305FDDU8CVK1
+ro.twrp.boot=1
+ro.serialno=<redacted>
+ro.boot.serialno=<redacted>
