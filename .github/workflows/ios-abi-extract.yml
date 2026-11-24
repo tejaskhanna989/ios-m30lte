@@ -1,0 +1,124 @@
+name: iOS 16 IOMobileFramebuffer ABI evidence extraction
+
+'on':
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release containing the genuine iOS 16.7.16 HFSX root parts
+        default: 'ios-root-20H392-44905109656'
+      expected_sha256:
+        description: Expected SHA-256 of the reassembled HFSX image
+        default: '5f2e2aa6a80aea489946287d8cc32ef0ff6a1905a0d2923e8d4324163bb699b5'
+      ipsw_version:
+        description: blacktop/ipsw release used for dyld shared cache analysis
+        default: 'v3.1.751'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-abi-extract-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  extract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    env:
+      TAG: ${{ inputs.release_tag }}
+      EXPECT_SHA: ${{ inputs.expected_sha256 }}
+      IPSW_VERSION: ${{ inputs.ipsw_version }}
+      WORK: /home/runner/work/abi-extract
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check runner disk capacity
+        run: |
+          df -h /
+          AVAIL=$(df -B1 / | awk 'NR==2 {print $4}')
+          echo "avail_bytes=$AVAIL"
+          test "$AVAIL" -gt 35000000000 || { echo "runner disk too small" >&2; exit 1; }
+
+      - name: Install HFS validation and extraction tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq hfsprogs fuse3 curl unzip coreutils
+          mkdir -p "$WORK/bin"
+          curl -fL --retry 3 -o "$WORK/bin/ipsw.tar.gz" \
+            "https://github.com/blacktop/ipsw/releases/download/${IPSW_VERSION}/ipsw_${IPSW_VERSION}_linux_x86_64.tar.gz"
+          tar -xzf "$WORK/bin/ipsw.tar.gz" -C "$WORK/bin" ipsw
+          chmod +x "$WORK/bin/ipsw"
+          "$WORK/bin/ipsw" version
+
+      - name: Download and reassemble the genuine HFSX root
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$WORK/parts" "$WORK/mnt"
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" \
+            --pattern 'ios-root-20H392.img.gz.part-*' --dir "$WORK/parts"
+          sha256sum "$WORK/parts"/* | tee "$WORK/parts-sha256.txt"
+          cat "$WORK/parts"/ios-root-20H392.img.gz.part-* | gunzip > "$WORK/ios-root.img"
+          SHA=$(sha256sum "$WORK/ios-root.img" | cut -d' ' -f1)
+          echo "root_sha256=$SHA"
+          test "$SHA" = "$EXPECT_SHA" || { echo "root hash mismatch" >&2; exit 1; }
+          sudo mount -t hfsplus -o loop,force,ro "$WORK/ios-root.img" "$WORK/mnt"
+          test -d "$WORK/mnt/private/preboot/Cryptexes/OS"
+
+      - name: Locate dyld shared caches and extract ABI evidence
+        run: |
+          set -o pipefail
+          mkdir -p "$WORK/out"
+          {
+            echo '## dyld cache paths'
+            sudo find "$WORK/mnt" -type f \( -name 'dyld_shared_cache_arm64*' -o -name '*.symbols' \) -printf '%p %s bytes\n'
+          } | tee "$WORK/out/cache-paths.txt"
+          DSC=$(sudo find "$WORK/mnt" -type f -name 'dyld_shared_cache_arm64' | head -1)
+          test -n "$DSC" || { echo "no arm64 dyld shared cache found" >&2; exit 1; }
+          echo "DSC=$DSC" | tee "$WORK/out/dsc-path.txt"
+          "$WORK/bin/ipsw" dyld info "$DSC" | tee "$WORK/out/dyld-info.txt"
+          "$WORK/bin/ipsw" dyld image "$DSC" | tee "$WORK/out/images.txt"
+
+          for IMAGE in IOMobileFramebuffer backboardd QuartzCore BackBoardServices SpringBoard; do
+            echo "### $IMAGE" >> "$WORK/out/image-closures.txt"
+            "$WORK/bin/ipsw" dyld image "$DSC" "$IMAGE" >> "$WORK/out/image-closures.txt" 2>&1 || true
+          done
+
+          "$WORK/bin/ipsw" dyld macho "$DSC" \
+            '/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer' \
+            --loads --symbols --strings --starts --stubs \
+            --output "$WORK/out" --extract --force \
+            > "$WORK/out/iomfb-macho.txt" 2>&1 || true
+          "$WORK/bin/ipsw" dyld macho "$DSC" '/usr/libexec/backboardd' \
+            --loads --symbols --strings --starts --stubs \
+            --output "$WORK/out" --extract --force \
+            > "$WORK/out/backboardd-macho.txt" 2>&1 || true
+
+          "$WORK/bin/ipsw" dyld disass "$DSC" \
+            --image '/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer' \
+            --quiet > "$WORK/out/iomfb-disasm.txt" 2>&1 || true
+          "$WORK/bin/ipsw" dyld disass "$DSC" --image '/usr/libexec/backboardd' \
+            --quiet > "$WORK/out/backboardd-disasm.txt" 2>&1 || true
+
+          grep -n -i -E 'GetBlock|SupportedFrameInfo|FrameInfo|IOMobileFramebuffer' \
+            "$WORK/out/backboardd-disasm.txt" > "$WORK/out/backboardd-iomfb-refs.txt" 2>&1 || true
+          grep -n -i -E 'GetBlock|SupportedFrameInfo|FrameInfo|externalMethod|IORPC' \
+            "$WORK/out/iomfb-disasm.txt" > "$WORK/out/iomfb-key-refs.txt" 2>&1 || true
+
+          printf '%s\n' 'IOMobileFramebufferGetBlock' 'IOMobileFramebufferSupportedFrameInfo' \
+            'IOMobileFramebufferFrameInfo' 'IOMobileFrameBufferGetBlock' \
+            > "$WORK/out/symbols.txt"
+          "$WORK/bin/ipsw" dyld symaddr "$DSC" --in "$WORK/out/symbols.txt" --all \
+            > "$WORK/out/symaddr.json" 2>&1 || true
+
+          sudo umount "$WORK/mnt"
+          find "$WORK/out" -maxdepth 1 -type f -printf '%f %s bytes\n' | sort | tee "$WORK/out/manifest-files.txt"
+          (cd "$WORK/out" && sha256sum *) > "$WORK/out/SHA256SUMS"
+
+      - name: Upload ABI evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-abi-evidence
+          path: ${{ env.WORK }}/out
+          if-no-files-found: error
