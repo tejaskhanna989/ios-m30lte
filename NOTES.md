@@ -2615,3 +2615,26 @@ authorization for a BOOT-only test of candidate v6.
   at ~3 min to capture early pstore with the NS exception reason and the new
   `cfa/cfi/cfp` counters. No lock-screen claim without visible persistent
   evidence plus logs.
+
+## 2026-11-24 - v59 physical boot: inconclusive (late pstore capture)
+
+- Identity/Download Mode verified, BOOT-only flash of
+  `shim-boot.img` `9890079d8d801aef5639d79a0eba5e8cb468c4ab735dec17eb2a1092eda1b421`
+  at `00:34:44Z..00:34:49Z`, resume `00:34:59Z`. USERDATA/SYSTEM/RECOVERY
+  untouched, no Fastboot, no BOOT readback.
+- The requested ~3 min early recovery capture was missed. Pstore was finally
+  pulled at `04:50Z`, about four hours after boot, so the 16 KB ring had wrapped
+  again. Raw pstore `8f2e5b306d07863000c29e5e43c8b3f54307ce991a4cb1c020e343a805a2d32d`;
+  decode 139/139 records, `clean=False`.
+- Surviving window contains 50 `cs_invalid_page` records for auxiliary daemons
+  only (`fairplayd.H2` 27, `bluetoothd` 17, `xpcproxy` 5, `fseventsd` 1), and zero
+  `SpringBoard`/`backboardd`/`M30 IRT`/`csblk=`/`cfa=`/`cfi=`/`cfp=`/`SMP `/
+  `CRASH`/`NSInternal`/`state=4` records. Those absences are due to ring wrap,
+  not evidence of absence. No lock screen was reported.
+- v59 is INCONCLUSIVE on the CS fix; no success or failure claim. Evidence:
+  `validation/physical-boot-test/20261124-ios-v59-boot/README.md`,
+  `analysis.txt`, decoded logs and both SHA256SUMS files.
+- NEXT v60: make decisive telemetry independent of user timing. Add a very slow
+  (~10 min) durable IRT/CS report that always stays near the ring tail, and a
+  replay of the last SpringBoard/backboardd crash reason. Then rerun physical;
+  no lock-screen claim without visible persistent evidence plus logs.

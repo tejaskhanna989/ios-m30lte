@@ -1,0 +1,1163 @@
+{
+  "input_bytes": 16372,
+  "input_sha256": "8f2e5b306d07863000c29e5e43c8b3f54307ce991a4cb1c020e343a805a2d32d",
+  "record_count": 139,
+  "consumed": 16372,
+  "clean": false,
+  "records": [
+    {
+      "index": 0,
+      "offset": 59,
+      "length": 101,
+      "metadata_hex": "6d656e74292e006c6c0000000000000000",
+      "tag": "",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000process lsd[97] denied attempt to escape CPU monitor (missing require"
+    },
+    {
+      "index": 1,
+      "offset": 167,
+      "length": 101,
+      "metadata_hex": "6d656e74292e006c8d0000000000000000",
+      "tag": "",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000CODE SIGNING: cs_invalid_page(0x101c89000): p=868[fairplayd.H2] final"
+    },
+    {
+      "index": 2,
+      "offset": 289,
+      "length": 108,
+      "metadata_hex": "6f77696e67202872656d6f76652056414c",
+      "tag": "ID) page",
+      "message": "ll\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000process lsd[97] denied attempt to escape CPU monitor (mis"
+    },
+    {
+      "index": 3,
+      "offset": 416,
+      "length": 101,
+      "metadata_hex": "6d656e74292e006c6c0000000000000000",
+      "tag": "",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000process lsd[97] denied attempt to escape CPU monitor (missing require"
+    },
+    {
+      "index": 4,
+      "offset": 524,
+      "length": 101,
+      "metadata_hex": "6d656e74292e006c8b0000000000000000",
+      "tag": "",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000CODE SIGNING: cs_invalid_page(0x1c761c000): p=869[bluetoothd] final s"
+    },
+    {
+      "index": 5,
+      "offset": 644,
+      "length": 108,
+      "metadata_hex": "6f77696e67202872656d6f76652056414c",
+      "tag": "ID) page",
+      "message": "l\ufffd\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000CODE SIGNING: cs_invalid_page(0x232ead000): p=871[fairpla"
+    },
+    {
+      "index": 6,
+      "offset": 763,
+      "length": 32,
+      "metadata_hex": "7374617475732030783232303030303030",
+      "tag": ", allowing (r",
+      "message": ""
+    },
+    {
+      "index": 7,
+      "offset": 813,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 8,
+      "offset": 921,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 9,
+      "offset": 1029,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1d3a6c000): p=874[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 10,
+      "offset": 1170,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 11,
+      "offset": 1278,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 12,
+      "offset": 1386,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 13,
+      "offset": 1494,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1dd8c6000): p=873[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 14,
+      "offset": 1633,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 15,
+      "offset": 1741,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101d20000): p=876[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 16,
+      "offset": 1882,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 17,
+      "offset": 1990,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x255374000): p=877[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 18,
+      "offset": 2127,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 19,
+      "offset": 2235,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1bf44e000): p=878[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 20,
+      "offset": 2374,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1cca5a000): p=879[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 21,
+      "offset": 2515,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 22,
+      "offset": 2623,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 23,
+      "offset": 2731,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1bfe49000): p=880[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 24,
+      "offset": 2868,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 25,
+      "offset": 2976,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1c18de000): p=881[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 26,
+      "offset": 3117,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 27,
+      "offset": 3225,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1bf42c000): p=884[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 28,
+      "offset": 3364,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x100cdd000): p=883[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 29,
+      "offset": 3505,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 30,
+      "offset": 3613,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1c6e68000): p=885[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 31,
+      "offset": 3754,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 32,
+      "offset": 3862,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 33,
+      "offset": 3970,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 34,
+      "offset": 4078,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 35,
+      "offset": 4186,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 36,
+      "offset": 4294,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1bfc1c000): p=890[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 37,
+      "offset": 4435,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 38,
+      "offset": 4543,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1bf496000): p=893[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 39,
+      "offset": 4682,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 40,
+      "offset": 4790,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1d991e000): p=894[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 41,
+      "offset": 4931,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 42,
+      "offset": 5039,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101aa5000): p=895[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 43,
+      "offset": 5180,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 44,
+      "offset": 5288,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x100bf1000): p=896[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 45,
+      "offset": 5429,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 46,
+      "offset": 5537,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1c86c9000): p=897[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 47,
+      "offset": 5676,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 48,
+      "offset": 5784,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 49,
+      "offset": 5892,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 50,
+      "offset": 6000,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1bf3c4000): p=902[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 51,
+      "offset": 6139,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x100b30000): p=903[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 52,
+      "offset": 6280,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 53,
+      "offset": 6388,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 54,
+      "offset": 6496,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 55,
+      "offset": 6604,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 56,
+      "offset": 6712,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x2553a0000): p=906[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 57,
+      "offset": 6849,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 58,
+      "offset": 6957,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 59,
+      "offset": 7065,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 60,
+      "offset": 7173,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 61,
+      "offset": 7281,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 62,
+      "offset": 7389,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1c6eb7000): p=907[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 63,
+      "offset": 7530,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1014f0000): p=908[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 64,
+      "offset": 7669,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 65,
+      "offset": 7777,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101e54000): p=909[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 66,
+      "offset": 7918,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 67,
+      "offset": 8026,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 68,
+      "offset": 8134,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 69,
+      "offset": 8242,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1cda39000): p=911[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 70,
+      "offset": 8383,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 71,
+      "offset": 8491,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 72,
+      "offset": 8599,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1c70fd000): p=913[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 73,
+      "offset": 8738,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 74,
+      "offset": 8846,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 75,
+      "offset": 8954,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 76,
+      "offset": 9062,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 77,
+      "offset": 9170,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 78,
+      "offset": 9278,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101fe0000): p=917[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 79,
+      "offset": 9419,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 80,
+      "offset": 9527,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 81,
+      "offset": 9635,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1bf434000): p=918[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 82,
+      "offset": 9774,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 83,
+      "offset": 9882,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 84,
+      "offset": 9990,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 85,
+      "offset": 10098,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 86,
+      "offset": 10206,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 87,
+      "offset": 10314,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 88,
+      "offset": 10422,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x100a7c000): p=925[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 89,
+      "offset": 10563,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1dc812000): p=924[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 90,
+      "offset": 10702,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 91,
+      "offset": 10810,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 92,
+      "offset": 10918,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 93,
+      "offset": 11026,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 94,
+      "offset": 11134,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 95,
+      "offset": 11242,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x100ca6000): p=89[fseventsd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 96,
+      "offset": 11379,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1c7450000): p=928[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 97,
+      "offset": 11518,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 98,
+      "offset": 11626,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 99,
+      "offset": 11734,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 100,
+      "offset": 11842,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 101,
+      "offset": 11950,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 102,
+      "offset": 12058,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1d5209000): p=934[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 103,
+      "offset": 12197,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 104,
+      "offset": 12305,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 105,
+      "offset": 12413,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 106,
+      "offset": 12521,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 107,
+      "offset": 12629,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 108,
+      "offset": 12737,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x24225d000): p=938[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 109,
+      "offset": 12878,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 110,
+      "offset": 12986,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1bf72d000): p=939[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 111,
+      "offset": 13125,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x232ead000): p=940[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 112,
+      "offset": 13266,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 113,
+      "offset": 13374,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1fdf49000): p=941[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 114,
+      "offset": 13515,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x10151c000): p=943[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 115,
+      "offset": 13654,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1cca1a000): p=942[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 116,
+      "offset": 13795,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 117,
+      "offset": 13903,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1dccce000): p=944[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 118,
+      "offset": 14044,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 119,
+      "offset": 14152,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 120,
+      "offset": 14260,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101220000): p=945[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 121,
+      "offset": 14401,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x10098a000): p=946[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 122,
+      "offset": 14542,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 123,
+      "offset": 14650,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 124,
+      "offset": 14758,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1bf4f3000): p=948[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 125,
+      "offset": 14897,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 126,
+      "offset": 15005,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x2109b5000): p=950[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 127,
+      "offset": 15146,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 128,
+      "offset": 15254,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101c7c000): p=951[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 129,
+      "offset": 15395,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1ba2e5000): p=952[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 130,
+      "offset": 15532,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1bf6ac000): p=953[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 131,
+      "offset": 15671,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 132,
+      "offset": 15779,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x226565000): p=954[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 133,
+      "offset": 15916,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 134,
+      "offset": 16024,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 135,
+      "offset": 16132,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x20"
+    },
+    {
+      "index": 136,
+      "offset": 16192,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 137,
+      "offset": 16252,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=1 gpio=0x20"
+    },
+    {
+      "index": 138,
+      "offset": 16312,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea down (1 clients)"
+    }
+  ],
+  "issues": [
+    {
+      "offset": 0,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x65"
+    },
+    {
+      "offset": 160,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x64"
+    },
+    {
+      "offset": 268,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x20"
+    },
+    {
+      "offset": 397,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x73"
+    },
+    {
+      "offset": 517,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x64"
+    },
+    {
+      "offset": 625,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x74"
+    },
+    {
+      "offset": 752,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x79"
+    },
+    {
+      "offset": 795,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x65"
+    }
+  ]
+}

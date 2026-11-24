@@ -1,0 +1,21 @@
+# v59 pstore key evidence
+raw_sha256=8f2e5b306d07863000c29e5e43c8b3f54307ce991a4cb1c020e343a805a2d32d
+decode: 139/139 records, clean=False (ring wrapped; capture ~4h after boot)
+--- cs_invalid_page processes ---
+total 50
+fairplayd.H2 27
+bluetoothd 17
+xpcproxy 5
+fseventsd 1
+--- absent markers ---
+SpringBoard: 0
+backboardd: 0
+M30 IRT: 0
+cfa=: 0
+cfi=: 0
+cfp=: 0
+SMP : 0
+CRASH: 0
+NSInternal: 0
+state=4: 0
+Early boot complete: 0
