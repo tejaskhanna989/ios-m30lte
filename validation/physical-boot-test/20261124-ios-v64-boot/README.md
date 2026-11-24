@@ -34,9 +34,9 @@ MAIN only. Candidate: `validation/ios-candidate-v64-out/` (source commit
 
 ## Visual result
 
-User-confirmed: **no lock screen**. The exact final frame (clean Apple logo vs
-console text) should be recorded once observed; v64 is not a lock-screen success
-under any interpretation.
+User-confirmed: **no lock screen**. The final frame was a **clean Apple logo**
+(same presentation as v62), not console text and not blank. v64 is definitively
+rejected for the lock-screen objective.
 
 ## Pstore result
 

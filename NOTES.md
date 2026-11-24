@@ -3020,8 +3020,9 @@ authorization for a BOOT-only test of candidate v6.
 
 ## 2026-11-24 - v64 physical result: REJECTED, stderr hypothesis disproven (MAIN only)
 
-- User-confirmed: **no lock screen** after the v64 BOOT-only flash. No success
-  claimed; exact final frame still to be transcribed if available.
+- User-confirmed: **no lock screen** after the v64 BOOT-only flash. Final frame
+  was a **clean Apple logo** (same as v62), not console text and not blank. v64
+  is definitively rejected for the lock-screen objective.
 - Device returned to TWRP; identity re-verified before a read-only pstore pull.
   Raw `pmsg-ramoops-0` 16372 bytes, SHA256
   `5331c2f90da194587d4f803fcef16cbdabef3b0241f55a25cb53a07751c8f1af`.
