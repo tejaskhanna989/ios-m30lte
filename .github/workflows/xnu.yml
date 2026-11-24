@@ -109,9 +109,31 @@ jobs:
         grep "MACHINE_FLAGS_ARM64_M30LTE" dxb/xnu/makedefs/MakeInc.def
     - name: Verify effective M30 source tree
       run: |
+        set -o pipefail
         python3 tools/verify_m30_buildtree.py \
           --tree dxb/xnu \
           --patch-dir dxb/patches | tee m30-buildtree-verification.json
+    - name: Verify M30 framebuffer diagnostic patch applied
+      run: |
+        grep -q 'Applying patch: .*0442-m30-framebuffer-commit-diag.patch' build.log
+        if grep -q 'Skipping patch .*0442-m30-framebuffer-commit-diag.patch' build.log; then
+          echo "ERROR: patch 0442 was skipped by the tolerant build script"
+          exit 1
+        fi
+        python3 - <<'PY'
+        import hashlib
+        from pathlib import Path
+        expect = {
+            "pexpert/arm/pe_serial.c": "0567414c2f004778bba71a01b2723202af5bde98bf1ca6ec035856b086c2a772",
+            "iokit/Kernel/arm/SweetFramebuffer.cpp": "a92e8e928033ccf73648b40952ea3cdb7f975e045af7789523e4139b2320d178",
+            "bsd/kern/sys_generic.c": "438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f",
+        }
+        for rel, want in expect.items():
+            got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
+            if got != want:
+                raise SystemExit(f"ERROR: {rel} sha256 {got} != {want}")
+            print(f"PASS {rel} {got}")
+        PY
     - name: Verify XNU target (iOS vs OSX)
       run: |
         echo "=== XNU_TARGET=$XNU_TARGET ==="
@@ -138,6 +160,7 @@ jobs:
         PY
     - name: Verify exact M30 kernel binary
       run: |
+        set -o pipefail
         kc=$(echo "$KERNEL_CONFIG" | tr A-Z a-z)
         # macosx target: kernel.<kc>.m30lte in /System/Library/Kernels; ios target: mach.<kc>.m30lte at fakeroot root
         kernel="dxb/fakeroot/System/Library/Kernels/kernel.${kc}.m30lte"

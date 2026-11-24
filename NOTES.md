@@ -3105,3 +3105,28 @@ authorization for a BOOT-only test of candidate v6.
   in CI order; PASS. No physical action. Next: commit/push, rerun CI, and
   explicitly confirm from the log that 0442 was APPLIED (not skipped) before
   packaging.
+
+## 2026-11-24 - CI 45435016186 false GREEN; fail-closed fix (MAIN only)
+
+- CI `45435016186` reported GREEN and did APPLY 0442, but its
+  `Verify effective M30 source tree` step actually printed `result: FAIL`:
+  reverse-applying critical patch `0403-m30lte-hardware-overrides.patch` failed
+  at `SweetFramebuffer.cpp:48`. The step used `python3 ... | tee ...` without
+  `set -o pipefail`, so `tee`'s success masked the verifier failure. Therefore
+  that run is NOT a valid GREEN certification and no candidate was flashed.
+- Root cause of reverse-apply failure: 0442 inserted
+  `#include <libkern/libkern.h>` directly after `#include <sys/proc.h>`, which
+  is trailing context of 0403's first `SweetFramebuffer.cpp` hunk. Moved the
+  guarded include to immediately after `#include "SweetSurface.h"`, outside
+  all 0403 hunk context. Full local `verify_m30_buildtree.py` now PASSes on a
+  simulated v62 tree with 0441+0442 applied (critical provenance 4/4).
+- Updated `.github/workflows/xnu.yml`: added `set -o pipefail` to the buildtree
+  and kernel verification steps, and added an explicit step that requires 0442
+  to be APPLIED (not skipped) and verifies exact source hashes
+  `pe_serial.c=0567414c...`, `SweetFramebuffer.cpp=a92e8e92...`,
+  `sys_generic.c=438bc846...`.
+- New 0442 patch SHA256
+  `8d9d7475f25fb7a0f643dab4fb328706dcdc6a50114073848de35d1fbb8547a1`;
+  `tools/test_m30_framebuffer_commit_diag.py` PASS. No physical action.
+  NEXT: rerun CI; treat only a run where every verification step is genuinely
+  successful as packagable.

@@ -27,7 +27,7 @@ PATCH = ROOT / "xnu/patches-minimal/0442-m30-framebuffer-commit-diag.patch"
 BASE = ROOT / "milestone_artifacts/ci_45356410574/buildtree/unpacked/xnu"
 RESULT_SERIAL = "0567414c2f004778bba71a01b2723202af5bde98bf1ca6ec035856b086c2a772"
 RESULT_SYS = "438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f"
-RESULT_FB = "b3cc2d07adeb8503ab60e66febb98fb073ff41ad62815cccfe257f44d396054c"
+RESULT_FB = "a92e8e928033ccf73648b40952ea3cdb7f975e045af7789523e4139b2320d178"
 
 
 def sha256(p: Path) -> str:

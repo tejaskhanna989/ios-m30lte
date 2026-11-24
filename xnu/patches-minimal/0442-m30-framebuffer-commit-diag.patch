@@ -41,8 +41,13 @@ diff --git a/pexpert/arm/pe_serial.c b/pexpert/arm/pe_serial.c
 diff --git a/iokit/Kernel/arm/SweetFramebuffer.cpp b/iokit/Kernel/arm/SweetFramebuffer.cpp
 --- a/iokit/Kernel/arm/SweetFramebuffer.cpp
 +++ b/iokit/Kernel/arm/SweetFramebuffer.cpp
-@@ -37,6 +37,9 @@
+@@ -35,8 +35,14 @@
+  * the first swap on (it still reaches the persistent log; panics draw).
+  */
  #include "SweetSurface.h"
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++#include <libkern/libkern.h>    /* snprintf for bounded pstore diagnostics */
++#endif
  
  extern "C" int sweet_console_muted;     /* osfmk/console/serial_console.c */
 +#if defined(ARM64_BOARD_CONFIG_M30LTE)
@@ -51,16 +56,6 @@ diff --git a/iokit/Kernel/arm/SweetFramebuffer.cpp b/iokit/Kernel/arm/SweetFrame
  
  #if defined(ARM64_BOARD_CONFIG_SWEET) || defined(ARM64_BOARD_CONFIG_A5XELTE)
  #include <IOKit/IOService.h>
-@@ -51,6 +54,9 @@
- #include <pexpert/arm64/board_config.h>
- #include <kern/clock.h>
- #include <sys/proc.h>
-+#if defined(ARM64_BOARD_CONFIG_M30LTE)
-+#include <libkern/libkern.h>    /* snprintf for bounded pstore diagnostics */
-+#endif
- 
- enum {
- 	kSweetFBGetLayerDefaultSurface  = 3,
 @@ -121,6 +127,15 @@
  	uint8_t       fPending[SWEET_FB_SWAP_REC_SIZE];     /* latest swap, not yet shown */
  	bool          fDirty;
