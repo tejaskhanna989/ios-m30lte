@@ -3201,3 +3201,15 @@ authorization for a BOOT-only test of candidate v6.
 - No security weakening. NEXT: restore v62 BOOT-only after a fresh identity and
   Download Mode gate. v65 evidence preserved under
   `validation/physical-boot-test/20261124-ios-v65-boot/`.
+
+## 2026-11-24 - known-good v62 BOOT restored after v65 (MAIN only)
+
+- After v65 rejection, identity was re-verified in TWRP (`SM-M305F`, `m30lte`,
+  bootloader `M305FDDU8CVK1`, exact known serial, `ro.twrp.boot=1`) and Samsung
+  Download Mode was confirmed by Heimdall before any write.
+- Known-good v62 BOOT
+  `7798b211ebc9773df3225732e572dc18d091d2805cc1f7be72f967fbdd0913c7` was
+  flashed BOOT-only with `--no-reboot` at `17:28:19Z..17:28:24Z`; `BOOT upload
+  successful`; resumed with `heimdall print-pit --resume`. No USERDATA/SYSTEM/
+  RECOVERY write, no Fastboot. Evidence:
+  `validation/physical-boot-test/20261124-v62-restore-after-v65/`.
