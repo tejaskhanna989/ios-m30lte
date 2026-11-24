@@ -3261,3 +3261,17 @@ authorization for a BOOT-only test of candidate v6.
   Download Mode gate, BOOT-only Heimdall flash, 10-15 min visual observation,
   read-only pstore pull, decode `M30 FB: wait/done` and `M30 UI`. Accept only
   a persistent visible lock screen plus logs.
+
+## 2026-11-24 - v66 BOOT-only physical test started (MAIN only)
+
+- Identity gate PASS in TWRP: `SM-M305F`, `m30lte`, bootloader
+  `M305FDDU8CVK1`, exact known serial, `ro.twrp.boot=1`.
+- Samsung Download Mode confirmed by Heimdall before any write.
+- BOOT-only flash of `shim-boot.img`
+  `5c502123f49b6a4d126ead6b377bfbeca500855d5b37660dd9160af49a18d4e5`
+  `2026-11-24T18:11:45Z..18:11:50Z` with `--no-reboot`, `BOOT upload
+  successful`; resumed with `heimdall print-pit --resume`. No USERDATA/SYSTEM/
+  RECOVERY write, no Fastboot. Evidence:
+  `validation/physical-boot-test/20261124-ios-v66-boot/`.
+- Visual observation and read-only pstore pull pending. Accept only a
+  persistent visible lock-screen render plus supporting logs.

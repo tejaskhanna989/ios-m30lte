@@ -1,0 +1,8 @@
+IDENTITY_GATE=PASS
+ro.boot.em.model=SM-M305F
+ro.product.device=m30lte
+ro.boot.bootloader=M305FDDU8CVK1
+ro.twrp.boot=1
+ro.serialno=<redacted>
+ro.boot.serialno=<redacted>
+image_sha256=5c502123f49b6a4d126ead6b377bfbeca500855d5b37660dd9160af49a18d4e5
