@@ -3395,3 +3395,32 @@ authorization for a BOOT-only test of candidate v6.
   `validation/physical-boot-test/20261125-ios-v67-boot/`.
 - Visual observation and read-only pstore pull pending. Accept only a
   persistent visible lock-screen render plus supporting logs.
+
+## 2026-11-25 - v67 physically rejected; notifications ruled out (MAIN only)
+
+- Final visual (user-confirmed at ~00:55 IST): Apple logo only, stuck
+  indefinitely. v67 is REJECTED for the lock-screen objective.
+- Per explicit user instruction, NO ROLLBACK was performed. v67 BOOT remains
+  installed and the device is currently in TWRP. Do not flash another BOOT
+  image without a new explicit instruction.
+- Read-only pstore pull from TWRP after identity recheck PASS. Raw
+  `pmsg-ramoops-0` 16372 bytes, SHA256
+  `7da6103435e8560eff132c97f3bfd91c6fc12a1ea359cf6ad0a7f03f2d84f9f3`;
+  171 records, `clean=False` (three leading wrapped-ring bad_magic records).
+- Nonblocking `SwapWait` worked: waits #1..#8 are short and `before==done`
+  after the first present. Commit activity recovered to 5 staged swaps and 4
+  `present()` copies (`copied=40435200`), close to v65. Then it froze at
+  `v=19200 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2`.
+- The notify push was inert: every `M30 FB: notify mask=0x0 done=N` shows no
+  notification type had both a registered callback and valid port. This rules
+  out the notification handshake as the blocker.
+- `M30 UI: sb=26 bb=57 reason=none`; SpringBoard/backboardd alive. Surviving
+  IRT final `state=3`, `csblk=3903 csfail=7 csvok=36705 cfa=2 cfi=5 cfp=0`.
+  CRASH records for driverkitd[68] and lsd[98] survived, but not for
+  SpringBoard or backboardd. No SBERR/BBERR/NSInternal strings survived.
+- Evidence: `validation/physical-boot-test/20261125-ios-v67-boot/` including
+  `analysis.txt`, `decoded-pmsg.txt`, `decoded-pmsg.json`, `SHA256SUMS`.
+- NEXT fix target: newer IOMobileFramebuffer selectors called by backboardd and
+  currently returned as empty successes, especially selector 79 (2 scalar
+  inputs, 1580-byte structure output), 74, 84, 50, 68 and 55. Selector 79's
+  large structure output is the strongest display-mode/transaction ABI lead.

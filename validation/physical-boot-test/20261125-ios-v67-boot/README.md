@@ -20,6 +20,11 @@ notification types.
 - Device resumed with `heimdall print-pit --resume`. No USERDATA, SYSTEM or
   RECOVERY write; no Fastboot.
 
-Visual result and read-only pstore pull are pending. No lock-screen claim is
-made from the flash, Apple logo, console text, process liveness, IRT state, or
-logs alone.
+## Result
+
+REJECTED for the lock-screen objective. User confirmed at ~00:55 IST that the
+screen stayed on the Apple logo indefinitely. Per explicit user instruction,
+**no rollback was performed**; v67 BOOT remains installed and the device is in
+TWRP. Read-only pstore pull and decoded records are in `raw/` and
+`decoded-pmsg.*`; see `analysis.txt`. No lock-screen claim is made from the
+flash, Apple logo, process liveness, IRT state, or logs alone.

@@ -1,0 +1,47 @@
+v67 physical result: REJECTED for the lock-screen objective.
+
+Final visual (user-confirmed at ~2026-11-25T00:55 IST): Apple logo only,
+stuck indefinitely. No persistent lock screen. Per explicit user instruction,
+NO ROLLBACK was performed; the device remains on v67 BOOT and is currently in
+TWRP with the v67 BOOT image still installed.
+
+Pstore evidence:
+- Read-only pull from TWRP after identity recheck PASS. Raw pmsg-ramoops-0:
+  16372 bytes, SHA256
+  7da6103435e8560eff132c97f3bfd91c6fc12a1ea359cf6ad0a7f03f2d84f9f3.
+- Decoder consumed 16372 bytes; 171 records. clean=False because of three
+  leading wrapped-ring bad_magic records.
+- Nonblocking SwapWait worked: wait #1..#8 are all short/nonblocking and
+  before==done for every wait after the first present. Commit activity was
+  restored close to v65 levels: 5 staged swaps and 4 present() copies of
+  10108800 bytes each, copied total 40435200.
+- The notify push was inert:
+    M30 FB: notify mask=0x0 done=1
+    M30 FB: notify mask=0x0 done=2
+    M30 FB: notify mask=0x0 done=3
+    M30 FB: notify mask=0x0 done=4
+  No IOMobileFramebuffer notification type had both a registered callback and a
+  valid notification port. Therefore neither type 6 nor the forced push of
+  all registered types could reach userland. This rules out the notification
+  handshake as the cause of the stall.
+- After present #4 the counters froze:
+    v=19200 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+  Only periodic status records survive from v=5400 through v=19200; no further
+  staged swap or present occurred while the screen stayed on the Apple logo.
+- M30 UI: sb=26 bb=57 reason=none. SpringBoard and backboardd remained alive;
+  no SpringBoard/backboardd crash reason was captured.
+- Surviving IRT final: state=3, csblk=3903 csfail=7 csvok=36705 cfa=2 cfi=5
+  cfp=0. CRASH records for driverkitd[68] and lsd[98] survived, but these are
+  not SpringBoard or backboardd.
+- No SBERR/BBERR or NSInternal strings survived. These are ring observations,
+  not lock-screen evidence.
+
+Conclusion: v67 confirms the stall is NOT caused by SwapWait blocking and NOT
+caused by missing framebuffer notifications. Nonblocking behavior is correct,
+but backboardd still stops issuing swaps after the first few presents. The next
+fix target should be the newer IOMobileFramebuffer selectors that backboardd
+calls and our user client currently treats as empty successes, especially
+selector 79 (2 scalar inputs, 1580-byte structure output), selector 74,
+selector 84, selector 50, selector 68 and selector 55. Selector 79's large
+structure output is the strongest lead for a display-mode/transaction ABI
+mismatch. No security state was weakened.
