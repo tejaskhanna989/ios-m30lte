@@ -3459,3 +3459,15 @@ authorization for a BOOT-only test of candidate v6.
   evidence artifact, and trace selector 79/74/84/50/68/55 callers and output
   contracts from genuine binaries. Do not implement or flash any synthetic
   selector response.
+
+## 2026-11-25 - direct boot of installed v67 BOOT (MAIN only)
+
+- User instructed "just boot it". Device was connected in TWRP; identity gate
+  PASS: `SM-M305F`, `m30lte`, serial `320081735bb166a3`, bootloader
+  `M305FDDU8CVK1`, `ro.twrp.boot=1`.
+- `adb reboot` issued at `2026-11-24T19:54:34Z` (`2026-11-25 01:24:34 IST`).
+  No BOOT/USERDATA/SYSTEM/RECOVERY write, no Heimdall write, no Fastboot;
+  this simply booted the already-installed v67 BOOT image.
+- Physical 10-15 minute observation is pending from the user. Accept only a
+  persistent visible iOS lock screen plus supporting logs; Apple logo,
+  console text, process liveness or pstore activity alone remain rejection.
