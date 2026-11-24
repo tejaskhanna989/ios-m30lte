@@ -3356,3 +3356,28 @@ authorization for a BOOT-only test of candidate v6.
   (not skipped) and checks the exact final source hashes. No physical action
   yet; device is back on known-good v62 BOOT and must return to TWRP before any
   further BOOT write.
+
+## 2026-11-25 - v67 CI GREEN and candidate packaged (MAIN only)
+
+- CI `45459907542` GREEN for source `03acae4f`. Explicit step confirmed 0442,
+  0443 and 0444 all APPLIED (not skipped); critical buildtree verifier PASS with
+  `set -o pipefail`; exact source hashes: `pe_serial.c=0567414c...`,
+  `SweetFramebuffer.cpp=6d0c9f8820d71c62d0baa4112f2c5cf3015ce5329a23a697969607f86bfc0e39`,
+  `sys_generic.c=438bc846...`.
+- Candidate `validation/ios-candidate-v67-out/`: linked kernel
+  `8e309b88d1fc5d4023ee7329edf60bfba6c842b06db31835e0941a747e2159ef`, payload
+  `b4033f336d7496a61749696e3786e409851f2fb87b6b4fa5556e84f1c81744a2`,
+  `shim-boot.img`
+  `afc7cac13eac9d56686d701d97afd65aa40e9a3e2fed98ed05ba7fd995ca4209`,
+  `ios-boot.img`
+  `8724c287f809aa433c507a9cf62efac9281b1abc543bfe37b075b2418da313ad`.
+  Payload cmdline unchanged, including `serial=3`, `a5fb_noconsole=1`,
+  `a5fb_keep_on=1`.
+- Validation: boot images PASS; handoff 27/27 PASS; buildtree 4/4 critical
+  provenance PASS; kernel 6/6 PASS; platform 9/9 PASS; focused tests 24 PASS /
+  1 pre-existing FAIL (`tools/test_m30_16k_pages.py` missing
+  `0417-m30-16k-pages.patch`).
+- Device was not connected at packaging time. NEXT: connect in TWRP, fresh
+  identity + Download Mode gate, BOOT-only Heimdall flash, 10-15 min visual
+  observation, read-only pstore pull. Accept only a persistent visible lock
+  screen plus supporting logs.
