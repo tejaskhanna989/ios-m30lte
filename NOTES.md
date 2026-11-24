@@ -2596,3 +2596,22 @@ authorization for a BOOT-only test of candidate v6.
   ~3 min to capture early pstore, because the exact NS exception reason was
   lost in v58's wrapped ring. No lock-screen claim without visible persistent
   evidence plus logs.
+
+## 2026-11-24 - v59 CI GREEN and candidate packaged (MAIN only)
+
+- CI `45295419663` GREEN for source `dccbc33b` (`XNU_TARGET=iphoneos`, M30LTE,
+  DEVELOPMENT). Log applied `0436-m30-cs-busy-peer-overlay.patch`; LSE count 0.
+  Buildtree `vm_fault.c` matches the local v59 source byte-for-byte
+  (`98196f90fef3f7cc382678dbee83799b8bfd7893ac008ca0cefd0e8e262bf65d`).
+- Kernel SHA256 `82d1e1443a2260535195a12c12714ac2b2248355ca60af30bfce05f94f6c2448`.
+  Candidate `validation/ios-candidate-v59-out/`: payload
+  `6c4c3ddf1aafd4991b23a2839bdc4499dbc0a7622d6be83b0cdd1014a69a128b`,
+  `shim-boot.img`
+  `9890079d8d801aef5639d79a0eba5e8cb468c4ab735dec17eb2a1092eda1b421`.
+  Cmdline/ADT/shim/layout unchanged from v58.
+- Validators PASS: buildtree, kernel 6 checks, platform 9/9, packaging, handoff
+  22/22, all applicable focused tests.
+- NEXT: BOOT-only physical test with identity/Download Mode gate; force recovery
+  at ~3 min to capture early pstore with the NS exception reason and the new
+  `cfa/cfi/cfp` counters. No lock-screen claim without visible persistent
+  evidence plus logs.

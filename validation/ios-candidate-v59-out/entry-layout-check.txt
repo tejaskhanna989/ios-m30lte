@@ -1,0 +1,21 @@
+v59 kernel-entry and payload-layout check (MAIN only)
+=====================================================
+
+CI: 45295419663 (GREEN, source dccbc33b)
+Patches applied: 0426-0436 (0436 = busy-peer CS overlay).
+Buildtree osfmk/vm/vm_fault.c SHA256
+98196f90fef3f7cc382678dbee83799b8bfd7893ac008ca0cefd0e8e262bf65d.
+
+Kernel entry unchanged from v57/v58:
+  LC_UNIXTHREAD PC / entry VA 0xfffffff007411488
+  _start_first_cpu 0xfffffff0074130ec
+  __TEXT_EXEC __text size 0x008b4000
+  kernel end 0xfffffff008454000
+
+mkpayload.py output:
+  entry 0xfffffff007411488, kernel_end 0xfffffff008454000
+  ADT PA 0x82454000, boot_args PA 0x82458000
+  payload size 16179264 bytes, kernel binary 16807032 bytes
+  cmdline: debug=0xc serial=3 cpus=6 keepsyms=1 maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1 sweetfb_noconsole=1
+
+ADT and shim unchanged from v57/v58. verify_handoff_v59.py: 22/22 PASS.
