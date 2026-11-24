@@ -3213,3 +3213,27 @@ authorization for a BOOT-only test of candidate v6.
   successful`; resumed with `heimdall print-pit --resume`. No USERDATA/SYSTEM/
   RECOVERY write, no Fastboot. Evidence:
   `validation/physical-boot-test/20261124-v62-restore-after-v65/`.
+
+## 2026-11-24 - v66 fix attempt: SwapWait completion handshake (MAIN only)
+
+- v65 proved the lock-screen blocker is a UI transaction stall: 6 staged swaps
+  and 5 `present()` copies, then frozen counters while vsync kept firing, with
+  SpringBoard/backboardd alive (`sb=27 bb=102 reason=none`). The donor
+  `AppleCLCD` leaves `kSweetFBSwapWait` (selector 6) as a no-op and never emits
+  a swap-done notification, which can leave a modern backboardd waiting for
+  transaction completion.
+- New M30LTE-only fix patch
+  `xnu/patches-minimal/0443-m30-framebuffer-swapwait-handshake.patch`, SHA256
+  `d96a4695643584103d050d91f080b6ffe5d1cae96dce2bf341bbd62a4c42a2c2`.
+  It implements a bounded `SwapWait` (20 x 5 ms), returns the current present
+  count, and emits a swap-done notification (type 6) after each `present()`.
+  Bounded direct-pstore lines `M30 FB: wait #` and `M30 FB: done #` confirm the
+  handshake. No security, serial, console, userland-policy or USERDATA change.
+- Offline CI-order test applies 0441+0442+0443 to the exact v62 CI source:
+  `pe_serial.c=0567414c...`, `sys_generic.c=438bc846...`,
+  `SweetFramebuffer.cpp=a80558039ddf9e0be26fb12f186edd50acca81e0276c0e747e9713c906bb35f8`.
+  `verify_m30_buildtree.py` PASS with all 4 critical patches reverse-applying;
+  `tools/test_m30_framebuffer_swapwait_handshake.py` PASS.
+- `.github/workflows/xnu.yml` now requires both 0442 and 0443 to be APPLIED
+  (not skipped) and checks the exact final source hashes. No physical action
+  yet. Device must be in TWRP before the next BOOT-only flash.

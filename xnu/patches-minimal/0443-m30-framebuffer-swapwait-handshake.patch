@@ -1,0 +1,81 @@
+diff --git a/iokit/Kernel/arm/SweetFramebuffer.cpp b/iokit/Kernel/arm/SweetFramebuffer.cpp
+--- a/iokit/Kernel/arm/SweetFramebuffer.cpp
++++ b/iokit/Kernel/arm/SweetFramebuffer.cpp
+@@ -135,6 +135,8 @@
+ 	uint64_t      fPresentBytes;
+ 	uint32_t      fPresentSkips;
+ 	uint32_t      fLastSkip;
++	uint64_t      fSwapWaitCalls; /* bounded SwapWait handshake telemetry */
++	uint64_t      fSwapDone;      /* present() completions observed by userland */
+ #endif
+ #if defined(ARM64_BOARD_CONFIG_A5XELTE)
+ 	bool          fPerfLog;       /* A5-only copy timing; never on the donor */
+@@ -274,6 +276,8 @@
+ 	fPresentBytes = 0;
+ 	fPresentSkips = 0;
+ 	fLastSkip = 0;
++	fSwapWaitCalls = 0;
++	fSwapDone = 0;
+ 	int m30_noconsole = 0;
+ 	int m30_keepon = 0;
+ 	PE_parse_boot_argn("a5fb_noconsole", &m30_noconsole, sizeof(m30_noconsole));
+@@ -593,6 +597,26 @@
+ 		    fPresentSkips, fLastSkip, mask);
+ 		m30_pmsg_diag_line(line);
+ 	}
++	/* Complete the backboardd transaction handshake.  The donor framebuffer
++	 * left SwapWait as a no-op and never emitted a swap-done notification, so
++	 * a modern backboardd can stall after its first few SwapEnd calls. */
++	fSwapDone = fPresentCalls;
++	if (fSwapDone <= 8) {
++		char line[160];
++		snprintf(line, sizeof(line), "M30 FB: done #%llu copied=%llu",
++		    (unsigned long long)fSwapDone, (unsigned long long)copied);
++		m30_pmsg_diag_line(line);
++	}
++	{
++		uint64_t values[4] = { fSwapDone, copied, 0, 0 };
++		IOLockLock(fLock);
++		for (unsigned int i = 0; i < fClients->getCount(); i++) {
++			IOMobileFramebufferUserClient *client =
++			    (IOMobileFramebufferUserClient *)fClients->getObject(i);
++			client->notify(6, values, 4);   /* swap-done notification */
++		}
++		IOLockUnlock(fLock);
++	}
+ #endif
+ 	return copied;
+ }
+@@ -758,7 +782,31 @@
+ 			IOLog("SWEET FB: display %s\n", off ? "off" : "on");
+ 		}
+ 		break;
+-	case kSweetFBSwapWait:
++	case kSweetFBSwapWait: {
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++		uint64_t token = args->scalarInputCount != 0 ? args->scalarInput[0] : 0;
++		uint64_t before = fFB->fPresentCalls;
++		fFB->fSwapWaitCalls++;
++		/* Wait, briefly, for the next present() to complete.  This preserves
++		 * the SwapBegin/SwapEnd/SwapWait transaction ordering expected by a
++		 * modern backboardd without adding userland-visible policy. */
++		for (int i = 0; i < 20 && fFB->fPresentCalls == before; i++) {
++			IOSleep(5000);
++		}
++		out[0] = fFB->fPresentCalls;
++		outCount = 1;
++		if (fFB->fSwapWaitCalls <= 8) {
++			char line[160];
++			snprintf(line, sizeof(line),
++			    "M30 FB: wait #%llu token=%llu before=%llu done=%llu",
++			    (unsigned long long)fFB->fSwapWaitCalls,
++			    (unsigned long long)token, (unsigned long long)before,
++			    (unsigned long long)fFB->fPresentCalls);
++			m30_pmsg_diag_line(line);
++		}
++#endif
++		break;
++	}
+ 	default:
+ 		break;
+ 	}
