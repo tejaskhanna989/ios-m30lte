@@ -1,0 +1,1168 @@
+{
+  "input_bytes": 16372,
+  "input_sha256": "3299f42228ae42958c6b8946feb217d71acfc8e0139215fd782edff115e2097d",
+  "record_count": 144,
+  "consumed": 16372,
+  "clean": false,
+  "records": [
+    {
+      "index": 0,
+      "offset": 6,
+      "length": 72,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 6 in 3/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 1,
+      "offset": 78,
+      "length": 76,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 27 in 0/0 out 0/3084 -> 0x0"
+    },
+    {
+      "index": 2,
+      "offset": 154,
+      "length": 76,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 17 in 0/3084 out 0/0 -> 0x0"
+    },
+    {
+      "index": 3,
+      "offset": 230,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 84 in 0/4 out 0/0 -> 0x0"
+    },
+    {
+      "index": 4,
+      "offset": 303,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 50 in 2/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 5,
+      "offset": 376,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd sel 13"
+    },
+    {
+      "index": 6,
+      "offset": 429,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 68 in 1/8 out 0/0 -> 0x0"
+    },
+    {
+      "index": 7,
+      "offset": 502,
+      "length": 136,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd create id 2 1080x2340 fmt 0x42475241 bpe 4 bpr 4352 planes 0 size 10186752 keys 11 -> 0x0"
+    },
+    {
+      "index": 8,
+      "offset": 638,
+      "length": 52,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd sel 9"
+    },
+    {
+      "index": 9,
+      "offset": 690,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd sel 27"
+    },
+    {
+      "index": 10,
+      "offset": 743,
+      "length": 52,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd sel 5"
+    },
+    {
+      "index": 11,
+      "offset": 795,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd trap 2"
+    },
+    {
+      "index": 12,
+      "offset": 848,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd trap 3"
+    },
+    {
+      "index": 13,
+      "offset": 901,
+      "length": 72,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 4 in 0/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 14,
+      "offset": 973,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 68 in 1/8 out 0/0 -> 0x0"
+    },
+    {
+      "index": 15,
+      "offset": 1046,
+      "length": 75,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 5 in 0/1132 out 0/0 -> 0x0"
+    },
+    {
+      "index": 16,
+      "offset": 1121,
+      "length": 72,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 3 in 2/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 17,
+      "offset": 1193,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd sel 34"
+    },
+    {
+      "index": 18,
+      "offset": 1246,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 55 in 1/72 out 0/0 -> 0x0"
+    },
+    {
+      "index": 19,
+      "offset": 1320,
+      "length": 124,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: swap 2 layer 0 surface 2 1080x2340 fmt 0x42475241 bpr 4352 a 0,0 1080x2340 b 0,0 1080x2340"
+    },
+    {
+      "index": 20,
+      "offset": 1444,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1fb0e2000): p=99[ReportCrash] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 21,
+      "offset": 1583,
+      "length": 136,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd create id 3 1080x2340 fmt 0x42475241 bpe 4 bpr 4352 planes 0 size 10186752 keys 11 -> 0x0"
+    },
+    {
+      "index": 22,
+      "offset": 1719,
+      "length": 124,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: swap 3 layer 0 surface 3 1080x2340 fmt 0x42475241 bpr 4352 a 0,0 1080x2340 b 0,0 1080x2340"
+    },
+    {
+      "index": 23,
+      "offset": 1843,
+      "length": 117,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE FB: frames=2 elapsed_ms=5241 fps=0.3 bytes=20217600 avg_copy_us=2421 max_copy_us=2447"
+    },
+    {
+      "index": 24,
+      "offset": 1960,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=3 xctest=1 xctchunk=0 csblk=4098 csfail=8 csvok=38606 cfa=3 cfi=5 "
+    },
+    {
+      "index": 25,
+      "offset": 2213,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: SpringBoard sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 26,
+      "offset": 2294,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: SpringBoard sel 35 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 27,
+      "offset": 2379,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: SpringBoard sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 28,
+      "offset": 2460,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: SpringBoard sel 35 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 29,
+      "offset": 2545,
+      "length": 132,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1010aa000): p=111[dmd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 30,
+      "offset": 2677,
+      "length": 135,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1ef1a5000): p=64[imagent] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 31,
+      "offset": 2812,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101ac8000): p=63[locationd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 32,
+      "offset": 2949,
+      "length": 79,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: securityd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 33,
+      "offset": 3028,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: chronod sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 34,
+      "offset": 3105,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: chronod sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 35,
+      "offset": 3182,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: chronod sel 35 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 36,
+      "offset": 3263,
+      "length": 251,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=6 xctest=1 xctchunk=0 csblk=4577 csfail=8 csvok=41652 cfa=3 cfi=5 cfp=0)"
+    },
+    {
+      "index": 37,
+      "offset": 3514,
+      "length": 251,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=6 xctest=1 xctchunk=0 csblk=4582 csfail=8 csvok=41683 cfa=3 cfi=5 cfp=0)"
+    },
+    {
+      "index": 38,
+      "offset": 3765,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: fmfd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 39,
+      "offset": 3839,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: fmfd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 40,
+      "offset": 3913,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=4 xctest=1 xctchunk=0 csblk=4868 csfail=8 csvok=43491 cfa=3 cfi=5 "
+    },
+    {
+      "index": 41,
+      "offset": 4166,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: liveactivitiesd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 42,
+      "offset": 4251,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: liveactivitiesd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 43,
+      "offset": 4336,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: chronod sel 35 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 44,
+      "offset": 4417,
+      "length": 128,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "ifnet_attach: Waiting for all kernel threads created for interface utun0 to get scheduled at least once."
+    },
+    {
+      "index": 45,
+      "offset": 4545,
+      "length": 131,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "ifnet_attach: All kernel threads created for interface utun0 have been scheduled at least once. Proceeding."
+    },
+    {
+      "index": 46,
+      "offset": 4676,
+      "length": 79,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET Sandbox: identityservicesd privilege 12001 denied"
+    },
+    {
+      "index": 47,
+      "offset": 4755,
+      "length": 40,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP --- sample 0"
+    },
+    {
+      "index": 48,
+      "offset": 4795,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd[57] slide 0x4cbf8000 mh 0x100c3c000"
+    },
+    {
+      "index": 49,
+      "offset": 4869,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t0 pc 0x20f2096a4 lr 0x1da74e41c sp 0x16f1c2ba0 bt 0x1da74dffc 0x1da74d9b0 0x1de18d0cc 0x104de70c4 0x1da790780 0x1da73164c 0x104de6e3c 0x104df19f8 0x1da790780 0x1da73d830 0x104df1698 0x1da790780 0x1da73164c 0x104df"
+    },
+    {
+      "index": 50,
+      "offset": 5122,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t2 pc 0x21e792718 lr 0x0 sp 0x16f3eeb70 bt"
+    },
+    {
+      "index": 51,
+      "offset": 5203,
+      "length": 197,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t3 pc 0x20f209030 lr 0x20f21ab18 sp 0x16f479eb0 bt 0x20f21adb8 0x20f209524 0x1d3a54148 0x1d3a552e0 0x1d3a59d20 0x1d3a98bec 0x1db19af70 0x21e7940ec 0x21e79272c"
+    },
+    {
+      "index": 52,
+      "offset": 5400,
+      "length": 161,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t4 pc 0x20f209030 lr 0x20f21ab18 sp 0x16f60e9b0 bt 0x20f21adb8 0x20f209524 0x1d4ec4884 0x1d5103418 0x21e7940ec 0x21e79272c"
+    },
+    {
+      "index": 53,
+      "offset": 5561,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t5 pc 0x20f209030 lr 0x20f21ab18 sp 0x16f7a9d90 bt 0x20f21adb8 0x20f209524 0x1d3a54148 0x1d3a552e0 0x1d3a59d20 0x1d3a98bec 0x1d50f9ccc 0x1d5103418 0x21e7940ec 0x21e79272c"
+    },
+    {
+      "index": 54,
+      "offset": 5770,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t6 pc 0x20f209030 lr 0x20f21ab18 sp 0x16f8b5d90 bt 0x20f21adb8 0x20f209524 0x1d3a54148 0x1d3a552e0 0x1d3a59d20 0x1d3a98bec 0x1d50f9ccc 0x1d5103418 0x21e7940ec 0x21e79272c"
+    },
+    {
+      "index": 55,
+      "offset": 5979,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t7 pc 0x20f209030 lr 0x20f21ab18 sp 0x16f2c9d90 bt 0x20f21adb8 0x20f209524 0x1d3a54148 0x1d3a552e0 0x1d3a59d20 0x1d3a98bec 0x1d50f9ccc 0x1d5103418 0x21e7940ec 0x21e79272c"
+    },
+    {
+      "index": 56,
+      "offset": 6188,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t8 pc 0x20f209030 lr 0x20f21ab18 sp 0x16f9c1d90 bt 0x20f21adb8 0x20f209524 0x1d3a54148 0x1d3a552e0 0x1d3a59d20 0x1d3a98bec 0x1d50f9ccc 0x1d5103418 0x21e7940ec 0x21e79272c"
+    },
+    {
+      "index": 57,
+      "offset": 6397,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t9 pc 0x20f209030 lr 0x20f21ab18 sp 0x16f500900 bt 0x20f21adb8 0x20f209524 0x1da746ec4 0x1da74725c 0x21e7e60ec 0x1cde04224 0x1cdd9dcb0 0x1cdd9c6e0 0x1cdd9c61c 0x1ce8a8f4c 0x1ce7f18e8 0x1ce8818e4 0x1ce7e8bc0 0x1ce8a"
+    },
+    {
+      "index": 58,
+      "offset": 6650,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t11 pc 0x1da7b9158 lr 0x1d3ab586c sp 0x16fada190 bt 0x1d3a30248 0x1d3a2fefc 0x1d3a2fca8 0x1d3a2f804 0x1d3a73d2c 0x1d3a60e34 0x1d3a5dbb8 0x1d3a09034 0x1d3a08f7c 0x1cdd9e144 0x1cddcb974 0x1cddcb6dc 0x1de190d34 0x1da7"
+    },
+    {
+      "index": 59,
+      "offset": 6903,
+      "length": 138,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t13 pc 0x20f208fc4 lr 0x1da730580 sp 0x16fa4ef30 bt 0x1da730b18 0x1da73f8ac 0x21e7940ec 0x21e79272c"
+    },
+    {
+      "index": 60,
+      "offset": 7041,
+      "length": 66,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t14 pc 0x0 lr 0x0 sp 0x0 bt"
+    },
+    {
+      "index": 61,
+      "offset": 7107,
+      "length": 75,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard[27] slide 0x4cbf8000 mh 0x100274000"
+    },
+    {
+      "index": 62,
+      "offset": 7182,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t0 pc 0x20f209ad0 lr 0x21e6f9d08 sp 0x16fb8a990 bt 0x1ce8817b8 0x1ce7e8bc0 0x1ce8ae238 0x1ce7d7bb8 0x1ce7d7b20 0x23d7f0c64 0x1da9470f4 0x23d7f0bf4 0x23d7f06c4 0x23d7f064c 0x23d7f0338 0x23d7efb38 0x1da790780 0x1da7"
+    },
+    {
+      "index": 63,
+      "offset": 7435,
+      "length": 222,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t3 pc 0x20f209ad0 lr 0x1da730908 sp 0x16fece680 bt 0x1da7306f4 0x1da73dad4 0x1da73d6ec 0x1e95bc980 0x1da78f7a8 0x1da790780 0x1da736298 0x1da736da0 0x1da740dc8 0x21e792bd0 0x21e792720"
+    },
+    {
+      "index": 64,
+      "offset": 7657,
+      "length": 102,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t4 pc 0x20f2094f0 lr 0x21e792c1c sp 0x16ff5ab30 bt 0x21e792720"
+    },
+    {
+      "index": 65,
+      "offset": 7759,
+      "length": 102,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t5 pc 0x20f2094f0 lr 0x21e792c1c sp 0x16ffe6b30 bt 0x21e792720"
+    },
+    {
+      "index": 66,
+      "offset": 7861,
+      "length": 251,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=7 xctest=1 xctchunk=0 csblk=5470 csfail=8 csvok=46958 cfa=3 cfi=5 cfp=0)"
+    },
+    {
+      "index": 67,
+      "offset": 8112,
+      "length": 251,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=7 xctest=1 xctchunk=0 csblk=5473 csfail=8 csvok=46978 cfa=3 cfi=5 cfp=0)"
+    },
+    {
+      "index": 68,
+      "offset": 8363,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1e9310000): p=103[PowerUIAgent] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 69,
+      "offset": 8504,
+      "length": 124,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: swap 4 layer 0 surface 2 1080x2340 fmt 0x42475241 bpr 4352 a 0,0 1080x2340 b 0,0 1080x2340"
+    },
+    {
+      "index": 70,
+      "offset": 8628,
+      "length": 88,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "_dlil_attach_flowswitch_nexus: not attaching flowswitch to utun0"
+    },
+    {
+      "index": 71,
+      "offset": 8716,
+      "length": 88,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: CloudKeychainProxy sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 72,
+      "offset": 8804,
+      "length": 88,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: CloudKeychainProxy sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 73,
+      "offset": 8892,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=5 xctest=1 xctchunk=0 csblk=5781 csfail=9 csvok=48697 cfa=4 cfi=5 "
+    },
+    {
+      "index": 74,
+      "offset": 9145,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7"
+    },
+    {
+      "index": 75,
+      "offset": 9234,
+      "length": 117,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE FB: frames=1 elapsed_ms=5246 fps=0.1 bytes=10108800 avg_copy_us=2346 max_copy_us=2346"
+    },
+    {
+      "index": 76,
+      "offset": 9351,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: transparencyd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 77,
+      "offset": 9434,
+      "length": 87,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: transparencyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 78,
+      "offset": 9521,
+      "length": 76,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: triald sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 79,
+      "offset": 9597,
+      "length": 76,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: triald sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 80,
+      "offset": 9673,
+      "length": 64,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET Sandbox: lsd privilege 1015 denied"
+    },
+    {
+      "index": 81,
+      "offset": 9737,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 82,
+      "offset": 9845,
+      "length": 251,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=8 xctest=1 xctchunk=0 csblk=6241 csfail=9 csvok=51489 cfa=4 cfi=5 cfp=0)"
+    },
+    {
+      "index": 83,
+      "offset": 10096,
+      "length": 251,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=8 xctest=1 xctchunk=0 csblk=6250 csfail=9 csvok=51528 cfa=4 cfi=5 cfp=0)"
+    },
+    {
+      "index": 84,
+      "offset": 10347,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7"
+    },
+    {
+      "index": 85,
+      "offset": 10436,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET Sandbox: mDNSResponder op 22"
+    },
+    {
+      "index": 86,
+      "offset": 10494,
+      "length": 57,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET Sandbox: mDNSResponder op 1"
+    },
+    {
+      "index": 87,
+      "offset": 10551,
+      "length": 128,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "ifnet_attach: Waiting for all kernel threads created for interface utun1 to get scheduled at least once."
+    },
+    {
+      "index": 88,
+      "offset": 10679,
+      "length": 131,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "ifnet_attach: All kernel threads created for interface utun1 have been scheduled at least once. Proceeding."
+    },
+    {
+      "index": 89,
+      "offset": 10810,
+      "length": 88,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "_dlil_attach_flowswitch_nexus: not attaching flowswitch to utun1"
+    },
+    {
+      "index": 90,
+      "offset": 10898,
+      "length": 70,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET Sandbox: rapportd privilege 12000 denied"
+    },
+    {
+      "index": 91,
+      "offset": 10968,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=6 xctest=1 xctchunk=0 csblk=6565 csfail=9 csvok=53446 cfa=4 cfi=5 "
+    },
+    {
+      "index": 92,
+      "offset": 11221,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: dmd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 93,
+      "offset": 11294,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: dmd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 94,
+      "offset": 11371,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: dmd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 95,
+      "offset": 11444,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: corespeechd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 96,
+      "offset": 11525,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: corespeechd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 97,
+      "offset": 11606,
+      "length": 75,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: passd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 98,
+      "offset": 11681,
+      "length": 79,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: passd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 99,
+      "offset": 11760,
+      "length": 75,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: passd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 100,
+      "offset": 11835,
+      "length": 78,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: sharingd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 101,
+      "offset": 11913,
+      "length": 78,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: sharingd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 102,
+      "offset": 11991,
+      "length": 79,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: lockdownd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 103,
+      "offset": 12070,
+      "length": 79,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: lockdownd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 104,
+      "offset": 12149,
+      "length": 79,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: passd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 105,
+      "offset": 12228,
+      "length": 251,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=9 xctest=1 xctchunk=0 csblk=7054 csfail=9 csvok=56476 cfa=4 cfi=5 cfp=0)"
+    },
+    {
+      "index": 106,
+      "offset": 12479,
+      "length": 251,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=9 xctest=1 xctchunk=0 csblk=7058 csfail=9 csvok=56499 cfa=4 cfi=5 cfp=0)"
+    },
+    {
+      "index": 107,
+      "offset": 12730,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET Sandbox: containermanager op 7"
+    },
+    {
+      "index": 108,
+      "offset": 12790,
+      "length": 82,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: sharingd sel 35 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 109,
+      "offset": 12872,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=7 xctest=1 xctchunk=0 csblk=7332 csfail=9 csvok=58226 cfa=4 cfi=5 "
+    },
+    {
+      "index": 110,
+      "offset": 13125,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: UserEventAgent sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 111,
+      "offset": 13209,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: UserEventAgent sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 112,
+      "offset": 13293,
+      "length": 86,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: UserEventAgent sel 103 arg0 0 in 0/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 113,
+      "offset": 13379,
+      "length": 86,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: UserEventAgent sel 102 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 114,
+      "offset": 13465,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: imagent sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 115,
+      "offset": 13542,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: imagent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 116,
+      "offset": 13623,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: imagent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 117,
+      "offset": 13704,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: imagent sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 118,
+      "offset": 13781,
+      "length": 252,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=10 xctest=1 xctchunk=0 csblk=7784 csfail=9 csvok=60932 cfa=4 cfi=5 cfp=0)"
+    },
+    {
+      "index": 119,
+      "offset": 14033,
+      "length": 252,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=10 xctest=1 xctchunk=0 csblk=7787 csfail=9 csvok=60944 cfa=4 cfi=5 cfp=0)"
+    },
+    {
+      "index": 120,
+      "offset": 14285,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: dmd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 121,
+      "offset": 14362,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 122,
+      "offset": 14446,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: dmd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 123,
+      "offset": 14523,
+      "length": 91,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: containermanagerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 124,
+      "offset": 14614,
+      "length": 86,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: mediaserverd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 125,
+      "offset": 14700,
+      "length": 88,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: CloudKeychainProxy sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 126,
+      "offset": 14788,
+      "length": 79,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: securityd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 127,
+      "offset": 14867,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: IMDPersistenceAgent sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 128,
+      "offset": 14956,
+      "length": 93,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: IMDPersistenceAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 129,
+      "offset": 15049,
+      "length": 93,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: IMDPersistenceAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 130,
+      "offset": 15142,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: IMDPersistenceAgent sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 131,
+      "offset": 15231,
+      "length": 79,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: securityd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 132,
+      "offset": 15310,
+      "length": 87,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: transparencyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 133,
+      "offset": 15397,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=23612 vh=3750 oh=1 pr=-5 fb=0x0 hb=8 xctest=1 xctchunk=0 csblk=8099 csfail=9 csvok=62511 cfa=4 cfi=5 "
+    },
+    {
+      "index": 134,
+      "offset": 15650,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x20"
+    },
+    {
+      "index": 135,
+      "offset": 15710,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 136,
+      "offset": 15770,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=1 gpio=0x20"
+    },
+    {
+      "index": 137,
+      "offset": 15830,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea down (1 clients)"
+    },
+    {
+      "index": 138,
+      "offset": 15890,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 139,
+      "offset": 15973,
+      "length": 79,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: securityd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 140,
+      "offset": 16052,
+      "length": 71,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET Sandbox: symptomsd privilege 10003 denied"
+    },
+    {
+      "index": 141,
+      "offset": 16123,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 142,
+      "offset": 16206,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 143,
+      "offset": 16289,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    }
+  ],
+  "issues": [
+    {
+      "offset": 0,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x3e"
+    }
+  ]
+}

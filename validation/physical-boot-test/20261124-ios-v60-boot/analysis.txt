@@ -1,0 +1,15 @@
+# v60 first attempt pstore (capture ~5 min after resume)
+raw_sha256=3299f42228ae42958c6b8946feb217d71acfc8e0139215fd782edff115e2097d
+--- IRT counters ---
+csblk=7787 csfail=9 csvok=60944 cfa=4 cfi=5 cfp=0
+--- UI processes alive ---
+SMP backboardd[57] s
+SMP SpringBoard[27] s
+--- absence markers ---
+CRASH : 0
+NSInternal: 0
+M30 SLOW: 0
+reason=: 0
+state=4: 0
+--- cs_invalid processes ---
+{'ReportCrash': 1, 'dmd': 1, 'imagent': 1, 'locationd': 1, 'PowerUIAgent': 1}

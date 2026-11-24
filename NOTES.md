@@ -2726,3 +2726,28 @@ authorization for a BOOT-only test of candidate v6.
   when recovery is convenient; look for `M30 SLOW:` with `cfa/cfi/cfp` and
   `reason=`, SpringBoard/backboardd CS status, and any visible lock screen.
   No UI claim without a persistent visible render plus logs.
+
+## 2026-11-24 - v60 first physical attempt: UI processes healthy, likely stopped early
+
+- Identity/Download Mode verified; BOOT-only flash of
+  `shim-boot.img` `c8db86b4526916da532b410b47f299d71787ad7618caa5c077096390c5b318c8`
+  at `06:24:03Z..06:24:08Z`, resume `06:24:18Z`. USERDATA/SYSTEM/RECOVERY
+  untouched, no Fastboot, no BOOT readback.
+- Pstore pulled `06:29Z`, ~5 min after resume; raw SHA256
+  `3299f42228ae42958c6b8946feb217d71acfc8e0139215fd782edff115e2097d`.
+  Decode 144 records, `clean=False`.
+- Decisive improvement over v58: `SMP SpringBoard[27]` and
+  `SMP backboardd[57]` were alive with multiple threads; **zero** `CRASH`, zero
+  `NSInternal`, zero `state=4`. Only 5 `cs_invalid_page` records, all auxiliary
+  daemons (`ReportCrash`, `dmd`, `imagent`, `locationd`, `PowerUIAgent`), none
+  UI. Counters: `csblk=7787 csfail=9 csvok=60944 cfa=4 cfi=5 cfp=0`.
+- No `M30 SLOW` line because capture preceded the first 10-minute slow report.
+  No lock screen was reported; the boot was forced back to recovery at ~5 min,
+  which was likely too early. This attempt is INCONCLUSIVE on the lock-screen
+  objective, not a rejection of the CS fix.
+- Evidence: `validation/physical-boot-test/20261124-ios-v60-boot/README.md`,
+  `analysis.txt`, decoded logs and SHA256SUMS.
+- NEXT: reflash the SAME validated v60 image with a longer observation
+  (~12–15 min) to allow a lock screen to appear and to capture the first
+  `M30 SLOW` report. Technical reason for reflashing unchanged: the previous
+  window ended before both the UI milestone and the slow telemetry could occur.
