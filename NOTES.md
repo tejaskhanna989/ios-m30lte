@@ -2933,3 +2933,31 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: keep `serial=3`; add a targeted diagnostic to capture what SpringBoard
   writes to stderr (or fully symbolicate the deeper backtrace) before the next
   kernel change. No lock-screen claim from liveness/log telemetry.
+
+## 2026-11-24 - deeper backtrace symbolication and v64 diagnostic plan (MAIN only)
+
+- Device returned to TWRP; identity re-verified (`SM-M305F`, serial
+  `320081735bb166a3`, bootloader `M305FDDU8CVK1`, `ro.twrp.boot=1`). Read-only
+  dyld symbol scan of the remaining v62 `SMP SpringBoard t0` frames completed.
+  Evidence: `validation/physical-boot-test/20261124-ios-v63-boot/deep-symbols.md`
+  and `deep-symbols.json`.
+- The code-section frames are VUI playback/media UI (`VUIPlaybackManager
+  activePlayer`, `VUIMediaLibraryApplicationController`,
+  `VUIMediaInfoFetchController _prewarmIndices`) plus IKit/PaperKit/NotesSupport;
+  three other frames resolve only to data/stub symbols. This is not
+  SpringBoard lock-screen code, and combined with v63 it further weakens the
+  serial-stderr-stall hypothesis.
+- New patch `xnu/patches-minimal/0441-m30-stderr-capture.patch`: captures at
+  most 190 bytes of the first 32 fd-2 writes from SpringBoard (`SBERR`) and
+  backboardd (`BBERR`) into the existing XNU pmsg ring. Read-only copy, no
+  userland behaviour change, no security change. `serial=3` stays enabled.
+- Offline test `tools/test_m30_stderr_capture.py` PASS: patch applies to the
+  exact v62 CI source and reproduces result hashes
+  `3a85e204a5a90639b8a60ee52be27e7ab40e0b959e4e191e35b1614d2263aa03`
+  (pe_serial.c) and
+  `438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f`
+  (sys_generic.c).
+- NEXT: commit, CI (`XNU_TARGET=iphoneos`, `M30LTE`, `DEVELOPMENT`), package v64
+  from v62 with `serial=3` restored + this diagnostic patch, then BOOT-only
+  physical test with the identity/Download Mode gate. Accept only a persistent
+  visible lock screen plus logs.

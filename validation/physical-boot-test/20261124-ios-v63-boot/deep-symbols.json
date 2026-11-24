@@ -1,0 +1,441 @@
+{
+  "addresses": {
+    "0x1c261524": [],
+    "0x1c262db8": [],
+    "0x1ccf5964c": [
+      {
+        "index": 5594090,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[IKDOMDocument createComment:]",
+        "offset": "0x48",
+        "value": "0x1ccf59604"
+      },
+      {
+        "index": 5594089,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[IKDOMDocument setDocumentURI:]",
+        "offset": "0x4c",
+        "value": "0x1ccf59600"
+      },
+      {
+        "index": 5594088,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[IKDOMDocument documentURI]",
+        "offset": "0x50",
+        "value": "0x1ccf595fc"
+      },
+      {
+        "index": 5594087,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[IKDOMDocument setStrictErrorChecking:]",
+        "offset": "0x54",
+        "value": "0x1ccf595f8"
+      },
+      {
+        "index": 5594086,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[IKDOMDocument strictErrorChecking]",
+        "offset": "0x5c",
+        "value": "0x1ccf595f0"
+      }
+    ],
+    "0x1cd0ea590": [
+      {
+        "index": 5609044,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIPlaybackManager activePlayer]",
+        "offset": "0x8",
+        "value": "0x1cd0ea588"
+      },
+      {
+        "index": 5609043,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke_4.793",
+        "offset": "0x98",
+        "value": "0x1cd0ea4f8"
+      },
+      {
+        "index": 5609042,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke_3.792",
+        "offset": "0xe0",
+        "value": "0x1cd0ea4b0"
+      },
+      {
+        "index": 5609041,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke_2.791",
+        "offset": "0x2d0",
+        "value": "0x1cd0ea2c0"
+      },
+      {
+        "index": 5609040,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke.789",
+        "offset": "0x314",
+        "value": "0x1cd0ea27c"
+      }
+    ],
+    "0x1cd0eb374": [
+      {
+        "index": 5609145,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIMediaLibraryApplicationController shouldWarnAboutPlaybackQualityForRentalMediaItem:]",
+        "offset": "0x20",
+        "value": "0x1cd0eb354"
+      },
+      {
+        "index": 5609144,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIMediaLibraryApplicationController isCellularDataForPlaybackEnabled]",
+        "offset": "0x94",
+        "value": "0x1cd0eb2e0"
+      },
+      {
+        "index": 5609143,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIMediaLibraryApplicationController settingsURL]",
+        "offset": "0x10c",
+        "value": "0x1cd0eb268"
+      },
+      {
+        "index": 5609142,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___57+[VUIMediaLibraryApplicationController defaultController]_block_invoke",
+        "offset": "0x134",
+        "value": "0x1cd0eb240"
+      },
+      {
+        "index": 5609141,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "+[VUIMediaLibraryApplicationController defaultController]",
+        "offset": "0x174",
+        "value": "0x1cd0eb200"
+      }
+    ],
+    "0x1cd11837c": [
+      {
+        "index": 5610254,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIMediaInfoFetchController _prewarmIndices]",
+        "offset": "0xc0",
+        "value": "0x1cd1182bc"
+      },
+      {
+        "index": 5610253,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIMediaInfoFetchController _updatePrewarmedPlayers]",
+        "offset": "0x63c",
+        "value": "0x1cd117d40"
+      },
+      {
+        "index": 5610252,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIMediaInfoFetchController queuePriorityForIndex:itemCount:selectedIndex:]",
+        "offset": "0x688",
+        "value": "0x1cd117cf4"
+      },
+      {
+        "index": 5610251,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIMediaInfoFetchController _updateImageOperationPriorities]",
+        "offset": "0x738",
+        "value": "0x1cd117c44"
+      },
+      {
+        "index": 5610250,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIMediaInfoFetchController setIndex:]",
+        "offset": "0x7f4",
+        "value": "0x1cd117b88"
+      }
+    ],
+    "0x1cd119040": [
+      {
+        "index": 5610263,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___59-[VUIMediaInfoFetchController loadImageAtIndex:completion:]_block_invoke",
+        "offset": "0xac",
+        "value": "0x1cd118f94"
+      },
+      {
+        "index": 5610262,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIMediaInfoFetchController loadImageAtIndex:completion:]",
+        "offset": "0x25c",
+        "value": "0x1cd118de4"
+      },
+      {
+        "index": 5610261,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIMediaInfoFetchController _createPlayerWithPlaylist:isForPrewarming:]",
+        "offset": "0x2fc",
+        "value": "0x1cd118d44"
+      },
+      {
+        "index": 5610260,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIMediaInfoFetchController removeMediaInfoAtIndex:]",
+        "offset": "0x464",
+        "value": "0x1cd118bdc"
+      },
+      {
+        "index": 5610259,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[VUIMediaInfoFetchController appendMediaInfos:]",
+        "offset": "0x56c",
+        "value": "0x1cd118ad4"
+      }
+    ],
+    "0x1e1a97a4c": [
+      {
+        "index": 5965282,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftsimd_$_NotesSupport",
+        "offset": "0xd0c",
+        "value": "0x1e1a96d40"
+      },
+      {
+        "index": 5965281,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftCoreMIDI_$_NotesSupport",
+        "offset": "0xd14",
+        "value": "0x1e1a96d38"
+      },
+      {
+        "index": 5965280,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftCoreAudio_$_NotesSupport",
+        "offset": "0xd1c",
+        "value": "0x1e1a96d30"
+      },
+      {
+        "index": 5965279,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftCoreMedia_$_NotesSupport",
+        "offset": "0xd24",
+        "value": "0x1e1a96d28"
+      },
+      {
+        "index": 5965278,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftAVFoundation_$_NotesSupport",
+        "offset": "0xd2c",
+        "value": "0x1e1a96d20"
+      }
+    ],
+    "0x1e1a97d8c": [
+      {
+        "index": 5965282,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftsimd_$_NotesSupport",
+        "offset": "0x104c",
+        "value": "0x1e1a96d40"
+      },
+      {
+        "index": 5965281,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftCoreMIDI_$_NotesSupport",
+        "offset": "0x1054",
+        "value": "0x1e1a96d38"
+      },
+      {
+        "index": 5965280,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftCoreAudio_$_NotesSupport",
+        "offset": "0x105c",
+        "value": "0x1e1a96d30"
+      },
+      {
+        "index": 5965279,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftCoreMedia_$_NotesSupport",
+        "offset": "0x1064",
+        "value": "0x1e1a96d28"
+      },
+      {
+        "index": 5965278,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftAVFoundation_$_NotesSupport",
+        "offset": "0x106c",
+        "value": "0x1e1a96d20"
+      }
+    ],
+    "0x1e1a97db8": [
+      {
+        "index": 5965282,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftsimd_$_NotesSupport",
+        "offset": "0x1078",
+        "value": "0x1e1a96d40"
+      },
+      {
+        "index": 5965281,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftCoreMIDI_$_NotesSupport",
+        "offset": "0x1080",
+        "value": "0x1e1a96d38"
+      },
+      {
+        "index": 5965280,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftCoreAudio_$_NotesSupport",
+        "offset": "0x1088",
+        "value": "0x1e1a96d30"
+      },
+      {
+        "index": 5965279,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftCoreMedia_$_NotesSupport",
+        "offset": "0x1090",
+        "value": "0x1e1a96d28"
+      },
+      {
+        "index": 5965278,
+        "n_desc": 128,
+        "n_sect": 16,
+        "n_type": 30,
+        "name": "__swift_FORCE_LOAD_$_swiftAVFoundation_$_NotesSupport",
+        "offset": "0x1098",
+        "value": "0x1e1a96d20"
+      }
+    ],
+    "0x1e1abc190": [
+      {
+        "index": 5980225,
+        "n_desc": 0,
+        "n_sect": 31,
+        "n_type": 14,
+        "name": "__IVARS__TtC8PaperKit34CompactSignatureStrokeWidthControl",
+        "offset": "0x38",
+        "value": "0x1e1abc158"
+      },
+      {
+        "index": 5980224,
+        "n_desc": 0,
+        "n_sect": 31,
+        "n_type": 14,
+        "name": "__PROTOCOLS__TtC8PaperKit34CompactSignatureStrokeWidthControl.1",
+        "offset": "0x48",
+        "value": "0x1e1abc148"
+      },
+      {
+        "index": 5980223,
+        "n_desc": 0,
+        "n_sect": 31,
+        "n_type": 14,
+        "name": "__METACLASS_DATA__TtC8PaperKit34CompactSignatureStrokeWidthControl",
+        "offset": "0x90",
+        "value": "0x1e1abc100"
+      },
+      {
+        "index": 5980222,
+        "n_desc": 0,
+        "n_sect": 31,
+        "n_type": 14,
+        "name": "__PROTOCOLS__TtC8PaperKit34CompactSignatureStrokeWidthControl",
+        "offset": "0xa0",
+        "value": "0x1e1abc0f0"
+      },
+      {
+        "index": 5980221,
+        "n_desc": 0,
+        "n_sect": 31,
+        "n_type": 14,
+        "name": "__IVARS__TtC8PaperKit29CompactShapeOpacityController",
+        "offset": "0x108",
+        "value": "0x1e1abc088"
+      }
+    ]
+  },
+  "entries_count": 2710,
+  "entries_off": "0x18",
+  "entry_size": 16,
+  "local_symbols_off": "0x4000",
+  "magic": "dyld_v1   arm64\u0000",
+  "mapping_count": 1,
+  "mapping_off": "0x200",
+  "nlist_count": 8705811,
+  "nlist_off": "0xa980",
+  "path": "/private/preboot/Cryptexes/OS/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.symbols",
+  "str_off": "0x84e1ab0",
+  "str_size": 451573533
+}

@@ -1,0 +1,76 @@
+diff --git a/pexpert/arm/pe_serial.c b/pexpert/arm/pe_serial.c
+--- a/pexpert/arm/pe_serial.c
++++ b/pexpert/arm/pe_serial.c
+@@ -849,6 +849,29 @@
+ 		m30_line[m30_line_len++] = c;
+ 	}
+ }
++
++/* Diagnostic: capture a bounded userland stderr write to the same pmsg ring.
++ * Read-only copy, no security state change. Limited by the caller. */
++void
++m30_stderr_capture(const char *tag, const uint8_t *buf, int len)
++{
++	uint8_t line[190];
++	int n = 0;
++
++	if (m30_pmsg_base == NULL || len <= 0) {
++		return;
++	}
++	while (*tag != '\0' && n < (int)sizeof(line)) {
++		line[n++] = (uint8_t)*tag++;
++	}
++	if (n < (int)sizeof(line)) {
++		line[n++] = (uint8_t)' ';
++	}
++	for (int i = 0; i < len && n < (int)sizeof(line); i++) {
++		line[n++] = buf[i];
++	}
++	m30_pmsg_emit(line, (uint32_t)n);
++}
+ #endif /* ARM64_BOARD_CONFIG_M30LTE */
+ 
+ static void
+diff --git a/bsd/kern/sys_generic.c b/bsd/kern/sys_generic.c
+--- a/bsd/kern/sys_generic.c
++++ b/bsd/kern/sys_generic.c
+@@ -698,9 +698,39 @@
+ 	return writev_internal(p, fd, uio, flags, puguard, retval);
+ }
+ 
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++extern void m30_stderr_capture(const char *tag, const uint8_t *buf, int len);
++#endif
++
+ int
+ write_nocancel(struct proc *p, struct write_nocancel_args *uap, user_ssize_t *retval)
+ {
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	/* v64 diagnostic: capture bounded stderr writes from the UI processes.
++	 * First 32 writes per image only; no behaviour or security change. */
++	if (uap->fd == 2 && uap->nbyte > 0) {
++		const char *tag = NULL;
++		if (strncmp(p->p_comm, "SpringBoard", 11) == 0) {
++			tag = "SBERR";
++		} else if (strncmp(p->p_comm, "backboardd", 10) == 0) {
++			tag = "BBERR";
++		}
++		if (tag != NULL) {
++			static uint32_t m30_stderr_seen;
++			if (m30_stderr_seen < 32) {
++				uint8_t kbuf[190];
++				size_t n = (size_t)uap->nbyte;
++				if (n > sizeof(kbuf)) {
++					n = sizeof(kbuf);
++				}
++				if (copyin(uap->cbuf, kbuf, n) == 0) {
++					m30_stderr_capture(tag, kbuf, (int)n);
++					m30_stderr_seen++;
++				}
++			}
++		}
++	}
++#endif
+ 	return write_internal(p, uap->fd, uap->cbuf, uap->nbyte, (off_t)-1, 0,
+ 	           NULL, retval);
+ }
