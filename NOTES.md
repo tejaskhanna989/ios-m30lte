@@ -3275,3 +3275,15 @@ authorization for a BOOT-only test of candidate v6.
   `validation/physical-boot-test/20261124-ios-v66-boot/`.
 - Visual observation and read-only pstore pull pending. Accept only a
   persistent visible lock-screen render plus supporting logs.
+
+## 2026-11-24 - v66 visual observation (user-reported, pending pstore)
+
+- User reports the screen shows **console text with some SMP/SpringBoard lines**
+  after the v66 BOOT-only flash. This is a behavioral change from v65's final
+  Apple-logo-only state, but it is **not** a lock-screen claim.
+- Device is not adb-reachable while this screen is displayed, so pstore cannot
+  be pulled yet. User is being asked to force TWRP and reconnect USB.
+- NEXT: read-only `adb exec-out dd` pstore pull, decode `M30 FB: wait/done`,
+  `M30 FB`, `M30 UI`, IRT counters; then decide whether the SwapWait handshake
+  restarted commits or whether the stall moved elsewhere. Do not flash anything
+  until this evidence is reviewed.
