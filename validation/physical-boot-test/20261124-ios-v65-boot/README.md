@@ -20,3 +20,10 @@ kernel policy and `serial=3`.
 
 Visual result and read-only pstore pull are pending. No lock-screen claim is
 made from the flash, Apple logo, process liveness, IRT state, or logs alone.
+
+## Interim visual observation
+
+At `2026-11-24T17:12:47Z` (~5 minutes after resume), the user reported:
+**Apple logo only; no lock screen**. This is not lock-screen evidence. The
+observation window continues until ~`17:22Z`; final visual status and the
+read-only pstore pull are still pending.

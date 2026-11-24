@@ -3174,3 +3174,7 @@ authorization for a BOOT-only test of candidate v6.
   `validation/physical-boot-test/20261124-ios-v65-boot/`.
 - Visual observation and read-only pstore pull are pending. No lock-screen
   claim until a persistent visible lock-screen render is confirmed with logs.
+
+- v65 interim visual at `17:12:47Z` (~5 min after resume): user reported
+  **Apple logo only, no lock screen**. Insufficient for acceptance; observation
+  continues to ~`17:22Z` before TWRP pstore pull.
