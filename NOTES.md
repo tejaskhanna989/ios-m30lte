@@ -2702,3 +2702,27 @@ authorization for a BOOT-only test of candidate v6.
   other applicable focused tests PASS.
 - NEXT: commit/push, rerun CI, validate/package v60 and run BOOT-only physical
   test. No lock-screen claim without visible persistent evidence plus logs.
+
+## 2026-11-24 - v60 CI GREEN and candidate packaged (MAIN only)
+
+- CI `45334020730` GREEN for source `f561e630` (`XNU_TARGET=iphoneos`, M30LTE,
+  DEVELOPMENT). Log applied 0435-0439; iOS target selection passed; Cortex-A53
+  LSE count 0. Buildtree files match the local v60 source byte-for-byte:
+  `vm_fault.c`
+  `cb010af81d89fa10ddf9d7aa03579225bd2860fb001de309c815ecfaf650551d`,
+  `exception.c`
+  `335dba8e00448a9e4e06480cc3b4dfb4a5f4521c1b0cbb1610dffbd89f87668b`.
+- Kernel SHA256
+  `a24d220685d42b51a1ac8f74c9256480fd81fe1103195fc99c2da1f4b79c7637`.
+  Candidate `validation/ios-candidate-v60-out/`: payload
+  `3fd1b3d5486285b35eb3bce1cd29d42bae832c690aac4a067729ff15a2c04cdf`,
+  `shim-boot.img`
+  `c8db86b4526916da532b410b47f299d71787ad7618caa5c077096390c5b318c8`.
+  Cmdline/ADT/shim/layout unchanged from v59.
+- Validators PASS: buildtree, kernel 6 checks, platform 9/9, packaging, handoff
+  22/22, all applicable focused tests. Two earlier CI runs failed only on the
+  missing `strstr` declaration and were fixed with 0438/0439.
+- NEXT: BOOT-only physical test with identity/Download Mode gate. Pull pstore
+  when recovery is convenient; look for `M30 SLOW:` with `cfa/cfi/cfp` and
+  `reason=`, SpringBoard/backboardd CS status, and any visible lock screen.
+  No UI claim without a persistent visible render plus logs.

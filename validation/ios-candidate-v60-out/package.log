@@ -1,0 +1,91 @@
+{
+  "output_dir": ".",
+  "images": {
+    "shim-boot.img": {
+      "size_bytes": 16314368,
+      "sha256": "c8db86b4526916da532b410b47f299d71787ad7618caa5c077096390c5b318c8",
+      "cmdline": "console=null",
+      "header_version": 0,
+      "header_fields": {
+        "version": 0,
+        "page_size": 2048,
+        "kernel_size": 16310480,
+        "kernel_addr": "0x80080000",
+        "ramdisk_size": 0,
+        "ramdisk_addr": "0x0",
+        "second_size": 0,
+        "second_addr": "0x0",
+        "tags_addr": "0x80000100",
+        "os_version_raw": "0x14000145",
+        "board": "m30lte",
+        "cmdline": "console=null",
+        "image_id_sha1": "81f3c380260fa379a0c603fc10f832d4a18b13da"
+      },
+      "component_layout": {
+        "header": {
+          "offset": 0,
+          "size_bytes": 2048,
+          "end": 2048
+        },
+        "kernel": {
+          "offset": 2048,
+          "size_bytes": 16310480,
+          "end": 16312528
+        },
+        "ramdisk": {
+          "offset": 16314368,
+          "size_bytes": 0,
+          "end": 16314368
+        },
+        "second": {
+          "offset": 16314368,
+          "size_bytes": 0,
+          "end": 16314368
+        }
+      }
+    },
+    "ios-boot.img": {
+      "size_bytes": 16314368,
+      "sha256": "e72af1646e57c80c11afbfe2184b13215c2447a9d67d16ec5b5277be39345945",
+      "cmdline": "debug=0xc serial=3 keepsyms=1",
+      "header_version": 0,
+      "header_fields": {
+        "version": 0,
+        "page_size": 2048,
+        "kernel_size": 16310480,
+        "kernel_addr": "0x80080000",
+        "ramdisk_size": 0,
+        "ramdisk_addr": "0x0",
+        "second_size": 0,
+        "second_addr": "0x0",
+        "tags_addr": "0x80000100",
+        "os_version_raw": "0x14000145",
+        "board": "m30lte",
+        "cmdline": "debug=0xc serial=3 keepsyms=1",
+        "image_id_sha1": "81f3c380260fa379a0c603fc10f832d4a18b13da"
+      },
+      "component_layout": {
+        "header": {
+          "offset": 0,
+          "size_bytes": 2048,
+          "end": 2048
+        },
+        "kernel": {
+          "offset": 2048,
+          "size_bytes": 16310480,
+          "end": 16312528
+        },
+        "ramdisk": {
+          "offset": 16314368,
+          "size_bytes": 0,
+          "end": 16314368
+        },
+        "second": {
+          "offset": 16314368,
+          "size_bytes": 0,
+          "end": 16314368
+        }
+      }
+    }
+  }
+}
