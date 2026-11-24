@@ -1,0 +1,16 @@
+v62 kernel-entry and payload-layout check (MAIN only)
+=====================================================
+
+CI: 45356410574 (GREEN, source b667f247)
+New patch: 0440-m30-compact-ui-state.patch
+Buildtree bsd/dev/sweet_sample.c SHA256
+c7e92cc467a5c0fe062d8f4cd77dbe99c10a3909a4287dcd78c517963489fcf0.
+Linked kernel SHA256
+45aff1b01f85b1dbe5a77903050005333eb858980cd1118465c3f11f02bda13d.
+
+Entry/layout unchanged: entry 0xfffffff007411488, _start_first_cpu
+0xfffffff0074130ec, __TEXT_EXEC size 0x008b4000, kernel end
+0xfffffff008454000, ADT PA 0x82454000, boot_args PA 0x82458000,
+payload 16179264 bytes. Cmdline uses corrected M30 boot args:
+a5fb_noconsole=1 a5fb_keep_on=1. ADT/shim unchanged.
+verify_handoff_v62.py: 23/23 PASS.

@@ -2826,3 +2826,21 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: commit/push, CI, validate/package v62 (reusing corrected v61 cmdline),
   physical test. The compact line should show whether SpringBoard is alive and
   whether any NS reason was captured, enabling the targeted final fix.
+
+## 2026-11-24 - v62 CI GREEN and candidate packaged (MAIN only)
+
+- CI `45356410574` GREEN for source `b667f247` (`XNU_TARGET=iphoneos`, M30LTE,
+  DEVELOPMENT). Log applied `0440-m30-compact-ui-state.patch`; LSE count 0.
+  Buildtree `sweet_sample.c` matches local v62 source
+  `c7e92cc467a5c0fe062d8f4cd77dbe99c10a3909a4287dcd78c517963489fcf0`.
+- Kernel SHA256 `45aff1b01f85b1dbe5a77903050005333eb858980cd1118465c3f11f02bda13d`.
+  Candidate `validation/ios-candidate-v62-out/`: payload
+  `e1c41dd83ee70cafc7af9ab91c8c20ed5320ee54a87392434790870d99d39bd0`,
+  `shim-boot.img`
+  `7798b211ebc9773df3225732e572dc18d091d2805cc1f7be72f967fbdd0913c7`.
+  Cmdline/ADT/shim/layout unchanged from v61.
+- Validators PASS: buildtree, kernel 6 checks, platform 9/9, packaging, handoff
+  23/23, all applicable focused tests.
+- NEXT: BOOT-only physical test with identity/Download Mode gate. Pull pstore
+  when convenient; the compact line repeats every 30 s. No lock-screen claim
+  without a visible persistent render plus logs.
