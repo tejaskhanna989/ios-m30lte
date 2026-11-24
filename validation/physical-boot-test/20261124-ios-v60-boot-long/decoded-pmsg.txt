@@ -1,0 +1,127 @@
+# M30LTE pstore pmsg decode
+# input_sha256=1f78fb3f8e5111d5d5676a8a1f3a4ea9c8293dea14cae4490c0465db37af21e4
+# input_bytes=16372 records=122 consumed=16372 clean=False
+[000] @0x000027 len=253 XNU: SMP backboardd t1 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16ee9c900 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x184478224 0x184411cb0 0x1844106e0 0x18441061c 0x184f1cf4c 0x184e658e8 0x184ef58e4 0x184e5cbc0 0x184f2
+[001] @0x000124 len=197 XNU: SMP backboardd t3 pc 0x1c587dad0 lr 0x190da4908 sp 0x16efba850 bt 0x190da4ca0 0x100ffca78 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720
+[002] @0x0001e9 len=197 XNU: SMP backboardd t4 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f0d1eb0 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x19180ef70 0x1d4e080ec 0x1d4e0672c
+[003] @0x0002ae len=161 XNU: SMP backboardd t5 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f2669b0 bt 0x1c588edb8 0x1c587d524 0x18b538884 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[004] @0x00034f len=209 XNU: SMP backboardd t6 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f401d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[005] @0x000420 len=209 XNU: SMP backboardd t7 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f50dd90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[006] @0x0004f1 len=209 XNU: SMP backboardd t8 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f619d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[007] @0x0005c2 len=209 XNU: SMP backboardd t9 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f725d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[008] @0x000693 len=198 XNU: SMP backboardd t10 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f15de40 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x194c29fac 0x1d4e080ec 0x1d4e0672c
+[009] @0x000759 len=246 XNU: SMP backboardd t11 pc 0x1b22beb40 lr 0x1b22beb1c sp 0x16f83e550 bt 0x190e037a8 0x190e04780 0x190dbc534 0x190da660c 0x190dbe228 0x190dba774 0x190daa168 0x190dbce78 0x190daa168 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720
+[010] @0x00084f len=102 XNU: SMP backboardd t12 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16f9e2fc0 bt 0x1d4e06720
+[011] @0x0008b5 len=102 XNU: SMP backboardd t13 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16f956b40 bt 0x1d4e06720
+[012] @0x00091b len= 74 XNU: SMP SpringBoard[27] slide 0x326c000 mh 0x10038c000
+[013] @0x000965 len=253 XNU: SMP SpringBoard t0 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16fa6d960 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x184478224 0x184411cb0 0x1844106e0 0x18441061c 0x184f1cf34 0x184e658d8 0x184ef58e4 0x184e5cbc0 0x184f
+[014] @0x000a62 len=222 XNU: SMP SpringBoard t2 pc 0x1c587dad0 lr 0x190da4908 sp 0x16fc9e680 bt 0x190da46f4 0x190db1ad4 0x190db16ec 0x19fc30980 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720
+[015] @0x000b40 len=102 XNU: SMP SpringBoard t3 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16fd2aa40 bt 0x1d4e06720
+[016] @0x000ba6 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[017] @0x000bf9 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[018] @0x000c4c len=253 XNU: M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=23977 vh=3759 oh=1 pr=-5 fb=0x0 hb=17 xctest=1 xctchunk=0 csblk=15551 csfail=15 csvok=105904 cfa=8 cf
+[019] @0x000d49 len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[020] @0x000db5 len=131 XNU: CODE SIGNING: cs_invalid_page(0x191746000): p=97[lsd] final status 0x22000000, allowing (remove VALID) page
+[021] @0x000e38 len= 85 XNU: SWEET AKS: ScreenTimeAgent sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[022] @0x000e8d len= 85 XNU: SWEET AKS: ScreenTimeAgent sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[023] @0x000ee2 len= 74 XNU: SWEET AKS: fmfd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[024] @0x000f2c len= 74 XNU: SWEET AKS: fmfd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[025] @0x000f76 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[026] @0x000fc9 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[027] @0x00101c len=142 XNU: CODE SIGNING: cs_invalid_page(0x1891c9000): p=24[UserEventAgent] final status 0x22000000, allowing (remove VALID) page
+[028] @0x0010aa len=139 XNU: CODE SIGNING: cs_invalid_page(0x183299000): p=93[ReportCrash] final status 0x22000000, allowing (remove VALID) page
+[029] @0x001135 len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[030] @0x0011a1 len= 82 XNU: SWEET AKS: searchpartyd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[031] @0x0011f3 len= 86 XNU: SWEET AKS: searchpartyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[032] @0x001249 len= 86 XNU: SWEET AKS: searchpartyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[033] @0x00129f len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[034] @0x0012f2 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[035] @0x001345 len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[036] @0x0013b1 len= 89 XNU: SWEET AKS: ScreenTimeAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[037] @0x00140a len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[038] @0x001476 len= 86 XNU: SWEET AKS: searchpartyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[039] @0x0014cc len= 81 XNU: SWEET AKS: duetexpertd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[040] @0x00151d len= 81 XNU: SWEET AKS: duetexpertd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[041] @0x00156e len= 85 XNU: SWEET AKS: duetexpertd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[042] @0x0015c3 len= 85 XNU: SWEET AKS: duetexpertd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[043] @0x001618 len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[044] @0x001684 len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[045] @0x0016f0 len= 73 XNU: SWEET AKS: akd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[046] @0x001739 len= 77 XNU: SWEET AKS: akd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[047] @0x001786 len= 73 XNU: SWEET AKS: akd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[048] @0x0017cf len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[049] @0x00183b len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[050] @0x0018a7 len= 40 XNU: SMP --- sample 2
+[051] @0x0018cf len= 73 XNU: SMP backboardd[57] slide 0x326c000 mh 0x100fe4000
+[052] @0x001918 len=177 XNU: SMP backboardd t0 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16ee1a880 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x100fede40 0x1a7890344 0x0
+[053] @0x0019c9 len=253 XNU: SMP backboardd t1 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16ee9c900 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x184478224 0x184411cb0 0x1844106e0 0x18441061c 0x184f1cf4c 0x184e658e8 0x184ef58e4 0x184e5cbc0 0x184f2
+[054] @0x001ac6 len=197 XNU: SMP backboardd t3 pc 0x1c587dad0 lr 0x190da4908 sp 0x16efba850 bt 0x190da4ca0 0x100ffca78 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720
+[055] @0x001b8b len=197 XNU: SMP backboardd t4 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f0d1eb0 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x19180ef70 0x1d4e080ec 0x1d4e0672c
+[056] @0x001c50 len=161 XNU: SMP backboardd t5 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f2669b0 bt 0x1c588edb8 0x1c587d524 0x18b538884 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[057] @0x001cf1 len=209 XNU: SMP backboardd t6 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f401d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[058] @0x001dc2 len=209 XNU: SMP backboardd t7 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f50dd90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[059] @0x001e93 len=209 XNU: SMP backboardd t8 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f619d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[060] @0x001f64 len=209 XNU: SMP backboardd t9 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f725d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[061] @0x002035 len=198 XNU: SMP backboardd t10 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f15de40 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x194c29fac 0x1d4e080ec 0x1d4e0672c
+[062] @0x0020fb len=210 XNU: SMP backboardd t11 pc 0x1b23f1e80 lr 0x1b22be7cc sp 0x16f956af0 bt 0x18a066d1c 0x18a0e8b48 0x1b22be654 0x190e04780 0x190da673c 0x190db87ac 0x190db3ab0 0x190db42ac 0x1d4e06b94 0x1d4e06720
+[063] @0x0021cd len=102 XNU: SMP backboardd t12 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16f046b40 bt 0x1d4e06720
+[064] @0x002233 len= 74 XNU: SMP SpringBoard[27] slide 0x326c000 mh 0x10038c000
+[065] @0x00227d len=253 XNU: SMP SpringBoard t0 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16fa6d960 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x184478224 0x184411cb0 0x1844106e0 0x18441061c 0x184f1cf34 0x184e658d8 0x184ef58e4 0x184e5cbc0 0x184f
+[066] @0x00237a len=222 XNU: SMP SpringBoard t2 pc 0x1c587dad0 lr 0x190da4908 sp 0x16fc9e680 bt 0x190da46f4 0x190db1ad4 0x190db16ec 0x19fc30980 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720
+[067] @0x002458 len=102 XNU: SMP SpringBoard t3 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16fd2aa40 bt 0x1d4e06720
+[068] @0x0024be len=139 XNU: CODE SIGNING: cs_invalid_page(0x1010d9000): p=187[bluetoothd] final status 0x22000000, allowing (remove VALID) page
+[069] @0x002549 len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[070] @0x0025b5 len=139 XNU: CODE SIGNING: cs_invalid_page(0x19f81d000): p=192[bluetoothd] final status 0x22000000, allowing (remove VALID) page
+[071] @0x002640 len=141 XNU: CODE SIGNING: cs_invalid_page(0x1da8e9000): p=194[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page
+[072] @0x0026cd len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[073] @0x002739 len=135 XNU: CODE SIGNING: cs_invalid_page(0x185512000): p=35[healthd] final status 0x22000000, allowing (remove VALID) page
+[074] @0x0027c0 len= 89 XNU: SWEET AKS: ScreenTimeAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[075] @0x002819 len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[076] @0x002885 len= 77 XNU: SWEET AKS: healthd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[077] @0x0028d2 len= 81 XNU: SWEET AKS: healthd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[078] @0x002923 len= 77 XNU: SWEET AKS: healthd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[079] @0x002970 len= 88 XNU: SWEET AKS: UserEventAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[080] @0x0029c8 len= 82 XNU: SWEET AKS: profiled sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[081] @0x002a1a len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[082] @0x002a86 len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[083] @0x002af2 len=133 XNU: CODE SIGNING: cs_invalid_page(0x190abd000): p=184[geod] final status 0x22000000, allowing (remove VALID) page
+[084] @0x002b77 len=142 XNU: CODE SIGNING: cs_invalid_page(0x1f00e4000): p=125[callservicesd] final status 0x22000000, allowing (remove VALID) page
+[085] @0x002c05 len= 83 XNU: SWEET AKS: familycircled sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[086] @0x002c58 len= 83 XNU: SWEET AKS: familycircled sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[087] @0x002cab len=133 XNU: CODE SIGNING: cs_invalid_page(0x1915d9000): p=165[fmfd] final status 0x22000000, allowing (remove VALID) page
+[088] @0x002d30 len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[089] @0x002d9c len=139 XNU: CODE SIGNING: cs_invalid_page(0x189706000): p=207[bluetoothd] final status 0x22000000, allowing (remove VALID) page
+[090] @0x002e27 len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[091] @0x002e93 len=144 XNU: CODE SIGNING: cs_invalid_page(0x101060000): p=53[identityservices] final status 0x22000000, allowing (remove VALID) page
+[092] @0x002f23 len= 40 XNU: SMP --- sample 3
+[093] @0x002f4b len= 73 XNU: SMP backboardd[57] slide 0x326c000 mh 0x100fe4000
+[094] @0x002f94 len=177 XNU: SMP backboardd t0 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16ee1a880 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x100fede40 0x1a7890344 0x0
+[095] @0x003045 len=253 XNU: SMP backboardd t1 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16ee9c900 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x184478224 0x184411cb0 0x1844106e0 0x18441061c 0x184f1cf4c 0x184e658e8 0x184ef58e4 0x184e5cbc0 0x184f2
+[096] @0x003142 len=197 XNU: SMP backboardd t3 pc 0x1c587dad0 lr 0x190da4908 sp 0x16efba850 bt 0x190da4ca0 0x100ffca78 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720
+[097] @0x003207 len=197 XNU: SMP backboardd t4 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f0d1eb0 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x19180ef70 0x1d4e080ec 0x1d4e0672c
+[098] @0x0032cc len=161 XNU: SMP backboardd t5 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f2669b0 bt 0x1c588edb8 0x1c587d524 0x18b538884 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[099] @0x00336d len=209 XNU: SMP backboardd t6 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f401d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[100] @0x00343e len=209 XNU: SMP backboardd t7 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f50dd90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[101] @0x00350f len=209 XNU: SMP backboardd t8 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f619d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[102] @0x0035e0 len=209 XNU: SMP backboardd t9 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f725d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c
+[103] @0x0036b1 len=198 XNU: SMP backboardd t10 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f15de40 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x194c29fac 0x1d4e080ec 0x1d4e0672c
+[104] @0x003777 len=102 XNU: SMP backboardd t11 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16f956b30 bt 0x1d4e06720
+[105] @0x0037dd len=253 XNU: SMP backboardd t12 pc 0x1c587dad0 lr 0x1d4d6dd08 sp 0x16f0464e0 bt 0x18332a920 0x1b22beb04 0x190e037a8 0x190e04780 0x190dbc534 0x190da660c 0x190dbe228 0x190dba774 0x190daa168 0x190dbce78 0x190daa168 0x190daada0 0x190db4dc8 0x1d4e
+[106] @0x0038da len=253 XNU: SMP backboardd t13 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f2f2390 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x1a1feff58 0x1a1fefc50 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e
+[107] @0x0039d7 len=174 XNU: SMP backboardd t14 pc 0x1b23a7660 lr 0x1b22be670 sp 0x16f7b2d20 bt 0x190e04780 0x190da673c 0x190db87ac 0x190db3ab0 0x190db42ac 0x1d4e06b94 0x1d4e06720
+[108] @0x003a85 len= 74 XNU: SMP SpringBoard[27] slide 0x326c000 mh 0x10038c000
+[109] @0x003acf len=253 XNU: SMP SpringBoard t0 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16fa6d960 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x184478224 0x184411cb0 0x1844106e0 0x18441061c 0x184f1cf34 0x184e658d8 0x184ef58e4 0x184e5cbc0 0x184f
+[110] @0x003bcc len=222 XNU: SMP SpringBoard t2 pc 0x1c587dad0 lr 0x190da4908 sp 0x16fc9e680 bt 0x190da46f4 0x190db1ad4 0x190db16ec 0x19fc30980 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720
+[111] @0x003caa len=102 XNU: SMP SpringBoard t3 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16fd2aa40 bt 0x1d4e06720
+[112] @0x003d10 len=108 XNU: process lsd[97] denied attempt to escape CPU monitor (missing required entitlement).
+[113] @0x003d7c len= 83 XNU: SWEET AKS: callservicesd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[114] @0x003dcf len= 83 XNU: SWEET AKS: callservicesd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[115] @0x003e22 len= 74 XNU: SWEET AKS: geod sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[116] @0x003e6c len= 78 XNU: SWEET AKS: geod sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[117] @0x003eba len= 74 XNU: SWEET AKS: geod sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[118] @0x003f04 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x20
+[119] @0x003f40 len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[120] @0x003f7c len= 60 XNU: A5XELTE KEYS: key=2 down=1 gpio=0x20
+[121] @0x003fb8 len= 60 XNU: SWEET HID: key 0xea down (1 clients)
+# ISSUE @0x000000 bad_magic: expected 0x6c, got 0x78
+# WARNING: framing was not fully valid; output may be incomplete

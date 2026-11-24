@@ -1,0 +1,992 @@
+{
+  "input_bytes": 16372,
+  "input_sha256": "1f78fb3f8e5111d5d5676a8a1f3a4ea9c8293dea14cae4490c0465db37af21e4",
+  "record_count": 122,
+  "consumed": 16372,
+  "clean": false,
+  "records": [
+    {
+      "index": 0,
+      "offset": 39,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t1 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16ee9c900 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x184478224 0x184411cb0 0x1844106e0 0x18441061c 0x184f1cf4c 0x184e658e8 0x184ef58e4 0x184e5cbc0 0x184f2"
+    },
+    {
+      "index": 1,
+      "offset": 292,
+      "length": 197,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t3 pc 0x1c587dad0 lr 0x190da4908 sp 0x16efba850 bt 0x190da4ca0 0x100ffca78 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720"
+    },
+    {
+      "index": 2,
+      "offset": 489,
+      "length": 197,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t4 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f0d1eb0 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x19180ef70 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 3,
+      "offset": 686,
+      "length": 161,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t5 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f2669b0 bt 0x1c588edb8 0x1c587d524 0x18b538884 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 4,
+      "offset": 847,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t6 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f401d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 5,
+      "offset": 1056,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t7 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f50dd90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 6,
+      "offset": 1265,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t8 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f619d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 7,
+      "offset": 1474,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t9 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f725d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 8,
+      "offset": 1683,
+      "length": 198,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t10 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f15de40 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x194c29fac 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 9,
+      "offset": 1881,
+      "length": 246,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t11 pc 0x1b22beb40 lr 0x1b22beb1c sp 0x16f83e550 bt 0x190e037a8 0x190e04780 0x190dbc534 0x190da660c 0x190dbe228 0x190dba774 0x190daa168 0x190dbce78 0x190daa168 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720"
+    },
+    {
+      "index": 10,
+      "offset": 2127,
+      "length": 102,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t12 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16f9e2fc0 bt 0x1d4e06720"
+    },
+    {
+      "index": 11,
+      "offset": 2229,
+      "length": 102,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t13 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16f956b40 bt 0x1d4e06720"
+    },
+    {
+      "index": 12,
+      "offset": 2331,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard[27] slide 0x326c000 mh 0x10038c000"
+    },
+    {
+      "index": 13,
+      "offset": 2405,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t0 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16fa6d960 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x184478224 0x184411cb0 0x1844106e0 0x18441061c 0x184f1cf34 0x184e658d8 0x184ef58e4 0x184e5cbc0 0x184f"
+    },
+    {
+      "index": 14,
+      "offset": 2658,
+      "length": 222,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t2 pc 0x1c587dad0 lr 0x190da4908 sp 0x16fc9e680 bt 0x190da46f4 0x190db1ad4 0x190db16ec 0x19fc30980 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720"
+    },
+    {
+      "index": 15,
+      "offset": 2880,
+      "length": 102,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t3 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16fd2aa40 bt 0x1d4e06720"
+    },
+    {
+      "index": 16,
+      "offset": 2982,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 17,
+      "offset": 3065,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 18,
+      "offset": 3148,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=23977 vh=3759 oh=1 pr=-5 fb=0x0 hb=17 xctest=1 xctchunk=0 csblk=15551 csfail=15 csvok=105904 cfa=8 cf"
+    },
+    {
+      "index": 19,
+      "offset": 3401,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 20,
+      "offset": 3509,
+      "length": 131,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x191746000): p=97[lsd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 21,
+      "offset": 3640,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ScreenTimeAgent sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 22,
+      "offset": 3725,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ScreenTimeAgent sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 23,
+      "offset": 3810,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: fmfd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 24,
+      "offset": 3884,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: fmfd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 25,
+      "offset": 3958,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 26,
+      "offset": 4041,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 27,
+      "offset": 4124,
+      "length": 142,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1891c9000): p=24[UserEventAgent] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 28,
+      "offset": 4266,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x183299000): p=93[ReportCrash] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 29,
+      "offset": 4405,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 30,
+      "offset": 4513,
+      "length": 82,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: searchpartyd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 31,
+      "offset": 4595,
+      "length": 86,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: searchpartyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 32,
+      "offset": 4681,
+      "length": 86,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: searchpartyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 33,
+      "offset": 4767,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 34,
+      "offset": 4850,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 35,
+      "offset": 4933,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 36,
+      "offset": 5041,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ScreenTimeAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 37,
+      "offset": 5130,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 38,
+      "offset": 5238,
+      "length": 86,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: searchpartyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 39,
+      "offset": 5324,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: duetexpertd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 40,
+      "offset": 5405,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: duetexpertd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 41,
+      "offset": 5486,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: duetexpertd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 42,
+      "offset": 5571,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: duetexpertd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 43,
+      "offset": 5656,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 44,
+      "offset": 5764,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 45,
+      "offset": 5872,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: akd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 46,
+      "offset": 5945,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: akd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 47,
+      "offset": 6022,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: akd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 48,
+      "offset": 6095,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 49,
+      "offset": 6203,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 50,
+      "offset": 6311,
+      "length": 40,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP --- sample 2"
+    },
+    {
+      "index": 51,
+      "offset": 6351,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd[57] slide 0x326c000 mh 0x100fe4000"
+    },
+    {
+      "index": 52,
+      "offset": 6424,
+      "length": 177,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t0 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16ee1a880 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x100fede40 0x1a7890344 0x0"
+    },
+    {
+      "index": 53,
+      "offset": 6601,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t1 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16ee9c900 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x184478224 0x184411cb0 0x1844106e0 0x18441061c 0x184f1cf4c 0x184e658e8 0x184ef58e4 0x184e5cbc0 0x184f2"
+    },
+    {
+      "index": 54,
+      "offset": 6854,
+      "length": 197,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t3 pc 0x1c587dad0 lr 0x190da4908 sp 0x16efba850 bt 0x190da4ca0 0x100ffca78 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720"
+    },
+    {
+      "index": 55,
+      "offset": 7051,
+      "length": 197,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t4 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f0d1eb0 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x19180ef70 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 56,
+      "offset": 7248,
+      "length": 161,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t5 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f2669b0 bt 0x1c588edb8 0x1c587d524 0x18b538884 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 57,
+      "offset": 7409,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t6 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f401d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 58,
+      "offset": 7618,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t7 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f50dd90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 59,
+      "offset": 7827,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t8 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f619d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 60,
+      "offset": 8036,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t9 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f725d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 61,
+      "offset": 8245,
+      "length": 198,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t10 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f15de40 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x194c29fac 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 62,
+      "offset": 8443,
+      "length": 210,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t11 pc 0x1b23f1e80 lr 0x1b22be7cc sp 0x16f956af0 bt 0x18a066d1c 0x18a0e8b48 0x1b22be654 0x190e04780 0x190da673c 0x190db87ac 0x190db3ab0 0x190db42ac 0x1d4e06b94 0x1d4e06720"
+    },
+    {
+      "index": 63,
+      "offset": 8653,
+      "length": 102,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t12 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16f046b40 bt 0x1d4e06720"
+    },
+    {
+      "index": 64,
+      "offset": 8755,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard[27] slide 0x326c000 mh 0x10038c000"
+    },
+    {
+      "index": 65,
+      "offset": 8829,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t0 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16fa6d960 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x184478224 0x184411cb0 0x1844106e0 0x18441061c 0x184f1cf34 0x184e658d8 0x184ef58e4 0x184e5cbc0 0x184f"
+    },
+    {
+      "index": 66,
+      "offset": 9082,
+      "length": 222,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t2 pc 0x1c587dad0 lr 0x190da4908 sp 0x16fc9e680 bt 0x190da46f4 0x190db1ad4 0x190db16ec 0x19fc30980 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720"
+    },
+    {
+      "index": 67,
+      "offset": 9304,
+      "length": 102,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t3 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16fd2aa40 bt 0x1d4e06720"
+    },
+    {
+      "index": 68,
+      "offset": 9406,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1010d9000): p=187[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 69,
+      "offset": 9545,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 70,
+      "offset": 9653,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x19f81d000): p=192[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 71,
+      "offset": 9792,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1da8e9000): p=194[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 72,
+      "offset": 9933,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 73,
+      "offset": 10041,
+      "length": 135,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x185512000): p=35[healthd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 74,
+      "offset": 10176,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ScreenTimeAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 75,
+      "offset": 10265,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 76,
+      "offset": 10373,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: healthd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 77,
+      "offset": 10450,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: healthd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 78,
+      "offset": 10531,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: healthd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 79,
+      "offset": 10608,
+      "length": 88,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: UserEventAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 80,
+      "offset": 10696,
+      "length": 82,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: profiled sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 81,
+      "offset": 10778,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 82,
+      "offset": 10886,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 83,
+      "offset": 10994,
+      "length": 133,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x190abd000): p=184[geod] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 84,
+      "offset": 11127,
+      "length": 142,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1f00e4000): p=125[callservicesd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 85,
+      "offset": 11269,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: familycircled sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 86,
+      "offset": 11352,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: familycircled sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 87,
+      "offset": 11435,
+      "length": 133,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1915d9000): p=165[fmfd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 88,
+      "offset": 11568,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 89,
+      "offset": 11676,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x189706000): p=207[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 90,
+      "offset": 11815,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 91,
+      "offset": 11923,
+      "length": 144,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101060000): p=53[identityservices] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 92,
+      "offset": 12067,
+      "length": 40,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP --- sample 3"
+    },
+    {
+      "index": 93,
+      "offset": 12107,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd[57] slide 0x326c000 mh 0x100fe4000"
+    },
+    {
+      "index": 94,
+      "offset": 12180,
+      "length": 177,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t0 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16ee1a880 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x100fede40 0x1a7890344 0x0"
+    },
+    {
+      "index": 95,
+      "offset": 12357,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t1 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16ee9c900 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x184478224 0x184411cb0 0x1844106e0 0x18441061c 0x184f1cf4c 0x184e658e8 0x184ef58e4 0x184e5cbc0 0x184f2"
+    },
+    {
+      "index": 96,
+      "offset": 12610,
+      "length": 197,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t3 pc 0x1c587dad0 lr 0x190da4908 sp 0x16efba850 bt 0x190da4ca0 0x100ffca78 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720"
+    },
+    {
+      "index": 97,
+      "offset": 12807,
+      "length": 197,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t4 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f0d1eb0 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x19180ef70 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 98,
+      "offset": 13004,
+      "length": 161,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t5 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f2669b0 bt 0x1c588edb8 0x1c587d524 0x18b538884 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 99,
+      "offset": 13165,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t6 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f401d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 100,
+      "offset": 13374,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t7 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f50dd90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 101,
+      "offset": 13583,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t8 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f619d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 102,
+      "offset": 13792,
+      "length": 209,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t9 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f725d90 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x18b76dccc 0x18b777418 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 103,
+      "offset": 14001,
+      "length": 198,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t10 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f15de40 bt 0x1c588edb8 0x1c587d524 0x18a0c8148 0x18a0c92e0 0x18a0cdd20 0x18a10cbec 0x194c29fac 0x1d4e080ec 0x1d4e0672c"
+    },
+    {
+      "index": 104,
+      "offset": 14199,
+      "length": 102,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t11 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16f956b30 bt 0x1d4e06720"
+    },
+    {
+      "index": 105,
+      "offset": 14301,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t12 pc 0x1c587dad0 lr 0x1d4d6dd08 sp 0x16f0464e0 bt 0x18332a920 0x1b22beb04 0x190e037a8 0x190e04780 0x190dbc534 0x190da660c 0x190dbe228 0x190dba774 0x190daa168 0x190dbce78 0x190daa168 0x190daada0 0x190db4dc8 0x1d4e"
+    },
+    {
+      "index": 106,
+      "offset": 14554,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t13 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16f2f2390 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x1a1feff58 0x1a1fefc50 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e"
+    },
+    {
+      "index": 107,
+      "offset": 14807,
+      "length": 174,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP backboardd t14 pc 0x1b23a7660 lr 0x1b22be670 sp 0x16f7b2d20 bt 0x190e04780 0x190da673c 0x190db87ac 0x190db3ab0 0x190db42ac 0x1d4e06b94 0x1d4e06720"
+    },
+    {
+      "index": 108,
+      "offset": 14981,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard[27] slide 0x326c000 mh 0x10038c000"
+    },
+    {
+      "index": 109,
+      "offset": 15055,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t0 pc 0x1c587d030 lr 0x1c588eb18 sp 0x16fa6d960 bt 0x1c588edb8 0x1c587d524 0x190dbaec4 0x190dbb25c 0x1d4e5a0ec 0x184478224 0x184411cb0 0x1844106e0 0x18441061c 0x184f1cf34 0x184e658d8 0x184ef58e4 0x184e5cbc0 0x184f"
+    },
+    {
+      "index": 110,
+      "offset": 15308,
+      "length": 222,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t2 pc 0x1c587dad0 lr 0x190da4908 sp 0x16fc9e680 bt 0x190da46f4 0x190db1ad4 0x190db16ec 0x19fc30980 0x190e037a8 0x190e04780 0x190daa298 0x190daada0 0x190db4dc8 0x1d4e06bd0 0x1d4e06720"
+    },
+    {
+      "index": 111,
+      "offset": 15530,
+      "length": 102,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SMP SpringBoard t3 pc 0x1c587d4f0 lr 0x1d4e06c1c sp 0x16fd2aa40 bt 0x1d4e06720"
+    },
+    {
+      "index": 112,
+      "offset": 15632,
+      "length": 108,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "process lsd[97] denied attempt to escape CPU monitor (missing required entitlement)."
+    },
+    {
+      "index": 113,
+      "offset": 15740,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: callservicesd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 114,
+      "offset": 15823,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: callservicesd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 115,
+      "offset": 15906,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: geod sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 116,
+      "offset": 15980,
+      "length": 78,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: geod sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 117,
+      "offset": 16058,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: geod sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 118,
+      "offset": 16132,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x20"
+    },
+    {
+      "index": 119,
+      "offset": 16192,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 120,
+      "offset": 16252,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=1 gpio=0x20"
+    },
+    {
+      "index": 121,
+      "offset": 16312,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea down (1 clients)"
+    }
+  ],
+  "issues": [
+    {
+      "offset": 0,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    }
+  ]
+}

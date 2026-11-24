@@ -2751,3 +2751,26 @@ authorization for a BOOT-only test of candidate v6.
   (~12–15 min) to allow a lock screen to appear and to capture the first
   `M30 SLOW` report. Technical reason for reflashing unchanged: the previous
   window ended before both the UI milestone and the slow telemetry could occur.
+
+## 2026-11-24 - v60 long run: UI survives 19 min; console-mute boot-arg bug found
+
+- Same validated v60 image reflashed BOOT-only; resume `06:34:59Z`. The
+  observation watcher was killed by a server restart but rearmed; pstore pulled
+  `06:54Z` (~19 min). Raw SHA256
+  `1f78fb3f8e5111d5d5676a8a1f3a4ea9c8293dea14cae4490c0465db37af21e4`.
+- `SMP SpringBoard[27]` and `SMP backboardd[57]` appear across multiple samples
+  throughout the window. **Zero** `CRASH`, zero `NSInternal`, zero `state=4`.
+  Both main threads are repeatedly at unslid PC ~`0x1c2611030` / LR
+  ~`0x1c2622b18` (same shared-library wait), but they do not die.
+- 12 `cs_invalid_page` records, all auxiliary daemons; none UI. Counter
+  fragment `csblk=15551 csfail=15 csvok=105904 cfa=8`. CS fix is holding for UI
+  processes far beyond v58.
+- **Concrete cause of no visible lock screen:** payload cmdline used
+  `sweetfb_noconsole=1`, but M30LTE defines `ARM64_BOARD_CONFIG_A5XELTE`, and
+  `iokit/Kernel/arm/SweetFramebuffer.cpp` under that guard reads
+  `a5fb_noconsole`. The console was therefore never muted and kept drawing over
+  the GUI, matching the user's “a lot of logs” observation.
+- NEXT: repackage the SAME CI-green v60 kernel with corrected cmdline
+  `a5fb_noconsole=1` (plus `a5fb_keep_on=1` to avoid blanking). No kernel rebuild
+  needed; v61 is a payload/cmdline candidate. Validate, then BOOT-only physical
+  test. Evidence: `validation/physical-boot-test/20261124-ios-v60-boot-long/`.
