@@ -27,15 +27,41 @@ MAIN only. Candidate: `validation/ios-candidate-v64-out/` (source commit
 | `raw/heimdall-detect.txt` | `38ba9867ff6cf3d7c8d1e7c42152c956bb3580cba25ff6bb2d1dae80ba0b5891` |
 | `raw/heimdall-flash.log` | `4bf2478fcc951372568ebaba583f3bf005df3bedf67a5f85337ccc1d817d2a4c` |
 | `raw/resume.log` | `976bfbc1f24490c104e56b66df50dea00a09959115d921fb0e38b39e77f07b4a` |
+| `raw/pmsg-ramoops-0` | `5331c2f90da194587d4f803fcef16cbdabef3b0241f55a25cb53a07751c8f1af` |
+| `decoded-pmsg.txt` | `0c178a1c45270c73ab63d4025feaebd633f1642349af08b537993fcae4dff98e` |
+| `decoded-pmsg.json` | `bde3a6c5195ed5ce00697a9eebd9dbfd77e7ba300d0333e6ed626c718187fa0f` |
+| `stderr-extract.txt` | `7c2e8344193a25120ab9b4462bb3a3889c732a59bf4fca013d1114aaff4afbe7` |
 
 ## Visual result
 
-Pending user observation. No lock-screen success is claimed at this stage.
+User-confirmed: **no lock screen**. The exact final frame (clean Apple logo vs
+console text) should be recorded once observed; v64 is not a lock-screen success
+under any interpretation.
 
 ## Pstore result
 
-Pending: pull `pmsg-ramoops-0` read-only from TWRP after the visual observation
-window, then decode and look specifically for `SBERR`/`BBERR` records.
+Pulled read-only from TWRP at ~`15:15Z`, identity re-verified before the read.
+
+- Raw `pmsg-ramoops-0`: 16372 bytes, SHA256
+  `5331c2f90da194587d4f803fcef16cbdabef3b0241f55a25cb53a07751c8f1af`.
+- Decode: 156 records, 131 `XNU:`-tagged, `clean=False` (ring wrapped; expected
+  for this long run).
+- `SBERR`: **0** records. SpringBoard wrote nothing to fd 2 that the
+  diagnostic captured.
+- `BBERR`: 13 writes, only three unique benign Objective-C duplicate-class
+  warnings from `DualSenseHIDServicePlugin` / GameController in backboardd.
+- `M30 UI: sb=26 bb=57 reason=none`: SpringBoard and backboardd both alive, no
+  NS exception reason. No `NSInternalInconsistencyException`, no SpringBoard
+  crash, no `SMP SpringBoard` telemetry survived the wrap.
+- `M30 IRT` reached final `state=3`; counters include
+  `csblk=3937 csfail=8 csvok=36903 cfa=3 cfi=5 cfp=0`. These are liveness
+  telemetry, not lock-screen evidence.
+- Crashes: `containermanager` sig 10 and `driverkitd` sig 9, both previously
+  seen and unrelated to SpringBoard.
+
+Conclusion: the earlier stderr/`write(2)` hypothesis is now rejected. SpringBoard
+is not emitting a diagnostic to stderr; the blocker is elsewhere in the UI
+presentation path.
 
 ## Acceptance
 

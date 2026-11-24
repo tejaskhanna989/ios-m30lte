@@ -1,0 +1,9 @@
+SBERR: count=0
+BBERR: count=13
+  BBERR objc[57]: Class GCGamepadHIDServicePlugin is implemented in both /System/Library/HIDPlugins/ServicePlugins/DualSenseHIDServicePlugin.plugin/DualSenseHIDServicePlugin (0x100d3eec0) and 
+  BBERR objc[57]: Class GCHapticMotor is implemented in both /System/Library/HIDPlugins/ServicePlugins/DualSenseHIDServicePlugin.plugin/DualSenseHIDServicePlugin (0x100d3ee70) and /System/Libr
+  BBERR objc[57]: Class _GCHapticEvent is implemented in both /System/Library/HIDPlugins/ServicePlugins/DualSenseHIDServicePlugin.plugin/DualSenseHIDServicePlugin (0x100d3ee20) and /System/Lib
+M30 UI: count=1
+  M30 UI: sb=26 bb=57 reason=none
+NSInternal: count=0
+SpringBoard: count=0

@@ -3017,3 +3017,26 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: user reports what is visible after ~3-5 min; then after ~10-15 min total,
   reconnect in TWRP for a read-only pstore pull and decode `SBERR`/`BBERR`
   records. Restore v62 BOOT only after evidence capture.
+
+## 2026-11-24 - v64 physical result: REJECTED, stderr hypothesis disproven (MAIN only)
+
+- User-confirmed: **no lock screen** after the v64 BOOT-only flash. No success
+  claimed; exact final frame still to be transcribed if available.
+- Device returned to TWRP; identity re-verified before a read-only pstore pull.
+  Raw `pmsg-ramoops-0` 16372 bytes, SHA256
+  `5331c2f90da194587d4f803fcef16cbdabef3b0241f55a25cb53a07751c8f1af`.
+  Decode: 156 records, 131 `XNU:`-tagged, `clean=False` (ring wrapped).
+- Diagnostic result: `SBERR` count **0**; `BBERR` count 13 but only three unique
+  benign Objective-C duplicate-class warnings from `DualSenseHIDServicePlugin`
+  in backboardd. `M30 UI: sb=26 bb=57 reason=none` confirms both processes alive
+  with no NS exception. No `NSInternal...`, no SpringBoard crash, no
+  `SMP SpringBoard` line survived. IRT reached `state=3`; counters
+  `csblk=3937 csfail=8 csvok=36903 cfa=3 cfi=5 cfp=0` are liveness telemetry.
+- Conclusion: the symbolicated `fprintf_stderr`/`write(2)` path was not emitting
+  a SpringBoard error. Combined with v63, the serial/stderr hypothesis is
+  rejected. The lock-screen blocker is elsewhere in UI presentation.
+- Evidence: `validation/physical-boot-test/20261124-ios-v64-boot/`.
+- NEXT: do not repeat console/stderr changes. Diagnose UI presentation directly
+  (AppleCLCD/backboardd transaction completion vs SpringBoard lock-screen
+  view construction) with a new read-only or narrowly targeted diagnostic.
+  Keep `serial=3`, all security state, and BOOT-only flashing rules.
