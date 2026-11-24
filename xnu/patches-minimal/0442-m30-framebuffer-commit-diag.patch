@@ -1,0 +1,234 @@
+diff --git a/pexpert/arm/pe_serial.c b/pexpert/arm/pe_serial.c
+--- a/pexpert/arm/pe_serial.c
++++ b/pexpert/arm/pe_serial.c
+@@ -849,6 +849,37 @@
+ 		m30_line[m30_line_len++] = c;
+ 	}
+ }
++
++/* Direct, bounded pstore sink for M30LTE framebuffer diagnostics.
++ *
++ * a5fb_noconsole=1 sets sweet_console_muted after the first GUI present;
++ * _cnputs() then stops calling the serial/fbcon path, so ordinary IOLog()
++ * cannot reach the console->pmsg mirror. This function writes one already
++ * formatted short line straight into the same pmsg ring. It is M30LTE-only,
++ * non-blocking, allocates nothing, and never touches the serial console,
++ * userland memory, or any security state.
++ */
++void
++m30_pmsg_diag_line(const char *line)
++{
++	uint32_t len = 0;
++
++	if (line == NULL) {
++		return;
++	}
++	if (m30_pmsg_base == NULL) {
++		m30_pmsg_init();
++	}
++	while (line[len] != '\0' && len < sizeof(m30_line) - 1) {
++		len++;
++	}
++	while (len > 0 && (line[len - 1] == '\n' || line[len - 1] == '\r')) {
++		len--;
++	}
++	if (len != 0) {
++		m30_pmsg_emit((const uint8_t *)line, len);
++	}
++}
+ #endif /* ARM64_BOARD_CONFIG_M30LTE */
+ 
+ static void
+diff --git a/iokit/Kernel/arm/SweetFramebuffer.cpp b/iokit/Kernel/arm/SweetFramebuffer.cpp
+--- a/iokit/Kernel/arm/SweetFramebuffer.cpp
++++ b/iokit/Kernel/arm/SweetFramebuffer.cpp
+@@ -37,6 +37,9 @@
+ #include "SweetSurface.h"
+ 
+ extern "C" int sweet_console_muted;     /* osfmk/console/serial_console.c */
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++extern "C" void m30_pmsg_diag_line(const char *line);  /* pexpert/arm/pe_serial.c */
++#endif
+ 
+ #if defined(ARM64_BOARD_CONFIG_SWEET) || defined(ARM64_BOARD_CONFIG_A5XELTE)
+ #include <IOKit/IOService.h>
+@@ -51,6 +54,9 @@
+ #include <pexpert/arm64/board_config.h>
+ #include <kern/clock.h>
+ #include <sys/proc.h>
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++#include <libkern/libkern.h>    /* snprintf for bounded pstore diagnostics */
++#endif
+ 
+ enum {
+ 	kSweetFBGetLayerDefaultSurface  = 3,
+@@ -121,6 +127,15 @@
+ 	uint8_t       fPending[SWEET_FB_SWAP_REC_SIZE];     /* latest swap, not yet shown */
+ 	bool          fDirty;
+ 	uint32_t      fFlushTicks;    /* vsync ticks between panel copies */
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	/* Bounded commit-path telemetry; no userland-visible behaviour change. */
++	uint64_t      fDiagTick;
++	uint64_t      fSwapCalls;
++	uint64_t      fPresentCalls;
++	uint64_t      fPresentBytes;
++	uint32_t      fPresentSkips;
++	uint32_t      fLastSkip;
++#endif
+ #if defined(ARM64_BOARD_CONFIG_A5XELTE)
+ 	bool          fPerfLog;       /* A5-only copy timing; never on the donor */
+ 	uint64_t      fPerfFrames;
+@@ -252,6 +267,24 @@
+ 	fFlushTicks = (hz == 0 || hz >= 60) ? 1 : 60 / hz;
+ #endif
+ 	fVsync->setTimeoutUS(SWEET_FB_VSYNC_US);
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	fDiagTick = 0;
++	fSwapCalls = 0;
++	fPresentCalls = 0;
++	fPresentBytes = 0;
++	fPresentSkips = 0;
++	fLastSkip = 0;
++	int m30_noconsole = 0;
++	int m30_keepon = 0;
++	PE_parse_boot_argn("a5fb_noconsole", &m30_noconsole, sizeof(m30_noconsole));
++	PE_parse_boot_argn("a5fb_keep_on", &m30_keepon, sizeof(m30_keepon));
++	char m30_start_line[192];
++	snprintf(m30_start_line, sizeof(m30_start_line),
++	    "M30 FB: start phys=0x%llx %ux%u logical=%ux%u hz=%u ticks=%u noconsole=%d keepon=%d",
++	    (unsigned long long)fPhys, fWidth, fHeight, fLogicalW, fLogicalH,
++	    hz, fFlushTicks, m30_noconsole, m30_keepon);
++	m30_pmsg_diag_line(m30_start_line);
++#endif
+ 
+ 	setProperty(kIOUserClientClassKey, "IOMobileFramebufferUserClient");
+ 	setProperty("external", false);
+@@ -284,6 +317,23 @@
+ 		    (IOMobileFramebufferUserClient *)fb->fClients->getObject(i);
+ 		client->notify(SWEET_FB_NOTIFY_VSYNC, values, 6);
+ 	}
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	/* Replay a compact commit-path status every 600 vsyncs (~10 s at 60 Hz).
++	 * Direct pstore emission keeps it durable even after console muting. */
++	if ((++fb->fDiagTick % 600) == 0) {
++		char line[192];
++		snprintf(line, sizeof(line),
++		    "M30 FB: v=%llu sw=%llu pr=%llu copied=%llu skip=%u last=%u dirty=%d power=%d cl=%u ticks=%u",
++		    (unsigned long long)count,
++		    (unsigned long long)fb->fSwapCalls,
++		    (unsigned long long)fb->fPresentCalls,
++		    (unsigned long long)fb->fPresentBytes,
++		    fb->fPresentSkips, fb->fLastSkip,
++		    fb->fDirty ? 1 : 0, fb->fPowerOff ? 1 : 0,
++		    fb->fClients->getCount(), fb->fFlushTicks);
++		m30_pmsg_diag_line(line);
++	}
++#endif
+ 	if (fb->fPowerOff) {
+ 		/* Fade out: halve every channel each vsync, then black, then idle. */
+ 		uint32_t step = fb->fFadeStep;
+@@ -397,6 +447,18 @@
+ 	IOLockLock(fLock);
+ 	memcpy(fPending, rec, SWEET_FB_SWAP_REC_SIZE);
+ 	fDirty = true;
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	fSwapCalls++;
++	if (fSwapCalls <= 4) {
++		char line[192];
++		snprintf(line, sizeof(line),
++		    "M30 FB: staged #%llu id=%u mask=0x%x layers=%u/%u/%u/%u dirty=%d",
++		    (unsigned long long)fSwapCalls, get32(rec, 0x50), get32(rec, 0x104),
++		    get32(rec, 0x54), get32(rec, 0x58), get32(rec, 0x5c), get32(rec, 0x60),
++		    fDirty ? 1 : 0);
++		m30_pmsg_diag_line(line);
++	}
++#endif
+ 	IOLockUnlock(fLock);
+ 	if ((++sweet_fb_swap_count % 1000) == 0) {
+ 		IOLog("SWEET FB: %llu swaps\n", sweet_fb_swap_count);
+@@ -409,6 +471,9 @@
+ 	uint32_t mask = get32(rec, 0x104);
+ 	uint64_t copied = 0;
+ 
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	fPresentCalls++;
++#endif
+ 
+ 	if (!fConsolePaused) {
+ 		int quiet = 0;
+@@ -433,6 +498,10 @@
+ 		int32_t w = (int32_t)get32(b, 8), h = (int32_t)get32(b, 12);
+ 
+ 		if (!(mask & (1u << layer)) || id == 0) {
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++			fPresentSkips++;
++			fLastSkip = 1;
++#endif
+ 			continue;
+ 		}
+ 		SweetSurface *s = sweet_surface_copy(id);
+@@ -444,6 +513,10 @@
+ 			    get32(a, 12), dx, dy, w, h);
+ 		}
+ 		if (s == NULL || s == fSurface) {
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++			fPresentSkips++;
++			fLastSkip = 2;
++#endif
+ 			OSSafeReleaseNULL(s);
+ 			continue;
+ 		}
+@@ -488,8 +561,18 @@
+ 		    (uint64_t)(sx + w) * 4;
+ 		if (w <= 0 || h <= 0 || s->elementWidth != 1 || s->elementHeight != 1 ||
+ 		    s->memory == NULL || last > s->memory->getLength()) {
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++			fPresentSkips++;
++			fLastSkip = 3;
++#endif
+ 			src = 0;
+ 		}
++		if (src != 0 && bpe != 4) {
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++			fPresentSkips++;
++			fLastSkip = 4;
++#endif
++		}
+ 		if (src != 0 && bpe == 4) {
+ 			copied += (uint64_t)w * (uint64_t)h * 4;
+ 			for (int32_t y = 0; y < h; y++) {
+@@ -500,6 +583,17 @@
+ 		}
+ 		s->release();
+ 	}
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	fPresentBytes += copied;
++	if (fPresentCalls <= 4 || (copied == 0 && fPresentCalls <= 16)) {
++		char line[192];
++		snprintf(line, sizeof(line),
++		    "M30 FB: present #%llu copied=%llu skip=%u last=%u mask=0x%x",
++		    (unsigned long long)fPresentCalls, (unsigned long long)copied,
++		    fPresentSkips, fLastSkip, mask);
++		m30_pmsg_diag_line(line);
++	}
++#endif
+ 	return copied;
+ }
+ 
+@@ -651,6 +745,16 @@
+ 				fFB->fDirty = true;     /* on: redraw the latest frame */
+ 			}
+ 			IOLockUnlock(fFB->fLock);
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++			char line[128];
++			snprintf(line, sizeof(line),
++			    "M30 FB: power req=%llu off=%d sw=%llu pr=%llu copied=%llu",
++			    (unsigned long long)fFB->fSwapCalls, off ? 1 : 0,
++			    (unsigned long long)fFB->fSwapCalls,
++			    (unsigned long long)fFB->fPresentCalls,
++			    (unsigned long long)fFB->fPresentBytes);
++			m30_pmsg_diag_line(line);
++#endif
+ 			IOLog("SWEET FB: display %s\n", off ? "off" : "on");
+ 		}
+ 		break;

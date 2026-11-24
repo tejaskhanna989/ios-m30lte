@@ -3044,3 +3044,38 @@ authorization for a BOOT-only test of candidate v6.
   (AppleCLCD/backboardd transaction completion vs SpringBoard lock-screen
   view construction) with a new read-only or narrowly targeted diagnostic.
   Keep `serial=3`, all security state, and BOOT-only flashing rules.
+
+## 2026-11-24 - UI presentation source check and v65 diagnostic plan (MAIN only)
+
+- Read-only source verification corrected one detail from the first UI analysis:
+  `milestone_artifacts/ci_45356410574/buildtree/unpacked/xnu/makedefs/MakeInc.def:68`
+  builds M30LTE with **both** `-DARM64_BOARD_CONFIG_A5XELTE` and
+  `-DARM64_BOARD_CONFIG_M30LTE`. The `a5fb_noconsole` / `a5fb_keep_on` boot
+  arguments in v61/v62/v64 are therefore parsed; there is no ignored-boot-arg
+  defect. The clean Apple logo is consistent with console muting working.
+- Confirmed from `iokit/Kernel/arm/SweetFramebuffer.cpp`: `kSweetFBSwapEnd`
+  (selector 5) only stages `fPending`/`fDirty`; the real panel copy is
+  `AppleCLCD::present()` from `vsyncFired()`. v60's early pstore proved the copy
+  path can work (`SWEET FB: swap ...`, `A5XELTE FB: frames=...`), but v61/v62/v64
+  captures lack those early records because the 16 KB ring wrapped and
+  `a5fb_noconsole=1` later bypasses the console->pmsg mirror. Staged vs
+  committed remains the unresolved link; absence of late swap logs is not proof
+  that no frame was presented.
+- New patch `xnu/patches-minimal/0442-m30-framebuffer-commit-diag.patch` adds an
+  M30LTE-only direct pstore sink `m30_pmsg_diag_line()` in
+  `pexpert/arm/pe_serial.c` (bypasses console muting; no serial output) and
+  bounded commit telemetry in `SweetFramebuffer.cpp`: `M30 FB: start`, `staged`,
+  `present`, `power`, and a compact `M30 FB: v=... sw=... pr=... copied=...`
+  replay every 600 vsyncs (~10 s). It records staged swaps, present() calls,
+  copied bytes, skip reasons, dirty/power/client state and boot-arg values.
+  No CS / AMFI / signing / trust-cache / page-validation / userland change.
+- Offline test `tools/test_m30_framebuffer_commit_diag.py` PASS: patch applies to
+  the exact v62 CI source and reproduces `pe_serial.c`
+  `058f8ade47a0288b0ba474fa309309018d49bb0a70095379baeb766196da6dbc` and
+  `SweetFramebuffer.cpp`
+  `b3cc2d07adeb8503ab60e66febb98fb073ff41ad62815cccfe257f44d396054c`.
+- NEXT: commit/push, then CI `xnu.yml` with `xnu_target=iphoneos`,
+  `machine_config=M30LTE`, `kernel_config=DEVELOPMENT`. Package v65 from the
+  CI kernel with the unchanged v62 cmdline (`serial=3` retained), validate, then
+  BOOT-only physical test after the identity/Download Mode gate. Accept only a
+  persistent visible lock screen plus logs; v65 itself is diagnostic.
