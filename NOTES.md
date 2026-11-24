@@ -3002,3 +3002,18 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: user must reconnect the phone in TWRP or Samsung Download Mode. Re-run
   positive identity + Download Mode verification, then BOOT-only Heimdall flash
   with the same gate. Never write USERDATA/SYSTEM/RECOVERY; never use Fastboot.
+
+## 2026-11-24 - v64 BOOT-only physical flash completed (MAIN only)
+
+- Identity re-verified in TWRP with exact expected model/device/bootloader and
+  recovery boot state; Download Mode then detected by Heimdall before any write.
+  Serial-bearing evidence is redacted in the repository.
+- BOOT-only Heimdall flash `15:09:08Z..15:09:13Z`, image SHA256
+  `d396bb549000993a009f7febf2e879f42626d6c7b0af5b34d8fe127f452d8960`,
+  `BOOT upload successful`; resumed with `heimdall print-pit --resume`.
+  No USERDATA/SYSTEM/RECOVERY write and no Fastboot.
+- Evidence: `validation/physical-boot-test/20261124-ios-v64-boot/`. Visual
+  observation and pstore pull are still pending. No lock-screen claim.
+- NEXT: user reports what is visible after ~3-5 min; then after ~10-15 min total,
+  reconnect in TWRP for a read-only pstore pull and decode `SBERR`/`BBERR`
+  records. Restore v62 BOOT only after evidence capture.

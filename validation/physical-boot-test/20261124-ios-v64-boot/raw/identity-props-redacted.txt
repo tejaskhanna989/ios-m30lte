@@ -1,0 +1,6 @@
+ro.boot.em.model=SM-M305F
+ro.product.device=m30lte
+ro.serialno=<redacted>
+ro.boot.serialno=<redacted>
+ro.bootloader=M305FDDU8CVK1
+ro.twrp.boot=1
