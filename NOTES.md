@@ -2990,3 +2990,15 @@ authorization for a BOOT-only test of candidate v6.
   v64 `shim-boot.img` with Heimdall. No USERDATA/SYSTEM/RECOVERY write, no
   Fastboot. v64 is diagnostic only; accept no lock-screen success without a
   persistent visible lock-screen render plus logs.
+
+## 2026-11-24 - v64 physical gate paused (MAIN only)
+
+- After packaging/commit `f1da00ac`, the device was checked for the physical
+  write gate. `adb devices -l` returned no device, `heimdall detect` found no
+  download-mode device, and `lsusb` showed no Samsung/Android USB device.
+- No BOOT write was attempted. The v64 candidate is ready at
+  `validation/ios-candidate-v64-out/shim-boot.img`
+  `d396bb549000993a009f7febf2e879f42626d6c7b0af5b34d8fe127f452d8960`.
+- NEXT: user must reconnect the phone in TWRP or Samsung Download Mode. Re-run
+  positive identity + Download Mode verification, then BOOT-only Heimdall flash
+  with the same gate. Never write USERDATA/SYSTEM/RECOVERY; never use Fastboot.
