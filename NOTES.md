@@ -2665,3 +2665,22 @@ authorization for a BOOT-only test of candidate v6.
   Capture pstore whenever recovery is convenient; the slow report should make
   early timing unnecessary. No lock-screen claim without a visible persistent
   render plus logs.
+
+## 2026-11-24 - v60 CI failure and fix (MAIN only)
+
+- CI `45329987546` FAILED for source `e252d946`. The only build error was
+  `exception.c:995:12: error: call to undeclared function 'strstr'` in the new
+  m30 crash-reason capture; all other steps were healthy.
+- New incremental patch `xnu/patches-minimal/0438-m30-string-include.patch`
+  adds `#include <string.h>` to the same guarded block in `exception.c`. No
+  behavioural or security change.
+- Offline checks PASS: 0437+0438 applied to the exact v59 CI buildtree
+  reproduce `vm_fault.c` SHA256
+  `cb010af81d89fa10ddf9d7aa03579225bd2860fb001de309c815ecfaf650551d` and
+  final `exception.c` SHA256
+  `3446b62576fb098020640154d2359e0bd9a6c521cc82302cf85beb5c8dbb011e`.
+  `tools/test_m30_durable_crash_report.py` PASS with both patches; all other
+  applicable focused tests PASS.
+- NEXT: commit/push fix, rerun CI with `XNU_TARGET=iphoneos`, M30LTE,
+  DEVELOPMENT; validate/package v60 and run BOOT-only physical test. No
+  lock-screen claim without visible persistent evidence plus logs.

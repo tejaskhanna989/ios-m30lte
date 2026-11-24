@@ -17,6 +17,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0437-m30-durable-crash-report.patch"
+PATCH_INCLUDE = ROOT / "xnu/patches-minimal/0438-m30-string-include.patch"
 BASE = ROOT / "milestone_artifacts/ci_45295419663/buildtree/unpacked/xnu"
 VM = BASE / "osfmk/vm/vm_fault.c"
 EXC = BASE / "osfmk/kern/exception.c"
@@ -24,6 +25,7 @@ BASE_VM_SHA = "98196f90fef3f7cc382678dbee83799b8bfd7893ac008ca0cefd0e8e262bf65d"
 BASE_EXC_SHA = "ea2dd4490e8406687dd958f9a7ade88bdb946ee6db7909f871a3cc94ca10fe22"
 VM_SHA = "cb010af81d89fa10ddf9d7aa03579225bd2860fb001de309c815ecfaf650551d"
 EXC_SHA = "35b3161fadd93ff49aa9f4b93f9165296939407f7da8dde5a9558d6e5c480e80"
+EXC_FINAL_SHA = "3446b62576fb098020640154d2359e0bd9a6c521cc82302cf85beb5c8dbb011e"
 
 
 def sha256(path: Path) -> str:
@@ -45,6 +47,9 @@ def main():
     assert "char m30_last_crash_reason[256];" in text
     assert 'strstr(text, "Exception") != NULL' in text
     assert "strlcpy(m30_last_crash_reason, text," in text
+    inc = PATCH_INCLUDE.read_text()
+    assert "diff --git a/osfmk/kern/exception.c b/osfmk/kern/exception.c" in inc
+    assert "+#include <string.h>" in inc
     for bad in (
         "cs_enforcement_disable", "amfi_get_out_of_my_way",
         "launchd_unsecure_cache", "CSDebugDisable", "IO_NOAUTH",
@@ -67,14 +72,15 @@ def main():
         shutil.copy2(VM, work / "osfmk/vm/vm_fault.c")
         shutil.copy2(EXC, work / "osfmk/kern/exception.c")
         rel = work.relative_to(ROOT)
-        subprocess.run(
-            ["git", "apply", "--directory", str(rel), "-p1",
-             str(PATCH.relative_to(ROOT))],
-            cwd=str(ROOT), check=True, env=env,
-            capture_output=True, text=True,
-        )
+        for p in (PATCH, PATCH_INCLUDE):
+            subprocess.run(
+                ["git", "apply", "--directory", str(rel), "-p1",
+                 str(p.relative_to(ROOT))],
+                cwd=str(ROOT), check=True, env=env,
+                capture_output=True, text=True,
+            )
         assert sha256(work / "osfmk/vm/vm_fault.c") == VM_SHA
-        assert sha256(work / "osfmk/kern/exception.c") == EXC_SHA
+        assert sha256(work / "osfmk/kern/exception.c") == EXC_FINAL_SHA
     print("[PASS] patch 0437 applies to exact v59 CI source; hashes reproduced")
 
     # Ring budget: one ~200-byte line every 10 min, always near the tail.

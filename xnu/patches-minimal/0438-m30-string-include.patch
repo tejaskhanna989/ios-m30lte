@@ -1,0 +1,11 @@
+diff --git a/osfmk/kern/exception.c b/osfmk/kern/exception.c
+--- a/osfmk/kern/exception.c
++++ b/osfmk/kern/exception.c
+@@ -823,6 +823,7 @@
+ #if defined(ARM64_BOARD_CONFIG_SWEET) || defined(ARM64_BOARD_CONFIG_A5XELTE)
+ #include <vm/vm_shared_region.h>
+ #include <arm/thread.h>
++#include <string.h>             /* strstr() used by m30 crash reason capture */
+ 
+ /*
+  * SWEET crash report on the console. The phone has no way to get crash
