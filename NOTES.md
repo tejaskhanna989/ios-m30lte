@@ -2793,3 +2793,36 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: BOOT-only physical test with identity/Download Mode gate. Expect the
   GUI to be visible now that the framebuffer console is muted. Accept only a
   persistent visible lock screen plus logs.
+
+## 2026-11-24 - v61 physical result (MAIN only): still no lock screen
+
+- Identity/Download Mode verified; BOOT-only flash at `07:32:11Z..07:32:16Z`
+  (13:02:11..13:02:16 IST), resume `07:32:29Z` (13:02:29 IST). It was left
+  booted ~13 min; pstore pulled at `07:45Z`. Raw SHA256
+  `1b97b044381a3e1db2312633353963ebcbf78370342639afffa3668ae9f6a12d`,
+  decode 158 records, `clean=False`.
+- IRT reached `patched`; counter fragment `csblk=3943 csfail=5 csvok=37138
+  cfa=0 cfi=5 cfp=0`. `backboardd` actively used the framebuffer: created a
+  1080x2340 surface, multiple swaps/selectors, `SWEET FB: display on`. Only
+  crash in the window was `driverkitd[68]` sig 9. No SpringBoard/backboardd
+  crash, no `NSInternal`, no `state=4`.
+- No lock screen was observed. The capture window was long enough, so this is
+  not a timing issue. The ring wrapped before SpringBoard's final state could
+  be seen, so the remaining question is whether SpringBoard never presented a
+  lock-screen scene or was stuck in a shared wait.
+- Evidence: `validation/physical-boot-test/20261124-ios-v61-boot/`.
+
+## 2026-11-24 - v62 source (MAIN only): compact frequent UI liveness
+
+- New patch `xnu/patches-minimal/0440-m30-compact-ui-state.patch` changes
+  `bsd/dev/sweet_sample.c`: print `M30 UI: sb=<pid> bb=<pid> reason=<string>`
+  every 30 s, replaying `m30_last_crash_reason`; keep the full `SMP` backtraces
+  only every fourth tick (2 min) so they no longer overwrite the whole ring.
+  No CS/AMFI/security change.
+- Offline checks PASS: patch applies to exact v60 CI buildtree and reproduces
+  `sweet_sample.c` SHA256
+  `c7e92cc467a5c0fe062d8f4cd77dbe99c10a3909a4287dcd78c517963489fcf0`.
+  `tools/test_m30_compact_ui_state.py` PASS; all applicable focused tests PASS.
+- NEXT: commit/push, CI, validate/package v62 (reusing corrected v61 cmdline),
+  physical test. The compact line should show whether SpringBoard is alive and
+  whether any NS reason was captured, enabling the targeted final fix.
