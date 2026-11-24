@@ -115,7 +115,7 @@ jobs:
           --patch-dir dxb/patches | tee m30-buildtree-verification.json
     - name: Verify M30 framebuffer fix patch chain applied
       run: |
-        for p in 0442-m30-framebuffer-commit-diag.patch 0443-m30-framebuffer-swapwait-handshake.patch; do
+        for p in 0442-m30-framebuffer-commit-diag.patch 0443-m30-framebuffer-swapwait-handshake.patch 0444-m30-framebuffer-notify-push.patch; do
           grep -q "Applying patch: .*$p" build.log
           if grep -q "Skipping patch .*$p" build.log; then
             echo "ERROR: patch $p was skipped by the tolerant build script"
@@ -127,7 +127,7 @@ jobs:
         from pathlib import Path
         expect = {
             "pexpert/arm/pe_serial.c": "0567414c2f004778bba71a01b2723202af5bde98bf1ca6ec035856b086c2a772",
-            "iokit/Kernel/arm/SweetFramebuffer.cpp": "a80558039ddf9e0be26fb12f186edd50acca81e0276c0e747e9713c906bb35f8",
+            "iokit/Kernel/arm/SweetFramebuffer.cpp": "6d0c9f8820d71c62d0baa4112f2c5cf3015ce5329a23a697969607f86bfc0e39",
             "bsd/kern/sys_generic.c": "438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f",
         }
         for rel, want in expect.items():

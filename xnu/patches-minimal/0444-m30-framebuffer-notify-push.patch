@@ -1,0 +1,51 @@
+diff --git a/iokit/Kernel/arm/SweetFramebuffer.cpp b/iokit/Kernel/arm/SweetFramebuffer.cpp
+--- a/iokit/Kernel/arm/SweetFramebuffer.cpp
++++ b/iokit/Kernel/arm/SweetFramebuffer.cpp
+@@ -609,13 +609,31 @@
+ 	}
+ 	{
+ 		uint64_t values[4] = { fSwapDone, copied, 0, 0 };
++		uint64_t vsync_values[6] = { fSwapDone, 0, copied, 0, 0, 0 };
++		uint32_t registered = 0;
+ 		IOLockLock(fLock);
+ 		for (unsigned int i = 0; i < fClients->getCount(); i++) {
+ 			IOMobileFramebufferUserClient *client =
+ 			    (IOMobileFramebufferUserClient *)fClients->getObject(i);
+-			client->notify(6, values, 4);   /* swap-done notification */
++			for (uint32_t type = 0; type < SWEET_FB_NOTIFY_TYPES; type++) {
++				if (client->fFunc[type] == 0 || client->fPort == MACH_PORT_NULL) {
++					continue;
++				}
++				registered |= (1U << type);
++				if (type == SWEET_FB_NOTIFY_VSYNC) {
++					client->notify(type, vsync_values, 6);
++				} else {
++					client->notify(type, values, 4);
++				}
++			}
+ 		}
+ 		IOLockUnlock(fLock);
++		if (fSwapDone <= 8) {
++			char line[160];
++			snprintf(line, sizeof(line), "M30 FB: notify mask=0x%x done=%llu",
++			    registered, (unsigned long long)fSwapDone);
++			m30_pmsg_diag_line(line);
++		}
+ 	}
+ #endif
+ 	return copied;
+@@ -787,12 +805,8 @@
+ 		uint64_t token = args->scalarInputCount != 0 ? args->scalarInput[0] : 0;
+ 		uint64_t before = fFB->fPresentCalls;
+ 		fFB->fSwapWaitCalls++;
+-		/* Wait, briefly, for the next present() to complete.  This preserves
+-		 * the SwapBegin/SwapEnd/SwapWait transaction ordering expected by a
+-		 * modern backboardd without adding userland-visible policy. */
+-		for (int i = 0; i < 20 && fFB->fPresentCalls == before; i++) {
+-			IOSleep(5000);
+-		}
++		/* v67: never block the backboardd user-client thread.  v66 proved the
++		 * 20 x 5 ms wait regresses commits from five presents to one. */
+ 		out[0] = fFB->fPresentCalls;
+ 		outCount = 1;
+ 		if (fFB->fSwapWaitCalls <= 8) {

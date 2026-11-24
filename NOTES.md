@@ -3331,3 +3331,28 @@ authorization for a BOOT-only test of candidate v6.
 - Evidence: `validation/physical-boot-test/20261124-v62-restore-after-v66/`.
   Device is back on the known-good v62 BOOT. Any further candidate must first
   return the device to TWRP.
+
+## 2026-11-24 - v67 fix attempt: nonblocking SwapWait + registered notify push (MAIN only)
+
+- v66 pstore proved the blocking `SwapWait` is counterproductive: it timed out
+  before the first present, then backboardd completed only 1 staged swap and 1
+  present (v65 had 6 swaps and 5 presents). The final visual was frozen console
+  text from the SMP sample that occurred before present #1.
+- New M30LTE-only patch
+  `xnu/patches-minimal/0444-m30-framebuffer-notify-push.patch`, SHA256
+  `4eb37f48433aece664bd457350f41a5feb898b1cff5510ccdd7364bedb57f607`.
+  It removes the 20 x 5 ms `IOSleep` loop from `SwapWait` (never blocks the
+  backboardd user-client thread) and, after each `present()`, pushes the
+  completion notification to every registered IOMobileFramebuffer notification
+  type, using the proper 6-value vsync payload for type 5. A bounded
+  `M30 FB: notify mask=...` line records which types were registered. No
+  security, serial, console, userland-policy or USERDATA change.
+- Offline CI-order test applies 0441+0442+0443+0444 to the exact v62 CI source:
+  `pe_serial.c=0567414c...`, `sys_generic.c=438bc846...`,
+  `SweetFramebuffer.cpp=6d0c9f8820d71c62d0baa4112f2c5cf3015ce5329a23a697969607f86bfc0e39`.
+  `verify_m30_buildtree.py` PASS with all 4 critical patches reverse-applying;
+  `tools/test_m30_framebuffer_notify_push.py` PASS.
+- `.github/workflows/xnu.yml` now requires 0442, 0443 and 0444 all APPLIED
+  (not skipped) and checks the exact final source hashes. No physical action
+  yet; device is back on known-good v62 BOOT and must return to TWRP before any
+  further BOOT write.
