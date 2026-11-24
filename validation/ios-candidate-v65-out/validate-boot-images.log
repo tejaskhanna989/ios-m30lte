@@ -1,0 +1,106 @@
+{
+  "result": "PASS",
+  "images": [
+    {
+      "path": "shim-boot.img",
+      "size_bytes": 16314368,
+      "sha256": "97f4f4044722ef4f9375f56685381e5889d9c75494bedd3d7d7d04f369956ac3",
+      "header": {
+        "version": 0,
+        "page_size": 2048,
+        "kernel_size": 16310736,
+        "kernel_addr": "0x80080000",
+        "ramdisk_size": 0,
+        "ramdisk_addr": "0x0",
+        "second_size": 0,
+        "second_addr": "0x0",
+        "tags_addr": "0x80000100",
+        "os_version_raw": "0x14000145",
+        "board": "m30lte",
+        "cmdline": "console=null",
+        "image_id_sha1": "55452e8370b9de328b94e36d2b19bb508c75fd3d"
+      },
+      "components": {
+        "header": {
+          "offset": 0,
+          "size_bytes": 2048,
+          "end": 2048
+        },
+        "kernel": {
+          "offset": 2048,
+          "size_bytes": 16310736,
+          "end": 16312784
+        },
+        "ramdisk": {
+          "offset": 16314368,
+          "size_bytes": 0,
+          "end": 16314368
+        },
+        "second": {
+          "offset": 16314368,
+          "size_bytes": 0,
+          "end": 16314368
+        }
+      },
+      "partition_limit_bytes": 33554432,
+      "partition_size_compatible": true,
+      "combined_kernel_exact": true,
+      "payload_offset_in_kernel": 131072,
+      "payload_size_bytes": 16179664,
+      "payload_sha256": "864324c326b52ddf89f1d03eb9a2d446f26af5c87ddd3f775858cf5c5f84b843",
+      "structurally_valid_generic_android_v0": true,
+      "sboot_compatible": "unknown; no exact SM-M305F acceptance evidence"
+    },
+    {
+      "path": "ios-boot.img",
+      "size_bytes": 16314368,
+      "sha256": "b123a853df703cf7294fcf0e00607935463df042654fe9a1f93e53259f48b575",
+      "header": {
+        "version": 0,
+        "page_size": 2048,
+        "kernel_size": 16310736,
+        "kernel_addr": "0x80080000",
+        "ramdisk_size": 0,
+        "ramdisk_addr": "0x0",
+        "second_size": 0,
+        "second_addr": "0x0",
+        "tags_addr": "0x80000100",
+        "os_version_raw": "0x14000145",
+        "board": "m30lte",
+        "cmdline": "debug=0xc serial=3 keepsyms=1",
+        "image_id_sha1": "55452e8370b9de328b94e36d2b19bb508c75fd3d"
+      },
+      "components": {
+        "header": {
+          "offset": 0,
+          "size_bytes": 2048,
+          "end": 2048
+        },
+        "kernel": {
+          "offset": 2048,
+          "size_bytes": 16310736,
+          "end": 16312784
+        },
+        "ramdisk": {
+          "offset": 16314368,
+          "size_bytes": 0,
+          "end": 16314368
+        },
+        "second": {
+          "offset": 16314368,
+          "size_bytes": 0,
+          "end": 16314368
+        }
+      },
+      "partition_limit_bytes": 33554432,
+      "partition_size_compatible": true,
+      "combined_kernel_exact": true,
+      "payload_offset_in_kernel": 131072,
+      "payload_size_bytes": 16179664,
+      "payload_sha256": "864324c326b52ddf89f1d03eb9a2d446f26af5c87ddd3f775858cf5c5f84b843",
+      "structurally_valid_generic_android_v0": true,
+      "sboot_compatible": "unknown; no exact SM-M305F acceptance evidence"
+    }
+  ],
+  "validation": "validation.json"
+}

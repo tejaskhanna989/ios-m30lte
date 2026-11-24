@@ -3130,3 +3130,33 @@ authorization for a BOOT-only test of candidate v6.
   `tools/test_m30_framebuffer_commit_diag.py` PASS. No physical action.
   NEXT: rerun CI; treat only a run where every verification step is genuinely
   successful as packagable.
+
+## 2026-11-24 - v65 CI GREEN and candidate packaged (MAIN only)
+
+- CI `45439734351` GREEN for source `17948e4a` (`XNU_TARGET=iphoneos`,
+  M30LTE, DEVELOPMENT). Explicit new step confirmed 0442 APPLIED (not skipped),
+  and the buildtree verifier genuinely PASSed with `set -o pipefail`; critical
+  patch provenance 4/4 PASS. No `"result": "FAIL"` in the full log.
+- CI buildtree source hashes: `pexpert/arm/pe_serial.c`
+  `0567414c2f004778bba71a01b2723202af5bde98bf1ca6ec035856b086c2a772`,
+  `iokit/Kernel/arm/SweetFramebuffer.cpp`
+  `a92e8e928033ccf73648b40952ea3cdb7f975e045af7789523e4139b2320d178`,
+  `bsd/kern/sys_generic.c`
+  `438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f`.
+- Candidate `validation/ios-candidate-v65-out/`: linked kernel
+  `4af5aa7feca09edfd38bdbeba63af72fd7d743dd116108c2186be85badf10383`, payload
+  `864324c326b52ddf89f1d03eb9a2d446f26af5c87ddd3f775858cf5c5f84b843`,
+  `shim-boot.img`
+  `97f4f4044722ef4f9375f56685381e5889d9c75494bedd3d7d7d04f369956ac3`,
+  `ios-boot.img`
+  `b123a853df703cf7294fcf0e00607935463df042654fe9a1f93e53259f48b575`.
+  Payload cmdline unchanged from v62/v64, including `serial=3`.
+- Validation: boot images PASS; handoff 26/26 PASS; buildtree PASS; kernel
+  verifier 6/6 PASS; platform match 9/9 PASS; focused tests 22 PASS / 1
+  pre-existing FAIL (`tools/test_m30_16k_pages.py` missing
+  `0417-m30-16k-pages.patch`). False-GREEN artifacts preserved under
+  `validation/ios-candidate-v65-out-falsegreen-45435016186/`.
+- v65 is diagnostic only. NEXT: identity + Download Mode gate, BOOT-only
+  Heimdall flash, 10-15 min visual observation, read-only pstore pull, decode
+  `M30 FB` / `M30 UI` / `SBERR` / `BBERR`. No lock-screen claim without a
+  persistent visible lock-screen render plus logs.
