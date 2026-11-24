@@ -3079,3 +3079,29 @@ authorization for a BOOT-only test of candidate v6.
   CI kernel with the unchanged v62 cmdline (`serial=3` retained), validate, then
   BOOT-only physical test after the identity/Download Mode gate. Accept only a
   persistent visible lock screen plus logs; v65 itself is diagnostic.
+
+## 2026-11-24 - v65 CI patch-skip caught; 0442 rebased (MAIN only)
+
+- CI `45430103586` was GREEN for source `adede31c`, but the build log showed:
+  `Skipping patch .../0442-m30-framebuffer-commit-diag.patch (already upstream,
+  previously applied, or malformed): error: patch failed: pexpert/arm/pe_serial.c:849`.
+  Root cause: 0442 was generated against the v62 CI tree, while the patch chain
+  applies 0441 (v64 stderr capture) first. 0441 inserts `m30_stderr_capture()`
+  at the exact 0442 context point in `pexpert/arm/pe_serial.c`.
+- Verified CI buildtree hashes: `pe_serial.c`
+  `3a85e204a5a90639b8a60ee52be27e7ab40e0b959e4e191e35b1614d2263aa03` and
+  `SweetFramebuffer.cpp` `afc4bb32...` — i.e. byte-identical to v64 apart from
+  the already-known 0441 files. The GREEN run therefore built **v64 kernel
+  logic**, not the v65 diagnostic. It is NOT a valid v65 candidate; no BOOT
+  image may be packaged or flashed from `45430103586`.
+- Removed `0442-m30-framebuffer-commit-diag.patch` was regenerated against the
+  exact post-0441 CI source. New patch SHA256
+  `e13891afc06699f1d87a0ec2fc2877c7e213cf33e937e8ee60aa18c2770daa08`.
+  Resulting `pe_serial.c` hash after 0441+0442 is
+  `0567414c2f004778bba71a01b2723202af5bde98bf1ca6ec035856b086c2a772`;
+  `sys_generic.c` remains `438bc846...`; `SweetFramebuffer.cpp` remains
+  `b3cc2d07adeb8503ab60e66febb98fb073ff41ad62815cccfe257f44d396054c`.
+- `tools/test_m30_framebuffer_commit_diag.py` updated to apply 0441 then 0442
+  in CI order; PASS. No physical action. Next: commit/push, rerun CI, and
+  explicitly confirm from the log that 0442 was APPLIED (not skipped) before
+  packaging.
