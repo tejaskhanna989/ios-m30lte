@@ -1,0 +1,370 @@
+{
+  "input_bytes": 3550,
+  "input_sha256": "6dfe5fadc1a10fcdfd87618c8d27f1be11a32ef4757b036e982491d8fbb63765",
+  "record_count": 45,
+  "consumed": 3550,
+  "clean": true,
+  "records": [
+    {
+      "index": 0,
+      "offset": 0,
+      "length": 48,
+      "metadata_hex": "0000001c0b001d0b7a6b056b7a9f7f0e04",
+      "tag": "adbd",
+      "message": "initializing functionfs"
+    },
+    {
+      "index": 1,
+      "offset": 48,
+      "length": 70,
+      "metadata_hex": "0000001c0b001d0b7a6b056bd73d810e04",
+      "tag": "adbd",
+      "message": "opening control endpoint /dev/usb-ffs/adb/ep0"
+    },
+    {
+      "index": 2,
+      "offset": 118,
+      "length": 60,
+      "metadata_hex": "0000001c0b001d0b7a6b056b20708c0e04",
+      "tag": "adbd",
+      "message": "functionfs successfully initialized"
+    },
+    {
+      "index": 3,
+      "offset": 178,
+      "length": 50,
+      "metadata_hex": "0000001c0b001d0b7a6b056b24538d0e04",
+      "tag": "adbd",
+      "message": "registering usb transport"
+    },
+    {
+      "index": 4,
+      "offset": 228,
+      "length": 88,
+      "metadata_hex": "0000001c0b001e0b7a6b056ba18d920e06",
+      "tag": "cutils-trace",
+      "message": "Error opening trace file: No such file or directory (2)"
+    },
+    {
+      "index": 5,
+      "offset": 316,
+      "length": 159,
+      "metadata_hex": "0000001b0b001b0b7a6b056bf88fff2704",
+      "tag": "ArmToArm64Assembler",
+      "message": "generated scanline__00000077:03010101_00008001_00000000 [195 ipp] (241 ins) at [0x78b964e3c0:0x78b964e784] in 71347 ns\n"
+    },
+    {
+      "index": 6,
+      "offset": 475,
+      "length": 158,
+      "metadata_hex": "0000001b0b001b0b7a6b056bdcbb122d04",
+      "tag": "ArmToArm64Assembler",
+      "message": "generated scanline__00000077:03545405_00000000_00000000 [ 65 ipp] (94 ins) at [0x78b964e790:0x78b964e908] in 48538 ns\n"
+    },
+    {
+      "index": 7,
+      "offset": 633,
+      "length": 160,
+      "metadata_hex": "0000001b0b001b0b7a6b056b811aa63104",
+      "tag": "ArmToArm64Assembler",
+      "message": "generated scanline__00000077:03545405_00000A01_00000000 [ 69 ipp] (113 ins) at [0x78b964e910:0x78b964ead4] in 105693 ns\n"
+    },
+    {
+      "index": 8,
+      "offset": 793,
+      "length": 159,
+      "metadata_hex": "0000001b0b001b0b7a6b056b6ffd883204",
+      "tag": "ArmToArm64Assembler",
+      "message": "generated scanline__00000077:03545405_00000A08_00000000 [ 69 ipp] (116 ins) at [0x78b964eae0:0x78b964ecb0] in 58270 ns\n"
+    },
+    {
+      "index": 9,
+      "offset": 952,
+      "length": 113,
+      "metadata_hex": "0000001c0b001f0bab6b056befea611606",
+      "tag": "adbd",
+      "message": "aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 10,
+      "offset": 1065,
+      "length": 109,
+      "metadata_hex": "0000001c0b001f0bab6b056b7eca621606",
+      "tag": "adbd",
+      "message": "remote usb: read terminated (message): Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 11,
+      "offset": 1174,
+      "length": 53,
+      "metadata_hex": "0000001c0b001c0bab6b056b299a671604",
+      "tag": "adbd",
+      "message": "closing functionfs transport"
+    },
+    {
+      "index": 12,
+      "offset": 1227,
+      "length": 48,
+      "metadata_hex": "0000001c0b001d0bab6b056b1f0eed1c04",
+      "tag": "adbd",
+      "message": "initializing functionfs"
+    },
+    {
+      "index": 13,
+      "offset": 1275,
+      "length": 60,
+      "metadata_hex": "0000001c0b001d0bab6b056b2c74f11c04",
+      "tag": "adbd",
+      "message": "functionfs successfully initialized"
+    },
+    {
+      "index": 14,
+      "offset": 1335,
+      "length": 50,
+      "metadata_hex": "0000001c0b001d0bab6b056bbf5ff21c04",
+      "tag": "adbd",
+      "message": "registering usb transport"
+    },
+    {
+      "index": 15,
+      "offset": 1385,
+      "length": 113,
+      "metadata_hex": "0000001c0b00810b496d056be3f2e11f06",
+      "tag": "adbd",
+      "message": "aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 16,
+      "offset": 1498,
+      "length": 109,
+      "metadata_hex": "0000001c0b00810b496d056b0a5ee51f06",
+      "tag": "adbd",
+      "message": "remote usb: read terminated (message): Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 17,
+      "offset": 1607,
+      "length": 53,
+      "metadata_hex": "0000001c0b001c0b496d056bb914f51f04",
+      "tag": "adbd",
+      "message": "closing functionfs transport"
+    },
+    {
+      "index": 18,
+      "offset": 1660,
+      "length": 48,
+      "metadata_hex": "0000001c0b001d0b496d056b14c4c42504",
+      "tag": "adbd",
+      "message": "initializing functionfs"
+    },
+    {
+      "index": 19,
+      "offset": 1708,
+      "length": 60,
+      "metadata_hex": "0000001c0b001d0b496d056bfb0bce2504",
+      "tag": "adbd",
+      "message": "functionfs successfully initialized"
+    },
+    {
+      "index": 20,
+      "offset": 1768,
+      "length": 50,
+      "metadata_hex": "0000001c0b001d0b496d056bb734d02504",
+      "tag": "adbd",
+      "message": "registering usb transport"
+    },
+    {
+      "index": 21,
+      "offset": 1818,
+      "length": 113,
+      "metadata_hex": "0000001c0b009d0c2d71056b1366791706",
+      "tag": "adbd",
+      "message": "aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 22,
+      "offset": 1931,
+      "length": 109,
+      "metadata_hex": "0000001c0b009d0c2d71056bc9457a1706",
+      "tag": "adbd",
+      "message": "remote usb: read terminated (message): Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 23,
+      "offset": 2040,
+      "length": 53,
+      "metadata_hex": "0000001c0b001c0b2d71056b31c4801704",
+      "tag": "adbd",
+      "message": "closing functionfs transport"
+    },
+    {
+      "index": 24,
+      "offset": 2093,
+      "length": 48,
+      "metadata_hex": "0000001c0b001d0b2d71056b90f2661d04",
+      "tag": "adbd",
+      "message": "initializing functionfs"
+    },
+    {
+      "index": 25,
+      "offset": 2141,
+      "length": 60,
+      "metadata_hex": "0000001c0b001d0b2d71056b27126b1d04",
+      "tag": "adbd",
+      "message": "functionfs successfully initialized"
+    },
+    {
+      "index": 26,
+      "offset": 2201,
+      "length": 50,
+      "metadata_hex": "0000001c0b001d0b2d71056b35f06b1d04",
+      "tag": "adbd",
+      "message": "registering usb transport"
+    },
+    {
+      "index": 27,
+      "offset": 2251,
+      "length": 113,
+      "metadata_hex": "0000001c0b000c0d2a75056b5c166a3206",
+      "tag": "adbd",
+      "message": "aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 28,
+      "offset": 2364,
+      "length": 109,
+      "metadata_hex": "0000001c0b000c0d2a75056b413f6d3206",
+      "tag": "adbd",
+      "message": "remote usb: read terminated (message): Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 29,
+      "offset": 2473,
+      "length": 53,
+      "metadata_hex": "0000001c0b001c0b2a75056b52727b3204",
+      "tag": "adbd",
+      "message": "closing functionfs transport"
+    },
+    {
+      "index": 30,
+      "offset": 2526,
+      "length": 48,
+      "metadata_hex": "0000001c0b001d0b2a75056b4a38703b04",
+      "tag": "adbd",
+      "message": "initializing functionfs"
+    },
+    {
+      "index": 31,
+      "offset": 2574,
+      "length": 60,
+      "metadata_hex": "0000001c0b001d0b2a75056b680b743b04",
+      "tag": "adbd",
+      "message": "functionfs successfully initialized"
+    },
+    {
+      "index": 32,
+      "offset": 2634,
+      "length": 50,
+      "metadata_hex": "0000001c0b001d0b2a75056bbe9d743b04",
+      "tag": "adbd",
+      "message": "registering usb transport"
+    },
+    {
+      "index": 33,
+      "offset": 2684,
+      "length": 113,
+      "metadata_hex": "0000001c0b000a26cc89056b12b8fa0406",
+      "tag": "adbd",
+      "message": "aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 34,
+      "offset": 2797,
+      "length": 109,
+      "metadata_hex": "0000001c0b000a26cc89056b0708fe0406",
+      "tag": "adbd",
+      "message": "remote usb: read terminated (message): Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 35,
+      "offset": 2906,
+      "length": 53,
+      "metadata_hex": "0000001c0b001c0bcc89056be0300c0504",
+      "tag": "adbd",
+      "message": "closing functionfs transport"
+    },
+    {
+      "index": 36,
+      "offset": 2959,
+      "length": 48,
+      "metadata_hex": "0000001c0b001d0bcc89056bdc93dc0904",
+      "tag": "adbd",
+      "message": "initializing functionfs"
+    },
+    {
+      "index": 37,
+      "offset": 3007,
+      "length": 60,
+      "metadata_hex": "0000001c0b001d0bcc89056b97ece50904",
+      "tag": "adbd",
+      "message": "functionfs successfully initialized"
+    },
+    {
+      "index": 38,
+      "offset": 3067,
+      "length": 50,
+      "metadata_hex": "0000001c0b001d0bcc89056bbc5ae80904",
+      "tag": "adbd",
+      "message": "registering usb transport"
+    },
+    {
+      "index": 39,
+      "offset": 3117,
+      "length": 113,
+      "metadata_hex": "0000001c0b00dd2cad8f056b2928f32a06",
+      "tag": "adbd",
+      "message": "aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 40,
+      "offset": 3230,
+      "length": 109,
+      "metadata_hex": "0000001c0b00dd2cad8f056bfaa3f52a06",
+      "tag": "adbd",
+      "message": "remote usb: read terminated (message): Cannot send after transport endpoint shutdown"
+    },
+    {
+      "index": 41,
+      "offset": 3339,
+      "length": 53,
+      "metadata_hex": "0000001c0b001c0bad8f056bf1350e2b04",
+      "tag": "adbd",
+      "message": "closing functionfs transport"
+    },
+    {
+      "index": 42,
+      "offset": 3392,
+      "length": 48,
+      "metadata_hex": "0000001c0b001d0bad8f056be2cdcc2e04",
+      "tag": "adbd",
+      "message": "initializing functionfs"
+    },
+    {
+      "index": 43,
+      "offset": 3440,
+      "length": 60,
+      "metadata_hex": "0000001c0b001d0bad8f056b237bd02e04",
+      "tag": "adbd",
+      "message": "functionfs successfully initialized"
+    },
+    {
+      "index": 44,
+      "offset": 3500,
+      "length": 50,
+      "metadata_hex": "0000001c0b001d0bad8f056b6906d12e04",
+      "tag": "adbd",
+      "message": "registering usb transport"
+    }
+  ],
+  "issues": []
+}

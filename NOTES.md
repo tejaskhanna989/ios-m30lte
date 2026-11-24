@@ -2909,3 +2909,27 @@ authorization for a BOOT-only test of candidate v6.
   `test_m30_16k_pages.py` failure). NEXT: commit/push, then BOOT-only physical
   test with full identity/Download Mode gate. No lock-screen claim without a
   persistent visible render plus logs.
+
+## 2026-11-24 - v63 physical result (MAIN only): REJECTED, blank screen
+
+- Identity/Download Mode verified; BOOT-only flash `13:23:16Z..13:23:21Z`
+  (image `37c6c85af81e45c4ae687f8d36b8eada82cb2f3f3b843595c7502e1559654c13`).
+  No USERDATA/SYSTEM/RECOVERY write, no Fastboot.
+- User-confirmed visual result at `13:25:10Z`: **blank screen**, no lock screen,
+  no Apple logo, no console text. v63 is definitively rejected.
+- Pstore pulled read-only from TWRP at `13:26Z`: raw 3550 bytes, SHA256
+  `6dfe5fadc1a10fcdfd87618c8d27f1be11a32ef4757b036e982491d8fbb63765`,
+  45 records (`adbd` 40, `ArmToArm64Assembler` 4, `cutils-trace` 1), **zero
+  `XNU:` records**. v62's pstore from TWRP was 16372 bytes / 157 `XNU:` records.
+- Conclusion: the stderr/serial-stall hypothesis is **wrong**. Removing
+  `serial=3` removed console output and the console→pmsg mirror (patch 0406
+  hooks `fbcon_transmit_data()` in `pexpert/arm/pe_serial.c`; `arm_init.c`
+  clears `disableConsoleOutput` in the serial branch). The device therefore
+  showed no text and logged nothing. Do not disable the serial console again.
+- Device restored to the known-good v62 BOOT image
+  `7798b211ebc9773df3225732e572dc18d091d2805cc1f7be72f967fbdd0913c7` at
+  `13:33:23Z..13:33:28Z` after re-verifying identity; it left Download Mode by
+  `13:34:51Z`. Evidence: `validation/physical-boot-test/20261124-ios-v63-boot/`.
+- NEXT: keep `serial=3`; add a targeted diagnostic to capture what SpringBoard
+  writes to stderr (or fully symbolicate the deeper backtrace) before the next
+  kernel change. No lock-screen claim from liveness/log telemetry.
