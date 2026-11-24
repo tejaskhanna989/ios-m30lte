@@ -3032,9 +3032,12 @@ authorization for a BOOT-only test of candidate v6.
   with no NS exception. No `NSInternal...`, no SpringBoard crash, no
   `SMP SpringBoard` line survived. IRT reached `state=3`; counters
   `csblk=3937 csfail=8 csvok=36903 cfa=3 cfi=5 cfp=0` are liveness telemetry.
-- Conclusion: the symbolicated `fprintf_stderr`/`write(2)` path was not emitting
-  a SpringBoard error. Combined with v63, the serial/stderr hypothesis is
-  rejected. The lock-screen blocker is elsewhere in UI presentation.
+- Conclusion: the symbolicated `fprintf_stderr`/`write(2)` path is not supported
+  by captured evidence; no surviving SpringBoard error record exists. An early
+  write could have been overwritten by the wrapped ring, so this is absence of
+  evidence, not proof of absence. Combined with v63, the serial/stderr
+  hypothesis is rejected. The lock-screen blocker is elsewhere in UI
+  presentation.
 - Evidence: `validation/physical-boot-test/20261124-ios-v64-boot/`.
 - NEXT: do not repeat console/stderr changes. Diagnose UI presentation directly
   (AppleCLCD/backboardd transaction completion vs SpringBoard lock-screen

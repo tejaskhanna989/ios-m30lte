@@ -46,8 +46,9 @@ Pulled read-only from TWRP at ~`15:15Z`, identity re-verified before the read.
   `5331c2f90da194587d4f803fcef16cbdabef3b0241f55a25cb53a07751c8f1af`.
 - Decode: 156 records, 131 `XNU:`-tagged, `clean=False` (ring wrapped; expected
   for this long run).
-- `SBERR`: **0** records. SpringBoard wrote nothing to fd 2 that the
-  diagnostic captured.
+- `SBERR`: **0** records survived in the captured ring. Because the ring
+  wrapped, a very early SpringBoard fd-2 write could have been overwritten, but
+  the diagnostic captured no evidence of one.
 - `BBERR`: 13 writes, only three unique benign Objective-C duplicate-class
   warnings from `DualSenseHIDServicePlugin` / GameController in backboardd.
 - `M30 UI: sb=26 bb=57 reason=none`: SpringBoard and backboardd both alive, no
@@ -59,9 +60,9 @@ Pulled read-only from TWRP at ~`15:15Z`, identity re-verified before the read.
 - Crashes: `containermanager` sig 10 and `driverkitd` sig 9, both previously
   seen and unrelated to SpringBoard.
 
-Conclusion: the earlier stderr/`write(2)` hypothesis is now rejected. SpringBoard
-is not emitting a diagnostic to stderr; the blocker is elsewhere in the UI
-presentation path.
+Conclusion: the earlier stderr/`write(2)` hypothesis is not supported by the
+captured evidence. No surviving SpringBoard error record exists; the blocker is
+most likely elsewhere in the UI presentation path.
 
 ## Acceptance
 
