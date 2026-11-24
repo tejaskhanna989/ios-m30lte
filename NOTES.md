@@ -2844,3 +2844,26 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: BOOT-only physical test with identity/Download Mode gate. Pull pstore
   when convenient; the compact line repeats every 30 s. No lock-screen claim
   without a visible persistent render plus logs.
+
+## 2026-11-24 - v62 physical result (MAIN only): UI alive, still no lock-screen claim
+
+- Identity/Download Mode verified; BOOT-only flash
+  `10:27:49Z..10:27:54Z` (15:57:49..15:57:54 IST), resume `10:28:01Z`
+  (15:58:01 IST). Pstore pulled at `10:48Z` (16:18 IST) after ~20 min. Raw
+  SHA256 `2bc2179e27603d997ebe97851b7e0dd7eccdb878c56b8838f211d763004a85e7`.
+- Compact telemetry survived: `M30 UI: sb=27 bb=57 reason=none`, proving both
+  UI processes alive with no captured NS reason at that sample. The ring still
+  wrapped heavily, so only one compact line remained.
+- `SMP SpringBoard[27] slide 0x3f420000 mh 0x100008000`; main thread pc
+  `0x201a31030`, lr `0x201a42b18`, unslid `0x1c2611030` / `0x1c2622b18`:
+  the same location as the v60 long run. IRT final full record `state=3`,
+  counters `csblk=3948 csfail=9 csvok=36811 cfa=4 cfi=5 cfp=0`.
+- Backboardd actively used the framebuffer (`display on`, 1080x2340 surface).
+  Only crash was `driverkitd[68] sig 9`; no SpringBoard/backboardd crash, no
+  `NSInternal`, no `state=4`.
+- Evidence: `validation/physical-boot-test/20261124-ios-v62-boot/`.
+- Visual result still requires user confirmation; no lock-screen claim is made
+  from logs/PIDs/framebuffer activity. Next technical step: symbolicate the
+  repeated SpringBoard PC/LR using the genuine iOS 16 dyld symbol cache from
+  USERDATA, then make the targeted fix. Device disconnected during an initial
+  read-only HFSX catalog inspection; reconnect needed for that extraction.

@@ -1,0 +1,4 @@
+65801d7fe712554dff8c7002574565687bd588bd6794a433a24b1ab2e1dfbdd9  validation/physical-boot-test/20261124-ios-v62-boot/decoded-bootlog.txt
+bf29d162620da67980eeb924aa60a2936816de280a075759adb73aa84819c002  validation/physical-boot-test/20261124-ios-v62-boot/decoded-pmsg.txt
+f33fe3dbed2fec86ab43b9df4f43dbba283454e3f5749f3883526691ea8f6144  validation/physical-boot-test/20261124-ios-v62-boot/decode-pmsg-report.json
+8cbac7ea5c9652b721967e54566bcba6b809776ef63233021a36e0ee1e746a15  validation/physical-boot-test/20261124-ios-v62-boot/README.md
