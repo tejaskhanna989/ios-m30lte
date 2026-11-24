@@ -1,0 +1,111 @@
+diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
+--- a/osfmk/vm/vm_fault.c
++++ b/osfmk/vm/vm_fault.c
+@@ -228,6 +228,9 @@
+ static unsigned long m30_cs_block_reads = 0;
+ static unsigned long m30_cs_block_read_fail = 0;
+ static unsigned long m30_cs_block_validated = 0;
++static unsigned long m30_cs_fail_alloc = 0;
++static unsigned long m30_cs_fail_io = 0;
++static unsigned long m30_cs_fail_pager = 0;
+ static uint64_t  m30_cs_diag_seen = 0;
+ 
+ #ifndef IO_NOCACHE
+@@ -1256,7 +1259,7 @@
+ 			    "nlist_cnt=%u nlist_range=%u sc=%u si=%d "
+ 			    "fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d "
+ 			    "xctest=%lu xctchunk=%lu csblk=%lu csfail=%lu "
+-			    "csvok=%lu)\n",
++			    "csvok=%lu cfa=%lu cfi=%lu cfp=%lu)\n",
+ 			    m30_irt_state,
+ 			    (unsigned long long)m30_irt_file_offset,
+ 			    (unsigned long long)m30_irt_sym_vmaddr,
+@@ -1268,14 +1271,15 @@
+ 			    (unsigned long long)m30_irt_fallback_off, i,
+ 			    m30_xctest_patch_count, m30_xctest_chunk_count,
+ 			    m30_cs_block_reads, m30_cs_block_read_fail,
+-			    m30_cs_block_validated);
++			    m30_cs_block_validated, m30_cs_fail_alloc,
++			    m30_cs_fail_io, m30_cs_fail_pager);
+ 		} else {
+ 			printf("M30 IRT final: state=%d off=0x%llx err=%d "
+ 			    "sym=0x%llx comp=%d ls=0x%llx "
+ 			    "nlist_cnt=%u nlist_range=%u hits=%d tries=%d "
+ 			    "sc=%u si=%d fo=%u vh=%u oh=%u pr=%d fb=0x%llx hb=%d "
+ 			    "xctest=%lu xctchunk=%lu csblk=%lu csfail=%lu "
+-			    "csvok=%lu\n",
++			    "csvok=%lu cfa=%lu cfi=%lu cfp=%lu\n",
+ 			    m30_irt_state,
+ 			    (unsigned long long)m30_irt_file_offset,
+ 			    m30_irt_last_err,
+@@ -1289,7 +1293,8 @@
+ 			    (unsigned long long)m30_irt_fallback_off, i,
+ 			    m30_xctest_patch_count, m30_xctest_chunk_count,
+ 			    m30_cs_block_reads, m30_cs_block_read_fail,
+-			    m30_cs_block_validated);
++			    m30_cs_block_validated, m30_cs_fail_alloc,
++			    m30_cs_fail_io, m30_cs_fail_pager);
+ 		}
+ 	}
+ }
+@@ -8987,13 +8992,15 @@
+ 			readbuf = kalloc_data(CS_16K_BLOCK_SIZE, Z_NOWAIT);
+ 			if (readbuf == NULL) {
+ 				m30_cs_block_read_fail++;
++				m30_cs_fail_alloc++;
+ 				M30_CS_DIAG(3, "16K readback allocation failed\n");
+ 			} else {
+ 				/*
+-				 * Never give the UBC UPL the busy faulting page or any
+-				 * other busy/cleaning page.  Only absent slots are
+-				 * fetched from the vnode; resident slots are copied
+-				 * from their real bytes after the lock is reacquired.
++				 * Only absent slots are fetched from the vnode, so the
++				 * busy faulting page is never given to the UBC UPL.
++				 * Resident slots are copied from their real physical
++				 * bytes after the lock is reacquired; a concurrent
++				 * change can only fail the full hash, never bypass it.
+ 				 */
+ 				for (slot = 0; slot < 4; slot++) {
+ 					vm_page_t lp = vm_page_lookup(object,
+@@ -9003,10 +9010,10 @@
+ 						need_read[slot] = FALSE; /* kaddr below */
+ 					} else if (lp == VM_PAGE_NULL) {
+ 						need_read[slot] = TRUE;  /* file bytes */
+-					} else if (lp->vmp_busy || lp->vmp_cleaning) {
+-						read_ok = FALSE;
+-						break;
+ 					} else {
++						/* Busy/cleaning peers are safe to copy through
++						 * phystokv(); they are never given to the UPL.
++						 * A torn read can only fail the full hash. */
+ 						need_read[slot] = FALSE; /* physical bytes */
+ 					}
+ 				}
+@@ -9033,9 +9040,13 @@
+ 						M30_CS_DIAG(0,
+ 						    "16K readback slot=%d err=%d resid=%d\n",
+ 						    slot, err, resid);
+-						if (err != 0 || resid != 0 ||
+-						    !object->alive || object->terminating ||
++						if (err != 0 || resid != 0) {
++							m30_cs_fail_io++;
++							read_ok = FALSE;
++						}
++						if (!object->alive || object->terminating ||
+ 						    object->pager != pager) {
++							m30_cs_fail_pager++;
+ 							read_ok = FALSE;
+ 						}
+ 					}
+@@ -9057,10 +9068,6 @@
+ 						if (rpage == page) {
+ 							memcpy(readbuf + (i << PAGE_SHIFT),
+ 							    (const void *)kaddr, PAGE_SIZE);
+-						} else if (rpage->vmp_busy ||
+-						    rpage->vmp_cleaning) {
+-							read_ok = FALSE;
+-							break;
+ 						} else {
+ 							vm_offset_t bva = (vm_map_offset_t)phystokv(
+ 							    (pmap_paddr_t)VM_PAGE_GET_PHYS_PAGE(rpage) << PAGE_SHIFT);

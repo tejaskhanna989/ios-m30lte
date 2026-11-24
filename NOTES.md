@@ -2569,3 +2569,30 @@ authorization for a BOOT-only test of candidate v6.
   CS failure counters (`cfa`/`cfi`/`cfp`) and an early crash-reason marker so
   the next capture does not depend on the wrapped ring. Force recovery at
   ~3 min in the next physical test to capture early pstore. No security change.
+
+## 2026-11-24 - v59 source (MAIN only): busy-peer CS overlay + fail reasons
+
+- v58 physically proved SpringBoard launches (pid 739) then aborts with an NS
+  exception, and that backboardd crash-loops with the same PC
+  `0x1cd897198`. It also showed 36 `cs_invalid_page` events including
+  `backboardd` and a later `SpringBoard` pid 783: CS_VALID is still being
+  stripped from UI processes despite the v57 full-block readback.
+- New patch `xnu/patches-minimal/0436-m30-cs-busy-peer-overlay.patch`
+  (incremental on v58): busy/cleaning **peer** pages are no longer rejected in
+  the 16K readback. Only absent slots go to the vnode/UPL, so the busy faulting
+  page is still excluded and is hashed from `kaddr`; every resident peer is
+  copied through `phystokv()` and the full 16K block is still hashed, so a
+  torn or tampered page can only fail closed. Added durable per-reason counters
+  `m30_cs_fail_alloc`, `m30_cs_fail_io`, `m30_cs_fail_pager`, replayed in the
+  IRT heartbeat as `cfa=`, `cfi=`, `cfp=`. No signature/hash/AMFI/trust-cache/
+  page-validation change; no 0417, no OSX target, no branch/settings change.
+- Offline checks PASS: patch applies to the exact v58 CI buildtree and
+  reproduces `vm_fault.c` SHA256
+  `98196f90fef3f7cc382678dbee83799b8bfd7893ac008ca0cefd0e8e262bf65d`.
+  New `tools/test_m30_cs_busy_peer_overlay.py` PASS; all other applicable
+  focused tests PASS (`test_m30_16k_pages.py` inapplicable without 0417).
+- NEXT: commit/push source, run CI with `XNU_TARGET=iphoneos`, M30LTE,
+  DEVELOPMENT; validate/package v59. Physical test must force recovery at
+  ~3 min to capture early pstore, because the exact NS exception reason was
+  lost in v58's wrapped ring. No lock-screen claim without visible persistent
+  evidence plus logs.
