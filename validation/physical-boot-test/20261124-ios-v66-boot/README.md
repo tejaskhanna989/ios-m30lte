@@ -18,5 +18,10 @@ handshake and swap-done notification for M30LTE.
 - Device resumed with `heimdall print-pit --resume`. No USERDATA, SYSTEM or
   RECOVERY write; no Fastboot.
 
-Visual result and read-only pstore pull are pending. No lock-screen claim is
-made from the flash, Apple logo, process liveness, IRT state, or logs alone.
+## Result
+
+REJECTED for the lock-screen objective. User reported console text with
+SMP/SpringBoard lines, not a persistent lock screen. Read-only pstore pull and
+decoded records are in `raw/` and `decoded-pmsg.*`; see `analysis.txt`. No
+lock-screen claim is made from the flash, console text, process liveness, IRT
+state, or logs alone.

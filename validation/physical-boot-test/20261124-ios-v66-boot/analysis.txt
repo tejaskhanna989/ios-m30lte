@@ -1,0 +1,45 @@
+v66 physical result: REJECTED for the lock-screen objective.
+
+Final visual (user-reported during the ~2026-11-24T18:22Z / ~23:52 IST
+observation window): console text with SMP/SpringBoard lines, not a persistent
+lock screen. This differs from v65's final Apple-logo-only screen, but it is not
+functional progress: the panel is showing frozen early console output.
+
+Pstore evidence:
+- Read-only pull from TWRP after identity recheck PASS. Raw pmsg-ramoops-0:
+  16372 bytes, SHA256
+  4a76d84b2bab134b4b37f4abe149c98695388e24a31a68cfffe06d1c5bdda8c0.
+- Decoder consumed 16372 bytes; 141 records. clean=False because of two
+  leading bad_magic records from the wrapped 16 KB ring; all later framing is
+  valid.
+- Handshake telemetry proves the new code ran:
+    M30 FB: wait #1 token=0 before=0 done=0
+    M30 FB: staged #1 id=1 mask=0x80000007 layers=2/0/0/0 dirty=1
+    M30 FB: present #1 copied=10108800 skip=3 last=1 mask=0x80000007
+    M30 FB: done #1 copied=10108800
+    M30 FB: wait #2 token=1 before=0 done=1
+  wait #1 timed out before any present. wait #2 began before the first
+  present() and completed after it (the line is emitted at the end of the
+  wait, hence it appears after done #1).
+- After that, only periodic framebuffer status records survive:
+    v=10200,10800,11400,12000,12600,13200 sw=1 pr=1 copied=10108800
+  No second staged swap, present, or done record appears through v=13200.
+  Compare v65: 6 staged swaps and 5 present() copies. The v66 handshake
+  reduced commit activity to 1 swap/1 present instead of restoring a
+  continuous transaction stream.
+- The console-text visual is explained by this single early present: the SMP
+  stack sample records appear BEFORE staged/present #1, so the first panel copy
+  captured the still-live console text. With no later present, that text stayed
+  on the panel. It is not evidence that a lock screen was rendered.
+- M30 UI: sb=26 bb=57 reason=none. SpringBoard and backboardd were alive; no
+  NS exception reason was captured. Surviving IRT final: state=3,
+  csblk=11679 csfail=6 csvok=83413 cfa=1 cfi=5 cfp=0. No SBERR/BBERR,
+  NSInternal, or crash strings survived in this ring. These are liveness and
+  ring observations, not lock-screen evidence.
+
+Conclusion: v66's bounded SwapWait + swap-done notification is not sufficient
+and is counterproductive in its current form: it does not restart the UI
+transaction stream and cuts presents from five to one. v66 is rejected. No
+security state was weakened; v62 remains the known-good BOOT rollback. The next
+fix hypothesis should target why backboardd stops issuing SwapBegin/SwapEnd
+after the first completed present, not the presence/absence of SwapWait alone.

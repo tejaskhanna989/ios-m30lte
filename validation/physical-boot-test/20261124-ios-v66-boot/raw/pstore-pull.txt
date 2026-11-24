@@ -1,0 +1,15 @@
+Read-only pstore capture from TWRP. No USERDATA write.
+
+Identity recheck before pull: SM-M305F / m30lte / M305FDDU8CVK1 / exact known
+serial / ro.twrp.boot=1. Serial-bearing values are redacted in repository files.
+
+Command:
+  adb exec-out sh -c 'dd if=/sys/fs/pstore/pmsg-ramoops-0 2>/dev/null' > raw/pmsg-ramoops-0
+
+Device sysfs size: 16372 bytes
+Captured size:     16372 bytes
+SHA256:            4a76d84b2bab134b4b37f4abe149c98695388e24a31a68cfffe06d1c5bdda8c0
+
+Decoder: tools/decode_pmsg.py -> decoded-pmsg.txt and decoded-pmsg.json
+Result: 141 records, 16372 bytes consumed, clean=False (two leading wrapped-ring
+bad_magic records).

@@ -3287,3 +3287,33 @@ authorization for a BOOT-only test of candidate v6.
   `M30 FB`, `M30 UI`, IRT counters; then decide whether the SwapWait handshake
   restarted commits or whether the stall moved elsewhere. Do not flash anything
   until this evidence is reviewed.
+
+## 2026-11-24 - v66 physically rejected; handshake ran but commits regressed (MAIN only)
+
+- Final visual (user-reported during the ~23:52 IST window): console text with
+  SMP/SpringBoard lines, not a persistent lock screen. v66 is REJECTED for the
+  lock-screen objective. This differs from v65's Apple-logo-only final screen
+  but is not functional progress.
+- Read-only pstore pull from TWRP after identity recheck PASS. Raw
+  `pmsg-ramoops-0` 16372 bytes, SHA256
+  `4a76d84b2bab134b4b37f4abe149c98695388e24a31a68cfffe06d1c5bdda8c0`;
+  141 records, `clean=False` (two leading wrapped-ring bad_magic records).
+- Handshake telemetry proves 0443 ran: `wait #1 token=0 before=0 done=0`
+  (timed out before any present), then `staged #1`, `present #1
+  copied=10108800 skip=3 last=1`, `done #1`, and `wait #2 token=1 before=0
+  done=1` (wait started before the first present and completed after it).
+  After that only periodic FB records survive through `v=13200 sw=1 pr=1
+  copied=10108800`; no second staged swap/present/done. Compare v65's 6 swaps
+  and 5 presents: v66 cut commit activity to 1 swap/1 present.
+- The console-text visual is explained by the single early present: the SMP
+  stack sample records appear BEFORE staged/present #1, so the first panel copy
+  captured still-live console text and no later present repainted it.
+- `M30 UI: sb=26 bb=57 reason=none`; IRT final `state=3`, `csblk=11679
+  csfail=6 csvok=83413 cfa=1 cfi=5 cfp=0`. No SBERR/BBERR/NSInternal/crash
+  strings survived. These are liveness/ring observations, not lock-screen
+  evidence. No security state weakened.
+- Evidence: `validation/physical-boot-test/20261124-ios-v66-boot/` including
+  `analysis.txt`, `decoded-pmsg.txt`, `decoded-pmsg.json`, and `SHA256SUMS`.
+- NEXT: restore known-good v62 BOOT-only with a fresh identity/Download Mode
+  gate. The next fix hypothesis must target why backboardd stops issuing
+  SwapBegin/SwapEnd after the first completed present, not SwapWait alone.

@@ -1,3 +1,6 @@
+7fdf3f447df6f39dea6aaef490adf63fb3860f2234c74cf228a7e4071d184e6e  ./analysis.txt
+99550f0cabddfe1533f136eb7a82ed71827fd86615437b75ddf6c6a87a5395b7  ./decoded-pmsg.json
+cbf9236dfaa64ae34dda66519f0d7102cc29762eeab01b2f5d870126e3ee2498  ./decoded-pmsg.txt
 ccc8bcc7dc6696adee3694dfa39b16598562cb1c997fd053bba3965b234f25d1  ./raw/download-mode-gate.txt
 3dab707285779b855a281806cc0b84435ed57a5fd1436fc458aca44e796fc6e5  ./raw/flash-end.txt
 f58a1d6a7207eb4f2ba252b232c7ac12d212f96e7fb53e4a6e238936752a7ec5  ./raw/flash-start.txt
@@ -5,5 +8,10 @@ f58a1d6a7207eb4f2ba252b232c7ac12d212f96e7fb53e4a6e238936752a7ec5  ./raw/flash-st
 4bf2478fcc951372568ebaba583f3bf005df3bedf67a5f85337ccc1d817d2a4c  ./raw/heimdall-flash.log
 abf82e0fe689a7a97f65e9a1ba2ec3c5fc6e7c328fb17eb45c9ed0b90946c6ba  ./raw/identity-gate.txt
 303e06c4d8bf14dad26cd28647515df8dea4323c3fe94391a5a015ca49585298  ./raw/identity-props-redacted.txt
+4a76d84b2bab134b4b37f4abe149c98695388e24a31a68cfffe06d1c5bdda8c0  ./raw/pmsg-ramoops-0
+d5012779cb5f6b8e4022eb27cb54c12718999a2ab28e6c4aacb9777dcdb8d54b  ./raw/pstore-ls.txt
+3b53158708d99d80da09e58f2ae6e20c82b379f65a0c25838b13f074c4d998d0  ./raw/pstore-pull-end.txt
+3b53158708d99d80da09e58f2ae6e20c82b379f65a0c25838b13f074c4d998d0  ./raw/pstore-pull-start.txt
+5e507c68960d5c3f0ab52f1f31a0d810bbb4313fbe47f149c985517b5c0382e8  ./raw/pstore-pull.txt
 976bfbc1f24490c104e56b66df50dea00a09959115d921fb0e38b39e77f07b4a  ./raw/resume.log
-94a4d8c74a695106b5e15eecf2bb5a87ba05fa66b575a8d3df042c421d03fda8  ./README.md
+fe01ddfdfcf6971c141879b0140570d58a053a9badc9faa2bb8fb64f3c721895  ./README.md
