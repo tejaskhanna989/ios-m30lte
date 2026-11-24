@@ -2774,3 +2774,22 @@ authorization for a BOOT-only test of candidate v6.
   `a5fb_noconsole=1` (plus `a5fb_keep_on=1` to avoid blanking). No kernel rebuild
   needed; v61 is a payload/cmdline candidate. Validate, then BOOT-only physical
   test. Evidence: `validation/physical-boot-test/20261124-ios-v60-boot-long/`.
+
+## 2026-11-24 - v61 candidate packaged (MAIN only): correct console boot arg
+
+- v61 reuses the byte-identical CI-green v60 kernel
+  `a24d220685d42b51a1ac8f74c9256480fd81fe1103195fc99c2da1f4b79c7637`
+  from CI `45334020730`; no new kernel build is needed. Only the payload cmdline
+  changes from `sweetfb_noconsole=1` to the M30/A5-correct
+  `a5fb_noconsole=1`, plus `a5fb_keep_on=1` to keep the panel on.
+- Candidate `validation/ios-candidate-v61-out/`: payload
+  `06a492b5b6a8d747956f8c7f5cb870d79c736813c588af14cbc79377e95cbf4e`,
+  `shim-boot.img`
+  `0a224fdb7c6a3e284d565a26e70c46094ef901b0b3c9c2b62e97affba4b421d1`.
+  ADT and shim unchanged; layout unchanged.
+- Validation: `validate_boot_images.py` PASS, `verify_handoff_v61.py` 23/23 PASS
+  (includes both corrected boot args); v60 CI results and focused tests still
+  apply because the kernel is unchanged.
+- NEXT: BOOT-only physical test with identity/Download Mode gate. Expect the
+  GUI to be visible now that the framebuffer console is muted. Accept only a
+  persistent visible lock screen plus logs.

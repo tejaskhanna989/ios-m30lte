@@ -1,0 +1,21 @@
+v61 kernel-entry and payload-layout check (MAIN only)
+=====================================================
+
+Kernel: identical to v60 (CI run 45334020730, source f561e630), SHA256
+a24d220685d42b51a1ac8f74c9256480fd81fe1103195fc99c2da1f4b79c7637.
+Buildtree source hashes unchanged from v60:
+  osfmk/vm/vm_fault.c   cb010af81d89fa10ddf9d7aa03579225bd2860fb001de309c815ecfaf650551d
+  osfmk/kern/exception.c 335dba8e00448a9e4e06480cc3b4dfb4a5f4521c1b0cbb1610dffbd89f87668b
+
+Only the payload cmdline changes from v60:
+  debug=0xc serial=3 cpus=6 keepsyms=1 maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1 a5fb_noconsole=1 a5fb_keep_on=1
+
+v60 used sweetfb_noconsole=1, but M30LTE defines
+ARM64_BOARD_CONFIG_A5XELTE and SweetFramebuffer.cpp reads a5fb_noconsole
+under that guard, so the console was never muted. v61 uses the correct name
+and also keeps the panel on with a5fb_keep_on=1.
+
+All layout values unchanged: entry 0xfffffff007411488,
+_start_first_cpu 0xfffffff0074130ec, __TEXT_EXEC size 0x008b4000,
+kernel end 0xfffffff008454000, ADT PA 0x82454000, boot_args PA 0x82458000,
+payload 16179264 bytes. ADT and shim unchanged. verify_handoff_v61.py: 23/23 PASS.
