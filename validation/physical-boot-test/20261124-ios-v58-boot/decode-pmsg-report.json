@@ -1,0 +1,1270 @@
+{
+  "input_bytes": 16372,
+  "input_sha256": "7d16f9fd557ae757c2713b03b26bd319cc1a7b5396db9a97c546ab3007ee07d2",
+  "record_count": 153,
+  "consumed": 16372,
+  "clean": false,
+  "records": [
+    {
+      "index": 0,
+      "offset": 18,
+      "length": 105,
+      "metadata_hex": "645f706167652830783130313066373030",
+      "tag": "0): p=746[backboardd] final status 0x22000000, allowing (remove VALID) page",
+      "message": "l\ufffd"
+    },
+    {
+      "index": 1,
+      "offset": 157,
+      "length": 105,
+      "metadata_hex": "645f706167652830783130313439663030",
+      "tag": "0): p=747[chronod] final status 0x22000000, allowing (remove VALID) page",
+      "message": "l\ufffd"
+    },
+    {
+      "index": 2,
+      "offset": 293,
+      "length": 105,
+      "metadata_hex": "645f706167652830783130323235663030",
+      "tag": "0): p=745[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page",
+      "message": "l\ufffd"
+    },
+    {
+      "index": 3,
+      "offset": 434,
+      "length": 105,
+      "metadata_hex": "645f706167652830783130306234663030",
+      "tag": "0): p=744[installcoordinat] final status 0x22000000, allowing (remove VALID) page",
+      "message": "lP"
+    },
+    {
+      "index": 4,
+      "offset": 608,
+      "length": 32,
+      "metadata_hex": "31313329006c6400000000000000000000",
+      "tag": "",
+      "message": "\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000CR"
+    },
+    {
+      "index": 5,
+      "offset": 685,
+      "length": 105,
+      "metadata_hex": "646520307862323830303030206d682030",
+      "tag": "x100e08000",
+      "message": "lu\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000XNU\u0000CRASH SpringBoard pc 0x1cd897198 lr 0x1dce265f8 sp 0"
+    },
+    {
+      "index": 6,
+      "offset": 832,
+      "length": 164,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH SpringBoard bt 0x198edc4b8 0x1dcd5ef54 0x1dcd4fa4c 0x18b352afc 0x1dcd5e424 0x1dcd60da0 0x1dcd60d60 0x18b34dd58 0x18c855810 0x1fc191138"
+    },
+    {
+      "index": 7,
+      "offset": 996,
+      "length": 70,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH SpringBoard reason ns 2 code 0x6: (none)"
+    },
+    {
+      "index": 8,
+      "offset": 1066,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x10171b000): p=749[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 9,
+      "offset": 1205,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1003ff000): p=750[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 10,
+      "offset": 1342,
+      "length": 80,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 11,
+      "offset": 1422,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 12,
+      "offset": 1506,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: SweetHIDTouch open by IOHIDEventServiceUserClient -> 1"
+    },
+    {
+      "index": 13,
+      "offset": 1595,
+      "length": 91,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: SweetHIDButtons open by IOHIDEventServiceUserClient -> 1"
+    },
+    {
+      "index": 14,
+      "offset": 1686,
+      "length": 145,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1016b4000): p=750[ACCHWComponentAu] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 15,
+      "offset": 1831,
+      "length": 99,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd[746] sig 6 code 0x0 sub 0x0 slide 0xb280000 mh 0x100e18000"
+    },
+    {
+      "index": 16,
+      "offset": 1930,
+      "length": 116,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd pc 0x1cd897198 lr 0x1dce265f8 sp 0x16efe7680 fp 0x16efe76a0 far 0x1cd897190"
+    },
+    {
+      "index": 17,
+      "offset": 2046,
+      "length": 163,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd bt 0x198edc4b8 0x1dcd5ef54 0x1dcd4fa4c 0x18b352afc 0x1dcd5e424 0x1dcd5e3d4 0x198e18794 0x198db964c 0x100e21334 0x100e21a00"
+    },
+    {
+      "index": 18,
+      "offset": 2209,
+      "length": 69,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd reason ns 2 code 0x6: (none)"
+    },
+    {
+      "index": 19,
+      "offset": 2278,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101534000): p=751[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 20,
+      "offset": 2415,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1004b0000): p=752[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 21,
+      "offset": 2552,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101040000): p=751[aggregated] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 22,
+      "offset": 2691,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101398000): p=752[backboardd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 23,
+      "offset": 2830,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101200000): p=753[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 24,
+      "offset": 2967,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101dc8000): p=753[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 25,
+      "offset": 3106,
+      "length": 80,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 26,
+      "offset": 3186,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 27,
+      "offset": 3270,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: SweetHIDTouch open by IOHIDEventServiceUserClient -> 1"
+    },
+    {
+      "index": 28,
+      "offset": 3359,
+      "length": 91,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: SweetHIDButtons open by IOHIDEventServiceUserClient -> 1"
+    },
+    {
+      "index": 29,
+      "offset": 3450,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x100402000): p=755[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 30,
+      "offset": 3589,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x19102d000): p=756[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 31,
+      "offset": 3728,
+      "length": 99,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd[752] sig 6 code 0x0 sub 0x0 slide 0xb280000 mh 0x101054000"
+    },
+    {
+      "index": 32,
+      "offset": 3827,
+      "length": 116,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd pc 0x1cd897198 lr 0x1dce265f8 sp 0x16edab680 fp 0x16edab6a0 far 0x1cd897190"
+    },
+    {
+      "index": 33,
+      "offset": 3943,
+      "length": 163,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd bt 0x198edc4b8 0x1dcd5ef54 0x1dcd4fa4c 0x18b352afc 0x1dcd5e424 0x1dcd5e3d4 0x198e18794 0x198db964c 0x10105d334 0x10105da00"
+    },
+    {
+      "index": 34,
+      "offset": 4106,
+      "length": 69,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd reason ns 2 code 0x6: (none)"
+    },
+    {
+      "index": 35,
+      "offset": 4175,
+      "length": 92,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH lsd[748] sig 6 code 0x0 sub 0x0 slide 0xb280000 mh 0x1012c8000"
+    },
+    {
+      "index": 36,
+      "offset": 4267,
+      "length": 109,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH lsd pc 0x1cd897198 lr 0x1dce265f8 sp 0x16eb37700 fp 0x16eb37720 far 0x18cf9efd0"
+    },
+    {
+      "index": 37,
+      "offset": 4376,
+      "length": 156,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH lsd bt 0x198edc4b8 0x18cf152cc 0x18cf1a258 0x198e18780 0x198dc5830 0x18cf1a088 0x18cea0320 0x18cf15684 0x18cf6c64c 0x1af8a4344"
+    },
+    {
+      "index": 38,
+      "offset": 4532,
+      "length": 62,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH lsd reason ns 2 code 0x6: (none)"
+    },
+    {
+      "index": 39,
+      "offset": 4594,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x19ea02000): p=758[backboardd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 40,
+      "offset": 4733,
+      "length": 80,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 41,
+      "offset": 4813,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 42,
+      "offset": 4897,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: SweetHIDTouch open by IOHIDEventServiceUserClient -> 1"
+    },
+    {
+      "index": 43,
+      "offset": 4986,
+      "length": 91,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: SweetHIDButtons open by IOHIDEventServiceUserClient -> 1"
+    },
+    {
+      "index": 44,
+      "offset": 5077,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x19132a000): p=762[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 45,
+      "offset": 5216,
+      "length": 99,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd[758] sig 6 code 0x0 sub 0x0 slide 0xb280000 mh 0x100d3c000"
+    },
+    {
+      "index": 46,
+      "offset": 5315,
+      "length": 116,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd pc 0x1cd897198 lr 0x1dce265f8 sp 0x16f0c3680 fp 0x16f0c36a0 far 0x1cd897190"
+    },
+    {
+      "index": 47,
+      "offset": 5431,
+      "length": 163,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd bt 0x198edc4b8 0x1dcd5ef54 0x1dcd4fa4c 0x18b352afc 0x1dcd5e424 0x1dcd5e3d4 0x198e18794 0x198db964c 0x100d45334 0x100d45a00"
+    },
+    {
+      "index": 48,
+      "offset": 5594,
+      "length": 69,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd reason ns 2 code 0x6: (none)"
+    },
+    {
+      "index": 49,
+      "offset": 5663,
+      "length": 92,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH pkd[742] sig 6 code 0x0 sub 0x0 slide 0xb280000 mh 0x100f98000"
+    },
+    {
+      "index": 50,
+      "offset": 5755,
+      "length": 109,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH pkd pc 0x1cd897198 lr 0x1dce265f8 sp 0x16ee665f0 fp 0x16ee66610 far 0x1ea0f2e28"
+    },
+    {
+      "index": 51,
+      "offset": 5864,
+      "length": 156,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH pkd bt 0x198edc4b8 0x1dcd5ef54 0x1dcd4fa4c 0x18b352afc 0x1dcd5e424 0x1dcd60da0 0x1dcd60d60 0x18b34dd58 0x192153704 0x100fab028"
+    },
+    {
+      "index": 52,
+      "offset": 6020,
+      "length": 62,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH pkd reason ns 2 code 0x6: (none)"
+    },
+    {
+      "index": 53,
+      "offset": 6082,
+      "length": 105,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH installcoordinat[744] sig 6 code 0x0 sub 0x0 slide 0xb280000 mh 0x1008e4000"
+    },
+    {
+      "index": 54,
+      "offset": 6187,
+      "length": 122,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH installcoordinat pc 0x1cd89e8c0 lr 0x1cd8bfb48 sp 0x16f51b0b0 fp 0x16f51b0f0 far 0x1cd89e8b8"
+    },
+    {
+      "index": 55,
+      "offset": 6309,
+      "length": 125,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH installcoordinat bt 0x1cd8bfb78 0x198ef4290 0x1009500a0 0x1008ec1c4 0x1008e83c0 0x1af8a4344 0x0"
+    },
+    {
+      "index": 56,
+      "offset": 6434,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH installcoordinat reason ns 18 code 0x2: Failed to fetch system container URL: Error Domain=IXErrorDomain Code=1 UserInfo={NSLocalizedDescription=<private>, FunctionName=<private>, SourceFileLine=223, NSLocalizedFailureReaso"
+    },
+    {
+      "index": 57,
+      "offset": 6687,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x101201000): p=767[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 58,
+      "offset": 6824,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x19fa88000): p=763[backboardd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 59,
+      "offset": 6963,
+      "length": 80,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 60,
+      "offset": 7043,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 61,
+      "offset": 7127,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: SweetHIDTouch open by IOHIDEventServiceUserClient -> 1"
+    },
+    {
+      "index": 62,
+      "offset": 7216,
+      "length": 91,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: SweetHIDButtons open by IOHIDEventServiceUserClient -> 1"
+    },
+    {
+      "index": 63,
+      "offset": 7307,
+      "length": 136,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x19e98e000): p=764[chronod] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 64,
+      "offset": 7443,
+      "length": 99,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd[763] sig 6 code 0x0 sub 0x0 slide 0xb280000 mh 0x1010bc000"
+    },
+    {
+      "index": 65,
+      "offset": 7542,
+      "length": 116,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd pc 0x1cd897198 lr 0x1dce265f8 sp 0x16ed43680 fp 0x16ed436a0 far 0x1cd897190"
+    },
+    {
+      "index": 66,
+      "offset": 7658,
+      "length": 163,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd bt 0x198edc4b8 0x1dcd5ef54 0x1dcd4fa4c 0x18b352afc 0x1dcd5e424 0x1dcd5e3d4 0x198e18794 0x198db964c 0x1010c5334 0x1010c5a00"
+    },
+    {
+      "index": 67,
+      "offset": 7821,
+      "length": 69,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd reason ns 2 code 0x6: (none)"
+    },
+    {
+      "index": 68,
+      "offset": 7890,
+      "length": 92,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH lsd[757] sig 6 code 0x0 sub 0x0 slide 0xb280000 mh 0x1006bc000"
+    },
+    {
+      "index": 69,
+      "offset": 7982,
+      "length": 109,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH lsd pc 0x1cd897198 lr 0x1dce265f8 sp 0x16f743700 fp 0x16f743720 far 0x18cf9efd0"
+    },
+    {
+      "index": 70,
+      "offset": 8091,
+      "length": 156,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH lsd bt 0x198edc4b8 0x18cf152cc 0x18cf1a258 0x198e18780 0x198dc5830 0x18cf1a088 0x18cea0320 0x18cf15684 0x18cf6c64c 0x1af8a4344"
+    },
+    {
+      "index": 71,
+      "offset": 8247,
+      "length": 62,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH lsd reason ns 2 code 0x6: (none)"
+    },
+    {
+      "index": 72,
+      "offset": 8309,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1e86c2000): p=770[backboardd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 73,
+      "offset": 8448,
+      "length": 80,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 74,
+      "offset": 8528,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 75,
+      "offset": 8612,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: SweetHIDTouch open by IOHIDEventServiceUserClient -> 1"
+    },
+    {
+      "index": 76,
+      "offset": 8701,
+      "length": 91,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: SweetHIDButtons open by IOHIDEventServiceUserClient -> 1"
+    },
+    {
+      "index": 77,
+      "offset": 8792,
+      "length": 145,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x191285000): p=772[ACCHWComponentAu] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 78,
+      "offset": 8937,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1ad96d000): p=773[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 79,
+      "offset": 9076,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 80,
+      "offset": 9161,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 81,
+      "offset": 9246,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 82,
+      "offset": 9331,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 83,
+      "offset": 9416,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 84,
+      "offset": 9501,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 85,
+      "offset": 9586,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 86,
+      "offset": 9671,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 87,
+      "offset": 9756,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 88,
+      "offset": 9841,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 89,
+      "offset": 9926,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 90,
+      "offset": 10011,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 91,
+      "offset": 10096,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 92,
+      "offset": 10181,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 93,
+      "offset": 10266,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 94,
+      "offset": 10351,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 95,
+      "offset": 10436,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 96,
+      "offset": 10521,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 97,
+      "offset": 10606,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 98,
+      "offset": 10691,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 99,
+      "offset": 10776,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 100,
+      "offset": 10861,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 101,
+      "offset": 10946,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 102,
+      "offset": 11031,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 103,
+      "offset": 11116,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 104,
+      "offset": 11201,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 105,
+      "offset": 11286,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 106,
+      "offset": 11371,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 107,
+      "offset": 11456,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 108,
+      "offset": 11541,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 109,
+      "offset": 11626,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x19164a000): p=775[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 110,
+      "offset": 11765,
+      "length": 99,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd[770] sig 6 code 0x0 sub 0x0 slide 0xb280000 mh 0x100f00000"
+    },
+    {
+      "index": 111,
+      "offset": 11864,
+      "length": 116,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd pc 0x1cd897198 lr 0x1dce265f8 sp 0x16eeff680 fp 0x16eeff6a0 far 0x1cd897190"
+    },
+    {
+      "index": 112,
+      "offset": 11980,
+      "length": 163,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd bt 0x198edc4b8 0x1dcd5ef54 0x1dcd4fa4c 0x18b352afc 0x1dcd5e424 0x1dcd5e3d4 0x198e18794 0x198db964c 0x100f09334 0x100f09a00"
+    },
+    {
+      "index": 113,
+      "offset": 12143,
+      "length": 69,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd reason ns 2 code 0x6: (none)"
+    },
+    {
+      "index": 114,
+      "offset": 12212,
+      "length": 121,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH mobileactivation[735] sig 5 code 0x600000001 sub 0x100f335bc slide 0xb280000 mh 0x100d74000"
+    },
+    {
+      "index": 115,
+      "offset": 12333,
+      "length": 122,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH mobileactivation pc 0x100f335bc lr 0x100f335bc sp 0x16f08b3a0 fp 0x16f08b3b0 far 0x1af8d4124"
+    },
+    {
+      "index": 116,
+      "offset": 12455,
+      "length": 77,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH mobileactivation bt 0x100dc4630 0x1af8a4344 0x0"
+    },
+    {
+      "index": 117,
+      "offset": 12532,
+      "length": 75,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH mobileactivation reason ns 2 code 0x5: (none)"
+    },
+    {
+      "index": 118,
+      "offset": 12607,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 119,
+      "offset": 12692,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 120,
+      "offset": 12777,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x191cd5000): p=776[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 121,
+      "offset": 12916,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1915fd000): p=777[backboardd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 122,
+      "offset": 13055,
+      "length": 136,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1f2060000): p=778[chronod] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 123,
+      "offset": 13191,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x191212000): p=780[bluetoothd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 124,
+      "offset": 13330,
+      "length": 141,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x191aaa000): p=781[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 125,
+      "offset": 13471,
+      "length": 92,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH pkd[765] sig 6 code 0x0 sub 0x0 slide 0xb280000 mh 0x10066c000"
+    },
+    {
+      "index": 126,
+      "offset": 13563,
+      "length": 109,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH pkd pc 0x1cd897198 lr 0x1dce265f8 sp 0x16f7925f0 fp 0x16f792610 far 0x1cd897190"
+    },
+    {
+      "index": 127,
+      "offset": 13672,
+      "length": 156,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH pkd bt 0x198edc4b8 0x1dcd5ef54 0x1dcd4fa4c 0x18b352afc 0x1dcd5e424 0x1dcd60da0 0x1dcd60d60 0x18b34dd58 0x192153704 0x10067f028"
+    },
+    {
+      "index": 128,
+      "offset": 13828,
+      "length": 62,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH pkd reason ns 2 code 0x6: (none)"
+    },
+    {
+      "index": 129,
+      "offset": 13890,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 130,
+      "offset": 13975,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x2272c0000): p=782[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 131,
+      "offset": 14112,
+      "length": 140,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1da521000): p=783[SpringBoard] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 132,
+      "offset": 14252,
+      "length": 80,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 133,
+      "offset": 14332,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 134,
+      "offset": 14416,
+      "length": 89,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: SweetHIDTouch open by IOHIDEventServiceUserClient -> 1"
+    },
+    {
+      "index": 135,
+      "offset": 14505,
+      "length": 91,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: SweetHIDButtons open by IOHIDEventServiceUserClient -> 1"
+    },
+    {
+      "index": 136,
+      "offset": 14596,
+      "length": 145,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x100381000): p=766[installcoordinat] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 137,
+      "offset": 14741,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x227294000): p=784[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 138,
+      "offset": 14878,
+      "length": 99,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd[777] sig 6 code 0x0 sub 0x0 slide 0xb280000 mh 0x1010ec000"
+    },
+    {
+      "index": 139,
+      "offset": 14977,
+      "length": 116,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd pc 0x1cd897198 lr 0x1dce265f8 sp 0x16ed13680 fp 0x16ed136a0 far 0x1cd897190"
+    },
+    {
+      "index": 140,
+      "offset": 15093,
+      "length": 163,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd bt 0x198edc4b8 0x1dcd5ef54 0x1dcd4fa4c 0x18b352afc 0x1dcd5e424 0x1dcd5e3d4 0x198e18794 0x198db964c 0x1010f5334 0x1010f5a00"
+    },
+    {
+      "index": 141,
+      "offset": 15256,
+      "length": 69,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CRASH backboardd reason ns 2 code 0x6: (none)"
+    },
+    {
+      "index": 142,
+      "offset": 15325,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 143,
+      "offset": 15410,
+      "length": 145,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x19174c000): p=784[ACCHWComponentAu] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 144,
+      "offset": 15555,
+      "length": 139,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x19f7e2000): p=785[backboardd] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 145,
+      "offset": 15694,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x1dceac000): p=786[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 146,
+      "offset": 15831,
+      "length": 137,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "CODE SIGNING: cs_invalid_page(0x100507000): p=787[xpcproxy] final status 0x22000000, allowing (remove VALID) page"
+    },
+    {
+      "index": 147,
+      "offset": 15968,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x20"
+    },
+    {
+      "index": 148,
+      "offset": 16028,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (0 clients)"
+    },
+    {
+      "index": 149,
+      "offset": 16088,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=2 down=1 gpio=0x20"
+    },
+    {
+      "index": 150,
+      "offset": 16148,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xea down (0 clients)"
+    },
+    {
+      "index": 151,
+      "offset": 16208,
+      "length": 80,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 152,
+      "offset": 16288,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: backboardd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    }
+  ],
+  "issues": [
+    {
+      "offset": 0,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x45"
+    },
+    {
+      "offset": 123,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x00"
+    },
+    {
+      "offset": 262,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x00"
+    },
+    {
+      "offset": 398,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x00"
+    },
+    {
+      "offset": 539,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x00"
+    },
+    {
+      "offset": 640,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x41"
+    },
+    {
+      "offset": 790,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x78"
+    }
+  ]
+}

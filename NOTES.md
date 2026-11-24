@@ -2532,3 +2532,40 @@ authorization for a BOOT-only test of candidate v6.
   SpringBoard`/`SMP backboardd`, `M30 IRT` counters, SpringBoard CRASH/assertion
   strings, and take a screen photo if a lock screen appears. No UI claim
   without a persistent visible render plus supporting logs.
+
+## 2026-11-24 - v58 physical result (MAIN only): SpringBoard launches, then aborts
+
+- Identity verified in TWRP before the write (`SM-M305F`, `m30lte`, serial
+  `320081735bb166a3`, bootloader `M305FDDU8CVK1`, `ro.twrp.boot=1`), Download
+  Mode confirmed, BOOT-only flash of `shim-boot.img`
+  `2ef2e3a09cb501fb4b4ed4dd8e888441fe7d5895f29fb6b73397be1d982f783d`
+  completed `19:37:32Z..19:37:37Z`. USERDATA/SYSTEM/RECOVERY untouched, no
+  Fastboot, no BOOT readback. Resume failed because the device auto-booted.
+- Device was observed booting XNU console text. No lock screen was reported.
+  It did not return to recovery, so pstore was pulled after the user forced
+  TWRP: `validation/physical-boot-test/20261124-ios-v58-boot/raw/pmsg-ramoops-0`
+  is 16,372 bytes, SHA256
+  `7d16f9fd557ae757c2713b03b26bd319cc1a7b5396db9a97c546ab3007ee07d2`.
+  `decode_pmsg.py` decoded 153/153 records with `clean=False` (ring wrapped
+  over the ~25 min boot). Early `SMP` and IRT heartbeat records were lost;
+  their absence is not evidence they did not run.
+- **New decisive evidence:** SpringBoard did launch (`CRASH SpringBoard[739]
+  sig 6 ... pc 0x1cd897198`) and then aborted with an NS exception (`reason ns 2
+  code 0x6`, text overwritten). `backboardd` crash-looped through pids 746,
+  752, 758, 763, 770, 777 with the exact same PC, so both die in one shared
+  library abort path. XCTest fix-up fired (`total 113`) but did not prevent it.
+- There are 36 `cs_invalid_page` records with status `0x22000000`; six are
+  `backboardd` and one is a later `SpringBoard` pid 783. CS_VALID is still
+  being stripped from UI processes despite the v57 full-block readback.
+  v58 is PHYSICALLY REJECTED for the lock-screen objective, but it answers the
+  key question: SpringBoard launches; the blocker is its abort plus backboardd
+  crash loop, not “SpringBoard never starts”.
+- Evidence: `validation/physical-boot-test/20261124-ios-v58-boot/README.md`,
+  `analysis.txt`, decoded logs, `SHA256SUMS`, `raw/SHA256SUMS`.
+- NEXT v59: remove the fail-closed rejection for busy/cleaning **peer** pages in
+  the 16K readback overlay (the busy faulting page remains excluded from UPL
+  and is hashed from `kaddr`; physical bytes of peers are copied and still
+  full-block hashed, so tamper detection is preserved). Add durable per-reason
+  CS failure counters (`cfa`/`cfi`/`cfp`) and an early crash-reason marker so
+  the next capture does not depend on the wrapped ring. Force recovery at
+  ~3 min in the next physical test to capture early pstore. No security change.
