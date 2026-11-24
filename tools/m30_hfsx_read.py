@@ -12,6 +12,7 @@ private hardlink directory.
 """
 
 import argparse
+import heapq
 import json
 import struct
 import subprocess
@@ -392,13 +393,19 @@ class HFSXFile:
             found = None
             for logical, phys, count in self.mapping:
                 if logical <= lb < logical + count:
-                    found = (phys + (lb - logical), inblock)
+                    found = (logical, phys, count)
                     break
             if found is None:
                 raise HFSXError(f"no extent maps logical block {lb}")
-            phys, inblock = found
-            take = min(self.block_size - inblock, length - done)
-            data = self.volume.reader.read_blocks(phys, 1, self.block_size)
+            logical, phys, count = found
+            within = lb - logical
+            remain = length - done
+            want_blocks = (inblock + remain + self.block_size - 1) // self.block_size
+            blocks = min(want_blocks, count - within)
+            data = self.volume.reader.read_blocks(
+                phys + within, blocks, self.block_size
+            )
+            take = min(remain, len(data) - inblock)
             out.append(data[inblock:inblock + take])
             done += take
         return b"".join(out)
@@ -455,8 +462,11 @@ class DyldSymbols:
             raw = raw[:end]
         return raw.decode("utf-8", "replace")
 
-    def nearest(self, address, count=8):
-        best = []
+    def nearest_many(self, addresses, count=8):
+        addrs = sorted(set(int(a, 0) if isinstance(a, str) else int(a) for a in addresses), reverse=True)
+        keep = max(4096, count * 16)
+        best = {addr: [] for addr in addrs}
+        max_addr = addrs[0]
         step = 65536
         for start in range(0, self.nlist_count, step):
             n = min(step, self.nlist_count - start)
@@ -467,28 +477,35 @@ class DyldSymbols:
                 strx, ntype, nsect, ndesc, value = struct.unpack_from(
                     "<IBBHQ", buf, i * 16
                 )
-                if value == 0 or value > address:
+                if value == 0 or value > max_addr:
                     continue
                 item = (value, strx, ntype, nsect, ndesc, start + i)
-                best.append(item)
-                if len(best) > 8192:
-                    best.sort(reverse=True)
-                    del best[8192:]
-        best.sort(reverse=True)
-        out = []
-        for value, strx, ntype, nsect, ndesc, index in best[:count]:
-            out.append(
+                for addr in addrs:
+                    if value <= addr:
+                        heap = best[addr]
+                        if len(heap) < keep:
+                            heapq.heappush(heap, item)
+                        elif item > heap[0]:
+                            heapq.heapreplace(heap, item)
+        result = {}
+        for addr in addrs:
+            entries = sorted(best[addr], reverse=True)[:count]
+            result[hex(addr)] = [
                 {
                     "value": hex(value),
-                    "offset": hex(address - value),
+                    "offset": hex(addr - value),
                     "index": index,
                     "n_type": ntype,
                     "n_sect": nsect,
                     "n_desc": ndesc,
                     "name": self.symbol_name(strx),
                 }
-            )
-        return out
+                for value, strx, ntype, nsect, ndesc, index in entries
+            ]
+        return result
+
+    def nearest(self, address, count=8):
+        return self.nearest_many([address], count)[hex(int(address, 0) if isinstance(address, str) else int(address))]
 
     def find_name(self, wanted, limit=20):
         found = []
@@ -603,9 +620,7 @@ def main(argv=None):
             "entry_size": dyld.entry_size,
             "addresses": {},
         }
-        for raw in args.addresses:
-            addr = int(raw, 0)
-            result["addresses"][hex(addr)] = dyld.nearest(addr, args.count)
+        result["addresses"] = dyld.nearest_many(args.addresses, args.count)
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0
 

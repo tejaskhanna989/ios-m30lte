@@ -1,0 +1,754 @@
+{
+  "addresses": {
+    "0x1c2611030": [
+      {
+        "index": 4816122,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___commpage_gettimeofday_internal",
+        "offset": "0x350",
+        "value": "0x1c2610ce0"
+      },
+      {
+        "index": 4809453,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xpcServiceIdentifier",
+        "offset": "0xc050",
+        "value": "0x1c2604fe0"
+      },
+      {
+        "index": 4809452,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xOUT_exp",
+        "offset": "0xc070",
+        "value": "0x1c2604fc0"
+      },
+      {
+        "index": 4809451,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xOUT",
+        "offset": "0xc090",
+        "value": "0x1c2604fa0"
+      },
+      {
+        "index": 4809450,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xIN_exp",
+        "offset": "0xc0b0",
+        "value": "0x1c2604f80"
+      },
+      {
+        "index": 4809449,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xIN",
+        "offset": "0xc0d0",
+        "value": "0x1c2604f60"
+      },
+      {
+        "index": 4809448,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$wwanSampleCount",
+        "offset": "0xc0f0",
+        "value": "0x1c2604f40"
+      },
+      {
+        "index": 4809447,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$wwanOUT_start",
+        "offset": "0xc110",
+        "value": "0x1c2604f20"
+      },
+      {
+        "index": 4809446,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$wwanOUT_mean",
+        "offset": "0xc130",
+        "value": "0x1c2604f00"
+      },
+      {
+        "index": 4809445,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$wwanOUT_exp",
+        "offset": "0xc150",
+        "value": "0x1c2604ee0"
+      }
+    ],
+    "0x1c26114f0": [
+      {
+        "index": 4816124,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "_mach_msg_destroy_port",
+        "offset": "0x184",
+        "value": "0x1c261136c"
+      },
+      {
+        "index": 4816123,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "_kdebug_signpost_internal",
+        "offset": "0x3b4",
+        "value": "0x1c261113c"
+      },
+      {
+        "index": 4816122,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___commpage_gettimeofday_internal",
+        "offset": "0x810",
+        "value": "0x1c2610ce0"
+      },
+      {
+        "index": 4809453,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xpcServiceIdentifier",
+        "offset": "0xc510",
+        "value": "0x1c2604fe0"
+      },
+      {
+        "index": 4809452,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xOUT_exp",
+        "offset": "0xc530",
+        "value": "0x1c2604fc0"
+      },
+      {
+        "index": 4809451,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xOUT",
+        "offset": "0xc550",
+        "value": "0x1c2604fa0"
+      },
+      {
+        "index": 4809450,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xIN_exp",
+        "offset": "0xc570",
+        "value": "0x1c2604f80"
+      },
+      {
+        "index": 4809449,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xIN",
+        "offset": "0xc590",
+        "value": "0x1c2604f60"
+      },
+      {
+        "index": 4809448,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$wwanSampleCount",
+        "offset": "0xc5b0",
+        "value": "0x1c2604f40"
+      },
+      {
+        "index": 4809447,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$wwanOUT_start",
+        "offset": "0xc5d0",
+        "value": "0x1c2604f20"
+      }
+    ],
+    "0x1c2611524": [
+      {
+        "index": 4816124,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "_mach_msg_destroy_port",
+        "offset": "0x1b8",
+        "value": "0x1c261136c"
+      },
+      {
+        "index": 4816123,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "_kdebug_signpost_internal",
+        "offset": "0x3e8",
+        "value": "0x1c261113c"
+      },
+      {
+        "index": 4816122,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___commpage_gettimeofday_internal",
+        "offset": "0x844",
+        "value": "0x1c2610ce0"
+      },
+      {
+        "index": 4809453,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xpcServiceIdentifier",
+        "offset": "0xc544",
+        "value": "0x1c2604fe0"
+      },
+      {
+        "index": 4809452,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xOUT_exp",
+        "offset": "0xc564",
+        "value": "0x1c2604fc0"
+      },
+      {
+        "index": 4809451,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xOUT",
+        "offset": "0xc584",
+        "value": "0x1c2604fa0"
+      },
+      {
+        "index": 4809450,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xIN_exp",
+        "offset": "0xc5a4",
+        "value": "0x1c2604f80"
+      },
+      {
+        "index": 4809449,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$xIN",
+        "offset": "0xc5c4",
+        "value": "0x1c2604f60"
+      },
+      {
+        "index": 4809448,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$wwanSampleCount",
+        "offset": "0xc5e4",
+        "value": "0x1c2604f40"
+      },
+      {
+        "index": 4809447,
+        "n_desc": 0,
+        "n_sect": 22,
+        "n_type": 30,
+        "name": "_objc_msgSend$wwanOUT_start",
+        "offset": "0xc604",
+        "value": "0x1c2604f20"
+      }
+    ],
+    "0x1c2622b18": [
+      {
+        "index": 4816144,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "_do_compat",
+        "offset": "0x18c",
+        "value": "0x1c262298c"
+      },
+      {
+        "index": 4816143,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 30,
+        "name": "_fprintf_stderr",
+        "offset": "0x2e8",
+        "value": "0x1c2622830"
+      },
+      {
+        "index": 4816142,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "_internal_catch_exception_raise",
+        "offset": "0x384",
+        "value": "0x1c2622794"
+      },
+      {
+        "index": 4816141,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "_internal_catch_exception_raise_state",
+        "offset": "0x440",
+        "value": "0x1c26226d8"
+      },
+      {
+        "index": 4816140,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "_internal_catch_exception_raise_state_identity",
+        "offset": "0x510",
+        "value": "0x1c2622608"
+      },
+      {
+        "index": 4816139,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "_port_for_id_internal",
+        "offset": "0x1afc",
+        "value": "0x1c262101c"
+      },
+      {
+        "index": 4816138,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "__libkernel_strlcpy",
+        "offset": "0x1be0",
+        "value": "0x1c2620f38"
+      },
+      {
+        "index": 4816137,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "__libkernel_strcpy",
+        "offset": "0x1c14",
+        "value": "0x1c2620f04"
+      },
+      {
+        "index": 4816136,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "__libkernel_memmove",
+        "offset": "0x1d2c",
+        "value": "0x1c2620dec"
+      },
+      {
+        "index": 4816135,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "__libkernel_memset",
+        "offset": "0x1db4",
+        "value": "0x1c2620d64"
+      }
+    ],
+    "0x1ccfb8780": [
+      {
+        "index": 5596659,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "+[NSObject(SafeInitializer) ik_invocationforSelectorString:argumentsPointerValue:].cold.1",
+        "offset": "0x24",
+        "value": "0x1ccfb875c"
+      },
+      {
+        "index": 5596658,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[NSObject(SafeInitializer) ik_initWithInitializers:].cold.1",
+        "offset": "0xcc",
+        "value": "0x1ccfb86b4"
+      },
+      {
+        "index": 5596657,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[NSObject(SafeInitializer) ik_initWithSelectorString:arguments:].cold.1",
+        "offset": "0x12c",
+        "value": "0x1ccfb8654"
+      },
+      {
+        "index": 5596656,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[IKColor setGradientColors:andPoints:].cold.1",
+        "offset": "0x16c",
+        "value": "0x1ccfb8614"
+      },
+      {
+        "index": 5596655,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___30+[IKPreference logDocumentXML]_block_invoke.cold.1",
+        "offset": "0x1dc",
+        "value": "0x1ccfb85a4"
+      },
+      {
+        "index": 5596654,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___31+[IKPreference ignoreHTTPCache]_block_invoke.cold.1",
+        "offset": "0x24c",
+        "value": "0x1ccfb8534"
+      },
+      {
+        "index": 5596653,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[IKViewElementStyle _declarationForStyleName:expectedClass:].cold.1",
+        "offset": "0x2c0",
+        "value": "0x1ccfb84c0"
+      },
+      {
+        "index": 5596652,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___47-[IKAppContext appCache:didUpdateWithChecksum:]_block_invoke.cold.1",
+        "offset": "0x3d0",
+        "value": "0x1ccfb83b0"
+      },
+      {
+        "index": 5596651,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "-[IKAppContext inspectElement:].cold.1",
+        "offset": "0x440",
+        "value": "0x1ccfb8340"
+      },
+      {
+        "index": 5596650,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___46-[IKAppContext contextDidStartWithJS:options:]_block_invoke.cold.1",
+        "offset": "0x4b8",
+        "value": "0x1ccfb82c8"
+      }
+    ],
+    "0x1cd0e7ad4": [
+      {
+        "index": 5609007,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke_5.682",
+        "offset": "0x60",
+        "value": "0x1cd0e7a74"
+      },
+      {
+        "index": 5609006,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke_4.679",
+        "offset": "0xac",
+        "value": "0x1cd0e7a28"
+      },
+      {
+        "index": 5609005,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke_3.669",
+        "offset": "0x1b8",
+        "value": "0x1cd0e791c"
+      },
+      {
+        "index": 5609004,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke_2.668",
+        "offset": "0x1204",
+        "value": "0x1cd0e68d0"
+      },
+      {
+        "index": 5609003,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke.665",
+        "offset": "0x14e4",
+        "value": "0x1cd0e65f0"
+      },
+      {
+        "index": 5609002,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke_2.664",
+        "offset": "0x15cc",
+        "value": "0x1cd0e6508"
+      },
+      {
+        "index": 5609001,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke.663",
+        "offset": "0x16b8",
+        "value": "0x1cd0e641c"
+      },
+      {
+        "index": 5609000,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke_9.662",
+        "offset": "0x1970",
+        "value": "0x1cd0e6164"
+      },
+      {
+        "index": 5608999,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke_8.661",
+        "offset": "0x1a5c",
+        "value": "0x1cd0e6078"
+      },
+      {
+        "index": 5608998,
+        "n_desc": 0,
+        "n_sect": 1,
+        "n_type": 14,
+        "name": "___51-[VUIPlaybackManager _registerStateMachineHandlers]_block_invoke_7.655",
+        "offset": "0x1e14",
+        "value": "0x1cd0e5cc0"
+      }
+    ],
+    "0x1d1b9720": [],
+    "0x1d1b9a1c": [],
+    "0x1e3a3189c": [
+      {
+        "index": 5962491,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_libAccessibilityLibraryCore.frameworkLibrary",
+        "offset": "0xf30584",
+        "value": "0x1e2b01318"
+      },
+      {
+        "index": 5962490,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_getkAXQuickSpeakStopSpeakingNotificationSymbolLoc.ptr",
+        "offset": "0xf3058c",
+        "value": "0x1e2b01310"
+      },
+      {
+        "index": 5962489,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_topoTextStylesToAnalyticsStyles",
+        "offset": "0xf30594",
+        "value": "0x1e2b01308"
+      },
+      {
+        "index": 5962488,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_sharedInstance.sharedInstance",
+        "offset": "0xf3059c",
+        "value": "0x1e2b01300"
+      },
+      {
+        "index": 5962487,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_sendSignalForSearchResultSelectedIfNecessary:.searchResultCheckingQueue",
+        "offset": "0xf305a4",
+        "value": "0x1e2b012f8"
+      },
+      {
+        "index": 5962486,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_sendSignalForSearchResultSelectedIfNecessary:.searchResultCheckingOnceToken",
+        "offset": "0xf305ac",
+        "value": "0x1e2b012f0"
+      },
+      {
+        "index": 5962485,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_renderingQueue.renderingQueue",
+        "offset": "0xf305b4",
+        "value": "0x1e2b012e8"
+      },
+      {
+        "index": 5962484,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_fontForTTNamedStyle:.validCategories",
+        "offset": "0xf305bc",
+        "value": "0x1e2b012e0"
+      },
+      {
+        "index": 5962483,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_containerViewForAttachments.UITextContainerViewClass",
+        "offset": "0xf305c4",
+        "value": "0x1e2b012d8"
+      },
+      {
+        "index": 5962482,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_attachmentViewUnderTouches:.onceToken",
+        "offset": "0xf305cc",
+        "value": "0x1e2b012d0"
+      }
+    ],
+    "0x1e3a321d4": [
+      {
+        "index": 5962491,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_libAccessibilityLibraryCore.frameworkLibrary",
+        "offset": "0xf30ebc",
+        "value": "0x1e2b01318"
+      },
+      {
+        "index": 5962490,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_getkAXQuickSpeakStopSpeakingNotificationSymbolLoc.ptr",
+        "offset": "0xf30ec4",
+        "value": "0x1e2b01310"
+      },
+      {
+        "index": 5962489,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_topoTextStylesToAnalyticsStyles",
+        "offset": "0xf30ecc",
+        "value": "0x1e2b01308"
+      },
+      {
+        "index": 5962488,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_sharedInstance.sharedInstance",
+        "offset": "0xf30ed4",
+        "value": "0x1e2b01300"
+      },
+      {
+        "index": 5962487,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_sendSignalForSearchResultSelectedIfNecessary:.searchResultCheckingQueue",
+        "offset": "0xf30edc",
+        "value": "0x1e2b012f8"
+      },
+      {
+        "index": 5962486,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_sendSignalForSearchResultSelectedIfNecessary:.searchResultCheckingOnceToken",
+        "offset": "0xf30ee4",
+        "value": "0x1e2b012f0"
+      },
+      {
+        "index": 5962485,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_renderingQueue.renderingQueue",
+        "offset": "0xf30eec",
+        "value": "0x1e2b012e8"
+      },
+      {
+        "index": 5962484,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_fontForTTNamedStyle:.validCategories",
+        "offset": "0xf30ef4",
+        "value": "0x1e2b012e0"
+      },
+      {
+        "index": 5962483,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_containerViewForAttachments.UITextContainerViewClass",
+        "offset": "0xf30efc",
+        "value": "0x1e2b012d8"
+      },
+      {
+        "index": 5962482,
+        "n_desc": 0,
+        "n_sect": 48,
+        "n_type": 14,
+        "name": "_attachmentViewUnderTouches:.onceToken",
+        "offset": "0xf30f04",
+        "value": "0x1e2b012d0"
+      }
+    ]
+  },
+  "entries_count": 2710,
+  "entries_off": "0x18",
+  "entry_size": 16,
+  "local_symbols_off": "0x4000",
+  "magic": "dyld_v1   arm64\u0000",
+  "mapping_count": 1,
+  "mapping_off": "0x200",
+  "nlist_count": 8705811,
+  "nlist_off": "0xa980",
+  "path": "/private/preboot/Cryptexes/OS/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64.symbols",
+  "str_off": "0x84e1ab0",
+  "str_size": 451573533
+}

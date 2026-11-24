@@ -56,5 +56,13 @@ SYSTEM and RECOVERY were not written; no Fastboot was used.
   only one compact UI line survived; it still proved both UI processes alive.
 
 ## Visual result
-No lock-screen success is claimed from logs, process PIDs, framebuffer activity,
-or IRT state. Visual confirmation is required.
+User confirmed: **no lock screen**. The device stayed on the Apple logo after
+console logs. This candidate is definitively rejected for the lock-screen
+objective. No success is inferred from logs, process PIDs, framebuffer activity,
+IRT state, or the Apple logo.
+
+## Follow-up
+Read-only symbolication of the repeated stuck SpringBoard PC/LR is in
+`symbolication/`. It places the thread in the libsystem stderr/`write(2)` path
+and motivated the v63 targeted change: drop `serial=3` from the payload cmdline
+while keeping the same CI-green kernel and all security state unchanged.

@@ -2866,11 +2866,20 @@ authorization for a BOOT-only test of candidate v6.
   logo after console logs. This is a definitive physical rejection for the
   lock-screen objective. Process liveness, IRT state and framebuffer activity
   are NOT accepted as success.
-- Next technical step: symbolicate the repeated SpringBoard PC/LR using the
-  genuine iOS 16 dyld symbol cache from USERDATA, then make the targeted fix.
-  The read-only HFSX parser found that the catalog's dyld `.symbols` entry is
-  an old-style `hlnk`/`hfs+` stub with linkRef `0x279b3e30` (664485424); its
-  real data fork is the `iNode664485424` file (fileID 318463) in the private
-  file-hardlink directory (parent 18). A reusable read-only tool was added at
-  `tools/m30_hfsx_read.py`; device extraction still needs the M30 reconnected
-  in TWRP after the server restart disconnected it.
+- Symbolication is now complete with the genuine iOS 16 dyld local-symbol table,
+  extracted read-only from USERDATA. The catalog's `.symbols` entry is an
+  old-style `hlnk`/`hfs+` stub (`linkRef=664485424`); its real data fork is
+  `iNode664485424` (fileID 318463) under private file-hardlink parent 18. The
+  reusable read-only tool is `tools/m30_hfsx_read.py`; it resolved the hardlink
+  to a 592,101,376-byte file at extent `(2905235, 144556)` blocks.
+- Unslid SpringBoard PC `0x1c2611030` is `___commpage_gettimeofday_internal+0x350`;
+  LR `0x1c2622b18` is `_do_compat+0x18c` / `fprintf_stderr+0x2e8`. The repeated
+  main-thread state is in the libsystem stderr/`write(2)` path, not a UIKit
+  lock-screen method. Evidence:
+  `validation/physical-boot-test/20261124-ios-v62-boot/symbolication/`.
+- Targeted v63 fix: retain the byte-identical CI-green v62 kernel and all CS /
+  AMFI / signing / trust-cache / page-validation state, remove only `serial=3`
+  from the payload cmdline. `serial=3` enables the serial console in
+  `osfmk/arm/arm_init.c`; `fprintf_stderr` writes fd 2 there and can block with
+  no serial drain. Kernel pstore logging remains active via
+  `a5xelte_log_append()` in `_cnputs()`, independent of serial output.
