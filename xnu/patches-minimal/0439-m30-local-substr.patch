@@ -1,0 +1,44 @@
+diff --git a/osfmk/kern/exception.c b/osfmk/kern/exception.c
+--- a/osfmk/kern/exception.c
++++ b/osfmk/kern/exception.c
+@@ -840,6 +840,27 @@
+  * slow heartbeat in vm_fault.c so a late pstore pull still sees it. */
+ char m30_last_crash_reason[256];
+ 
++/* XNU kernel headers do not expose strstr(); use a bounded local search. */
++static bool
++m30_contains(const char *haystack, const char *needle)
++{
++	if (haystack == NULL || needle == NULL || *needle == '\0') {
++		return false;
++	}
++	for (const char *p = haystack; *p != '\0'; p++) {
++		const char *h = p;
++		const char *n = needle;
++		while (*h != '\0' && *n != '\0' && *h == *n) {
++			h++;
++			n++;
++		}
++		if (*n == '\0') {
++			return true;
++		}
++	}
++	return false;
++}
++
+ void
+ sweet_crash_log(const char *name, int pid, int sig, uint64_t code, uint64_t subcode)
+ {
+@@ -993,9 +1014,9 @@
+ 					if (strncmp(text, last, sizeof(last) - 1) != 0) {
+ 						printf("STR %s\n", text);
+ 						if (m30_last_crash_reason[0] == '\0' &&
+-						    (strstr(text, "Exception") != NULL ||
+-						     strstr(text, "exception") != NULL ||
+-						     strstr(text, "reason") != NULL)) {
++						    (m30_contains(text, "Exception") ||
++						     m30_contains(text, "exception") ||
++						     m30_contains(text, "reason"))) {
+ 							strlcpy(m30_last_crash_reason, text,
+ 							    sizeof(m30_last_crash_reason));
+ 						}
