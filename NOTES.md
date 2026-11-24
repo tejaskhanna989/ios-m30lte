@@ -3424,3 +3424,38 @@ authorization for a BOOT-only test of candidate v6.
   currently returned as empty successes, especially selector 79 (2 scalar
   inputs, 1580-byte structure output), 74, 84, 50, 68 and 55. Selector 79's
   large structure output is the strongest display-mode/transaction ABI lead.
+
+## 2026-11-25 - v68 ABI investigation started (MAIN only)
+
+- No v68 kernel candidate, selector response, CI kernel build, BOOT flash or
+  rollback has been created. v67 BOOT remains installed; no lock-screen claim.
+- Read-only source/subagent audit confirmed the current v67 user client handles
+  only selectors 3, 4, 5, 6, 7, 8, 12, 18, 28 and 72. Selectors 79, 74, 84, 50,
+  68 and 55 fall through the generic default: scalar outputs are zeroed,
+  non-descriptor structure outputs are zero-filled, and `kIOReturnSuccess`
+  is returned. The pstore log records only counts/sizes, not scalar input
+  values or output bytes, so the 1580-byte selector-79 size is not proof of a
+  display-mode structure.
+- No shipped iOS userland ABI evidence exists locally. No local `backboardd`,
+  `IOMobileFramebuffer.framework`, dyld shared cache, or usable root image was
+  found; all selector references are project notes/logs or our kernel stub.
+- Public evidence checked read-only: iOS SDK `.tbd` files export
+  `IOMobileFramebufferGetBlock`, `IOMobileFramebufferFrameInfo` and newer
+  `IOMobileFramebufferGetBlockSize`; Battman's `IOMFB_interaction.c` shows
+  block 0 as a 384-byte temperature-compensation record with Q16.16 fields.
+  This does not explain the observed 1580-byte call and is not a fix basis.
+- Added read-only CI workflow `.github/workflows/ios-abi-extract.yml` to verify
+  and mount the genuine HFSX root release, locate the dyld shared cache, dump
+  image/symbol metadata, extract IOMobileFramebuffer/backboardd, and collect
+  disassemblies. Initial commit `1ae9e18d`; run `45473957587` FAILED only
+  because the ipsw asset URL included the release tag's leading `v` in the
+  filename. The workflow has been corrected locally (not yet committed/rerun).
+- Device briefly reappeared in TWRP and identity checks passed (`SM-M305F`,
+  `m30lte`, exact known serial, bootloader `M305FDDU8CVK1`); the HFSX reader
+  also reported valid HFSX volume metadata. The ADB link dropped again during
+  a large read-only catalogue scan, so direct device extraction is unstable.
+  No writes were attempted.
+- NEXT: commit the corrected extraction workflow, rerun CI, download the ABI
+  evidence artifact, and trace selector 79/74/84/50/68/55 callers and output
+  contracts from genuine binaries. Do not implement or flash any synthetic
+  selector response.
