@@ -2638,3 +2638,30 @@ authorization for a BOOT-only test of candidate v6.
   (~10 min) durable IRT/CS report that always stays near the ring tail, and a
   replay of the last SpringBoard/backboardd crash reason. Then rerun physical;
   no lock-screen claim without visible persistent evidence plus logs.
+
+## 2026-11-24 - v60 source (MAIN only): durable CS/IRT + crash reason report
+
+- New patch `xnu/patches-minimal/0437-m30-durable-crash-report.patch`
+  (incremental on v59):
+  1. After the bounded heartbeat, the IRT worker keeps one compact
+     `M30 SLOW:` line every 10 minutes with IRT state, `csblk/csfail/csvok` and
+     `cfa/cfi/cfp`. At ~6 records/hour this stays near the tail of the 16 KB
+     pmsg ring even after hours of daemon noise, so any later recovery pull
+     contains the final CS result.
+  2. `osfmk/kern/exception.c` records the first UI heap string containing
+     `Exception`/`exception`/`reason` into `m30_last_crash_reason[256]`; the
+     slow heartbeat replays it as `reason=...`. This targets the NS exception
+     reason that v58/v59 lost to ring wrap.
+  No signature/hash/AMFI/trust-cache/page-validation change; no 0417, no OSX
+  target, no branch or GitHub settings change.
+- Offline checks PASS: patch applies to the exact v59 CI buildtree and
+  reproduces `vm_fault.c` SHA256
+  `cb010af81d89fa10ddf9d7aa03579225bd2860fb001de309c815ecfaf650551d` and
+  `exception.c` SHA256
+  `35b3161fadd93ff49aa9f4b93f9165296939407f7da8dde5a9558d6e5c480e80`.
+  New `tools/test_m30_durable_crash_report.py` PASS; all other applicable
+  focused tests PASS (`test_m30_16k_pages.py` inapplicable without 0417).
+- NEXT: commit/push, CI, validate/package v60, then BOOT-only physical test.
+  Capture pstore whenever recovery is convenient; the slow report should make
+  early timing unnecessary. No lock-screen claim without a visible persistent
+  render plus logs.
