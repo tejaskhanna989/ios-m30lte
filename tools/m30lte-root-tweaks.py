@@ -71,6 +71,39 @@ def launchd(root):
     print(f'launchd.plist: {renamed} _PanicOnCrash renamed, {len(removed)} CommCenter jobs removed')
 
 
+
+MCM_META = '.com.apple.mobile_container_manager.metadata.plist'
+
+
+def fix_container_metadata(root):
+    """Align MCMMetadataUUID with the container directory name.
+
+    iOS resolves a daemon's system/data container path from the metadata UUID.
+    If it does not name an existing directory, BaseBoard passes a nil path to
+    +[NSURL fileURLWithPath:] and backboardd dies with an NSException.  This
+    operates on a host-staged rootfs image only, never on the device.
+    """
+    total = fixed = 0
+    for base in ('private/var/containers', 'private/var/mobile/Containers'):
+        top = os.path.join(root, base)
+        if not os.path.isdir(top):
+            continue
+        for path, _dirs, files in os.walk(top):
+            if MCM_META not in files:
+                continue
+            meta = os.path.join(path, MCM_META)
+            data = load(meta)
+            want = os.path.basename(os.path.normpath(path))
+            total += 1
+            if data.get('MCMMetadataUUID') != want:
+                st = os.stat(meta)
+                data['MCMMetadataUUID'] = want
+                save(meta, data, st.st_uid, st.st_gid, st.st_mode & 0o7777)
+                fixed += 1
+    print(f'container metadata: {fixed}/{total} MCMMetadataUUID values aligned')
+    return fixed, total
+
+
 def containers(root):
     base = os.path.join(root, 'private/var/containers')
     for sub, uid in (('Bundle', 33), ('Data/System', 0), ('Shared/SystemGroup', 0), ('Temp', 0)):
@@ -128,6 +161,7 @@ def main():
     root = sys.argv[1]
     launchd(root)
     containers(root)
+    fix_container_metadata(root)
     activation(root)
     audio(root)
     merge_pref(root, 'com.apple.migration', {

@@ -1,0 +1,19 @@
+name: iOS root container metadata tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Container metadata tests
+        run: python3 tools/test_ios_container_metadata.py
+      - name: Compile changed tools
+        run: python3 -m py_compile tools/m30lte-root-tweaks.py tools/verify_ios_container_metadata.py tools/hfsplus_ro.py
