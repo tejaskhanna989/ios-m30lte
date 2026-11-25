@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "kernel": "/home/tejas/Projects/m30lte-ios/validation/ios-candidate-v68t-out/inputs/kernel.development.m30lte",
+  "kernel_size_bytes": 16808016,
+  "kernel_sha256": "5e898ee0ec7bffee85c5b49cfcda82ff5d0624762233b438a778f26861f83758",
+  "checks": [
+    "linked M30 framebuffer base 0xec000000",
+    "linked M30 marker and relocated framebuffer checkpoints",
+    "linked M30 eMMC and ALIVE/GPA1 constants",
+    "donor Exynos7580 touch implementation absent",
+    "linked GICv2 MMIO initialization and acknowledge/EOI path",
+    "linked XNU virtual-timer ownership"
+  ]
+}

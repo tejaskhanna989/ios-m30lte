@@ -1,0 +1,12 @@
+^[[36;1mprint("PASS Melfas driver hash, IRQ sampler, and 4 gated HID calls")^[[0m
+PASS bsd/dev/m30lte_touch.c 0240f7c6166a251d8397bcfebb80b29c65edb611f0da182cc2c3afc5c7cdfc94
+PASS Melfas driver hash, IRQ sampler, and 4 gated HID calls
+  "result": "PASS",
+      "reverse_apply": "PASS"
+      "reverse_apply": "PASS"
+      "reverse_apply": "PASS"
+      "reverse_apply": "PASS"
+      "reverse_apply": "PASS"
+^[[36;1mecho "kernel path: $kernel"^[[0m
+kernel path: dxb/fakeroot/mach.development.m30lte
+  "result": "PASS",

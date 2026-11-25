@@ -1,0 +1,31 @@
+  PASS  boot.img ANDROID! magic: 
+  PASS  kernel_addr == 0x80080000 (proven shim link): 0x80080000
+  PASS  no ramdisk: 
+  PASS  combined == shim Image + 0x20000 pad + payload: shim=5456 pad_to=0x20000 payload=16180240
+  PASS  payload seg0 in D22AP-fixed kernel: 
+  PASS  kernel SHA256 == 5e898ee0...: 
+  PASS  payload SHA256 == 45aae173...: 
+  PASS  kernel contains SBERR/BBERR diagnostic tags: 
+  PASS  ELF entry 0x80080000: 
+  PASS  CurrentEL dispatch present: 
+  PASS  EL2 state install (HCR/SCTLR/CNTHCTL/eret) present: 
+  PASS  GICv2 init present (gicv2_init + 0x1230 base): 
+  PASS  watchdog 0x10160000 absent: 
+  PASS  payload M30LTXNU v1, 10 segs: 
+  PASS  ADT SHA256 == 2dc36c05...: 
+  PASS  ADT PA 0x82454000 in RAM: 
+  PASS  boot_args PA 0x82458000: 
+  PASS  entry VA 0xfffffff007411488: 
+  PASS  v68t payload cmdline uses cpus=6: debug=0xc serial=3 cpus=6 keepsyms=1 maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1 a5fb_noconsole=1 a5fb_keep_on=1 m30touch=1 m30touchhid=1
+  PASS  v68t enables Melfas probe: 
+  PASS  v68t enables HID delivery: 
+  PASS  v68 payload cmdline keeps serial console: 
+  PASS  v68 payload cmdline mutes M30/A5 framebuffer console: 
+  PASS  v68 payload cmdline keeps display on: 
+  PASS  manifest payload runtime address 0x800a0000: 
+  PASS  payload starts after complete shim footprint: 
+  PASS  payload offset in kernel 0x20000: 
+  PASS  kernel contains M30 FB diagnostic tags: 
+  PASS  kernel contains notify-push tag: 
+  PASS  kernel contains v68 selector ABI trace tag: 
+RESULT: 30/30 PASS
