@@ -1,0 +1,39 @@
+v68t first physical boot — read-only analysis (no device modification)
+
+Device: SM-M305F / m30lte / M305FDDU8CVK1 / known serial / returned to TWRP.
+Pstore: raw/pmsg-ramoops-0, 16372 bytes, SHA256
+fa00fa435f89b9362aa69b8aff2f1942dabfe26efa827c28298cfdd5252c538b,
+174 records, clean=False (wrapped ring).
+
+Confirmed:
+- 0 panic, 0 watchdog, 0 NSException, 0 SBERR/BBERR fatal records.
+- 28 `M30 FB: v=` heartbeats to v=18600, with sw=6 pr=5 copied=50544000
+  skip=15 cl=1. Framebuffer presentation was active and copied pixels.
+- 5 `M30 FB: done` records; 7 `M30 FB: ABI sel=` diagnostics.
+- 72 `SWEET AKS` records (securityd selector errors) in the surviving window;
+  no corresponding crash report.
+- 0 `M30 TOUCH` / `Melfas` / probe / heartbeat / packet records survive. This
+  is not proof the driver did not run: the ring wrapped and early boot records
+  may have been overwritten. No contact evidence exists.
+- USERDATA crash-report scan found 0 `.ips` files: no new backboardd /
+  SpringBoard / lsd crash reports were produced by this boot. This is strong
+  evidence the earlier container-path NSException did not recur.
+
+Comparison with successful v68 (9f58e3e):
+- v68: 138 heartbeats to v=97800, sw=11 pr=8 copied=70761600 skip=25 cl=1;
+  0 NSException; 0 SWEET AKS in surviving window.
+- v68t: presentation active (sw=6 pr=5 cl=1) but no surviving UI crash or
+  fatal record. The display stayed on the Apple logo per user observation.
+
+Confidence / uncertainty:
+- The userspace container fix appears to have eliminated the fatal backboardd
+  NSException (no crash reports, no NSException in pstore).
+- Why the lock screen did not appear is inconclusive: no fatal record survives.
+  Possible causes include slow first-boot data migration/Setup, or backboardd
+  presenting the static logo without SpringBoard scene creation. The surviving
+  pstore window covers only the tail of the boot and cannot prove earlier stages.
+- Touch support is NOT established: no M30 TOUCH record and no user-observed
+  touch response.
+
+Next evidence needed: another boot observation with a longer settled window,
+and read-only pstore capture immediately after, plus crash-report rescan.
