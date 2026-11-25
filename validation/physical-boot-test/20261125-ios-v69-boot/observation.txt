@@ -1,0 +1,15 @@
+v69 physical observation (user-reported, not inferred from telemetry)
+
+- BOOT-only v69 candidate was flashed at 09:17:20Z..09:17:25Z
+  (14:47:20..14:47:25 IST); `BOOT upload successful`. Resume attempt began
+  at 09:17:32Z (14:47:32 IST) but `heimdall print-pit --resume` failed with
+  `ERROR: Failed to send file part size packet!`. The device nevertheless left
+  Download Mode and booted XNU.
+- The device did NOT reach the accepted v68 lock screen in the observed run.
+  The user reported it stuck at the Apple logo, then restarted it; the restart
+  returned it to XNU and overwrote the early pstore records before it was
+  brought back to TWRP.
+- No physical touchscreen result was observed or claimed. Button outcomes are
+  described in `analysis.txt` from the runtime records that survived.
+- The device was returned to TWRP; identity recheck PASS at 09:48:54Z
+  (15:18:54 IST) preceded the read-only pstore pull.

@@ -1,0 +1,42 @@
+v69 pstore analysis (read-only capture after Apple-logo boot)
+
+Raw capture: `raw/pmsg-ramoops-0`, 16372 bytes, SHA256
+`f029f1f266c335256414ce4801dfac5ad78a25db5dc1c193c07aea13b9a4e8fe`.
+Decoder: `clean=False`, 225 records, 1 issue (the expected leading wrapped-ring
+`bad_magic` record). See `decoded-pmsg.txt` and `decoded-pmsg.json`.
+
+Framebuffer heartbeat cap worked:
+- Only 4 `M30 FB: v=` records survived (`v=3000`, `3600`, `4200`, `4800`) versus
+  138 records / 15164 bytes in the v68 capture. The 0446 heartbeat cap did not
+  change display behavior; it only reduced pstore churn.
+- 7 `M30 FB: ABI sel=` records survived, with full scalar inputs and output
+  sizes: selectors 79, 84, 50, 68, 68, 55, 50, all `name=backboardd`.
+  Selector 79 was `in=2/0 s0=0x40 s1=0x0 s2=0x0 s3=0x0 out=0/40 -> 0x0`.
+  This is evidence of the call shape only. It is NOT proof that selector 79 is
+  a display-mode structure, and no response was synthesized.
+
+Button/HID runtime evidence:
+- 66 `A5XELTE KEYS: key=... down=... gpio=...` lines and 67
+  `SWEET HID: key 0x... down/up (1 clients)` lines survived.
+- HID usage `0xe9` had 17 down / 17 up transitions; usage `0x30` had 16 down /
+  17 up transitions. Every HID line reports `1 clients`.
+- This proves that, in the captured XNU boot, GPIO key polling sampled real
+  transitions and `sweet_hid_key()` constructed HID events that were enqueued
+  to one user client. It does NOT prove SpringBoard/UIKit acted on them.
+- The new bounded 0447/0448 tags (`M30 KEY:`, `M30 HID:`) are absent because
+  repeated button attempts during recovery forcing overflowed the 16 KiB ring
+  after those early records. The pre-existing IOLog/prfmt lines survived in
+  larger numbers because they were emitted on every transition.
+
+Display/UI outcome:
+- `SWEET FB: display on`, staged/present/done records with
+  `copied=10108800` for presents #1 and #2, then present #3 `copied=0`.
+- The ring ends with `SBERR libc++abi:`, `SBERR terminating due to uncaught
+  exception of type NSException`, and a bare `SBERR`. Combined with the user's
+  Apple-logo observation, v69 did not reach the accepted v68 lock screen in
+  this run. The logging-only patches are not proven to be the cause; this is a
+  runtime result, not a code-causation claim.
+
+Touch:
+- No touch contact or Melfas hardware-driver records exist. Touch support is
+  still unimplemented and unclaimed.

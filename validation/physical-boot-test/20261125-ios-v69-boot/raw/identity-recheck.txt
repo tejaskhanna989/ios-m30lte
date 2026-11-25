@@ -1,0 +1,8 @@
+IDENTITY_RECHECK_TIME_UTC=2026-11-25T09:48:54Z
+ro.boot.em.model=SM-M305F MATCH=True
+ro.product.device=m30lte MATCH=True
+ro.boot.bootloader=M305FDDU8CVK1 MATCH=True
+ro.boot.serialno=<redacted> MATCH=True
+ro.serialno=<redacted> MATCH=True
+ro.twrp.boot=1 MATCH=True
+IDENTITY_GATE=PASS

@@ -1,0 +1,231 @@
+# M30LTE pstore pmsg decode
+# input_sha256=f029f1f266c335256414ce4801dfac5ad78a25db5dc1c193c07aea13b9a4e8fe
+# input_bytes=16372 records=225 consumed=16372 clean=False
+[000] @0x000039 len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[001] @0x000075 len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xe0
+[002] @0x0000b1 len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[003] @0x0000eb len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0xe0
+[004] @0x000127 len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[005] @0x000161 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[006] @0x00019d len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[007] @0x0001d9 len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0x40
+[008] @0x000215 len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[009] @0x000251 len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[010] @0x00028d len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[011] @0x0002c7 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[012] @0x000303 len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[013] @0x00033f len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[014] @0x00037b len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[015] @0x0003b5 len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[016] @0x0003f1 len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[017] @0x00042b len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0xc0
+[018] @0x000467 len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[019] @0x0004a3 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[020] @0x0004df len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[021] @0x00051b len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[022] @0x000557 len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[023] @0x000591 len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[024] @0x0005cd len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[025] @0x000607 len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0xc0
+[026] @0x000643 len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[027] @0x00067f len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[028] @0x0006bb len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[029] @0x0006f7 len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[030] @0x000733 len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[031] @0x00076d len= 81 XNU: SWEET AKS: ReportCrash sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[032] @0x0007be len= 85 XNU: SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[033] @0x000813 len= 81 XNU: SWEET AKS: ReportCrash sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[034] @0x000864 len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[035] @0x0008a0 len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[036] @0x0008da len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0xc0
+[037] @0x000916 len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[038] @0x000952 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[039] @0x00098e len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[040] @0x0009ca len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[041] @0x000a06 len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[042] @0x000a40 len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[043] @0x000a7c len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[044] @0x000ab6 len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0xc0
+[045] @0x000af2 len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[046] @0x000b2e len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[047] @0x000b6a len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[048] @0x000ba6 len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[049] @0x000be2 len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[050] @0x000c1c len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[051] @0x000c58 len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[052] @0x000c92 len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0xc0
+[053] @0x000cce len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[054] @0x000d0a len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[055] @0x000d46 len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[056] @0x000d82 len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[057] @0x000dbe len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[058] @0x000df8 len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[059] @0x000e34 len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[060] @0x000e6e len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0xc0
+[061] @0x000eaa len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[062] @0x000ee6 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[063] @0x000f22 len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[064] @0x000f5e len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[065] @0x000f9a len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[066] @0x000fd4 len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=17374 vh=2668 oh=0 pr=-5 fb=0x0 hb=3 xctest=1 xctchunk=0 csblk=2874 csfail=8 csvok=29431 cfa=3 c
+[067] @0x0010d1 len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[068] @0x00110d len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[069] @0x001147 len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0xc0
+[070] @0x001183 len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[071] @0x0011bf len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=17414 vh=2669 oh=0 pr=-5 fb=0x0 hb=3 xctest=1 xctchunk=0 csblk=2876 csfail=8 csvok=29471 cfa=3 c
+[072] @0x0012bc len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[073] @0x0012f8 len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[074] @0x001334 len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[075] @0x001370 len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[076] @0x0013aa len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[077] @0x0013e6 len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[078] @0x001420 len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0xc0
+[079] @0x00145c len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[080] @0x001498 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[081] @0x0014d4 len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[082] @0x001510 len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[083] @0x00154c len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[084] @0x001586 len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[085] @0x0015c2 len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[086] @0x0015fc len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0xc0
+[087] @0x001638 len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[088] @0x001674 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[089] @0x0016b0 len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[090] @0x0016ec len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[091] @0x001728 len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[092] @0x001762 len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0x40
+[093] @0x00179e len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[094] @0x0017da len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[095] @0x001816 len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[096] @0x001850 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[097] @0x00188c len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[098] @0x0018c8 len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[099] @0x001904 len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[100] @0x00193e len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[101] @0x00197a len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[102] @0x0019b4 len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0xc0
+[103] @0x0019f0 len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[104] @0x001a2c len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[105] @0x001a68 len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[106] @0x001aa4 len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[107] @0x001ae0 len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[108] @0x001b1a len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[109] @0x001b56 len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[110] @0x001b90 len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0xc0
+[111] @0x001bcc len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[112] @0x001c08 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[113] @0x001c44 len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[114] @0x001c80 len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[115] @0x001cbc len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[116] @0x001cf6 len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[117] @0x001d32 len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[118] @0x001d6c len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0xc0
+[119] @0x001da8 len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[120] @0x001de4 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[121] @0x001e20 len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[122] @0x001e5c len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[123] @0x001e98 len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[124] @0x001ed2 len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0x40
+[125] @0x001f0e len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[126] @0x001f4a len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xc0
+[127] @0x001f86 len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[128] @0x001fc0 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x60
+[129] @0x001ffc len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[130] @0x002038 len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[131] @0x002074 len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[132] @0x0020ae len= 60 XNU: A5XELTE KEYS: key=1 down=1 gpio=0x40
+[133] @0x0020ea len= 60 XNU: SWEET HID: key 0xe9 down (1 clients)
+[134] @0x002126 len= 79 XNU: SWEET AKS: securityd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[135] @0x002175 len= 60 XNU: A5XELTE KEYS: key=1 down=0 gpio=0x60
+[136] @0x0021b1 len= 58 XNU: SWEET HID: key 0xe9 up (1 clients)
+[137] @0x0021eb len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xe0
+[138] @0x002227 len= 58 XNU: SWEET HID: key 0x30 up (1 clients)
+[139] @0x002261 len= 79 XNU: SWEET AKS: securityd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[140] @0x0022b0 len=100 XNU: M30 FB: v=3000 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[141] @0x002314 len= 83 XNU: SWEET AKS: contextstored sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[142] @0x002367 len= 83 XNU: SWEET AKS: contextstored sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[143] @0x0023ba len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[144] @0x00240d len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[145] @0x002460 len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=19425 vh=2994 oh=0 pr=-5 fb=0x0 hb=1 xctest=1 xctchunk=0 csblk=3114 csfail=8 csvok=31482
+[146] @0x00255d len= 82 XNU: SWEET AKS: mediaserverd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[147] @0x0025af len= 86 XNU: SWEET AKS: mediaserverd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[148] @0x002605 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[149] @0x002658 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[150] @0x0026ab len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[151] @0x0026fe len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[152] @0x002751 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[153] @0x0027a4 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[154] @0x0027f7 len= 55 XNU: M30 UI: sb=27 bb=57 reason=none
+[155] @0x00282e len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=22408 vh=3581 oh=0 pr=-5 fb=0x0 hb=4 xctest=1 xctchunk=0 csblk=3562 csfail=8 csvok=34465 cfa=3 c
+[156] @0x00292b len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=22450 vh=3597 oh=0 pr=-5 fb=0x0 hb=4 xctest=1 xctchunk=0 csblk=3568 csfail=8 csvok=34507 cfa=3 c
+[157] @0x002a28 len= 84 XNU: SWEET AKS: bluetoothuserd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[158] @0x002a7c len= 84 XNU: SWEET AKS: bluetoothuserd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[159] @0x002ad0 len=100 XNU: M30 FB: v=3600 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[160] @0x002b34 len= 86 XNU: M30 IRT: patched _internal_release_type off 0xa432d84 (0 -> 3)
+[161] @0x002b8a len= 88 XNU: SWEET AKS: CloudKeychainProxy sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[162] @0x002be2 len= 88 XNU: SWEET AKS: CloudKeychainProxy sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[163] @0x002c3a len=253 XNU: M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=23990 vh=3853 oh=1 pr=-5 fb=0x0 hb=2 xctest=1 xctchunk=0 csblk=3864 csfail=8 csvok=36498 cfa=3 cfi=5 
+[164] @0x002d37 len= 80 XNU: SWEET AKS: securityd sel 26 arg0 0 in 3/0 out 0/0 -> 0x0
+[165] @0x002d87 len= 82 XNU: SWEET AKS: mobileassetd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[166] @0x002dd9 len= 82 XNU: SWEET AKS: mobileassetd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[167] @0x002e2b len=251 XNU: M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23990 vh=3853 oh=1 pr=-5 fb=0x0 hb=5 xctest=1 xctchunk=0 csblk=4213 csfail=8 csvok=39076 cfa=3 cfi=5 cfp=0)
+[168] @0x002f26 len=251 XNU: M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23990 vh=3853 oh=1 pr=-5 fb=0x0 hb=5 xctest=1 xctchunk=0 csblk=4218 csfail=8 csvok=39132 cfa=3 cfi=5 cfp=0)
+[169] @0x003021 len= 68 XNU: M30 FB: power req=0 off=0 sw=0 pr=0 copied=0
+[170] @0x003065 len= 44 XNU: SWEET FB: display on
+[171] @0x003091 len= 73 XNU: SWEET FB: backboardd sel 12 in 1/0 out 0/0 -> 0x0
+[172] @0x0030da len=103 XNU: M30 FB: ABI sel=79 name=backboardd in=2/0 s0=0x40 s1=0x0 s2=0x0 s3=0x0 out=0/40
+[173] @0x003141 len= 74 XNU: SWEET FB: backboardd sel 79 in 2/0 out 0/40 -> 0x0
+[174] @0x00318b len= 63 XNU: M30 FB: wait #1 token=0 before=0 done=0
+[175] @0x0031ca len= 72 XNU: SWEET FB: backboardd sel 6 in 3/0 out 0/0 -> 0x0
+[176] @0x003212 len= 76 XNU: SWEET FB: backboardd sel 27 in 0/0 out 0/3084 -> 0x0
+[177] @0x00325e len= 76 XNU: SWEET FB: backboardd sel 17 in 0/3084 out 0/0 -> 0x0
+[178] @0x0032aa len=101 XNU: M30 FB: ABI sel=84 name=backboardd in=0/4 s0=0x0 s1=0x0 s2=0x0 s3=0x0 out=0/0
+[179] @0x00330f len= 73 XNU: SWEET FB: backboardd sel 84 in 0/4 out 0/0 -> 0x0
+[180] @0x003358 len=105 XNU: M30 FB: ABI sel=50 name=backboardd in=2/0 s0=0x10000 s1=0x0 s2=0x0 s3=0x0 out=0/0
+[181] @0x0033c1 len= 73 XNU: SWEET FB: backboardd sel 50 in 2/0 out 0/0 -> 0x0
+[182] @0x00340a len= 53 XNU: SWEET SURF: backboardd sel 13
+[183] @0x00343f len=101 XNU: M30 FB: ABI sel=68 name=backboardd in=1/8 s0=0x7 s1=0x0 s2=0x0 s3=0x0 out=0/0
+[184] @0x0034a4 len= 73 XNU: SWEET FB: backboardd sel 68 in 1/8 out 0/0 -> 0x0
+[185] @0x0034ed len=136 XNU: SWEET SURF: backboardd create id 2 1080x2340 fmt 0x42475241 bpe 4 bpr 4352 planes 0 size 10186752 keys 11 -> 0x0
+[186] @0x003575 len= 52 XNU: SWEET SURF: backboardd sel 9
+[187] @0x0035a9 len= 53 XNU: SWEET SURF: backboardd sel 27
+[188] @0x0035de len= 52 XNU: SWEET SURF: backboardd sel 5
+[189] @0x003612 len= 53 XNU: SWEET SURF: backboardd trap 2
+[190] @0x003647 len= 53 XNU: SWEET SURF: backboardd trap 3
+[191] @0x00367c len= 72 XNU: SWEET FB: backboardd sel 4 in 0/0 out 1/0 -> 0x0
+[192] @0x0036c4 len=101 XNU: M30 FB: ABI sel=68 name=backboardd in=1/8 s0=0x6 s1=0x0 s2=0x0 s3=0x0 out=0/0
+[193] @0x003729 len= 73 XNU: SWEET FB: backboardd sel 68 in 1/8 out 0/0 -> 0x0
+[194] @0x003772 len= 85 XNU: M30 FB: staged #1 id=1 mask=0x80000007 layers=2/0/0/0 dirty=1
+[195] @0x0037c7 len= 75 XNU: SWEET FB: backboardd sel 5 in 0/1132 out 0/0 -> 0x0
+[196] @0x003812 len= 72 XNU: SWEET FB: backboardd sel 3 in 2/0 out 1/0 -> 0x0
+[197] @0x00385a len= 53 XNU: SWEET SURF: backboardd sel 34
+[198] @0x00388f len= 63 XNU: M30 FB: wait #2 token=1 before=0 done=0
+[199] @0x0038ce len=102 XNU: M30 FB: ABI sel=55 name=backboardd in=1/72 s0=0x9 s1=0x0 s2=0x0 s3=0x0 out=0/0
+[200] @0x003934 len= 74 XNU: SWEET FB: backboardd sel 55 in 1/72 out 0/0 -> 0x0
+[201] @0x00397e len=105 XNU: M30 FB: ABI sel=50 name=backboardd in=2/0 s0=0x10000 s1=0x0 s2=0x0 s3=0x0 out=0/0
+[202] @0x0039e7 len= 63 XNU: M30 FB: wait #3 token=1 before=0 done=0
+[203] @0x003a26 len= 78 XNU: M30 FB: staged #2 id=2 mask=0x1 layers=2/0/0/0 dirty=1
+[204] @0x003a74 len= 81 XNU: M30 FB: present #1 copied=10108800 skip=3 last=1 mask=0x1
+[205] @0x003ac5 len= 55 XNU: M30 FB: done #1 copied=10108800
+[206] @0x003afc len= 54 XNU: M30 FB: notify mask=0x0 done=1
+[207] @0x003b32 len=107 XNU: M30 FB: v=4200 sw=2 pr=1 copied=10108800 skip=3 last=1 dirty=0 power=0 cl=1 ticks=2
+[208] @0x003b9d len= 63 XNU: M30 FB: wait #4 token=1 before=1 done=1
+[209] @0x003bdc len= 63 XNU: M30 FB: wait #5 token=2 before=1 done=1
+[210] @0x003c1b len= 78 XNU: M30 FB: staged #3 id=3 mask=0x1 layers=3/0/0/0 dirty=1
+[211] @0x003c69 len= 81 XNU: M30 FB: present #2 copied=10108800 skip=6 last=1 mask=0x1
+[212] @0x003cba len= 55 XNU: M30 FB: done #2 copied=10108800
+[213] @0x003cf1 len= 54 XNU: M30 FB: notify mask=0x0 done=2
+[214] @0x003d27 len=107 XNU: M30 FB: v=4800 sw=3 pr=2 copied=20217600 skip=6 last=1 dirty=0 power=0 cl=1 ticks=2
+[215] @0x003d92 len= 63 XNU: M30 FB: wait #6 token=2 before=2 done=2
+[216] @0x003dd1 len= 63 XNU: M30 FB: wait #7 token=3 before=2 done=2
+[217] @0x003e10 len= 78 XNU: M30 FB: staged #4 id=4 mask=0x1 layers=0/0/0/0 dirty=1
+[218] @0x003e5e len= 63 XNU: M30 FB: wait #8 token=0 before=2 done=2
+[219] @0x003e9d len= 82 XNU: M30 FB: present #3 copied=0 skip=10 last=1 mask=0x80000007
+[220] @0x003eef len= 48 XNU: M30 FB: done #3 copied=0
+[221] @0x003f1f len= 54 XNU: M30 FB: notify mask=0x0 done=3
+[222] @0x003f55 len= 41 XNU: SBERR libc++abi: 
+[223] @0x003f7e len= 87 XNU: SBERR terminating due to uncaught exception of type NSException
+[224] @0x003fd5 len= 31 XNU: SBERR 
+
+# ISSUE @0x000000 bad_magic: expected 0x6c, got 0x00
+# WARNING: framing was not fully valid; output may be incomplete

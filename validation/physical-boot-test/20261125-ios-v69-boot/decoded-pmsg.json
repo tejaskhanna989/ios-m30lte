@@ -1,0 +1,1816 @@
+{
+  "input_bytes": 16372,
+  "input_sha256": "f029f1f266c335256414ce4801dfac5ad78a25db5dc1c193c07aea13b9a4e8fe",
+  "record_count": 225,
+  "consumed": 16372,
+  "clean": false,
+  "records": [
+    {
+      "index": 0,
+      "offset": 57,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 1,
+      "offset": 117,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xe0"
+    },
+    {
+      "index": 2,
+      "offset": 177,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 3,
+      "offset": 235,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0xe0"
+    },
+    {
+      "index": 4,
+      "offset": 295,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 5,
+      "offset": 353,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 6,
+      "offset": 413,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 7,
+      "offset": 473,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0x40"
+    },
+    {
+      "index": 8,
+      "offset": 533,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 9,
+      "offset": 593,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 10,
+      "offset": 653,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 11,
+      "offset": 711,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 12,
+      "offset": 771,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 13,
+      "offset": 831,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 14,
+      "offset": 891,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 15,
+      "offset": 949,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 16,
+      "offset": 1009,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 17,
+      "offset": 1067,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0xc0"
+    },
+    {
+      "index": 18,
+      "offset": 1127,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 19,
+      "offset": 1187,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 20,
+      "offset": 1247,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 21,
+      "offset": 1307,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 22,
+      "offset": 1367,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 23,
+      "offset": 1425,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 24,
+      "offset": 1485,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 25,
+      "offset": 1543,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0xc0"
+    },
+    {
+      "index": 26,
+      "offset": 1603,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 27,
+      "offset": 1663,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 28,
+      "offset": 1723,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 29,
+      "offset": 1783,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 30,
+      "offset": 1843,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 31,
+      "offset": 1901,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 32,
+      "offset": 1982,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 33,
+      "offset": 2067,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: ReportCrash sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 34,
+      "offset": 2148,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 35,
+      "offset": 2208,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 36,
+      "offset": 2266,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0xc0"
+    },
+    {
+      "index": 37,
+      "offset": 2326,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 38,
+      "offset": 2386,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 39,
+      "offset": 2446,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 40,
+      "offset": 2506,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 41,
+      "offset": 2566,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 42,
+      "offset": 2624,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 43,
+      "offset": 2684,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 44,
+      "offset": 2742,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0xc0"
+    },
+    {
+      "index": 45,
+      "offset": 2802,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 46,
+      "offset": 2862,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 47,
+      "offset": 2922,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 48,
+      "offset": 2982,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 49,
+      "offset": 3042,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 50,
+      "offset": 3100,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 51,
+      "offset": 3160,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 52,
+      "offset": 3218,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0xc0"
+    },
+    {
+      "index": 53,
+      "offset": 3278,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 54,
+      "offset": 3338,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 55,
+      "offset": 3398,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 56,
+      "offset": 3458,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 57,
+      "offset": 3518,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 58,
+      "offset": 3576,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 59,
+      "offset": 3636,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 60,
+      "offset": 3694,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0xc0"
+    },
+    {
+      "index": 61,
+      "offset": 3754,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 62,
+      "offset": 3814,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 63,
+      "offset": 3874,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 64,
+      "offset": 3934,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 65,
+      "offset": 3994,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 66,
+      "offset": 4052,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=17374 vh=2668 oh=0 pr=-5 fb=0x0 hb=3 xctest=1 xctchunk=0 csblk=2874 csfail=8 csvok=29431 cfa=3 c"
+    },
+    {
+      "index": 67,
+      "offset": 4305,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 68,
+      "offset": 4365,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 69,
+      "offset": 4423,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0xc0"
+    },
+    {
+      "index": 70,
+      "offset": 4483,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 71,
+      "offset": 4543,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=17414 vh=2669 oh=0 pr=-5 fb=0x0 hb=3 xctest=1 xctchunk=0 csblk=2876 csfail=8 csvok=29471 cfa=3 c"
+    },
+    {
+      "index": 72,
+      "offset": 4796,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 73,
+      "offset": 4856,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 74,
+      "offset": 4916,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 75,
+      "offset": 4976,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 76,
+      "offset": 5034,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 77,
+      "offset": 5094,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 78,
+      "offset": 5152,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0xc0"
+    },
+    {
+      "index": 79,
+      "offset": 5212,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 80,
+      "offset": 5272,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 81,
+      "offset": 5332,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 82,
+      "offset": 5392,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 83,
+      "offset": 5452,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 84,
+      "offset": 5510,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 85,
+      "offset": 5570,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 86,
+      "offset": 5628,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0xc0"
+    },
+    {
+      "index": 87,
+      "offset": 5688,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 88,
+      "offset": 5748,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 89,
+      "offset": 5808,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 90,
+      "offset": 5868,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 91,
+      "offset": 5928,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 92,
+      "offset": 5986,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0x40"
+    },
+    {
+      "index": 93,
+      "offset": 6046,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 94,
+      "offset": 6106,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 95,
+      "offset": 6166,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 96,
+      "offset": 6224,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 97,
+      "offset": 6284,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 98,
+      "offset": 6344,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 99,
+      "offset": 6404,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 100,
+      "offset": 6462,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 101,
+      "offset": 6522,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 102,
+      "offset": 6580,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0xc0"
+    },
+    {
+      "index": 103,
+      "offset": 6640,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 104,
+      "offset": 6700,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 105,
+      "offset": 6760,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 106,
+      "offset": 6820,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 107,
+      "offset": 6880,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 108,
+      "offset": 6938,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 109,
+      "offset": 6998,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 110,
+      "offset": 7056,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0xc0"
+    },
+    {
+      "index": 111,
+      "offset": 7116,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 112,
+      "offset": 7176,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 113,
+      "offset": 7236,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 114,
+      "offset": 7296,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 115,
+      "offset": 7356,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 116,
+      "offset": 7414,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 117,
+      "offset": 7474,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 118,
+      "offset": 7532,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0xc0"
+    },
+    {
+      "index": 119,
+      "offset": 7592,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 120,
+      "offset": 7652,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 121,
+      "offset": 7712,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 122,
+      "offset": 7772,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 123,
+      "offset": 7832,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 124,
+      "offset": 7890,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0x40"
+    },
+    {
+      "index": 125,
+      "offset": 7950,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 126,
+      "offset": 8010,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xc0"
+    },
+    {
+      "index": 127,
+      "offset": 8070,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 128,
+      "offset": 8128,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=1 gpio=0x60"
+    },
+    {
+      "index": 129,
+      "offset": 8188,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 down (1 clients)"
+    },
+    {
+      "index": 130,
+      "offset": 8248,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 131,
+      "offset": 8308,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 132,
+      "offset": 8366,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=1 gpio=0x40"
+    },
+    {
+      "index": 133,
+      "offset": 8426,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 down (1 clients)"
+    },
+    {
+      "index": 134,
+      "offset": 8486,
+      "length": 79,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: securityd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 135,
+      "offset": 8565,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=1 down=0 gpio=0x60"
+    },
+    {
+      "index": 136,
+      "offset": 8625,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0xe9 up (1 clients)"
+    },
+    {
+      "index": 137,
+      "offset": 8683,
+      "length": 60,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "A5XELTE KEYS: key=0 down=0 gpio=0xe0"
+    },
+    {
+      "index": 138,
+      "offset": 8743,
+      "length": 58,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET HID: key 0x30 up (1 clients)"
+    },
+    {
+      "index": 139,
+      "offset": 8801,
+      "length": 79,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: securityd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 140,
+      "offset": 8880,
+      "length": 100,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: v=3000 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2"
+    },
+    {
+      "index": 141,
+      "offset": 8980,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: contextstored sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 142,
+      "offset": 9063,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: contextstored sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 143,
+      "offset": 9146,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 144,
+      "offset": 9229,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 145,
+      "offset": 9312,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=19425 vh=2994 oh=0 pr=-5 fb=0x0 hb=1 xctest=1 xctchunk=0 csblk=3114 csfail=8 csvok=31482"
+    },
+    {
+      "index": 146,
+      "offset": 9565,
+      "length": 82,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: mediaserverd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 147,
+      "offset": 9647,
+      "length": 86,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: mediaserverd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 148,
+      "offset": 9733,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 149,
+      "offset": 9816,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 150,
+      "offset": 9899,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 151,
+      "offset": 9982,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 152,
+      "offset": 10065,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 153,
+      "offset": 10148,
+      "length": 83,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0"
+    },
+    {
+      "index": 154,
+      "offset": 10231,
+      "length": 55,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 UI: sb=27 bb=57 reason=none"
+    },
+    {
+      "index": 155,
+      "offset": 10286,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=22408 vh=3581 oh=0 pr=-5 fb=0x0 hb=4 xctest=1 xctchunk=0 csblk=3562 csfail=8 csvok=34465 cfa=3 c"
+    },
+    {
+      "index": 156,
+      "offset": 10539,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=22450 vh=3597 oh=0 pr=-5 fb=0x0 hb=4 xctest=1 xctchunk=0 csblk=3568 csfail=8 csvok=34507 cfa=3 c"
+    },
+    {
+      "index": 157,
+      "offset": 10792,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: bluetoothuserd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 158,
+      "offset": 10876,
+      "length": 84,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: bluetoothuserd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 159,
+      "offset": 10960,
+      "length": 100,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: v=3600 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2"
+    },
+    {
+      "index": 160,
+      "offset": 11060,
+      "length": 86,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched _internal_release_type off 0xa432d84 (0 -> 3)"
+    },
+    {
+      "index": 161,
+      "offset": 11146,
+      "length": 88,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: CloudKeychainProxy sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 162,
+      "offset": 11234,
+      "length": 88,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: CloudKeychainProxy sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 163,
+      "offset": 11322,
+      "length": 253,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=23990 vh=3853 oh=1 pr=-5 fb=0x0 hb=2 xctest=1 xctchunk=0 csblk=3864 csfail=8 csvok=36498 cfa=3 cfi=5 "
+    },
+    {
+      "index": 164,
+      "offset": 11575,
+      "length": 80,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: securityd sel 26 arg0 0 in 3/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 165,
+      "offset": 11655,
+      "length": 82,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: mobileassetd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 166,
+      "offset": 11737,
+      "length": 82,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET AKS: mobileassetd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 167,
+      "offset": 11819,
+      "length": 251,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23990 vh=3853 oh=1 pr=-5 fb=0x0 hb=5 xctest=1 xctchunk=0 csblk=4213 csfail=8 csvok=39076 cfa=3 cfi=5 cfp=0)"
+    },
+    {
+      "index": 168,
+      "offset": 12070,
+      "length": 251,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23990 vh=3853 oh=1 pr=-5 fb=0x0 hb=5 xctest=1 xctchunk=0 csblk=4218 csfail=8 csvok=39132 cfa=3 cfi=5 cfp=0)"
+    },
+    {
+      "index": 169,
+      "offset": 12321,
+      "length": 68,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: power req=0 off=0 sw=0 pr=0 copied=0"
+    },
+    {
+      "index": 170,
+      "offset": 12389,
+      "length": 44,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: display on"
+    },
+    {
+      "index": 171,
+      "offset": 12433,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 12 in 1/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 172,
+      "offset": 12506,
+      "length": 103,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: ABI sel=79 name=backboardd in=2/0 s0=0x40 s1=0x0 s2=0x0 s3=0x0 out=0/40"
+    },
+    {
+      "index": 173,
+      "offset": 12609,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 79 in 2/0 out 0/40 -> 0x0"
+    },
+    {
+      "index": 174,
+      "offset": 12683,
+      "length": 63,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: wait #1 token=0 before=0 done=0"
+    },
+    {
+      "index": 175,
+      "offset": 12746,
+      "length": 72,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 6 in 3/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 176,
+      "offset": 12818,
+      "length": 76,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 27 in 0/0 out 0/3084 -> 0x0"
+    },
+    {
+      "index": 177,
+      "offset": 12894,
+      "length": 76,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 17 in 0/3084 out 0/0 -> 0x0"
+    },
+    {
+      "index": 178,
+      "offset": 12970,
+      "length": 101,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: ABI sel=84 name=backboardd in=0/4 s0=0x0 s1=0x0 s2=0x0 s3=0x0 out=0/0"
+    },
+    {
+      "index": 179,
+      "offset": 13071,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 84 in 0/4 out 0/0 -> 0x0"
+    },
+    {
+      "index": 180,
+      "offset": 13144,
+      "length": 105,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: ABI sel=50 name=backboardd in=2/0 s0=0x10000 s1=0x0 s2=0x0 s3=0x0 out=0/0"
+    },
+    {
+      "index": 181,
+      "offset": 13249,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 50 in 2/0 out 0/0 -> 0x0"
+    },
+    {
+      "index": 182,
+      "offset": 13322,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd sel 13"
+    },
+    {
+      "index": 183,
+      "offset": 13375,
+      "length": 101,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: ABI sel=68 name=backboardd in=1/8 s0=0x7 s1=0x0 s2=0x0 s3=0x0 out=0/0"
+    },
+    {
+      "index": 184,
+      "offset": 13476,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 68 in 1/8 out 0/0 -> 0x0"
+    },
+    {
+      "index": 185,
+      "offset": 13549,
+      "length": 136,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd create id 2 1080x2340 fmt 0x42475241 bpe 4 bpr 4352 planes 0 size 10186752 keys 11 -> 0x0"
+    },
+    {
+      "index": 186,
+      "offset": 13685,
+      "length": 52,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd sel 9"
+    },
+    {
+      "index": 187,
+      "offset": 13737,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd sel 27"
+    },
+    {
+      "index": 188,
+      "offset": 13790,
+      "length": 52,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd sel 5"
+    },
+    {
+      "index": 189,
+      "offset": 13842,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd trap 2"
+    },
+    {
+      "index": 190,
+      "offset": 13895,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd trap 3"
+    },
+    {
+      "index": 191,
+      "offset": 13948,
+      "length": 72,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 4 in 0/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 192,
+      "offset": 14020,
+      "length": 101,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: ABI sel=68 name=backboardd in=1/8 s0=0x6 s1=0x0 s2=0x0 s3=0x0 out=0/0"
+    },
+    {
+      "index": 193,
+      "offset": 14121,
+      "length": 73,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 68 in 1/8 out 0/0 -> 0x0"
+    },
+    {
+      "index": 194,
+      "offset": 14194,
+      "length": 85,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: staged #1 id=1 mask=0x80000007 layers=2/0/0/0 dirty=1"
+    },
+    {
+      "index": 195,
+      "offset": 14279,
+      "length": 75,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 5 in 0/1132 out 0/0 -> 0x0"
+    },
+    {
+      "index": 196,
+      "offset": 14354,
+      "length": 72,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 3 in 2/0 out 1/0 -> 0x0"
+    },
+    {
+      "index": 197,
+      "offset": 14426,
+      "length": 53,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET SURF: backboardd sel 34"
+    },
+    {
+      "index": 198,
+      "offset": 14479,
+      "length": 63,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: wait #2 token=1 before=0 done=0"
+    },
+    {
+      "index": 199,
+      "offset": 14542,
+      "length": 102,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: ABI sel=55 name=backboardd in=1/72 s0=0x9 s1=0x0 s2=0x0 s3=0x0 out=0/0"
+    },
+    {
+      "index": 200,
+      "offset": 14644,
+      "length": 74,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SWEET FB: backboardd sel 55 in 1/72 out 0/0 -> 0x0"
+    },
+    {
+      "index": 201,
+      "offset": 14718,
+      "length": 105,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: ABI sel=50 name=backboardd in=2/0 s0=0x10000 s1=0x0 s2=0x0 s3=0x0 out=0/0"
+    },
+    {
+      "index": 202,
+      "offset": 14823,
+      "length": 63,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: wait #3 token=1 before=0 done=0"
+    },
+    {
+      "index": 203,
+      "offset": 14886,
+      "length": 78,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: staged #2 id=2 mask=0x1 layers=2/0/0/0 dirty=1"
+    },
+    {
+      "index": 204,
+      "offset": 14964,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: present #1 copied=10108800 skip=3 last=1 mask=0x1"
+    },
+    {
+      "index": 205,
+      "offset": 15045,
+      "length": 55,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: done #1 copied=10108800"
+    },
+    {
+      "index": 206,
+      "offset": 15100,
+      "length": 54,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: notify mask=0x0 done=1"
+    },
+    {
+      "index": 207,
+      "offset": 15154,
+      "length": 107,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: v=4200 sw=2 pr=1 copied=10108800 skip=3 last=1 dirty=0 power=0 cl=1 ticks=2"
+    },
+    {
+      "index": 208,
+      "offset": 15261,
+      "length": 63,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: wait #4 token=1 before=1 done=1"
+    },
+    {
+      "index": 209,
+      "offset": 15324,
+      "length": 63,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: wait #5 token=2 before=1 done=1"
+    },
+    {
+      "index": 210,
+      "offset": 15387,
+      "length": 78,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: staged #3 id=3 mask=0x1 layers=3/0/0/0 dirty=1"
+    },
+    {
+      "index": 211,
+      "offset": 15465,
+      "length": 81,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: present #2 copied=10108800 skip=6 last=1 mask=0x1"
+    },
+    {
+      "index": 212,
+      "offset": 15546,
+      "length": 55,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: done #2 copied=10108800"
+    },
+    {
+      "index": 213,
+      "offset": 15601,
+      "length": 54,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: notify mask=0x0 done=2"
+    },
+    {
+      "index": 214,
+      "offset": 15655,
+      "length": 107,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: v=4800 sw=3 pr=2 copied=20217600 skip=6 last=1 dirty=0 power=0 cl=1 ticks=2"
+    },
+    {
+      "index": 215,
+      "offset": 15762,
+      "length": 63,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: wait #6 token=2 before=2 done=2"
+    },
+    {
+      "index": 216,
+      "offset": 15825,
+      "length": 63,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: wait #7 token=3 before=2 done=2"
+    },
+    {
+      "index": 217,
+      "offset": 15888,
+      "length": 78,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: staged #4 id=4 mask=0x1 layers=0/0/0/0 dirty=1"
+    },
+    {
+      "index": 218,
+      "offset": 15966,
+      "length": 63,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: wait #8 token=0 before=2 done=2"
+    },
+    {
+      "index": 219,
+      "offset": 16029,
+      "length": 82,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: present #3 copied=0 skip=10 last=1 mask=0x80000007"
+    },
+    {
+      "index": 220,
+      "offset": 16111,
+      "length": 48,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: done #3 copied=0"
+    },
+    {
+      "index": 221,
+      "offset": 16159,
+      "length": 54,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "M30 FB: notify mask=0x0 done=3"
+    },
+    {
+      "index": 222,
+      "offset": 16213,
+      "length": 41,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SBERR libc++abi: "
+    },
+    {
+      "index": 223,
+      "offset": 16254,
+      "length": 87,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SBERR terminating due to uncaught exception of type NSException"
+    },
+    {
+      "index": 224,
+      "offset": 16341,
+      "length": 31,
+      "metadata_hex": "0000000000000000000000000000000000",
+      "tag": "XNU",
+      "message": "SBERR \n"
+    }
+  ],
+  "issues": [
+    {
+      "offset": 0,
+      "kind": "bad_magic",
+      "detail": "expected 0x6c, got 0x00"
+    }
+  ]
+}

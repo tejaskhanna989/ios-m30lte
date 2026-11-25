@@ -1,0 +1,8 @@
+PRE-FLASH IDENTITY GATE (TWRP, read-only)
+ro.boot.em.model=SM-M305F
+ro.product.device=m30lte
+ro.boot.bootloader=M305FDDU8CVK1
+ro.boot.serialno=<redacted>
+ro.serialno=<redacted>
+IDENTITY_GATE=PASS
+SAMSUNG_DOWNLOAD_MODE_HEIMDALL_DETECT=PASS

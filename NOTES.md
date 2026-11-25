@@ -3711,12 +3711,54 @@ authorization for a BOOT-only test of candidate v6.
   failed only because `/tmp` was out of space while copying the tree; after
   removing stale scratch artifacts the same check passed.
 - No Melfas hardware-driver strings are present in the linked kernel, as
-  expected for this logging-only candidate. No BOOT write, flash, ADB action or
-  pstore pull has occurred for v69. `adb devices -l` showed no connected device.
-- NEXT: after the device is connected in Download Mode, perform fresh exact
-  identity verification (`SM-M305F`, `m30lte`, serial
-  `320081735bb166a3`, bootloader `M305FDDU8CVK1`), confirm Download Mode with
-  Heimdall, then BOOT-only flash `ios-boot.img`. Pull pstore early in TWRP and
-  evaluate `M30 KEY:` / `M30 HID:` / framebuffer-ABI records plus physical
-  button/touch behavior before claiming any input support. v68 remains the
-  rollback baseline but is not to be restored without explicit instruction.
+  expected for this logging-only candidate.
+
+## 2026-11-25 - v69 BOOT-only physical test: buttons reached HID, Apple logo persisted (MAIN only)
+
+- Device reconnected in TWRP. Fresh exact identity gate PASS in TWRP
+  (`SM-M305F`, `m30lte`, bootloader `M305FDDU8CVK1`, exact known serial,
+  `ro.twrp.boot=1`); serial redacted in committed evidence. Heimdall Download
+  Mode detect PASS immediately before the write.
+- BOOT-only flash of v69 `ios-boot.img`
+  `3d63bae2b709fad2d58a973158ff9d87bed1403ab64cdfc30b461879477d6835` ran
+  `2026-11-25T09:17:20Z..09:17:25Z` (`14:47:20..14:47:25 IST`) with
+  `--no-reboot`; `BOOT upload successful`. Resume attempt began at
+  `09:17:32Z` (`14:47:32 IST`) and failed with
+  `Failed to send file part size packet!`, but the device left Download Mode
+  and booted XNU. No USERDATA, SYSTEM or RECOVERY write; no Fastboot; no
+  rollback.
+- PHYSICAL LOCK-SCREEN: **NOT OBSERVED**. The user reported the device stuck at
+  the Apple logo and restarted it; that restart returned to XNU and overwrote
+  the early pstore before the device was brought back to TWRP. v68 remains the
+  accepted lock-screen baseline. No touch input was observed or claimed.
+- The device was returned to TWRP, identity recheck PASS at `09:48:54Z`
+  (`15:18:54 IST`), and `pmsg-ramoops-0` was pulled read-only. Raw capture
+  16372 bytes, SHA256
+  `f029f1f266c335256414ce4801dfac5ad78a25db5dc1c193c07aea13b9a4e8fe`;
+  decode 225 records, `clean=False` (expected wrapped-ring leading bad_magic).
+  Full evidence in
+  `validation/physical-boot-test/20261125-ios-v69-boot/`.
+- BUTTONS -> HID: **RUNTIME PASS at producer/HID boundary**. Surviving records
+  include 66 `A5XELTE KEYS: key=... gpio=...` transitions and 67
+  `SWEET HID: key 0x... down/up (1 clients)` dispatches. HID usage `0xe9` had
+  17 down / 17 up transitions; usage `0x30` had 16 down / 17 up. This proves
+  GPIO polling sampled real transitions and `sweet_hid_key()` enqueued HID
+  events to one user client in the captured boot. It does NOT prove
+  SpringBoard/UIKit acted on them.
+- The new bounded `M30 KEY:` / `M30 HID:` lines were overwritten by repeated
+  button attempts while forcing recovery; the older per-transition lines
+  survived in greater volume. The 0446 heartbeat cap worked: only 4
+  `M30 FB: v=` records survived versus 138 in v68. Seven
+  `M30 FB: ABI sel=` records also survived (selectors 79, 84, 50, 68, 68, 55,
+  50), including selector 79 `in=2/0 s0=0x40 ... out=0/40 -> 0x0`. This is call
+  shape evidence only; selector 79 is still NOT proven to be a display-mode
+  structure and no response was synthesized.
+- The ring ends with `SBERR terminating due to uncaught exception of type
+  NSException`, consistent with the Apple-logo observation. The logging-only
+  patches are not proven to be the cause; this is a runtime result, not a
+  code-causation claim.
+- NEXT: do not restore or reflash without explicit instruction. v68 remains the
+  rollback baseline. If further v69 work is authorized, capture pstore earlier
+  after boot or reduce key/HID trace volume further before claiming UI-level
+  input behavior. Do not claim touch support without a real Melfas producer and
+  contact evidence.
