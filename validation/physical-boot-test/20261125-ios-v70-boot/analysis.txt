@@ -1,0 +1,51 @@
+v70 pstore analysis (read-only capture after Apple-logo boot)
+
+Raw capture: raw/pmsg-ramoops-0, 16372 bytes, SHA256
+f380b9abb7463e7a83e77f274a559143d7da0ed5676732fbd3d26c375cebc77a.
+Decoder: 169 records, clean=False, 1 issue (the expected leading wrapped-ring
+bad_magic record). See decoded-pmsg.txt and decoded-pmsg.json.
+
+Physical outcome:
+- The user observed only the Apple logo more than six minutes after the
+  resume reboot, then returned the device to TWRP. The persistent v68 lock
+  screen was NOT restored in this run.
+- The ring ends with the same fatal sequence as v69:
+  `SBERR libc++abi:`, `SBERR terminating due to uncaught exception of type
+  NSException`, `SBERR`. No exception reason, crashing thread or backtrace
+  survived. This is a runtime result, not proof that any specific patch caused
+  the exception.
+
+Correction result:
+- v70 reverted the v69 key/HID diagnostic patches 0447 and 0448. The same
+  Apple-logo/NSException outcome remains, so those two diagnostic patches are
+  not proven to be the cause and are unlikely to be the sole cause.
+- The only remaining source difference from the accepted v68 candidate is 0446,
+  a logging-only heartbeat cap. It remains a possible runtime difference but
+  is not proven causal. No broad investigation was started.
+
+Framebuffer:
+- `SWEET FB: backboardd` selector traffic continued and both SweetHIDTouch and
+  SweetHIDButtons user clients opened with `-> 1`.
+- Nine `M30 FB: ABI sel=` records survived. Selector 79 appeared twice:
+  `in=2/0 s0=0x4d ... out=0/1580` and `in=2/0 s0=0x40 ... out=0/40`.
+  This is call-shape evidence only. Selector 79 is still NOT proven to be a
+  display-mode structure, and no response was synthesized.
+- Heartbeat cap worked: 5 `M30 FB: v=` records survived versus 138 in v68
+  and 4 in v69. It reduced pstore churn without changing staged/present
+  behavior in the surviving trace.
+- Framebuffer staged #1/#2 and present #1/#2 each with copied=10108800,
+  followed by done and notify records. The ring then ended in the fatal
+  SpringBoard exception. Unlike v69, no third present with copied=0 survived.
+
+Buttons/HID:
+- No `A5XELTE KEYS: key=` or `SWEET HID: key` transition records exist in this
+  capture. The user confirmed no physical button was pressed after boot, so
+  this is an untested acceptance criterion for v70, not a new regression.
+- The HID user-client open records show both services were opened by
+  IOHIDEventServiceUserClient with one client each. The v69 runtime proof
+  (66 GPIO transitions, 67 HID dispatches, 1 client) remains the authoritative
+  GPIO-to-HID evidence; v70 did not add or remove functional GPIO/HID code.
+
+Touch:
+- No touch contact records, no Melfas hardware driver and no touch support.
+  Touch was not tested and must not be claimed.

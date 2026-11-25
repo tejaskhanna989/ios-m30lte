@@ -1,0 +1,52 @@
+v70 physical boot observation (MAIN only)
+
+Source candidate: validation/ios-candidate-v70-out/
+Source commit: 528bb2760e040f1e23ae4f94ae8f870775188797
+Candidate commit: 6e3296ee
+CI: 45592281185 GREEN
+
+2026-11-25T10:32:50Z / 16:02:50 IST
+- Device found in TWRP via ADB.
+- Fresh exact identity gate PASS: SM-M305F, m30lte, bootloader
+  M305FDDU8CVK1, exact known serial (redacted), ro.twrp.boot=1.
+- Evidence: raw/identity-gate.txt
+
+2026-11-25T10:32:59Z..10:33:05Z / 16:02:59..16:03:05 IST
+- ADB reboot download requested; Heimdall detect returned "Device detected".
+- Evidence: raw/download-mode-request.txt, raw/download-mode-reboot.log,
+  raw/heimdall-detect.log
+
+2026-11-25T10:33:17Z..10:33:22Z / 16:03:17..16:03:22 IST
+- BOOT-only flash of ios-boot.img SHA256
+  51eef66440cc4abb0fe99db6a28628e440ee2406813929e587f3b5d5fce4a6e9.
+- Command: heimdall flash --BOOT ... --no-reboot
+- Result: "BOOT upload successful". No USERDATA, SYSTEM or RECOVERY write;
+  no Fastboot; no rollback.
+- Evidence: raw/flash-start.txt, raw/flash-end.txt, raw/heimdall-flash.log
+
+2026-11-25T10:33:28Z..10:33:32Z / 16:03:28..16:03:32 IST
+- heimdall print-pit --resume succeeded (exit 0), ending "Rebooting device...".
+- Evidence: raw/resume-start.txt, raw/resume-end.txt, raw/resume.log
+
+User observation
+- When asked if the screen had settled, the user replied "wait till when?".
+- The 2-minute window after the 16:03:32 IST reboot ended at 16:05:32 IST.
+- At 16:10:28 IST the user reported "Apple logo only".
+- No physical button was pressed after boot: user answered "No, did not press"
+  when asked. Only the recovery key combo was used to return to TWRP.
+- User then reported "In TWRP now".
+
+2026-11-25T10:42:39Z / 16:12:39 IST
+- Device back in TWRP; fresh identity recheck PASS (serial redacted).
+- Evidence: raw/identity-recheck.txt
+
+2026-11-25T10:42:40Z / 16:12:40 IST
+- Read-only pstore pull from /sys/fs/pstore/pmsg-ramoops-0.
+- Raw: 16372 bytes, SHA256
+  f380b9abb7463e7a83e77f274a559143d7da0ed5676732fbd3d26c375cebc77a.
+- Evidence: raw/pstore-*, raw/pmsg-ramoops-0, decoded-pmsg.txt,
+  decoded-pmsg.json
+
+Result: PHYSICAL LOCK-SCREEN NOT OBSERVED. Apple logo persisted and SpringBoard
+still ended with an uncaught NSException. v68 remains the accepted lock-screen
+baseline. Touch remains unsupported and was not tested.

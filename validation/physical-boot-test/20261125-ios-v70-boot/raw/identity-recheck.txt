@@ -1,0 +1,10 @@
+POST-TEST IDENTITY RECHECK (TWRP, read-only)
+IDENTITY_RECHECK_TIME_UTC=2026-11-25T10:42:39Z
+IDENTITY_RECHECK_TIME_IST=2026-11-25T16:12:39+0530
+ro.boot.em.model=SM-M305F MATCH=True
+ro.product.device=m30lte MATCH=True
+ro.boot.bootloader=M305FDDU8CVK1 MATCH=True
+ro.boot.serialno=<redacted> MATCH=True
+ro.serialno=<redacted> MATCH=True
+ro.twrp.boot=1 MATCH=True
+IDENTITY_GATE=PASS

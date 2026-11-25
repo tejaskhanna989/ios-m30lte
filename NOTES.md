@@ -3804,8 +3804,41 @@ authorization for a BOOT-only test of candidate v6.
   platform 9/9, focused tests 26 PASS / 1 known unrelated `0417` FAIL. Kernel
   still contains v68 GPIO/HID producer strings and M30 framebuffer tags;
   bounded v69 `M30 KEY:` / `M30 HID:` tags are absent; no Melfas strings.
-- No v70 BOOT write or device action has happened yet. NEXT: commit candidate
-  metadata/evidence, then with fresh exact identity + Heimdall Download Mode
-  gate perform BOOT-only flash with `--no-reboot`. Acceptance requires observed
-  persistent lock screen, no fatal SpringBoard exception, and retained
-  GPIO -> HID evidence. Do not claim touch support.
+- Candidate metadata/evidence committed as `6e3296ee`.
+
+## 2026-11-25 - v70 BOOT-only physical test: Apple logo persisted, NSException remained (MAIN only)
+
+- Device was in TWRP. Fresh exact identity PASS at `10:32:50Z`
+  (`16:02:50 IST`): `SM-M305F`, `m30lte`, bootloader `M305FDDU8CVK1`, exact
+  known serial (redacted), `ro.twrp.boot=1`. Heimdall Download Mode detect PASS
+  at `10:33:05Z` (`16:03:05 IST`) immediately before the write.
+- BOOT-only flash of v70 `ios-boot.img`
+  `51eef66440cc4abb0fe99db6a28628e440ee2406813929e587f3b5d5fce4a6e9`
+  ran `10:33:17Z..10:33:22Z` (`16:03:17..16:03:22 IST`) with `--no-reboot`;
+  `BOOT upload successful`. Resume `10:33:28Z..10:33:32Z`
+  (`16:03:28..16:03:32 IST`) succeeded and rebooted. No USERDATA, SYSTEM or
+  RECOVERY write; no Fastboot; no rollback.
+- PHYSICAL LOCK-SCREEN: **NOT OBSERVED**. User reported `Apple logo only` at
+  `16:10:28 IST`, about 6.9 minutes after resume. v68 remains the accepted
+  lock-screen baseline. No touch observation or claim.
+- Reverting 0447/0448 did not restore the lock screen. The only remaining
+  source difference from v68 is the logging-only 0446 heartbeat cap; it is a
+  possible runtime difference but is NOT proven causal. The ring again ends
+  with `SBERR terminating due to uncaught exception of type NSException`; no
+  reason, thread or backtrace survived. No broad investigation was started.
+- Device returned to TWRP; identity recheck PASS at `10:42:39Z`
+  (`16:12:39 IST`); read-only pstore pull at `10:42:40Z` (`16:12:40 IST`).
+  Raw 16372 bytes, SHA256
+  `f380b9abb7463e7a83e77f274a559143d7da0ed5676732fbd3d26c375cebc77a`;
+  decode 169 records, `clean=False` (expected wrapped-ring leading bad_magic).
+  Full evidence in `validation/physical-boot-test/20261125-ios-v70-boot/`.
+- GPIO -> HID was **NOT RETESTED**: user confirmed no physical button was
+  pressed after boot. HID touch/button user clients opened with one client each,
+  but no transition records exist. The v69 runtime proof remains authoritative.
+- Heartbeat cap worked: 5 `M30 FB: v=` records versus 138 in v68. Nine
+  `M30 FB: ABI sel=` records survive, including selector 79 twice; no selector
+  response was synthesized.
+- NEXT: do not restore or reflash without explicit user direction. If the user
+  wants to continue narrow work, the next exact-v68 restoration would remove
+  0446 as well, but that has not been built or flashed. Do not claim input or
+  touch support from v70.

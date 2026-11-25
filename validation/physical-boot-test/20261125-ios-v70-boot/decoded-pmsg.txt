@@ -1,0 +1,175 @@
+# M30LTE pstore pmsg decode
+# input_sha256=f380b9abb7463e7a83e77f274a559143d7da0ed5676732fbd3d26c375cebc77a
+# input_bytes=16372 records=169 consumed=16372 clean=False
+[000] @0x00000c len=214 XNU: BBERR objc[57]: Class GCHapticMotor is implemented in both /System/Library/HIDPlugins/ServicePlugins/DualSenseHIDServicePlugin.plugin/DualSenseHIDServicePlugin (0x1005f2e70) and /System/Libr
+[001] @0x0000e2 len=214 XNU: BBERR objc[57]: Class GCGamepadHIDServicePlugin is implemented in both /System/Library/HIDPlugins/ServicePlugins/DualSenseHIDServicePlugin.plugin/DualSenseHIDServicePlugin (0x1005f2ec0) and 
+[002] @0x0001b8 len= 89 XNU: SWEET HID: SweetHIDTouch open by IOHIDEventServiceUserClient -> 1
+[003] @0x000211 len=253 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=3 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=5715 vh=886 oh=0 pr=-5 mo=0x82fd000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc8
+[004] @0x00030e len= 91 XNU: SWEET HID: SweetHIDButtons open by IOHIDEventServiceUserClient -> 1
+[005] @0x000369 len= 61 XNU: SWEET Sandbox: containermanager op 16
+[006] @0x0003a6 len= 61 XNU: SWEET Sandbox: containermanager op 15
+[007] @0x0003e3 len=253 XNU: M30 IRT status: state=2 off=0xa432d84 err=0 replay=4 comp=0 ls=0x4000 sym=0x1e1d3ad84 img=0x1d1c22000 hits=1 tries=29 sc=42 si=26 fo=7087 vh=1066 oh=0 pr=-5 mo=0x61b4000 symmap=0x22ade8000/0x4000@0x0 fb=0x0 basecnt=1 base0=0x1ecc
+[008] @0x0004e0 len= 76 XNU: SWEET AKS: powerd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[009] @0x00052c len= 76 XNU: SWEET AKS: powerd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[010] @0x000578 len= 87 XNU: SWEET AKS: containermanagerd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[011] @0x0005cf len= 91 XNU: SWEET AKS: containermanagerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[012] @0x00062a len= 71 XNU: SWEET WDT: watchdogd sel 0 in 0/0 out 1/0 -> ok
+[013] @0x000671 len= 70 XNU: SWEET AMFI UC: lsd sel 6 in 1/20 out 0/0 -> ok
+[014] @0x0006b7 len= 53 XNU: SWEET Sandbox: cfprefsd op 12
+[015] @0x0006ec len= 80 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[016] @0x00073c len= 80 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[017] @0x00078c len= 73 XNU: SWEET Sandbox: mediaserverd privilege 1015 denied
+[018] @0x0007d5 len=117 XNU: process mediaserverd[29] denied attempt to escape CPU monitor (missing required entitlement).
+[019] @0x00084a len= 80 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[020] @0x00089a len= 80 XNU: SWEET AKS: powerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[021] @0x0008ea len= 73 XNU: SWEET FB: backboardd sel 57 in 0/0 out 1/0 -> 0x0
+[022] @0x000933 len= 81 XNU: SWEET FB: MobileGestaltHelper sel 8 in 0/0 out 2/0 -> 0x0
+[023] @0x000984 len= 82 XNU: SWEET FB: MobileGestaltHelper sel 28 in 0/0 out 1/0 -> 0x0
+[024] @0x0009d6 len= 73 XNU: SWEET FB: backboardd sel 15 in 2/0 out 1/0 -> 0x0
+[025] @0x000a1f len= 73 XNU: SWEET FB: backboardd sel 22 in 1/0 out 0/0 -> 0x0
+[026] @0x000a68 len= 73 XNU: SWEET FB: backboardd sel 29 in 0/0 out 0/8 -> 0x0
+[027] @0x000ab1 len= 73 XNU: SWEET FB: backboardd sel 33 in 1/0 out 0/0 -> 0x0
+[028] @0x000afa len=105 XNU: M30 FB: ABI sel=79 name=backboardd in=2/0 s0=0x4d s1=0x0 s2=0x0 s3=0x0 out=0/1580
+[029] @0x000b63 len= 76 XNU: SWEET FB: backboardd sel 79 in 2/0 out 0/1580 -> 0x0
+[030] @0x000baf len=102 XNU: M30 FB: ABI sel=74 name=backboardd in=1/0 s0=0x0 s1=0x0 s2=0x0 s3=0x0 out=1/64
+[031] @0x000c15 len= 74 XNU: SWEET FB: backboardd sel 74 in 1/0 out 1/64 -> 0x0
+[032] @0x000c5f len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=10611 vh=1795 oh=0 pr=-5 fb=0x0 hb=2 xctest=1 xctchunk=0 csblk=1993 csfail=5 csvok=22797 cfa=0 c
+[033] @0x000d5c len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=10658 vh=1795 oh=0 pr=-5 fb=0x0 hb=2 xctest=1 xctchunk=0 csblk=2004 csfail=5 csvok=22843 cfa=0 c
+[034] @0x000e59 len=100 XNU: M30 FB: v=2400 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[035] @0x000ebd len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=12931 vh=2105 oh=0 pr=-5 fb=0x0 hb=0 xctest=1 xctchunk=0 csblk=2318 csfail=5 csvok=25116
+[036] @0x000fba len= 54 XNU: SWEET Sandbox: distnoted op 28
+[037] @0x000ff0 len= 79 XNU: SWEET AKS: coreduetd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[038] @0x00103f len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[039] @0x001092 len= 79 XNU: SWEET AKS: securityd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[040] @0x0010e1 len= 80 XNU: SWEET AKS: securityd sel 14 arg0 0 in 0/0 out 1/0 -> 0x0
+[041] @0x001131 len= 81 XNU: SWEET AKS: ReportCrash sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[042] @0x001182 len= 85 XNU: SWEET AKS: ReportCrash sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[043] @0x0011d7 len= 81 XNU: SWEET AKS: ReportCrash sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[044] @0x001228 len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=16610 vh=2623 oh=0 pr=-5 fb=0x0 hb=3 xctest=1 xctchunk=0 csblk=2884 csfail=5 csvok=28794 cfa=0 c
+[045] @0x001325 len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=16641 vh=2628 oh=0 pr=-5 fb=0x0 hb=3 xctest=1 xctchunk=0 csblk=2887 csfail=5 csvok=28825 cfa=0 c
+[046] @0x001422 len= 82 XNU: SWEET AKS: mediaserverd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[047] @0x001474 len= 82 XNU: SWEET AKS: mediaserverd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[048] @0x0014c6 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[049] @0x001519 len= 79 XNU: SWEET AKS: coreduetd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[050] @0x001568 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[051] @0x0015bb len=100 XNU: M30 FB: v=3000 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[052] @0x00161f len= 83 XNU: SWEET AKS: contextstored sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[053] @0x001672 len= 83 XNU: SWEET AKS: contextstored sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[054] @0x0016c5 len= 79 XNU: SWEET AKS: securityd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[055] @0x001714 len= 79 XNU: SWEET AKS: securityd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[056] @0x001763 len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 hits=1 tries=29 sc=42 si=26 fo=18590 vh=2871 oh=0 pr=-5 fb=0x0 hb=1 xctest=1 xctchunk=0 csblk=3136 csfail=5 csvok=30774
+[057] @0x001860 len= 82 XNU: SWEET AKS: mediaserverd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[058] @0x0018b2 len= 86 XNU: SWEET AKS: mediaserverd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[059] @0x001908 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[060] @0x00195b len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[061] @0x0019ae len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[062] @0x001a01 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[063] @0x001a54 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[064] @0x001aa7 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[065] @0x001afa len= 82 XNU: SWEET AKS: mobileassetd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[066] @0x001b4c len= 82 XNU: SWEET AKS: mobileassetd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[067] @0x001b9e len= 55 XNU: M30 UI: sb=27 bb=57 reason=none
+[068] @0x001bd5 len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=21921 vh=3690 oh=0 pr=-5 fb=0x0 hb=4 xctest=1 xctchunk=0 csblk=3611 csfail=5 csvok=34106 cfa=0 c
+[069] @0x001cd2 len=253 XNU: M30 IRT final: state=2 off=0xa432d84 err=0 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 hits=1 tries=29 sc=42 si=26 fo=21972 vh=3698 oh=0 pr=-5 fb=0x0 hb=4 xctest=1 xctchunk=0 csblk=3613 csfail=5 csvok=34156 cfa=0 c
+[070] @0x001dcf len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[071] @0x001e22 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[072] @0x001e75 len= 80 XNU: SWEET AKS: seserviced sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[073] @0x001ec5 len= 80 XNU: SWEET AKS: seserviced sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[074] @0x001f15 len= 87 XNU: SWEET AKS: identityservicesd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[075] @0x001f6c len= 91 XNU: SWEET AKS: identityservicesd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[076] @0x001fc7 len= 91 XNU: SWEET AKS: identityservicesd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[077] @0x002022 len= 87 XNU: SWEET AKS: identityservicesd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[078] @0x002079 len=100 XNU: M30 FB: v=3600 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[079] @0x0020dd len= 86 XNU: M30 IRT: patched _internal_release_type off 0xa432d84 (0 -> 3)
+[080] @0x002133 len=137 XNU: CODE SIGNING: cs_invalid_page(0x1fb858000): p=121[xpcproxy] final status 0x22000000, allowing (remove VALID) page
+[081] @0x0021bc len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[082] @0x002215 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[083] @0x00226e len=253 XNU: M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=8705811 nlist_range=146 sc=42 si=26 fo=23470 vh=3873 oh=1 pr=-5 fb=0x0 hb=2 xctest=1 xctchunk=0 csblk=3835 csfail=5 csvok=35713 cfa=0 cfi=5 
+[084] @0x00236b len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[085] @0x0023c4 len=145 XNU: CODE SIGNING: cs_invalid_page(0x1fb858000): p=121[CloudKeychainPro] final status 0x22000000, allowing (remove VALID) page
+[086] @0x002455 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[087] @0x0024ae len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[088] @0x002507 len=137 XNU: CODE SIGNING: cs_invalid_page(0x1fb858000): p=122[xpcproxy] final status 0x22000000, allowing (remove VALID) page
+[089] @0x002590 len=138 XNU: CODE SIGNING: cs_invalid_page(0x1fb858000): p=122[coreauthd] final status 0x22000000, allowing (remove VALID) page
+[090] @0x00261a len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[091] @0x002673 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[092] @0x0026cc len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[093] @0x002725 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[094] @0x00277e len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[095] @0x0027d7 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[096] @0x002830 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[097] @0x002889 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[098] @0x0028e2 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[099] @0x00293b len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[100] @0x002994 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[101] @0x0029ed len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[102] @0x002a46 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[103] @0x002a9f len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[104] @0x002af8 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[105] @0x002b51 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[106] @0x002baa len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[107] @0x002c03 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[108] @0x002c5c len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[109] @0x002cb5 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[110] @0x002d0e len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[111] @0x002d67 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[112] @0x002dc0 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[113] @0x002e19 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[114] @0x002e72 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[115] @0x002ecb len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[116] @0x002f24 len= 89 XNU: SWEET AKS: securityd sel 10 arg0 0 in 2/32 out 1/40 -> 0xe00002c7
+[117] @0x002f7d len=251 XNU: M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23470 vh=3873 oh=1 pr=-5 fb=0x0 hb=5 xctest=1 xctchunk=0 csblk=4190 csfail=5 csvok=37785 cfa=0 cfi=5 cfp=0)
+[118] @0x003078 len= 88 XNU: SWEET AKS: CloudKeychainProxy sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[119] @0x0030d0 len= 88 XNU: SWEET AKS: CloudKeychainProxy sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[120] @0x003128 len=251 XNU: M30 IRT: patched (final state=3 off=0xa432d84 sym=0x1e1d3ad84 comp=0 ls=0x4000 nlist_cnt=0 nlist_range=0 sc=42 si=26 fo=23470 vh=3873 oh=1 pr=-5 fb=0x0 hb=5 xctest=1 xctchunk=0 csblk=4195 csfail=5 csvok=37817 cfa=0 cfi=5 cfp=0)
+[121] @0x003223 len= 68 XNU: M30 FB: power req=0 off=0 sw=0 pr=0 copied=0
+[122] @0x003267 len= 44 XNU: SWEET FB: display on
+[123] @0x003293 len= 73 XNU: SWEET FB: backboardd sel 12 in 1/0 out 0/0 -> 0x0
+[124] @0x0032dc len=103 XNU: M30 FB: ABI sel=79 name=backboardd in=2/0 s0=0x40 s1=0x0 s2=0x0 s3=0x0 out=0/40
+[125] @0x003343 len= 74 XNU: SWEET FB: backboardd sel 79 in 2/0 out 0/40 -> 0x0
+[126] @0x00338d len= 63 XNU: M30 FB: wait #1 token=0 before=0 done=0
+[127] @0x0033cc len= 72 XNU: SWEET FB: backboardd sel 6 in 3/0 out 0/0 -> 0x0
+[128] @0x003414 len= 76 XNU: SWEET FB: backboardd sel 27 in 0/0 out 0/3084 -> 0x0
+[129] @0x003460 len= 76 XNU: SWEET FB: backboardd sel 17 in 0/3084 out 0/0 -> 0x0
+[130] @0x0034ac len=101 XNU: M30 FB: ABI sel=84 name=backboardd in=0/4 s0=0x0 s1=0x0 s2=0x0 s3=0x0 out=0/0
+[131] @0x003511 len= 73 XNU: SWEET FB: backboardd sel 84 in 0/4 out 0/0 -> 0x0
+[132] @0x00355a len=105 XNU: M30 FB: ABI sel=50 name=backboardd in=2/0 s0=0x10000 s1=0x0 s2=0x0 s3=0x0 out=0/0
+[133] @0x0035c3 len= 73 XNU: SWEET FB: backboardd sel 50 in 2/0 out 0/0 -> 0x0
+[134] @0x00360c len= 53 XNU: SWEET SURF: backboardd sel 13
+[135] @0x003641 len=101 XNU: M30 FB: ABI sel=68 name=backboardd in=1/8 s0=0x7 s1=0x0 s2=0x0 s3=0x0 out=0/0
+[136] @0x0036a6 len= 73 XNU: SWEET FB: backboardd sel 68 in 1/8 out 0/0 -> 0x0
+[137] @0x0036ef len=136 XNU: SWEET SURF: backboardd create id 2 1080x2340 fmt 0x42475241 bpe 4 bpr 4352 planes 0 size 10186752 keys 11 -> 0x0
+[138] @0x003777 len= 52 XNU: SWEET SURF: backboardd sel 9
+[139] @0x0037ab len= 53 XNU: SWEET SURF: backboardd sel 27
+[140] @0x0037e0 len= 52 XNU: SWEET SURF: backboardd sel 5
+[141] @0x003814 len= 53 XNU: SWEET SURF: backboardd trap 2
+[142] @0x003849 len= 53 XNU: SWEET SURF: backboardd trap 3
+[143] @0x00387e len= 72 XNU: SWEET FB: backboardd sel 4 in 0/0 out 1/0 -> 0x0
+[144] @0x0038c6 len=101 XNU: M30 FB: ABI sel=68 name=backboardd in=1/8 s0=0x6 s1=0x0 s2=0x0 s3=0x0 out=0/0
+[145] @0x00392b len= 73 XNU: SWEET FB: backboardd sel 68 in 1/8 out 0/0 -> 0x0
+[146] @0x003974 len= 85 XNU: M30 FB: staged #1 id=1 mask=0x80000007 layers=2/0/0/0 dirty=1
+[147] @0x0039c9 len= 75 XNU: SWEET FB: backboardd sel 5 in 0/1132 out 0/0 -> 0x0
+[148] @0x003a14 len= 72 XNU: SWEET FB: backboardd sel 3 in 2/0 out 1/0 -> 0x0
+[149] @0x003a5c len= 53 XNU: SWEET SURF: backboardd sel 34
+[150] @0x003a91 len= 63 XNU: M30 FB: wait #2 token=1 before=0 done=0
+[151] @0x003ad0 len=102 XNU: M30 FB: ABI sel=55 name=backboardd in=1/72 s0=0x9 s1=0x0 s2=0x0 s3=0x0 out=0/0
+[152] @0x003b36 len= 74 XNU: SWEET FB: backboardd sel 55 in 1/72 out 0/0 -> 0x0
+[153] @0x003b80 len=105 XNU: M30 FB: ABI sel=50 name=backboardd in=2/0 s0=0x10000 s1=0x0 s2=0x0 s3=0x0 out=0/0
+[154] @0x003be9 len= 63 XNU: M30 FB: wait #3 token=1 before=0 done=0
+[155] @0x003c28 len= 78 XNU: M30 FB: staged #2 id=2 mask=0x1 layers=2/0/0/0 dirty=1
+[156] @0x003c76 len= 81 XNU: M30 FB: present #1 copied=10108800 skip=3 last=1 mask=0x1
+[157] @0x003cc7 len= 55 XNU: M30 FB: done #1 copied=10108800
+[158] @0x003cfe len= 54 XNU: M30 FB: notify mask=0x0 done=1
+[159] @0x003d34 len= 63 XNU: M30 FB: wait #4 token=1 before=1 done=1
+[160] @0x003d73 len= 78 XNU: M30 FB: staged #3 id=3 mask=0x1 layers=3/0/0/0 dirty=1
+[161] @0x003dc1 len= 81 XNU: M30 FB: present #2 copied=10108800 skip=6 last=1 mask=0x1
+[162] @0x003e12 len= 55 XNU: M30 FB: done #2 copied=10108800
+[163] @0x003e49 len= 54 XNU: M30 FB: notify mask=0x0 done=2
+[164] @0x003e7f len=107 XNU: M30 FB: v=4200 sw=3 pr=2 copied=20217600 skip=6 last=1 dirty=0 power=0 cl=1 ticks=2
+[165] @0x003eea len=107 XNU: M30 FB: v=4800 sw=3 pr=2 copied=20217600 skip=6 last=1 dirty=0 power=0 cl=1 ticks=2
+[166] @0x003f55 len= 41 XNU: SBERR libc++abi: 
+[167] @0x003f7e len= 87 XNU: SBERR terminating due to uncaught exception of type NSException
+[168] @0x003fd5 len= 31 XNU: SBERR 
+
+# ISSUE @0x000000 bad_magic: expected 0x6c, got 0x2f
+# WARNING: framing was not fully valid; output may be incomplete
