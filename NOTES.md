@@ -3888,3 +3888,26 @@ authorization for a BOOT-only test of candidate v6.
   control OUT or polled serial, gated by `m30touchinject=1`) is specified but
   not implemented. Synthetic events reaching HID and SpringBoard response are
   therefore NOT established.
+
+## 2026-11-25 - v68 container metadata fix candidate (host-only; no flash)
+
+- Read-only HFS+ inspection of USERDATA via `tools/hfsplus_ro.py` found 595 MCM
+  metadata plists and **0/595** `MCMMetadataUUID` values matching any directory
+  name. backboardd metadata declares UUID `7993DF92-...` which has no directory;
+  its actual container dir `6532C5C7-...` does have Library/Caches. SpringBoard
+  metadata UUID `97F8E922-...` also has no directory.
+- Correlates with recovered `.ips` reports: backboardd dies in
+  BSSystemContainerForCurrentProcessPathProvider libraryPath/cachesPath ->
+  `+[NSURL fileURLWithPath:]`; lsd/assistantd/installcoordinationd fail in
+  container URL code at the same time. XNU/HID/display not implicated.
+- Minimal host-side fix added to `tools/m30lte-root-tweaks.py`:
+  `fix_container_metadata()` aligns MCMMetadataUUID with container dir names on
+  a staged rootfs image. Added read-only verifier and 4 focused tests.
+- CI `45649874886` (iOS root container metadata tests) GREEN on `56d6d6c1`.
+  Commits: `bd9dada6`, `56d6d6c1`. Focused sweep 31 PASS / 1 known 0417 FAIL.
+- No device write, no USERDATA change, no kernel/framebuffer/security change.
+  A new rootfs image must be staged and approved separately before any write.
+- m30touch readiness: `tools/m30touch.py` exists but device-side transport
+  (vendor control OUT or polled serial, gated by `m30touchinject=1`) is still
+  required before synthetic HID injection can be tested. Physical Melfas
+  driver remains a separate task.
