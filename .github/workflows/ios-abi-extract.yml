@@ -88,14 +88,20 @@ jobs:
           sudo find "$WORK/mnt" -type f \
             \( -name 'dyld_shared_cache_arm64*' -o -name '*.symbols' \) \
             -printf '%p %s bytes\n' | sort | tee "$WORK/out/cache-paths.txt"
-          DSC=$(sudo find "$WORK/mnt" -type f -name 'dyld_shared_cache_arm64' | head -1)
-          test -n "$DSC" || { echo "no arm64 dyld shared cache found" >&2; exit 1; }
+          DSC=$(sudo find "$WORK/mnt/System/Library/Caches/com.apple.dyld" -maxdepth 1 \
+            -type f -name 'dyld_shared_cache_arm64' | head -1)
+          test -n "$DSC" || { echo "no main arm64 dyld shared cache found" >&2; exit 1; }
           printf 'DSC=%s\n' "$DSC" | tee "$WORK/out/dsc-path.txt"
           printf '%s\n' "ipsw_version=$IPSW_VERSION" "root_sha256=$EXPECT_SHA" > "$WORK/out/provenance.txt"
           "$WORK/bin/ipsw" dyld info "$DSC" --dylibs > "$WORK/out/dyld-dylibs.txt" 2>&1 || true
           "$WORK/bin/ipsw" dyld image "$DSC" > "$WORK/out/images.txt" 2>&1 || true
 
-          for IMAGE in IOMobileFramebuffer backboardd QuartzCore BackBoardServices SpringBoard; do
+          for IMAGE in \
+            '/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer' \
+            '/usr/libexec/backboardd' \
+            '/System/Library/Frameworks/QuartzCore.framework/QuartzCore' \
+            '/System/Library/PrivateFrameworks/BackBoardServices.framework/BackBoardServices' \
+            '/System/Library/PrivateFrameworks/SpringBoard.framework/SpringBoard'; do
             echo "### $IMAGE" >> "$WORK/out/image-closures.txt"
             "$WORK/bin/ipsw" dyld image "$DSC" "$IMAGE" >> "$WORK/out/image-closures.txt" 2>&1 || true
           done
@@ -112,7 +118,7 @@ jobs:
 
           python3 - <<'PY' > "$WORK/out/symbols.json"
           import json
-          print(json.dumps([
+          names = [
               "IOMobileFramebufferGetBlock",
               "IOMobileFramebufferGetBlockSize",
               "IOMobileFramebufferSupportedFrameInfo",
@@ -128,15 +134,27 @@ jobs:
               "IOMobileFramebufferSetClientCallbacks",
               "IOMobileFramebufferEnable",
               "IOMobileFramebufferDisable",
-          ], indent=2))
+          ]
+          print(json.dumps([{"pattern": name} for name in names], indent=2))
           PY
           "$WORK/bin/ipsw" dyld symaddr "$DSC" --in "$WORK/out/symbols.json" --all \
             > "$WORK/out/symaddr.json" 2>&1 || true
 
-          "$WORK/bin/ipsw" dyld disass "$DSC" --image IOMobileFramebuffer \
+          "$WORK/bin/ipsw" dyld disass "$DSC" \
+            --image '/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer' \
             --quiet --force > "$WORK/out/iomfb-disasm.txt" 2>&1 || true
-          "$WORK/bin/ipsw" dyld disass "$DSC" --image backboardd \
+          "$WORK/bin/ipsw" dyld disass "$DSC" --image '/usr/libexec/backboardd' \
             --quiet --force > "$WORK/out/backboardd-disasm.txt" 2>&1 || true
+
+          for FILE in iomfb-disasm.txt backboardd-disasm.txt; do
+            test -s "$WORK/out/$FILE" || { echo "$FILE is empty" >&2; exit 1; }
+            if grep -q -E 'image not in|failed to parse|⨯' "$WORK/out/$FILE"; then
+              echo "$FILE contains an ipsw error" >&2
+              exit 1
+            fi
+          done
+          find "$WORK/out/extracted" -type f -printf '%P %s bytes\n' | sort \
+            | tee "$WORK/out/extracted-files.txt"
 
           grep -n -i -E 'GetBlock|SupportedFrameInfo|FrameInfo|IOMobileFramebuffer|IOMFB' \
             "$WORK/out/backboardd-disasm.txt" \

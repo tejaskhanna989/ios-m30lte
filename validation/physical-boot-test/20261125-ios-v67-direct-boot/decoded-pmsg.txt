@@ -1,0 +1,193 @@
+# M30LTE pstore pmsg decode
+# input_sha256=04ab4e093b19184c5ad67f212c47c46dce06063067c9b4480dbd09d3a0ae9028
+# input_bytes=16464 records=187 consumed=16372 clean=False
+[000] @0x000006 len= 76 XNU: /dev/emmcroot0 on / (hfs, local, journaled, noatime)
+[001] @0x000052 len=215 XNU: ERROR: BindFS bindfs_mount: lookup of /private/preboot/AE4797F8399C19FFEE77D2F58DEE886381B245190ABE1B5684DEC49566508882EDCEA021F4F54EC64A4C8B8BE21ACFB3/usr/standalone/firmware failed error: 2
+[002] @0x000129 len=116 XNU: com.apple.xpc.launchd|1969-12-31 16:00:03.481828 (data-protection) <Notice>: Doing boot task
+[003] @0x00019d len= 60 XNU: A5XELTE KEYS: key=0 down=0 gpio=0xa0
+[004] @0x0001d9 len= 58 XNU: SWEET HID: key 0x30 up (0 clients)
+[005] @0x000213 len= 60 XNU: A5XELTE KEYS: key=2 down=0 gpio=0xe0
+[006] @0x00024f len= 58 XNU: SWEET HID: key 0xea up (0 clients)
+[007] @0x000289 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x20
+[008] @0x0002c5 len= 60 XNU: SWEET HID: key 0x30 down (0 clients)
+[009] @0x000301 len= 60 XNU: A5XELTE KEYS: key=2 down=1 gpio=0x20
+[010] @0x00033d len= 60 XNU: SWEET HID: key 0xea down (0 clients)
+[011] @0x000379 len= 75 XNU: init_data_protection: No SEP present on this device
+[012] @0x0003c4 len=120 XNU: com.apple.xpc.launchd|1969-12-31 16:00:04.325589 (finish-obliteration) <Notice>: Doing boot task
+[013] @0x00043c len= 50 XNU: Obliterator: In INIT check
+[014] @0x00046e len=125 XNU: Wed Dec 31 16:00:04 1969: checkOblitNVRAMkey: IORegistryEntryFromPath failed [gF: 0x0000000000000000]
+[015] @0x0004eb len= 90 XNU: Obliterator: No obliteration needed, continue booting, returning 0
+[016] @0x000545 len=123 XNU: com.apple.xpc.launchd|1969-12-31 16:00:04.690557 (detect-installed-roots) <Notice>: Doing boot task
+[017] @0x0005c0 len=111 XNU: com.apple.xpc.launchd|1969-12-31 16:00:04.692666 <Notice>: No cookie from system volume
+[018] @0x00062f len=224 XNU: com.apple.xpc.launchd|1969-12-31 16:00:04.692962 <Notice>: No cookie: /private/preboot/AE4797F8399C19FFEE77D2F58DEE886381B245190ABE1B5684DEC49566508882EDCEA021F4F54EC64A4C8B8BE21ACFB3/.roots-installed
+[019] @0x00070f len=117 XNU: com.apple.xpc.launchd|1969-12-31 16:00:04.693001 (commit-boot-mode) <Notice>: Doing boot task
+[020] @0x000784 len=110 XNU: com.apple.xpc.launchd|1969-12-31 16:00:04.693024 <Notice>: boot-mode committed: (null)
+[021] @0x0007f2 len=122 XNU: com.apple.xpc.launchd|1969-12-31 16:00:04.693046 (restore-datapartition) <Notice>: Doing boot task
+[022] @0x00086c len=137 XNU: com.apple.xpc.launchd|1969-12-31 16:00:04.694623 (restore-datapartition) <Notice>: optional boot task not present
+[023] @0x0008f5 len=114 XNU: com.apple.xpc.launchd|1969-12-31 16:00:04.694703 (mount-phase-2) <Notice>: Doing boot task
+[024] @0x000967 len= 53 XNU: failed to get filesystem info
+[025] @0x00099c len= 53 XNU: failed to get filesystem info
+[026] @0x0009d1 len= 78 XNU: mount: data volume missing, but not required in env: 0
+[027] @0x000a1f len=142 XNU: ERROR: BindFS bindfs_mount: lookup of /private/var/hardware/Pearl/System/Library/Pearl/ReferenceFrames failed error: 2
+[028] @0x000aad len=155 XNU: ERROR: BindFS bindfs_mount: lookup of /private/var/hardware/FactoryData/System/Library/Caches/com.apple.factorydata failed error: 2
+[029] @0x000b48 len=210 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=1 comp=0 ls=0x4000 sym=0x0 img=0x0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 mo=0x0 symmap=0x0/0x0@0x0 fb=0x0 basecnt=0 base0=0x0/0x0@0x0
+[030] @0x000c1a len=122 XNU: com.apple.xpc.launchd|1969-12-31 16:00:04.709586 (init-with-data-volume) <Notice>: Doing boot task
+[031] @0x000c94 len=117 XNU: com.apple.xpc.launchd|1969-12-31 16:00:04.739037 (MSUEarlyBootTask) <Notice>: Doing boot task
+[032] @0x000d09 len=210 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=1 comp=0 ls=0x4000 sym=0x0 img=0x0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 mo=0x0 symmap=0x0/0x0@0x0 fb=0x0 basecnt=0 base0=0x0/0x0@0x0
+[033] @0x000ddb len= 66 XNU: MSUEarlyBootTask: MSUEarlyBootTask running
+[034] @0x000e1d len=226 XNU: main: Content from the ramdisk will be present at /private/var/MobileSoftwareUpdate//ae4797f8399c19ffee77d2f58dee886381b245190abe1b5684dec49566508882edcea021f4f54ec64a4c8b8be21acfb3-MSUData if it exists
+[035] @0x000eff len= 73 XNU: MSUEarlyBootTask: I have nothing to do. Goodbye!!
+[036] @0x000f48 len=105 XNU: com.apple.xpc.launchd|1969-12-31 16:00:05.193301 (fips) <Notice>: Doing boot task
+[037] @0x000fb1 len= 84 XNU: About to call the FIPS_POST function in the corecrypto.dylib
+[038] @0x001005 len= 41 XNU: Tracing: disabled
+[039] @0x00102e len=153 XNU: FIPSPOST_USER [327940265] fipspost_post:152: [FIPSPOST][Module-ID] Apple corecrypto Module v13.0 [Apple ARM, User, Software, SL1]
+[040] @0x0010c7 len=104 XNU: FIPSPOST_USER [328156064] fipspost_post:160: PASSED: (2 ms) - fipspost_post_hmac
+[041] @0x00112f len=110 XNU: FIPSPOST_USER [328907406] fipspost_post:164: PASSED: (11 ms) - fipspost_post_integrity
+[042] @0x00119d len=109 XNU: FIPSPOST_USER [328938176] fipspost_post:168: PASSED: (0 ms) - fipspost_post_indicator
+[043] @0x00120a len=107 XNU: FIPSPOST_USER [328947458] fipspost_post:169: PASSED: (0 ms) - fipspost_post_aes_ecb
+[044] @0x001275 len=107 XNU: FIPSPOST_USER [328967109] fipspost_post:170: PASSED: (0 ms) - fipspost_post_aes_cbc
+[045] @0x0012e0 len=108 XNU: FIPSPOST_USER [329636598] fipspost_post:171: PASSED: (10 ms) - fipspost_post_rsa_sig
+[046] @0x00134c len=106 XNU: FIPSPOST_USER [330813554] fipspost_post:172: PASSED: (18 ms) - fipspost_post_ecdsa
+[047] @0x0013b6 len=104 XNU: FIPSPOST_USER [330867019] fipspost_post:173: PASSED: (0 ms) - fipspost_post_ecdh
+[048] @0x00141e len=107 XNU: FIPSPOST_USER [330890215] fipspost_post:174: PASSED: (0 ms) - fipspost_post_aes_ccm
+[049] @0x001489 len=108 XNU: FIPSPOST_USER [330900132] fipspost_post:175: PASSED: (0 ms) - fipspost_post_aes_cmac
+[050] @0x0014f5 len=104 XNU: FIPSPOST_USER [330913948] fipspost_post:176: PASSED: (0 ms) - fipspost_post_hkdf
+[051] @0x00155d len=106 XNU: FIPSPOST_USER [332533443] fipspost_post:177: PASSED: (25 ms) - fipspost_post_pbkdf
+[052] @0x0015c7 len=109 XNU: FIPSPOST_USER [332546331] fipspost_post:178: PASSED: (0 ms) - fipspost_post_drbg_hmac
+[053] @0x001634 len=107 XNU: FIPSPOST_USER [332558039] fipspost_post:180: PASSED: (0 ms) - fipspost_post_kdf_ctr
+[054] @0x00169f len=107 XNU: FIPSPOST_USER [332567301] fipspost_post:181: PASSED: (0 ms) - fipspost_post_aes_gcm
+[055] @0x00170a len=107 XNU: FIPSPOST_USER [332576387] fipspost_post:182: PASSED: (0 ms) - fipspost_post_aes_xts
+[056] @0x001775 len=108 XNU: FIPSPOST_USER [332588487] fipspost_post:183: PASSED: (0 ms) - fipspost_post_tdes_ecb
+[057] @0x0017e1 len=108 XNU: FIPSPOST_USER [332598186] fipspost_post:184: PASSED: (0 ms) - fipspost_post_drbg_ctr
+[058] @0x00184d len=105 XNU: FIPSPOST_USER [334909998] fipspost_post:186: PASSED: (36 ms) - fipspost_post_ffdh
+[059] @0x0018b6 len=112 XNU: FIPSPOST_USER [336225736] fipspost_post:187: PASSED: (20 ms) - fipspost_post_rsa_enc_dec
+[060] @0x001926 len= 94 XNU: FIPSPOST_USER [336235382] fipspost_post:206: all tests PASSED (132 ms)
+[061] @0x001984 len=107 XNU: Returned from calling the FIPS_POST function in the corecrypto.dylib: result = true
+[062] @0x0019ef len=107 XNU: com.apple.xpc.launchd|1969-12-31 16:00:05.380698 (keybag) <Notice>: Doing boot task
+[063] @0x001a5a len= 47 XNU: ****** IN MKB_INIT ****
+[064] @0x001a89 len= 77 XNU: SWEET AKS: keybagd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[065] @0x001ad6 len= 78 XNU: SWEET AKS: keybagd sel 14 arg0 0 in 0/0 out 1/0 -> 0x0
+[066] @0x001b24 len= 78 XNU: SWEET AKS: keybagd sel 14 arg0 0 in 0/0 out 1/0 -> 0x0
+[067] @0x001b72 len= 90 XNU: MKB_INIT: mount is with NO CPROTECT:0x1480d000 on  (/private/var/)
+[068] @0x001bcc len= 94 XNU: MKB_INIT: mount point (/private/var/) does not support Data Protection
+[069] @0x001c2a len= 54 XNU: MKB_INIT: System Keybag loaded
+[070] @0x001c60 len= 82 XNU: MKB_INIT: Could not get options entry from the device tree
+[071] @0x001cb2 len= 92 XNU: Unable to set /private/var//tmp to class D!****** DONE MKB_INIT ****
+[072] @0x001d0e len=113 XNU: com.apple.xpc.launchd|1969-12-31 16:00:05.741762 (usermanagerd) <Notice>: Doing boot task
+[073] @0x001d7f len= 47 XNU: ****** IN UMD_INIT ****
+[074] @0x001dae len= 60 XNU: ****** STARTING EARLYBOOT SETUP ****
+[075] @0x001dea len= 58 XNU: UMD_INIT: STARTING EARLYBOOT SETUP
+[076] @0x001e24 len= 55 XNU: UMD_INIT: LOADING USER SESSIONS
+[077] @0x001e5b len= 61 XNU: UMD_INIT: Device Configuration Type:0
+[078] @0x001e98 len= 51 XNU: UMD_INIT: BOOTEDUSER is:501
+[079] @0x001ecb len= 92 XNU: UMD_INIT: diskLoadUserSessions, APNSID:, set to 18446744073709551615
+[080] @0x001f27 len= 63 XNU: UMD_INIT: Reloaded _gUserSessionTable (
+[081] @0x001f66 len= 33 XNU:         {
+[082] @0x001f87 len= 92 XNU:         MKBUserSessionCreateTimeStamp = "1970-01-01 00:00:05 +0000";
+[083] @0x001fe3 len= 56 XNU:         MKBUserSessionDirty = 0;
+[084] @0x00201b len= 67 XNU:         MKBUserSessionDisplayName = mobile;
+[085] @0x00205e len= 65 XNU:         MKBUserSessionFirstName = mobile;
+[086] @0x00209f len= 61 XNU:         MKBUserSessionForeground = 1;
+[087] @0x0020dc len= 60 XNU:         MKBUserSessionGroupID = 501;
+[088] @0x002118 len= 55 XNU:         MKBUserSessionID = 501;
+[089] @0x00214f len= 65 XNU:         MKBUserSessionLanguage = "en_US";
+[090] @0x002190 len= 64 XNU:         MKBUserSessionLastName = mobile;
+[091] @0x0021d0 len= 77 XNU:         MKBUserSessionLibinfoHomeDir = "/var/mobile";
+[092] @0x00221d len= 91 XNU:         MKBUserSessionLoginTimeStamp = "1970-01-01 00:00:05 +0000";
+[093] @0x002278 len= 60 XNU:         MKBUserSessionLoginUser = 0;
+[094] @0x0022b4 len= 60 XNU:         MKBUserSessionName = mobile;
+[095] @0x0022f0 len= 61 XNU:         MKBUserSessionNeedsMount = 1;
+[096] @0x00232d len= 65 XNU:         MKBUserSessionShortName = mobile;
+[097] @0x00236e len= 70 XNU:         MKBUserSessionType = UserSessionOther;
+[098] @0x0023b4 len= 92 XNU:         MKBUserSessionUUID = "A156A4E1-43EF-4E91-9DA6-6DB1F5DA0A30";
+[099] @0x002410 len= 82 XNU:         MKBUserSessionVolumeFSType = UserVolumeAPFSNative;
+[100] @0x002462 len= 61 XNU:         MKBUserSessionisAdminKey = 1;
+[101] @0x00249f len= 60 XNU:         MKBUserSessionisPrimary = 1;
+[102] @0x0024db len= 29 XNU:     }
+[103] @0x0024f8 len= 25 XNU: )
+[104] @0x002511 len= 61 XNU: UMD_INIT: FOUND NO SYNC BUBBLE UIDS:0
+[105] @0x00254e len= 59 XNU: UMD_INIT: FOUND NO LRU TABLE UIDS:0
+[106] @0x002589 len= 77 XNU: UMD_INIT: FOUND NO VOLUMETYPE, setting up volume type
+[107] @0x0025d6 len= 77 XNU: UMD_INIT: Set the new volume type to APFSNativeDevice
+[108] @0x002623 len= 55 XNU: UMD_INIT: SAVING SESSION TODISK
+[109] @0x00265a len= 55 XNU: UMD_INIT: SESSION TABLE TO BLOB
+[110] @0x002691 len= 65 XNU: UMD_INIT: NOTHING TO SAVE IN LRU UID LIST
+[111] @0x0026d2 len= 62 XNU: UMD_INIT: diskSaveUserSessions Success
+[112] @0x002710 len= 76 XNU: UMD_INIT: Read user sessions in _gUserSessionTable (
+[113] @0x00275c len= 33 XNU:         {
+[114] @0x00277d len= 92 XNU:         MKBUserSessionCreateTimeStamp = "1970-01-01 00:00:05 +0000";
+[115] @0x0027d9 len= 56 XNU:         MKBUserSessionDirty = 0;
+[116] @0x002811 len= 67 XNU:         MKBUserSessionDisplayName = mobile;
+[117] @0x002854 len= 65 XNU:         MKBUserSessionFirstName = mobile;
+[118] @0x002895 len= 61 XNU:         MKBUserSessionForeground = 1;
+[119] @0x0028d2 len= 60 XNU:         MKBUserSessionGroupID = 501;
+[120] @0x00290e len= 55 XNU:         MKBUserSessionID = 501;
+[121] @0x002945 len= 65 XNU:         MKBUserSessionLanguage = "en_US";
+[122] @0x002986 len= 64 XNU:         MKBUserSessionLastName = mobile;
+[123] @0x0029c6 len= 77 XNU:         MKBUserSessionLibinfoHomeDir = "/var/mobile";
+[124] @0x002a13 len= 91 XNU:         MKBUserSessionLoginTimeStamp = "1970-01-01 00:00:05 +0000";
+[125] @0x002a6e len= 60 XNU:         MKBUserSessionLoginUser = 0;
+[126] @0x002aaa len= 60 XNU:         MKBUserSessionName = mobile;
+[127] @0x002ae6 len= 61 XNU:         MKBUserSessionNeedsMount = 1;
+[128] @0x002b23 len= 65 XNU:         MKBUserSessionShortName = mobile;
+[129] @0x002b64 len= 70 XNU:         MKBUserSessionType = UserSessionOther;
+[130] @0x002baa len= 92 XNU:         MKBUserSessionUUID = "A156A4E1-43EF-4E91-9DA6-6DB1F5DA0A30";
+[131] @0x002c06 len= 82 XNU:         MKBUserSessionVolumeFSType = UserVolumeAPFSNative;
+[132] @0x002c58 len= 61 XNU:         MKBUserSessionisAdminKey = 1;
+[133] @0x002c95 len= 60 XNU:         MKBUserSessionisPrimary = 1;
+[134] @0x002cd1 len= 29 XNU:     }
+[135] @0x002cee len= 25 XNU: )
+[136] @0x002d07 len= 54 XNU: UMD_INIT: LOADED USER SESSIONS
+[137] @0x002d3d len= 65 XNU: UMD_INIT: failed to read nextsession dict
+[138] @0x002d7e len= 85 XNU: UMD_INIT: Unable to Obtained foreground, curFG:502, nextID:-1
+[139] @0x002dd3 len=107 XNU: UMD_INIT: Failed to get next session, booting with default id to be Loginwindow UID
+[140] @0x002e3e len= 51 XNU: UMD_INIT: BootedUser is:501
+[141] @0x002e71 len=102 XNU: UMD_INIT: Regular mode Setup for user:501: Num Sessions:1, CurrentsessionID:-1
+[142] @0x002ed7 len= 88 XNU: UMD_INIT: Set Foreground ID + multiuser in commpage successfully
+[143] @0x002f2f len= 51 XNU: UMD_INIT: LOADING PERSONA..
+[144] @0x002f62 len= 53 XNU: UMD_INIT: Manifest version: 1
+[145] @0x002f97 len= 78 XNU: UMD_INIT: Loaded Persona Generation ID from manifest:1
+[146] @0x002fe5 len=113 XNU: UMD_INIT: Adding 200 entry to persona Table for user:A156A4E1-43EF-4E91-9DA6-6DB1F5DA0A30
+[147] @0x003056 len=113 XNU: UMD_INIT: Adding 100 entry to persona Table for user:A156A4E1-43EF-4E91-9DA6-6DB1F5DA0A30
+[148] @0x0030c7 len=111 XNU: UMD_INIT: Adding 0 entry to persona Table for user:A156A4E1-43EF-4E91-9DA6-6DB1F5DA0A30
+[149] @0x003136 len=114 XNU: UMD_INIT: Adding 1000 entry to persona Table for user:A156A4E1-43EF-4E91-9DA6-6DB1F5DA0A30
+[150] @0x0031a8 len=112 XNU: UMD_INIT: Adding 99 entry to persona Table for user:FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF
+[151] @0x003218 len=113 XNU: UMD_INIT: Adding 199 entry to persona Table for user:FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF
+[152] @0x003289 len= 57 XNU: UMD_INIT: Loaded persona manifest
+[153] @0x0032c2 len= 96 XNU: UMD_INIT: Failed to retrieve info for kernel persona 99: No such process
+[154] @0x003322 len= 68 XNU: UMD_INIT: PersonaID:99 not loaded, loading..
+[155] @0x003366 len= 96 XNU: UMD_INIT: Allocated kernel persona with ID: 99, Type: 4, UID: 4294967295
+[156] @0x0033c6 len= 97 XNU: UMD_INIT: Failed to retrieve info for kernel persona 199: No such process
+[157] @0x003427 len= 69 XNU: UMD_INIT: PersonaID:199 not loaded, loading..
+[158] @0x00346c len= 97 XNU: UMD_INIT: Allocated kernel persona with ID: 199, Type: 6, UID: 4294967295
+[159] @0x0034cd len= 97 XNU: UMD_INIT: Failed to retrieve info for kernel persona 200: No such process
+[160] @0x00352e len= 69 XNU: UMD_INIT: PersonaID:200 not loaded, loading..
+[161] @0x003573 len= 90 XNU: UMD_INIT: Allocated kernel persona with ID: 200, Type: 6, UID: 501
+[162] @0x0035cd len= 97 XNU: UMD_INIT: Failed to retrieve info for kernel persona 100: No such process
+[163] @0x00362e len= 69 XNU: UMD_INIT: PersonaID:100 not loaded, loading..
+[164] @0x003673 len= 90 XNU: UMD_INIT: Allocated kernel persona with ID: 100, Type: 4, UID: 501
+[165] @0x0036cd len= 98 XNU: UMD_INIT: Failed to retrieve info for kernel persona 1000: No such process
+[166] @0x00372f len= 70 XNU: UMD_INIT: PersonaID:1000 not loaded, loading..
+[167] @0x003775 len= 91 XNU: UMD_INIT: Allocated kernel persona with ID: 1000, Type: 5, UID: 501
+[168] @0x0037d0 len= 55 XNU: UMD_INIT: setup kernel personas
+[169] @0x003807 len=124 XNU: UMD_INIT: Failed to notify_register_check com.apple.mobile.usermanagerd.personageneration_changed: 8
+[170] @0x003883 len=119 XNU: UMD_INIT: Failed to notify generation changed: Failed to register for darwin notification token
+[171] @0x0038fa len= 54 XNU: UMD_INIT: DONE EARLYBOOT SETUP
+[172] @0x003930 len= 56 XNU: ****** DONE EARLYBOOT SETUP ****
+[173] @0x003968 len= 49 XNU: ****** DONE UMD_INIT ****
+[174] @0x003999 len=113 XNU: com.apple.xpc.launchd|1969-12-31 16:00:06.594538 (dirs_cleaner) <Notice>: Doing boot task
+[175] @0x003a0a len= 56 XNU: dc_reset: /tmp: Invalid argument
+[176] @0x003a42 len= 60 XNU: dc_reset: /var/run: Invalid argument
+[177] @0x003a7e len=210 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=2 comp=0 ls=0x4000 sym=0x0 img=0x0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 mo=0x0 symmap=0x0/0x0@0x0 fb=0x0 basecnt=0 base0=0x0/0x0@0x0
+[178] @0x003b50 len=210 XNU: M30 IRT status: state=4 off=0x0 err=0 replay=2 comp=0 ls=0x4000 sym=0x0 img=0x0 hits=0 tries=0 sc=0 si=-1 fo=0 vh=0 oh=0 pr=0 mo=0x0 symmap=0x0/0x0@0x0 fb=0x0 basecnt=0 base0=0x0/0x0@0x0
+[179] @0x003c22 len=108 XNU: [System Event] [441859492] [INFO] [Subsystem: launchd] [Event: fsck] Doing boot task
+[180] @0x003c8e len=117 XNU: [System Event] [441874749] [INFO] [Subsystem: launchd] [Event: mount-phase-1] Doing boot task
+[181] @0x003d03 len=119 XNU: [System Event] [441886634] [INFO] [Subsystem: launchd] [Event: data-protection] Doing boot task
+[182] @0x003d7a len=123 XNU: [System Event] [441898103] [INFO] [Subsystem: launchd] [Event: finish-obliteration] Doing boot task
+[183] @0x003df5 len=126 XNU: [System Event] [441909749] [INFO] [Subsystem: launchd] [Event: detect-installed-roots] Doing boot task
+[184] @0x003e73 len=120 XNU: [System Event] [441925456] [INFO] [Subsystem: launchd] [Event: commit-boot-mode] Doing boot task
+[185] @0x003eeb len=125 XNU: [System Event] [441938418] [INFO] [Subsystem: launchd] [Event: restore-datapartition] Doing boot task
+[186] @0x003f68 len=140 XNU: [System Event] [441949904] [INFO] [Subsystem: launchd] [Event: restore-datapartition] optional boot task not present
+# ISSUE @0x000000 bad_magic: expected 0x6c, got 0x72
+# ISSUE @0x003ff4 bad_magic: expected 0x6c, got 0x33
+# WARNING: framing was not fully valid; output may be incomplete

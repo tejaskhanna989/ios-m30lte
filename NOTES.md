@@ -3472,6 +3472,17 @@ authorization for a BOOT-only test of candidate v6.
   boot. This is REJECTED for the lock-screen objective. No rollback or new
   BOOT flash was performed; v67 BOOT remains installed.
 - The direct boot adds no new lock-screen evidence beyond the prior v67
-  rejection. Fresh pstore was not pulled because the existing v67 capture
-  already documents the same BOOT's selector/commit state; returning to TWRP
-  would be needed only if a new capture is explicitly requested.
+  rejection. After the user returned the device to TWRP, identity was
+  re-verified PASS and a fresh read-only pstore pull was captured under
+  `validation/physical-boot-test/20261125-ios-v67-direct-boot/` (raw SHA
+  `04ab4e093b19184c5ad67f212c47c46dce06063067c9b4480dbd09d3a0ae9028`,
+  16,464 bytes). The capture is early-boot-only: 186 records ending at
+  launchd `restore-datapartition`, with no `M30 FB:` selector/swap records,
+  no `M30 UI:`, and no IRT patch-hit status. It does not reproduce the v67
+  selector telemetry and is not used as lock-screen evidence.
+- The ABI extraction workflow was corrected after run `45474469909` selected
+  the DriverKit dyld cache instead of the main cache: it now selects
+  `/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64`, uses full
+  image paths, supplies `symaddr --in` entries in the required
+  `{"pattern": ...}` form, and fails closed if disassembly output is empty or
+  contains an ipsw error. No synthetic selector response has been added.
