@@ -3486,3 +3486,71 @@ authorization for a BOOT-only test of candidate v6.
   image paths, supplies `symaddr --in` entries in the required
   `{"pattern": ...}` form, and fails closed if disassembly output is empty or
   contains an ipsw error. No synthetic selector response has been added.
+
+## 2026-11-25 - v68 genuine selector ABI evidence and diagnostic patch (MAIN only)
+
+- Device state: still in TWRP after identity PASS (`SM-M305F`, `m30lte`, serial
+  `320081735bb166a3`, bootloader `M305FDDU8CVK1`). No BOOT/USERDATA/SYSTEM/
+  RECOVERY write, no Heimdall write and no Fastboot since the direct boot.
+  v67 BOOT remains installed; no lock-screen claim.
+- ABI evidence runs (all on `main`, extraction only, not kernel certifications):
+  - `45526096416` GREEN (`2026-11-25 06:59:17–07:03:53 IST`), commit
+    `1a64d3b8`: added IOKit symbol lookups. `symaddr.json` resolves
+    `_IOConnectCallMethod`=`0x18e5526e4`,
+    `_IOConnectCallScalarMethod`=`0x18e551b74`,
+    `_IOConnectCallStructMethod`=`0x18e5526a4`. Artifact downloaded to
+    `/tmp/opencode/abi-evidence4`.
+  - `45527297765` FAILED (`07:09:07–07:14:43 IST`), commit `9f7c0e88`: the
+    `ipsw dyld stubs` dump aborted with `fatal error: runtime: out of memory`;
+    it was not a kernel build or certification.
+  - `45528104998` GREEN (`07:15:45–07:21:32 IST`), commit `fb118034`: the
+    stub dump is now best-effort, IOKit is extracted by full path, and targeted
+    `a2s`/`a2f` address resolutions are included. Artifact downloaded to
+    `/tmp/opencode/abi-evidence5`.
+- Resolution result: the raw IOMFB/QuartzCore/CoreBrightness branch addresses
+  (`0x1afb974bc`, `0x1afb974c8`, `0x1afb974d4`, `0x18dbcc238`, etc.) are all in
+  DSC `__TEXT_STUBS` islands. `a2s` reports the correct stub island mapping but
+  cannot name the slot; the full stub dump OOMed. IOKit extraction succeeded.
+  The three IOKit entry points are confirmed by symbol lookup, but the specific
+  stub-slot-to-symbol mapping remains unresolved.
+- Static caller audit of extracted genuine binaries: QuartzCore, CoreBrightness
+  and libEDR import `IOMobileFramebufferGetBlock`, but a full executable-section
+  scan found no direct `BL` to that import stub in those binaries. backboardd
+  directly calls only `IOMobileFramebufferOpen` and `SetDebugFlags`. The actual
+  block-ID arguments therefore still require runtime observation; do not infer
+  them from the 1,580-byte output size.
+- Genuine IOMFB `_kern_GetBlock` at `0x1af224cac` is now confirmed verbatim:
+  scalar[0] is the caller's 32-bit block ID, scalar[1] is a byte offset starting
+  at zero, optional 32-bit extras follow, selector `0x4f` is issued with
+  `IOConnectCallMethod`, and the structure output is requested in `0x1000`
+  chunks. This does **not** identify which block produced the v67 1,580-byte or
+  40-byte reads.
+- Added evidence document `validation/abi-analysis/v68-selector-contracts.md`
+  (SHA256 `8d792c441d7a59e3c2dab0304f4286f9cb3c2861386b17431bc468896de262e0`)
+  covering selectors 79, 74, 84, 50, 68 and 55, with the explicit unknown-field
+  list and no proposed response.
+- Added diagnostic-only patch
+  `xnu/patches-minimal/0445-m30-framebuffer-selector-trace.patch` (SHA256
+  `5c8cb8e2150e5ce9f978a7b35bdaa2d5c5e4a0ac0c5df229b5f9d3f53474e9d3`).
+  It logs at most four `M30 FB: ABI sel=... name=... in=... s0..s3 ... out=...`
+  pstore lines per target selector, recording scalar inputs and the caller
+  process name. It changes no return code, no scalar output and no structure
+  byte. v67's nonblocking `SwapWait` and notify push are unchanged.
+- Added `tools/test_m30_framebuffer_selector_trace.py` (SHA256
+  `cc1c23013699c57eb6d869428d8c77fedb2dbf8edce76e5ae007f9b91188f8bc`). It
+  verifies all six selectors are traced, no synthetic `case` response was
+  added, the patch chain 0441–0445 applies in CI order, and the resulting
+  `SweetFramebuffer.cpp` hash is
+  `695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3` while
+  `pe_serial.c` and `sys_generic.c` retain the v67 hashes. Relevant tests pass:
+  framebuffer commit-diag, swapwait, notify-push and new selector-trace.
+  Full `tools/test_m30*.py` sweep has one pre-existing unrelated failure:
+  `test_m30_16k_pages.py` expects missing `0417-m30-16k-pages.patch`.
+- Updated `.github/workflows/xnu.yml` to require patch 0445 in the build log and
+  to gate the new `SweetFramebuffer.cpp` hash. No v68 kernel CI run has been
+  started yet, no v68 candidate has been packaged, and no BOOT flash is planned
+  without an explicit instruction and a fresh identity/Download Mode gate.
+- NEXT: commit/push this handoff, run the patched `xnu.yml` CI, and only after a
+  genuinely GREEN certification consider asking the user before any BOOT flash.
+  The diagnostic pstore is the evidence source for real block IDs; after that,
+  implement only an evidence-backed selector response with focused tests.
