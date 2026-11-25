@@ -114,6 +114,17 @@ jobs:
           } > "$WORK/manifest.json"
           cat "$WORK/manifest.json"
 
+      - name: Verify container metadata in staged image (read-only mount)
+        if: env.DRY != 'true'
+        run: |
+          MNT=$(mktemp -d /home/runner/work/rootfs/verify.XXXXXX)
+          sudo mount -t hfsplus -o loop,force,ro "$WORK/ios-root-20H392.img" "$MNT"
+          python3 tools/verify_ios_container_metadata.py "$MNT" | tee "$WORK/container-verification.log"
+          rc=${PIPESTATUS[0]}
+          sudo umount "$MNT"
+          rmdir "$MNT"
+          exit "$rc"
+
       - name: Compress and split for release assets (Actions artifacts are 500 MB total)
         if: env.DRY != 'true' && env.PUBLISH == 'true'
         run: |
@@ -142,8 +153,11 @@ jobs:
         if: env.DRY != 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: ios-root-manifest
-          path: ${{ env.WORK }}/manifest.json
+          name: ios-root-verification
+          path: |
+            ${{ env.WORK }}/manifest.json
+            ${{ env.WORK }}/container-verification.log
+            ${{ env.WORK }}/dmg-sha256.txt
 
       - name: Summary
         if: env.DRY != 'true'
