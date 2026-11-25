@@ -1,0 +1,4 @@
+PRE-FLASH IDENTITY GATE (TWRP, read-only)
+IDENTITY_GATE_TIME_UTC=2026-11-25T19:19:10Z
+model=SM-M305F device=m30lte bootloader=M305FDDU8CVK1 serial=<redacted> twrp=1
+IDENTITY_GATE=PASS
