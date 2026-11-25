@@ -1,0 +1,36 @@
+v68 physical result: ACCEPTED for the persistent lock-screen objective.
+
+Visual evidence (user-confirmed, see observation.txt):
+- ~2 min after boot: transient CRASH/driverd-style text lines.
+- ~10 min after boot (2026-11-25T06:07:50Z / 11:37:50 IST): persistent iOS
+  lock screen with wallpaper, clock/date and unlock controls.
+- ~25 min after boot (2026-11-25T06:22:49Z / 11:52:49 IST): still the same
+  lock screen.
+
+Pstore evidence (read-only pull after the user returned the device to TWRP):
+- Identity recheck PASS before the pull. Serial-bearing values are redacted in
+  the committed raw evidence file.
+- Raw pmsg-ramoops-0: 16372 bytes, SHA256
+  7918d7b8c59dbc51cc2f962e2a065e44122961b5056b6fc8a8098c65c0b26128.
+- Decoder consumed 16372 bytes; 151 records; clean=False because of one leading
+  wrapped-ring bad_magic record.
+- Surviving records begin after present #4 and show presents #5-#8, with notify
+  mask=0x0 each time. The final swapped/presented state advanced to
+  v=97800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1
+  ticks=2, and remained there through the last surviving record. This is
+  consistent with the observed stable lock screen; it is supporting telemetry,
+  not the basis of the lock-screen claim.
+- Surviving SpringBoard-side duplicate-class warnings are SBERR objc messages
+  from MobileStoreDemoKit; no SpringBoard/backboardd crash or fatal locker
+  failure survived in the captured ring.
+- No `M30 FB: ABI sel=` lines survived. Patch 0445 emitted them once at boot,
+  but the ~25-minute run filled the 16 KiB ramoops ring with periodic status
+  records before the pstore pull. The real selector-79 block IDs and scalar
+  inputs therefore remain unknown. Do not infer them from the 1580-byte output
+  size or from this capture.
+
+Conclusion: v68 is physically accepted for a persistent visible iOS lock
+screen, with supporting build/flash/pstore logs. The selector ABI remains an
+open investigation; obtaining its runtime inputs requires a capture much
+earlier after boot or a diagnostic build that suppresses the periodic status
+ring churn. No security state was weakened; no rollback was performed.

@@ -1,5 +1,8 @@
-0dee7be86ce07edf8f83a4f7d32ed74824181eb1933895500d973f54c1b2fb61  ./README.md
-45763d62c977849a5433d190ac39ccffec8fd4fc96db7ceca53886dc8da87b38  ./observation.txt
+19cf2abcab8ab7fcb6bdecaf64ae70ebbf70311292e7d174385d63490cd3fa76  ./README.md
+acbc1eff9387cd036553f308d16fb9099a069f6a79cf7f521cab53afc8aea60c  ./analysis.txt
+aae9739bd8aedae7a5f2255e8fab39d544555d5e6047167bd904a5cf6b2e39ef  ./observation.txt
+b9f2c0f6d4adc3fcb08d550cdbcad5a1b0b2a2ee0eccbb66e5ac70c98d5a9e5a  ./decoded-pmsg.json
+3da57fd2ef6d6669cfcb3b2805b8382d13aaa2a697179ecce31962a443c36b2a  ./decoded-pmsg.txt
 b689fb4ba211375c8b1aa2c05c8d96d80c41ae4767993d39f149743df9e6c0d3  ./raw/download-mode-gate.txt
 c2d6abaee258d00c67affe45c0b48dc7e2ade7f4f930626c27d5270f6a97267c  ./raw/flash-end.txt
 1efda7d0fa1682bda5ae928bd7bcbd0bd5f630a0a01d967aec11790f5215d370  ./raw/flash-start.txt
@@ -7,6 +10,12 @@ c2d6abaee258d00c67affe45c0b48dc7e2ade7f4f930626c27d5270f6a97267c  ./raw/flash-en
 4bf2478fcc951372568ebaba583f3bf005df3bedf67a5f85337ccc1d817d2a4c  ./raw/heimdall-flash.log
 558d1a992f037bf960e790d97cd3111be9547c8a8ded2396dbd58b50a7aa8885  ./raw/heimdall-info.txt
 2e6343fd55400e62f98e01abb58e7d299601417a8e70a07233b031f483cf94be  ./raw/identity-gate.txt
+7918d7b8c59dbc51cc2f962e2a065e44122961b5056b6fc8a8098c65c0b26128  ./raw/pmsg-ramoops-0
+3f90235cc18729bf13a3a98f8752a01a1eeb46f339c4c6966ee9c86bbb86de6f  ./raw/pstore-device-size.txt
+1132deafda5a4d8d6995421552a569f594f7ca3157a9ebc5372e797c28127beb  ./raw/pstore-identity-recheck.txt
+bb1b2f33a2b834768a8a6f217848ada8b7dae4c482979da4b15be6337943c0d5  ./raw/pstore-ls.txt
+bc0c20273f07b84ef633a147b83f1e9787338d06270f3910093e73eab21f91c7  ./raw/pstore-pull-end.txt
+bc0c20273f07b84ef633a147b83f1e9787338d06270f3910093e73eab21f91c7  ./raw/pstore-pull-start.txt
 2e34d9c2998390c0c59556296336d39bb341a5989566b7222ea3fc05acab5f02  ./raw/resume-end.txt
 976bfbc1f24490c104e56b66df50dea00a09959115d921fb0e38b39e77f07b4a  ./raw/resume.log
 f7c1c01c6e704db970de18ab95bd116172bc2dba5c4babc8b1d9e3faa14a7741  ./raw/resume-start.txt

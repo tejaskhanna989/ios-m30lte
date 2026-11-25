@@ -46,7 +46,9 @@ by the user and remained stable for at least ~15 minutes after it appeared,
 with the last check at ~25 minutes after boot. This is a physical visual
 observation, not an inference from logs or counters.
 
-No rollback was performed. The user chose to keep iOS running, so no TWRP
-return, pstore pull or further device write was performed after this boot.
-Supporting build, package, identity, Download Mode and BOOT-only flash logs are
-in this directory and in validation/ios-candidate-v68-out/.
+No rollback was performed. The user initially chose to keep iOS running; after
+the observation above, the user explicitly instructed `pull pstore NOW!`. The
+device was then returned to TWRP and pstore was pulled read-only after another
+identity recheck PASS. No further device write occurred.
+Supporting build, package, identity, Download Mode, BOOT-only flash and pstore
+logs are in this directory and in validation/ios-candidate-v68-out/.

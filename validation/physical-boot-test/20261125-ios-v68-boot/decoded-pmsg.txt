@@ -1,0 +1,156 @@
+# M30LTE pstore pmsg decode
+# input_sha256=7918d7b8c59dbc51cc2f962e2a065e44122961b5056b6fc8a8098c65c0b26128
+# input_bytes=16372 records=151 consumed=16372 clean=False
+[000] @0x000015 len= 55 XNU: M30 FB: done #4 copied=10108800
+[001] @0x00004c len= 54 XNU: M30 FB: notify mask=0x0 done=4
+[002] @0x000082 len=109 XNU: M30 FB: v=15600 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[003] @0x0000ef len=109 XNU: M30 FB: v=16200 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[004] @0x00015c len=109 XNU: M30 FB: v=16800 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[005] @0x0001c9 len=109 XNU: M30 FB: v=17400 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[006] @0x000236 len=109 XNU: M30 FB: v=18000 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[007] @0x0002a3 len=109 XNU: M30 FB: v=18600 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[008] @0x000310 len=109 XNU: M30 FB: v=19200 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[009] @0x00037d len=109 XNU: M30 FB: v=19800 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[010] @0x0003ea len=109 XNU: M30 FB: v=20400 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[011] @0x000457 len=109 XNU: M30 FB: v=21000 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[012] @0x0004c4 len=109 XNU: M30 FB: v=21600 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[013] @0x000531 len=109 XNU: M30 FB: v=22200 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[014] @0x00059e len=109 XNU: M30 FB: v=22800 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[015] @0x00060b len=109 XNU: M30 FB: v=23400 sw=6 pr=4 copied=30326400 skip=13 last=1 dirty=0 power=0 cl=1 ticks=2
+[016] @0x000678 len= 55 XNU: M30 FB: done #5 copied=10108800
+[017] @0x0006af len= 54 XNU: M30 FB: notify mask=0x0 done=5
+[018] @0x0006e5 len= 55 XNU: M30 FB: done #6 copied=10108800
+[019] @0x00071c len= 54 XNU: M30 FB: notify mask=0x0 done=6
+[020] @0x000752 len=109 XNU: M30 FB: v=24000 sw=9 pr=6 copied=50544000 skip=19 last=1 dirty=0 power=0 cl=1 ticks=2
+[021] @0x0007bf len=214 XNU: SBERR objc[27]: Class MSDPreferencesFile is implemented in both /System/Library/PrivateFrameworks/MobileStoreDemoKit.framework/MobileStoreDemoKit (0x2285e9038) and /System/Library/SpringBoar
+[022] @0x000895 len=214 XNU: SBERR objc[27]: Class MSDLogModel is implemented in both /System/Library/PrivateFrameworks/MobileStoreDemoKit.framework/MobileStoreDemoKit (0x2285e9088) and /System/Library/SpringBoardPlugin
+[023] @0x00096b len=214 XNU: SBERR objc[27]: Class MSDTestPreferences is implemented in both /System/Library/PrivateFrameworks/MobileStoreDemoKit.framework/MobileStoreDemoKit (0x22b5d6008) and /System/Library/SpringBoar
+[024] @0x000a41 len=109 XNU: M30 FB: v=24600 sw=9 pr=6 copied=50544000 skip=19 last=1 dirty=0 power=0 cl=1 ticks=2
+[025] @0x000aae len= 55 XNU: M30 FB: done #7 copied=10108800
+[026] @0x000ae5 len= 54 XNU: M30 FB: notify mask=0x0 done=7
+[027] @0x000b1b len= 55 XNU: M30 FB: done #8 copied=10108800
+[028] @0x000b52 len= 54 XNU: M30 FB: notify mask=0x0 done=8
+[029] @0x000b88 len=110 XNU: M30 FB: v=25200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[030] @0x000bf6 len=110 XNU: M30 FB: v=25800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[031] @0x000c64 len=110 XNU: M30 FB: v=26400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[032] @0x000cd2 len=110 XNU: M30 FB: v=27000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[033] @0x000d40 len=110 XNU: M30 FB: v=27600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[034] @0x000dae len=110 XNU: M30 FB: v=28200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[035] @0x000e1c len=110 XNU: M30 FB: v=28800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[036] @0x000e8a len=110 XNU: M30 FB: v=29400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[037] @0x000ef8 len=110 XNU: M30 FB: v=30000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[038] @0x000f66 len=110 XNU: M30 FB: v=30600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[039] @0x000fd4 len=110 XNU: M30 FB: v=31200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[040] @0x001042 len=110 XNU: M30 FB: v=31800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[041] @0x0010b0 len=110 XNU: M30 FB: v=32400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[042] @0x00111e len=110 XNU: M30 FB: v=33000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[043] @0x00118c len=110 XNU: M30 FB: v=33600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[044] @0x0011fa len=110 XNU: M30 FB: v=34200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[045] @0x001268 len=110 XNU: M30 FB: v=34800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[046] @0x0012d6 len=110 XNU: M30 FB: v=35400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[047] @0x001344 len=110 XNU: M30 FB: v=36000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[048] @0x0013b2 len=110 XNU: M30 FB: v=36600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[049] @0x001420 len=110 XNU: M30 FB: v=37200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[050] @0x00148e len=110 XNU: M30 FB: v=37800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[051] @0x0014fc len=110 XNU: M30 FB: v=38400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[052] @0x00156a len=110 XNU: M30 FB: v=39000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[053] @0x0015d8 len=110 XNU: M30 FB: v=39600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[054] @0x001646 len=110 XNU: M30 FB: v=40200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[055] @0x0016b4 len=110 XNU: M30 FB: v=40800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[056] @0x001722 len=110 XNU: M30 FB: v=41400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[057] @0x001790 len=110 XNU: M30 FB: v=42000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[058] @0x0017fe len=110 XNU: M30 FB: v=42600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[059] @0x00186c len=110 XNU: M30 FB: v=43200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[060] @0x0018da len=110 XNU: M30 FB: v=43800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[061] @0x001948 len=110 XNU: M30 FB: v=44400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[062] @0x0019b6 len=110 XNU: M30 FB: v=45000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[063] @0x001a24 len=110 XNU: M30 FB: v=45600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[064] @0x001a92 len=110 XNU: M30 FB: v=46200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[065] @0x001b00 len=110 XNU: M30 FB: v=46800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[066] @0x001b6e len=110 XNU: M30 FB: v=47400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[067] @0x001bdc len=110 XNU: M30 FB: v=48000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[068] @0x001c4a len=110 XNU: M30 FB: v=48600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[069] @0x001cb8 len=110 XNU: M30 FB: v=49200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[070] @0x001d26 len=110 XNU: M30 FB: v=49800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[071] @0x001d94 len=110 XNU: M30 FB: v=50400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[072] @0x001e02 len=110 XNU: M30 FB: v=51000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[073] @0x001e70 len=110 XNU: M30 FB: v=51600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[074] @0x001ede len=110 XNU: M30 FB: v=52200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[075] @0x001f4c len=110 XNU: M30 FB: v=52800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[076] @0x001fba len=110 XNU: M30 FB: v=53400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[077] @0x002028 len=110 XNU: M30 FB: v=54000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[078] @0x002096 len=110 XNU: M30 FB: v=54600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[079] @0x002104 len=110 XNU: M30 FB: v=55200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[080] @0x002172 len=110 XNU: M30 FB: v=55800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[081] @0x0021e0 len=110 XNU: M30 FB: v=56400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[082] @0x00224e len=110 XNU: M30 FB: v=57000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[083] @0x0022bc len=110 XNU: M30 FB: v=57600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[084] @0x00232a len=110 XNU: M30 FB: v=58200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[085] @0x002398 len=110 XNU: M30 FB: v=58800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[086] @0x002406 len=110 XNU: M30 FB: v=59400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[087] @0x002474 len=110 XNU: M30 FB: v=60000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[088] @0x0024e2 len=110 XNU: M30 FB: v=60600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[089] @0x002550 len=110 XNU: M30 FB: v=61200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[090] @0x0025be len=110 XNU: M30 FB: v=61800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[091] @0x00262c len=110 XNU: M30 FB: v=62400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[092] @0x00269a len=110 XNU: M30 FB: v=63000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[093] @0x002708 len=110 XNU: M30 FB: v=63600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[094] @0x002776 len=110 XNU: M30 FB: v=64200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[095] @0x0027e4 len=110 XNU: M30 FB: v=64800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[096] @0x002852 len=110 XNU: M30 FB: v=65400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[097] @0x0028c0 len=110 XNU: M30 FB: v=66000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[098] @0x00292e len=110 XNU: M30 FB: v=66600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[099] @0x00299c len=110 XNU: M30 FB: v=67200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[100] @0x002a0a len=110 XNU: M30 FB: v=67800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[101] @0x002a78 len=110 XNU: M30 FB: v=68400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[102] @0x002ae6 len=110 XNU: M30 FB: v=69000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[103] @0x002b54 len=110 XNU: M30 FB: v=69600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[104] @0x002bc2 len=110 XNU: M30 FB: v=70200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[105] @0x002c30 len=110 XNU: M30 FB: v=70800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[106] @0x002c9e len=110 XNU: M30 FB: v=71400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[107] @0x002d0c len=110 XNU: M30 FB: v=72000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[108] @0x002d7a len=110 XNU: M30 FB: v=72600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[109] @0x002de8 len=110 XNU: M30 FB: v=73200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[110] @0x002e56 len=110 XNU: M30 FB: v=73800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[111] @0x002ec4 len=110 XNU: M30 FB: v=74400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[112] @0x002f32 len=110 XNU: M30 FB: v=75000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[113] @0x002fa0 len=110 XNU: M30 FB: v=75600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[114] @0x00300e len=110 XNU: M30 FB: v=76200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[115] @0x00307c len=110 XNU: M30 FB: v=76800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[116] @0x0030ea len=110 XNU: M30 FB: v=77400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[117] @0x003158 len=110 XNU: M30 FB: v=78000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[118] @0x0031c6 len=110 XNU: M30 FB: v=78600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[119] @0x003234 len=110 XNU: M30 FB: v=79200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[120] @0x0032a2 len=110 XNU: M30 FB: v=79800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[121] @0x003310 len=110 XNU: M30 FB: v=80400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[122] @0x00337e len=110 XNU: M30 FB: v=81000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[123] @0x0033ec len=110 XNU: M30 FB: v=81600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[124] @0x00345a len=110 XNU: M30 FB: v=82200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[125] @0x0034c8 len=110 XNU: M30 FB: v=82800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[126] @0x003536 len=110 XNU: M30 FB: v=83400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[127] @0x0035a4 len=110 XNU: M30 FB: v=84000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[128] @0x003612 len=110 XNU: M30 FB: v=84600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[129] @0x003680 len=110 XNU: M30 FB: v=85200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[130] @0x0036ee len=110 XNU: M30 FB: v=85800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[131] @0x00375c len=110 XNU: M30 FB: v=86400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[132] @0x0037ca len=110 XNU: M30 FB: v=87000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[133] @0x003838 len=110 XNU: M30 FB: v=87600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[134] @0x0038a6 len=110 XNU: M30 FB: v=88200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[135] @0x003914 len=110 XNU: M30 FB: v=88800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[136] @0x003982 len=110 XNU: M30 FB: v=89400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[137] @0x0039f0 len=110 XNU: M30 FB: v=90000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[138] @0x003a5e len=110 XNU: M30 FB: v=90600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[139] @0x003acc len=110 XNU: M30 FB: v=91200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[140] @0x003b3a len=110 XNU: M30 FB: v=91800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[141] @0x003ba8 len=110 XNU: M30 FB: v=92400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[142] @0x003c16 len=110 XNU: M30 FB: v=93000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[143] @0x003c84 len=110 XNU: M30 FB: v=93600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[144] @0x003cf2 len=110 XNU: M30 FB: v=94200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[145] @0x003d60 len=110 XNU: M30 FB: v=94800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[146] @0x003dce len=110 XNU: M30 FB: v=95400 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[147] @0x003e3c len=110 XNU: M30 FB: v=96000 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[148] @0x003eaa len=110 XNU: M30 FB: v=96600 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[149] @0x003f18 len=110 XNU: M30 FB: v=97200 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+[150] @0x003f86 len=110 XNU: M30 FB: v=97800 sw=11 pr=8 copied=70761600 skip=25 last=1 dirty=0 power=0 cl=1 ticks=2
+# ISSUE @0x000000 bad_magic: expected 0x6c, got 0x73
+# WARNING: framing was not fully valid; output may be incomplete

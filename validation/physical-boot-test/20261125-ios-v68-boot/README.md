@@ -34,12 +34,16 @@ alone.
 
 ## Logs and deferred evidence
 
-- `raw/` contains the exact identity, Download Mode, Heimdall flash and resume
-  logs. `SHA256SUMS` hashes the committed evidence.
-- The user explicitly chose to keep iOS running, so the device was not returned
-  to TWRP and no pstore capture was attempted after this boot. The selector-79
-  scalar inputs and block IDs therefore remain unobserved.
-- NEXT: when the user permits a TWRP return, capture `pmsg-ramoops-0` read-only
-  and decode it to identify the real block IDs. Only then implement an
-  evidence-backed selector response with focused regression tests. Do not
+- `raw/` contains the exact identity, Download Mode, Heimdall flash, resume and
+  post-boot pstore-pull logs. `SHA256SUMS` hashes the committed evidence.
+- The user later instructed `pull pstore NOW!`; the device was returned to TWRP
+  and `pmsg-ramoops-0` was pulled read-only after an identity recheck PASS.
+  Raw capture: 16372 bytes, SHA256
+  `7918d7b8c59dbc51cc2f962e2a065e44122961b5056b6fc8a8098c65c0b26128`; decode:
+  151 records, `clean=False` (one leading wrapped-ring bad_magic record). See
+  `decoded-pmsg.txt`, `decoded-pmsg.json` and `analysis.txt`.
+- No `M30 FB: ABI sel=` lines survived because the ~25-minute run overwrote the
+  16 KiB ramoops ring with periodic status records. The selector-79 block IDs
+  and scalar inputs remain unobserved. An early capture or a lower-volume
+  diagnostic is needed before implementing any selector response. Do not
   fabricate a response from the 1,580-byte output size or any other guess.

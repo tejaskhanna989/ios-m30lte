@@ -3606,15 +3606,20 @@ authorization for a BOOT-only test of candidate v6.
   visual observation; v68 is ACCEPTED for the persistent lock-screen objective
   on that basis. It is not inferred from flash logs, Apple logo, console text,
   framebuffer activity, process liveness, IRT counters or pstore alone.
-- The user chose to keep iOS running, so the device was not returned to TWRP and
-  no pstore pull was attempted after this boot. Evidence:
-  `validation/physical-boot-test/20261125-ios-v68-boot/` including
-  `observation.txt`, `README.md`, `SHA256SUMS` and the exact raw identity,
-  Download Mode, Heimdall flash and resume logs. The selector-79 block IDs and
-  scalar inputs remain unobserved; do not synthesize a selector response from
-  the 1,580-byte output size.
-- NEXT: leave the device running until the user permits a TWRP return. Then
-  capture `pmsg-ramoops-0` read-only, decode it, and use the real
-  `M30 FB: ABI sel=` lines to complete the selector contract. No further BOOT
-  write is planned without a fresh identity + Download Mode gate and explicit
-  instruction.
+- The user initially chose to keep iOS running, then explicitly instructed
+  `pull pstore NOW!`. The device was returned to TWRP and `pmsg-ramoops-0` was
+  pulled read-only after an identity recheck PASS. Raw capture: 16372 bytes,
+  SHA256 `7918d7b8c59dbc51cc2f962e2a065e44122961b5056b6fc8a8098c65c0b26128`;
+  decode: 151 records, `clean=False` (one leading wrapped-ring bad_magic).
+  Evidence: `validation/physical-boot-test/20261125-ios-v68-boot/` including
+  `observation.txt`, `README.md`, `analysis.txt`, `decoded-pmsg.*`, `SHA256SUMS`
+  and exact raw identity, Download Mode, Heimdall flash, resume and pstore logs.
+- Surviving pstore records show presents #5–#8, `notify mask=0x0`, and a stable
+  final framebuffer state `v=97800 sw=11 pr=8 copied=70761600 skip=25 last=1
+  dirty=0 power=0 cl=1 ticks=2`. No `M30 FB: ABI sel=` lines survived because
+  the ~25-minute run overwrote the 16 KiB ring with periodic status records.
+  The selector-79 block IDs and scalar inputs remain unobserved; do not
+  synthesize a selector response from the 1,580-byte output size.
+- NEXT: if selector ABI completion is still desired, capture much earlier after
+  boot or use a lower-volume diagnostic. No further BOOT write is planned
+  without a fresh identity + Download Mode gate and explicit instruction.
