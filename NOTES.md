@@ -3554,3 +3554,35 @@ authorization for a BOOT-only test of candidate v6.
   genuinely GREEN certification consider asking the user before any BOOT flash.
   The diagnostic pstore is the evidence source for real block IDs; after that,
   implement only an evidence-backed selector response with focused tests.
+
+## 2026-11-25 - v68 selector-trace CI GREEN and candidate packaged (MAIN only)
+
+- The previous section's "no v68 CI run" status is superseded by this section.
+  Commit `18322e15` was pushed on `main`; patched `xnu.yml` CI run
+  `45529035057` is GREEN (`2026-11-25 07:23:35–07:35:29 IST`, head SHA
+  `18322e15980d762ec4c4788bc4e67247688f013e`). The explicit gate confirmed
+  0442, 0443, 0444 and 0445 all APPLIED (not skipped), critical buildtree
+  provenance PASS, and exact source hash
+  `SweetFramebuffer.cpp=695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3`
+  with v67 `pe_serial.c`/`sys_generic.c` hashes unchanged.
+- Candidate `validation/ios-candidate-v68-out/`: linked kernel
+  `b5e3b704a771fa7dc3e0afb23b7e2c99c7d251f7c8a4665ba0a0b5b16c163f83`, payload
+  `5a4fc4b790fcbd8fed24c41cbf6a7bf34d1861a4703e5325eca9b4a57db9b060`,
+  `shim-boot.img`
+  `cee55271a463c0b9d9e9a63fe38d2382b3b64ea7354d76092b14a713521786cf`, and
+  `ios-boot.img`
+  `629843b597fd665b7de6b6578a1605455ef5786ae9e06101b591d13a80bf8c50`.
+  Payload cmdline is unchanged, including `serial=3`, `a5fb_noconsole=1` and
+  `a5fb_keep_on=1`.
+- Validation: boot-image structural PASS; handoff 28/28 PASS (including the new
+  `M30 FB: ABI sel=` tag); kernel 6/6 PASS; platform 9/9 PASS; buildtree
+  4/4 critical provenance PASS; focused tests 24 PASS / 1 pre-existing FAIL
+  (`tools/test_m30_16k_pages.py` missing `0417-m30-16k-pages.patch`). The new
+  selector-trace regression test PASSes.
+- No device write, Heimdall flash, Fastboot action or reboot has occurred for
+  v68. Device state remains the previously recorded TWRP/identity PASS with v67
+  BOOT installed; v64–v67 and the direct boot remain physically rejected for
+  lock screen. Do not flash this diagnostic candidate without a fresh exact
+  identity + Samsung Download Mode gate and explicit instruction. The purpose
+  of this candidate is to capture real selector-79 block IDs and scalar inputs
+  in pstore before any response is implemented.
