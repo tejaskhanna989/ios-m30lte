@@ -3842,3 +3842,27 @@ authorization for a BOOT-only test of candidate v6.
   wants to continue narrow work, the next exact-v68 restoration would remove
   0446 as well, but that has not been built or flashed. Do not claim input or
   touch support from v70.
+
+## 2026-11-25 - v71 direction change: restore exact v68 source baseline (MAIN only)
+
+- User changed direction: stop debugging v69/v70 display regressions, restore
+  the known-good v68 source state, then build touchscreen support on top of it.
+  All work remains on `main`; no branch, reset or history rewrite.
+- Exact v68 reference remains `64831cab`, whose candidate physically displayed
+  the persistent iOS lock screen. `git diff --name-status 64831cab..HEAD -- .github tools xnu`
+  identified the 10 source/build files introduced after v68 (workflow,
+  verifiers, v69/v70 tests, and patches 0446-0450).
+- Controlled restoration: restored `.github/workflows/xnu.yml`, `tools/` and
+  `xnu/patches-minimal/` from `64831cab`; removed post-v68 added test scripts
+  and patches 0446-0450 from the working tree. They remain in Git history.
+  `git diff --stat 64831cab -- .github tools xnu` is now empty.
+- Verification: workflow YAML parses; focused v68 sweep 24 PASS / 1 known
+  unrelated `0417` FAIL. Framebuffer, SpringBoard visibility, AMFI, code
+  signing, CS_VALID and full-page validation tests remain intact. Details in
+  `validation/input-analysis/v71-v68-restoration.md`.
+- No runtime touchscreen change is included in this restoration commit, and no
+  v71 CI run or flash has happened yet.
+- NEXT: finish controller-identification evidence review, then implement only a
+  driver justified by concrete device-tree/hardware evidence. If the register
+  map/protocol or GPIO/I2C identity is not proven, report the missing evidence
+  instead of guessing.

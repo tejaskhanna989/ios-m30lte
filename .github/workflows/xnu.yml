@@ -113,9 +113,9 @@ jobs:
         python3 tools/verify_m30_buildtree.py \
           --tree dxb/xnu \
           --patch-dir dxb/patches | tee m30-buildtree-verification.json
-    - name: Verify M30 v70 lock-screen restore patch chain applied
+    - name: Verify M30 framebuffer fix patch chain applied
       run: |
-        for p in 0441-m30-stderr-capture.patch 0442-m30-framebuffer-commit-diag.patch 0443-m30-framebuffer-swapwait-handshake.patch 0444-m30-framebuffer-notify-push.patch 0445-m30-framebuffer-selector-trace.patch 0446-m30-framebuffer-status-quiet.patch 0447-m30-key-input-diag.patch 0448-m30-hid-event-diag.patch 0449-m30-revert-key-input-diag.patch 0450-m30-revert-hid-event-diag.patch; do
+        for p in 0442-m30-framebuffer-commit-diag.patch 0443-m30-framebuffer-swapwait-handshake.patch 0444-m30-framebuffer-notify-push.patch 0445-m30-framebuffer-selector-trace.patch; do
           grep -q "Applying patch: .*$p" build.log
           if grep -q "Skipping patch .*$p" build.log; then
             echo "ERROR: patch $p was skipped by the tolerant build script"
@@ -127,11 +127,8 @@ jobs:
         from pathlib import Path
         expect = {
             "pexpert/arm/pe_serial.c": "0567414c2f004778bba71a01b2723202af5bde98bf1ca6ec035856b086c2a772",
+            "iokit/Kernel/arm/SweetFramebuffer.cpp": "695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3",
             "bsd/kern/sys_generic.c": "438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f",
-            "iokit/Kernel/arm/SweetFramebuffer.cpp": "d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f",
-            "bsd/dev/a5xelte_keys.c": "d53238ba0ca163a36ef17d1847d56f442bca3964001e0b998aa50d073a6f12db",
-            "iokit/Kernel/arm/hid/SweetHID.cpp": "d30c9adf85a89b5c94151e57bad24007655d1a9beb06742fc3d821a0f89805f3",
-            "iokit/Kernel/arm/hid/IOHIDEventServiceUserClient.cpp": "0e8df68c047322c220cdbd1b4c9db194c5dc1fb80117bfc8c726e9fab967637e",
         }
         for rel, want in expect.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
