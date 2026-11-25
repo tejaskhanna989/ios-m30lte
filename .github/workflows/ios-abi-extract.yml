@@ -197,7 +197,7 @@ jobs:
             "$WORK/bin/ipsw" dyld a2f "$DSC" "$ADDR" -j \
               >> "$WORK/out/resolved-addresses.txt" 2>&1 || true
           done < "$WORK/out/resolve-addresses.txt"
-          "$WORK/bin/ipsw" dyld stubs "$DSC" 2>&1 | gzip -9 > "$WORK/out/dyld-stubs.txt.gz"
+          "$WORK/bin/ipsw" dyld stubs "$DSC" 2>&1 | gzip -9 > "$WORK/out/dyld-stubs.txt.gz" || true
 
           "$WORK/bin/ipsw" dyld disass "$DSC" \
             --image '/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer' \
