@@ -100,6 +100,9 @@ jobs:
             '/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer' \
             '/usr/libexec/backboardd' \
             '/System/Library/Frameworks/QuartzCore.framework/QuartzCore' \
+            '/System/Library/PrivateFrameworks/CoreBrightness.framework/CoreBrightness' \
+            '/System/Library/PrivateFrameworks/libEDR.framework/libEDR' \
+            '/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit' \
             '/System/Library/PrivateFrameworks/BackBoardServices.framework/BackBoardServices' \
             '/System/Library/PrivateFrameworks/SpringBoard.framework/SpringBoard'; do
             echo "### $IMAGE" >> "$WORK/out/image-closures.txt"
@@ -120,6 +123,7 @@ jobs:
             QuartzCore \
             CoreBrightness \
             libEDR \
+            IOKit \
             BackBoardServices \
             SpringBoard; do
             "$WORK/bin/ipsw" dyld macho "$DSC" "$IMAGE" \
@@ -153,6 +157,9 @@ jobs:
               "IOMobileFramebufferSetClientCallbacks",
               "IOMobileFramebufferEnable",
               "IOMobileFramebufferDisable",
+              "IOConnectCallMethod",
+              "IOConnectCallScalarMethod",
+              "IOConnectCallStructMethod",
           ]
           print(json.dumps([{"pattern": name} for name in names], indent=2))
           PY
