@@ -1,0 +1,65 @@
+{
+  "result": "PASS",
+  "tree": "/tmp/opencode/v69-ci2/buildtree-unpacked/xnu",
+  "critical_patch_provenance": [
+    {
+      "name": "0096-m30lte-a5xelte-h-overrides.patch",
+      "reverse_apply": "PASS"
+    },
+    {
+      "name": "0400-m30lte-board-target.patch",
+      "reverse_apply": "PASS"
+    },
+    {
+      "name": "0402-m30lte-board-config-header.patch",
+      "reverse_apply": "PASS"
+    },
+    {
+      "name": "0403-m30lte-hardware-overrides.patch",
+      "reverse_apply": "PASS"
+    }
+  ],
+  "source_checks": [
+    "0400 M30LTE machine target and MASTER overlay",
+    "0402/0403 effective M30LTE board header and board_config wiring",
+    "0096 effective M30 branch in A5XELTE.h",
+    "0403 M30 marker and relocated framebuffer checkpoint consumers",
+    "0403 framebuffer, key, eMMC, and fbcon hardware consumers",
+    "inherited GICv2 interrupt path and XNU virtual-timer ownership",
+    "no XNU boot_args.machineType consumer"
+  ],
+  "effective_m30_macros": {
+    "M30LTE": "1",
+    "A5XELTE": "1",
+    "SWEET": "1",
+    "HAS_GIC_V3": "0",
+    "A5XELTE_VTIMER_INTID": "M30LTE_VTIMER_INTID",
+    "M30LTE_VTIMER_INTID": "27",
+    "M30LTE_FB_PA": "0xec000000",
+    "M30LTE_FB_WIDTH": "1080",
+    "M30LTE_FB_HEIGHT": "2340",
+    "M30LTE_FB_STRIDE": "4320",
+    "M30LTE_FB_STRIDE_PIXELS": "1080",
+    "M30LTE_FB_BLOCKS": "5",
+    "M30LTE_FB_DOT_PITCH": "409",
+    "M30LTE_MARKER_PA": "0x93fff100",
+    "M30LTE_BOOT_MPIDR": "0x100",
+    "M30LTE_EMMC_PA": "0x13500000",
+    "M30LTE_EMMC_NODE_NAME": "\"m30lte-emmc\"",
+    "M30LTE_FBCON_NODE_NAME": "\"m30lte-fbcon\"",
+    "M30LTE_ALIVE_PA": "0x11cb0000",
+    "M30LTE_GPA1_CON": "0x60",
+    "M30LTE_GPA1_DAT": "0x64",
+    "M30LTE_GPA1_PUD": "0x68",
+    "M30LTE_KEY_POWER_PIN": "7",
+    "M30LTE_KEY_VOLUP_PIN": "5",
+    "M30LTE_KEY_VOLDOWN_PIN": "6",
+    "A5XELTE_FB_PA": "0xec000000",
+    "A5XELTE_FB_WIDTH": "1080",
+    "A5XELTE_FB_HEIGHT": "2340",
+    "A5XELTE_FB_STRIDE": "4320",
+    "A5XELTE_FB_BLOCKS": "5",
+    "A5XELTE_MARKER_PA": "0x93fff100",
+    "A5XELTE_EMMC_PA": "0x13500000"
+  }
+}

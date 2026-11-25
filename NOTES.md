@@ -3686,3 +3686,37 @@ authorization for a BOOT-only test of candidate v6.
   visible over ADB; connect it in TWRP before any physical test. Do not claim
   input support from compilation or logs alone; keep v68 available as rollback
   baseline.
+
+### v69 CI/candidate certification (no device write)
+
+- Second CI run `45575704483` (head `7be160204d2f6017c7a26505870f39e3b9e83ea8`,
+  `2026-11-25T08:22:30Z..08:36:31Z` / `13:52:30..14:06:31 IST`) is **GREEN** with
+  all v69 patch/hash gates applied. Kernel SHA256
+  `5719dd55fc3f6c39aaa12bc466eb08cc7ef278ed30e88f541da0bbae384ce511`.
+- Candidate `validation/ios-candidate-v69-out/` was packaged from the GREEN CI
+  kernel, the certified v68 shim and the unchanged corrected ADT. Hashes:
+  kernel `5719dd55fc3f6c39aaa12bc466eb08cc7ef278ed30e88f541da0bbae384ce511`;
+  payload `d7b275e5a65f31daadfd5f51ea43fe760d1991a5e31cc664c64f75e688345c33`;
+  `shim-boot.img`
+  `4ed38997a7cfc7a325e9cbbc992d22ed90bfee8c3a78739dedf573bce1b557e0`;
+  `ios-boot.img`
+  `3d63bae2b709fad2d58a973158ff9d87bed1403ab64cdfc30b461879477d6835`.
+- Payload cmdline is unchanged from v68, including `serial=3`,
+  `a5fb_noconsole=1` and `a5fb_keep_on=1`; it now explicitly includes `cpus=6`.
+- Validation PASS: boot-image structural 12/12, handoff structural 29/29
+  (including `M30 KEY:` and `M30 HID:` tags), kernel binary 6/6, buildtree
+  critical provenance 4/4, platform match 9/9, focused tests 25 PASS / 1
+  pre-existing FAIL (`tools/test_m30_16k_pages.py` missing
+  `0417-m30-16k-pages.patch`). The first local buildtree-provenance attempt
+  failed only because `/tmp` was out of space while copying the tree; after
+  removing stale scratch artifacts the same check passed.
+- No Melfas hardware-driver strings are present in the linked kernel, as
+  expected for this logging-only candidate. No BOOT write, flash, ADB action or
+  pstore pull has occurred for v69. `adb devices -l` showed no connected device.
+- NEXT: after the device is connected in Download Mode, perform fresh exact
+  identity verification (`SM-M305F`, `m30lte`, serial
+  `320081735bb166a3`, bootloader `M305FDDU8CVK1`), confirm Download Mode with
+  Heimdall, then BOOT-only flash `ios-boot.img`. Pull pstore early in TWRP and
+  evaluate `M30 KEY:` / `M30 HID:` / framebuffer-ABI records plus physical
+  button/touch behavior before claiming any input support. v68 remains the
+  rollback baseline but is not to be restored without explicit instruction.
