@@ -26,6 +26,7 @@ PATCHES = (
     "0445-m30-framebuffer-selector-trace.patch",
 )
 PATCH = ROOT / "xnu/patches-minimal" / PATCHES[-1]
+PATCH_0451 = "0451-m30-melfas-touch.patch"
 BASE = ROOT / "milestone_artifacts/ci_45356410574/buildtree/unpacked/xnu"
 RESULT_SERIAL = "0567414c2f004778bba71a01b2723202af5bde98bf1ca6ec035856b086c2a772"
 RESULT_SYS = "438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f"
@@ -62,7 +63,7 @@ def main():
         work = Path(td)
         tree = work / "xnu"
         shutil.copytree(BASE, tree)
-        for patch in PATCHES:
+        for patch in PATCHES + (PATCH_0451,):
             subprocess.run(
                 ["patch", "-p1", "-i", str(ROOT / "xnu/patches-minimal" / patch)],
                 cwd=str(tree), check=True, env=env,
@@ -87,7 +88,7 @@ def main():
         )
         verify = json.loads(report.stdout)
         assert verify["result"] == "PASS", verify
-        assert len(verify["critical_patch_provenance"]) == 4
+        assert len(verify["critical_patch_provenance"]) == 5
     print("[PASS] 0441+0442+0443+0444+0445 apply in CI order; hashes and provenance reproduced")
     print("ALL M30 SELECTOR TRACE TESTS PASS")
 

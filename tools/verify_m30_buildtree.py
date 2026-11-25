@@ -31,6 +31,7 @@ CRITICAL_PATCHES = (
     "0400-m30lte-board-target.patch",
     "0402-m30lte-board-config-header.patch",
     "0403-m30lte-hardware-overrides.patch",
+    "0451-m30-melfas-touch.patch",
 )
 
 

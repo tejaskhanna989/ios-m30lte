@@ -1,0 +1,447 @@
+diff --git a/bsd/conf/files b/bsd/conf/files
+--- a/bsd/conf/files
++++ b/bsd/conf/files
+@@ -108,6 +108,7 @@
+ bsd/dev/a5xelte_emmc.c			standard
+ bsd/dev/a5xelte_keys.c			standard
+ bsd/dev/a5xelte_touch.c			standard
++bsd/dev/m30lte_touch.c			standard
+ bsd/dev/sweet_sample.c			standard
+ bsd/dev/sweet_keys.c			standard
+ bsd/dev/sweet_touch.c			standard
+diff --git a/iokit/bsddev/IOKitBSDInit.cpp b/iokit/bsddev/IOKitBSDInit.cpp
+--- a/iokit/bsddev/IOKitBSDInit.cpp
++++ b/iokit/bsddev/IOKitBSDInit.cpp
+@@ -72,6 +72,9 @@
+ extern void a5xelte_keys_init(void);
+ extern void a5xelte_touch_probe(void);
+ #endif
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++extern void m30lte_touch_probe(void);
++#endif
+ 
+ #define ROUNDUP(a, b) (((a) + ((b) - 1)) & (~((b) - 1)))
+ 
+@@ -788,6 +791,9 @@
+ #if !defined(ARM64_BOARD_CONFIG_M30LTE)
+ 	a5xelte_touch_probe();
+ #endif
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	m30lte_touch_probe();
++#endif
+ 	{
+ 	uint32_t emmcprobe = 0;
+ 	PE_parse_boot_argn("emmcprobe", &emmcprobe, sizeof(emmcprobe));
+diff --git a/bsd/dev/m30lte_touch.c b/bsd/dev/m30lte_touch.c
+new file mode 100644
+--- /dev/null
++++ b/bsd/dev/m30lte_touch.c
+@@ -0,0 +1,408 @@
++/*
++ * SM-M305F (Exynos 7904) native Melfas MSS100 touchscreen driver.
++ *
++ * Hardware evidence (read from the device and from Samsung's m30lte DTS):
++ *   i2c@13870000/mms_ts@48, compatible "melfas,mms_ts"
++ *   firmware "tsp_melfas/mss100_m30.fw" (MSS100 family)
++ *   samsung,s3c2440-i2c at 0x13870000, 7-bit address 0x48
++ *   IRQ GPA0-0 (wakeup IRQ 243), reported as "Level mms_ts"
++ *   melfas,event_info = <8 12>: MIP 4.0 format 8
++ *     (EVENT_FORMAT_WITH_PRESSURE_2BYTE), 12 bytes per contact
++ *   melfas,max_x_y = <4095 4095>
++ *
++ * MIP 4.0 registers (drivers/input/touchscreen/melfas_mss100/melfas_mss100_reg.h
++ * in Samsung's exynos7904 m30lte kernel, commit 554e05f367dfa36c2eefcf1d
++ * a64946ee6a76f):
++ *   [0x06,0x00] CTRL/READY_STATUS  -> 0xA0 when ready
++ *   [0x02,0x10] EVENT/PACKET_INFO  -> size = b & 0x7f, category = b >> 7
++ *   [0x02,0x11] EVENT/PACKET_DATA  -> size bytes of contact packets
++ * The same source defines EVENT_FORMAT_WITH_PRESSURE_2BYTE and its decoder.
++ *
++ * This driver is read-only with respect to the controller: it never writes
++ * configuration, firmware, NVM or GPIO state. It starts only with the
++ * boot-arg m30touch=1 so the known-good v68 display behaviour is unchanged by
++ * default. Every transfer is bounded, the worker runs in its own thread, and
++ * repeated transfer failures stop the worker instead of spinning forever.
++ */
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++
++#include <sys/param.h>
++#include <sys/systm.h>
++#include <kern/clock.h>
++#include <kern/thread.h>
++#include <kern/sched_prim.h>
++#include <machine/machine_routines.h>
++#include <pexpert/pexpert.h>
++
++extern vm_offset_t ml_io_map(vm_offset_t, vm_size_t);
++extern void thread_terminate_self(void);
++extern void sweet_hid_touch(int finger, int down, int x, int y);
++
++void m30lte_touch_probe(void);
++static void m30_touch_worker(void *arg, wait_result_t result);
++
++#define M30_TOUCH_I2C_PA        0x13870000u
++#define M30_TOUCH_I2C_SIZE      0x100u
++#define M30_TOUCH_I2C_ADDR      0x48u
++
++/* MIP 4.0 register addresses. */
++#define M30_R0_CTRL             0x06u
++#define M30_R1_CTRL_READY       0x00u
++#define M30_R0_EVENT            0x02u
++#define M30_R1_EVENT_PKT_INFO   0x10u
++#define M30_R1_EVENT_PKT_DATA   0x11u
++#define M30_CTRL_READY          0xA0u
++#define M30_STATUS_NONE         0x05u
++#define M30_STATUS_LOG          0x77u
++#define M30_ALIVE_PA            0x11CB0000u
++#define M30_GPA0_DAT            0x0004u   /* GPA0 data register (ALIVE bank) */
++
++/* Format 8, EVENT_FORMAT_WITH_PRESSURE_2BYTE, from melfas,event_info. */
++#define M30_EVENT_FMT           8u
++#define M30_EVENT_SIZE          12u
++#define M30_EVENT_TYPE_SCREEN   1u
++#define M30_RAW_MAX             4095u
++#define M30_MAX_FINGERS         10u
++
++/* The HID digitizer uses the A5XELTE branch of SweetHID.cpp on M30LTE. */
++#define M30_HID_W               1080u
++#define M30_HID_H               1920u
++
++static vm_offset_t m30_bus;
++static bool m30_active[M30_MAX_FINGERS];
++static int m30_x[M30_MAX_FINGERS];
++static int m30_y[M30_MAX_FINGERS];
++static unsigned m30_packets;
++static unsigned m30_contacts;
++static unsigned m30_hb_ticks;
++static unsigned m30_decode_logs;
++static int m30_touch_sleep;
++static int m30_hid_enabled;
++static vm_offset_t m30_alive;
++static unsigned m30_irq_edges;
++static unsigned m30_last_irq;
++static unsigned m30_seen[M30_MAX_FINGERS];
++static unsigned m30_cycles;
++
++static uint32_t
++m30_read(vm_offset_t base, uint32_t off)
++{
++	uint32_t value = *(volatile uint32_t *)(base + off);
++	__asm__ volatile("dmb oshld" ::: "memory");
++	return value;
++}
++
++static void
++m30_write(vm_offset_t base, uint32_t off, uint32_t value)
++{
++	__asm__ volatile("dmb oshst" ::: "memory");
++	*(volatile uint32_t *)(base + off) = value;
++	__asm__ volatile("dsb osh" ::: "memory");
++}
++
++/* GPA0-0 is the Melfas ATTN line (Linux IRQ 243, level). XNU IRQ 243 routing
++ * is not proven on this board, so sample the line in the bounded worker and
++ * count edges. This cannot block or destabilize the kernel. */
++static unsigned
++m30_irq_sample(void)
++{
++	if (!m30_alive) {
++		return 0;
++	}
++	return (unsigned)(m30_read(m30_alive, M30_GPA0_DAT) & 1u);
++}
++
++/* S3C2440 I2C: IICCON 0x00, IICSTAT 0x04, IICADD 0x08, IICDS 0x0c, IICLC 0x10. */
++static bool
++m30_i2c_wait_irq(void)
++{
++	for (unsigned n = 0; n < 20000; n++) {
++		if (m30_read(m30_bus, 0) & 0x10u) {
++			return true;
++		}
++		delay(1);
++	}
++	return false;
++}
++
++static void
++m30_i2c_clear_irq(void)
++{
++	m30_write(m30_bus, 0, m30_read(m30_bus, 0) & ~0x10u);
++}
++
++static void
++m30_i2c_stop(void)
++{
++	m30_write(m30_bus, 4, m30_read(m30_bus, 4) & ~0x20u);
++	m30_i2c_clear_irq();
++	for (unsigned n = 0; n < 5000; n++) {
++		if (!(m30_read(m30_bus, 4) & 0x20u)) {
++			break;
++		}
++		delay(1);
++	}
++}
++
++static bool
++m30_i2c_message(bool receive, uint8_t *bytes, unsigned count)
++{
++	const uint32_t mode = receive ? 0x90u : 0xd0u;
++	const uint8_t address = (uint8_t)((M30_TOUCH_I2C_ADDR << 1) | (receive ? 1u : 0u));
++	bool ok = false;
++
++	if (!count || count > 34) {
++		return false;
++	}
++	for (unsigned n = 0; n < 5000; n++) {
++		if (!(m30_read(m30_bus, 4) & 0x20u)) {
++			break;
++		}
++		if (n == 4999) {
++			return false;
++		}
++		delay(1);
++	}
++	m30_write(m30_bus, 0, 0xe3u);
++	m30_write(m30_bus, 0x10, 7u);
++	m30_write(m30_bus, 4, mode);
++	m30_write(m30_bus, 0xc, address);
++	delay(1);
++	m30_write(m30_bus, 4, mode | 0x20u);
++	if (!m30_i2c_wait_irq() || (m30_read(m30_bus, 4) & 1u)) {
++		goto out;
++	}
++	for (unsigned n = 0; n < count; n++) {
++		if (receive) {
++			if (n + 1 == count) {
++				m30_write(m30_bus, 0, m30_read(m30_bus, 0) & ~0x80u);
++			}
++		} else {
++			m30_write(m30_bus, 0xc, bytes[n]);
++			delay(1);
++		}
++		m30_i2c_clear_irq();
++		if (!m30_i2c_wait_irq()) {
++			goto out;
++		}
++		if (receive) {
++			bytes[n] = (uint8_t)m30_read(m30_bus, 0xc);
++		} else if (m30_read(m30_bus, 4) & 1u) {
++			goto out;
++		}
++	}
++	ok = true;
++out:
++	m30_i2c_stop();
++	return ok;
++}
++
++/* Melfas MIP reads are a two-byte register address write followed by a read. */
++static bool
++m30_i2c_read_reg(uint8_t r0, uint8_t r1, uint8_t *data, unsigned len)
++{
++	uint8_t address[2] = { r0, r1 };
++	if (!m30_i2c_message(false, address, sizeof(address))) {
++		return false;
++	}
++	return m30_i2c_message(true, data, len);
++}
++
++static void
++m30_release_contacts(void)
++{
++	for (unsigned id = 0; id < M30_MAX_FINGERS; id++) {
++		if (m30_active[id]) {
++			if (m30_hid_enabled) {
++				sweet_hid_touch((int)id, 0, m30_x[id], m30_y[id]);
++			}
++			m30_active[id] = false;
++		}
++	}
++}
++
++/* Decode one EVENT_FORMAT_WITH_PRESSURE_2BYTE contact packet. */
++static bool
++m30_report_packet(const uint8_t *p)
++{
++	unsigned type = (p[0] & 0xf0u) >> 4;
++	int id = (int)(p[0] & 0x0fu) - 1;
++	unsigned xraw, yraw;
++	int x, y;
++
++	if (type != M30_EVENT_TYPE_SCREEN) {
++		return true; /* keys and alerts are not part of this digitizer */
++	}
++	if (id < 0 || id >= (int)M30_MAX_FINGERS) {
++		return false;
++	}
++	xraw = ((unsigned)(p[2] & 0x0fu) << 8) | p[3];
++	yraw = ((unsigned)((p[2] >> 4) & 0x0fu) << 8) | p[4];
++	if (xraw > M30_RAW_MAX || yraw > M30_RAW_MAX) {
++		return false;
++	}
++	x = (int)(((uint64_t)xraw * M30_HID_W) / (M30_RAW_MAX + 1u));
++	y = (int)(((uint64_t)yraw * M30_HID_H) / (M30_RAW_MAX + 1u));
++	if (x >= (int)M30_HID_W) {
++		x = (int)M30_HID_W - 1;
++	}
++	if (y >= (int)M30_HID_H) {
++		y = (int)M30_HID_H - 1;
++	}
++	if ((p[1] & 1u) != 0) {
++		if (!m30_active[id] || m30_x[id] != x || m30_y[id] != y) {
++			printf("M30 TOUCH: contact id=%u x=%d y=%d raw=%u,%u\n",
++			    (unsigned)id, x, y, xraw, yraw);
++			m30_contacts++;
++		}
++		m30_x[id] = x;
++		m30_y[id] = y;
++		m30_seen[id] = m30_cycles;
++		m30_active[id] = true;
++		if (m30_hid_enabled) {
++			sweet_hid_touch(id, 1, x, y);
++		}
++	} else if (m30_active[id]) {
++		if (m30_hid_enabled) {
++			sweet_hid_touch(id, 0, m30_x[id], m30_y[id]);
++		}
++		m30_active[id] = false;
++	}
++	return true;
++}
++
++static void
++m30_touch_sleep_5ms(void)
++{
++	uint64_t deadline;
++	clock_interval_to_deadline(5, NSEC_PER_MSEC, &deadline);
++	(void)assert_wait_deadline(&m30_touch_sleep, THREAD_UNINT, deadline);
++	thread_block(THREAD_CONTINUE_NULL);
++}
++
++static void
++m30_touch_worker(void *arg, wait_result_t result)
++{
++	unsigned errors = 0;
++	(void)arg;
++	(void)result;
++
++	printf("M30 TOUCH: Melfas MSS100 worker started (I2C4 0x%llx addr=0x%02x fmt=%u size=%u)\n",
++	    (unsigned long long)M30_TOUCH_I2C_PA, M30_TOUCH_I2C_ADDR,
++	    M30_EVENT_FMT, M30_EVENT_SIZE);
++	for (;;) {
++		uint8_t info = 0;
++		unsigned size;
++		uint8_t data[34];
++		unsigned line = m30_irq_sample();
++
++		if (line != m30_last_irq) {
++			m30_last_irq = line;
++			if (m30_irq_edges < 100000) {
++				m30_irq_edges++;
++			}
++		}
++		m30_cycles++;
++		if (!m30_i2c_read_reg(M30_R0_EVENT, M30_R1_EVENT_PKT_INFO, &info, 1)) {
++			if (++errors <= 8) {
++				printf("M30 TOUCH: packet-info read failed errors=%u\n", errors);
++			}
++		} else {
++			size = info & 0x7fu;
++			if (size == 0 || size > sizeof(data) ||
++			    (info & 0x80u) != 0) {
++				/* No touch packet, or an alert category we ignore. */
++				errors = 0;
++			} else if (!m30_i2c_read_reg(M30_R0_EVENT,
++			    M30_R1_EVENT_PKT_DATA, data, size)) {
++				if (++errors <= 8) {
++					printf("M30 TOUCH: packet-data read failed size=%u errors=%u\n",
++					    size, errors);
++				}
++			} else {
++				errors = 0;
++				m30_packets++;
++				if (m30_decode_logs < 4) {
++					m30_decode_logs++;
++					printf("M30 TOUCH: packet size=%u %02x %02x %02x %02x %02x\n",
++					    size, data[0], data[1], data[2], data[3], data[4]);
++				}
++				if (size >= M30_EVENT_SIZE &&
++				    !m30_report_packet(data)) {
++					if (++errors <= 8) {
++						printf("M30 TOUCH: invalid contact packet\n");
++					}
++				}
++			}
++		}
++		if (errors >= 8) {
++			printf("M30 TOUCH: worker stopped after %u transfer failures\n", errors);
++			break;
++		}
++		/* Release contacts not refreshed recently (no packet / line idle). */
++		for (unsigned id = 0; id < M30_MAX_FINGERS; id++) {
++			if (m30_active[id] && m30_cycles - m30_seen[id] > 100) {
++				if (m30_hid_enabled) {
++					sweet_hid_touch((int)id, 0, m30_x[id], m30_y[id]);
++				}
++				m30_active[id] = false;
++			}
++		}
++		if (++m30_hb_ticks >= 200) {
++			m30_hb_ticks = 0;
++			printf("M30 TOUCH: hb pkts=%u contacts=%u errors=%u "
++			    "irq_edges=%u line=%u hid=%d\n",
++			    m30_packets, m30_contacts, errors, m30_irq_edges,
++			    m30_last_irq, m30_hid_enabled);
++		}
++		m30_touch_sleep_5ms();
++	}
++	m30_release_contacts();
++	printf("M30 TOUCH: worker exited packets=%u contacts=%u\n",
++	    m30_packets, m30_contacts);
++	thread_terminate_self();
++}
++
++void
++m30lte_touch_probe(void)
++{
++	int enabled = 0;
++	uint8_t status = 0;
++	thread_t thread;
++
++	(void)PE_parse_boot_argn("m30touch", &enabled, sizeof(enabled));
++	if (!enabled) {
++		return;
++	}
++	(void)PE_parse_boot_argn("m30touchhid", &m30_hid_enabled,
++	    sizeof(m30_hid_enabled));
++	printf("M30 TOUCH: probe entered m30touch=%d m30touchhid=%d\n",
++	    enabled, m30_hid_enabled);
++	m30_bus = ml_io_map(M30_TOUCH_I2C_PA, M30_TOUCH_I2C_SIZE);
++	if (!m30_bus) {
++		printf("M30 TOUCH: I2C4 MMIO mapping failed\n");
++		return;
++	}
++	printf("M30 TOUCH: I2C4 con=%#x stat=%#x add=%#x lc=%#x (read only)\n",
++	    m30_read(m30_bus, 0), m30_read(m30_bus, 4),
++	    m30_read(m30_bus, 8), m30_read(m30_bus, 0x10));
++	if (!m30_i2c_read_reg(M30_R0_CTRL, M30_R1_CTRL_READY, &status, 1) ||
++	    status != M30_CTRL_READY) {
++		printf("M30 TOUCH: controller not ready status=%#x\n", status);
++		return;
++	}
++	m30_alive = ml_io_map(M30_ALIVE_PA, 0x100);
++	if (!m30_alive) {
++		printf("M30 TOUCH: ALIVE/GPA0 MMIO mapping failed\n");
++	}
++	printf("M30 TOUCH: Melfas MSS100 ready status=%#x addr=%#x "
++	    "(irq=GPA0-0/243 sampled hid=%d)\n",
++	    status, M30_TOUCH_I2C_ADDR, m30_hid_enabled);
++	if (kernel_thread_start(m30_touch_worker, NULL, &thread) == KERN_SUCCESS) {
++		thread_deallocate(thread);
++	} else {
++		printf("M30 TOUCH: worker start failed\n");
++	}
++}
++
++#endif /* ARM64_BOARD_CONFIG_M30LTE */

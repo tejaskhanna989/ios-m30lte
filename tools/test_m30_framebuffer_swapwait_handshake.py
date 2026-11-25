@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parent.parent
 PATCH_0441 = ROOT / "xnu/patches-minimal/0441-m30-stderr-capture.patch"
 PATCH_0442 = ROOT / "xnu/patches-minimal/0442-m30-framebuffer-commit-diag.patch"
 PATCH = ROOT / "xnu/patches-minimal/0443-m30-framebuffer-swapwait-handshake.patch"
+PATCH_0451 = ROOT / "xnu/patches-minimal/0451-m30-melfas-touch.patch"
 BASE = ROOT / "milestone_artifacts/ci_45356410574/buildtree/unpacked/xnu"
 RESULT_SERIAL = "0567414c2f004778bba71a01b2723202af5bde98bf1ca6ec035856b086c2a772"
 RESULT_SYS = "438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f"
@@ -60,7 +61,7 @@ def main():
         tree = work / "xnu"
         shutil.copytree(BASE, tree)
         rel = tree.relative_to(ROOT)
-        for patch in (PATCH_0441, PATCH_0442, PATCH):
+        for patch in (PATCH_0441, PATCH_0442, PATCH, PATCH_0451):
             subprocess.run(
                 ["git", "apply", "--directory", str(rel), "-p1",
                  str(patch.relative_to(ROOT))],
@@ -81,7 +82,7 @@ def main():
         )
         verify = json.loads(report.stdout)
         assert verify["result"] == "PASS", verify
-        assert len(verify["critical_patch_provenance"]) == 4
+        assert len(verify["critical_patch_provenance"]) == 5
     print("[PASS] 0441+0442+0443 apply in CI order; hashes and 0403 provenance reproduced")
     print("ALL M30 SWAPWAIT HANDSHAKE TESTS PASS")
 

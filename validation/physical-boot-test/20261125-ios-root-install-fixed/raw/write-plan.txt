@@ -1,0 +1,6 @@
+USERDATA WRITE (authorized, USERDATA only)
+source: ios-root-20H392.img
+source_size_bytes=21474836480
+source_sha256_from_CI=dea9110cc5cc5d063785682527d9d0c527896a4fb34d2bacc9e9a182c8d601f4
+target=/dev/block/by-name/USERDATA -> /dev/block/mmcblk0p28
+command=cat IMAGE | adb shell dd of=/dev/block/by-name/USERDATA bs=4194304

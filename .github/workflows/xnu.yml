@@ -136,6 +136,31 @@ jobs:
                 raise SystemExit(f"ERROR: {rel} sha256 {got} != {want}")
             print(f"PASS {rel} {got}")
         PY
+    - name: Verify M30 Melfas touch patch applied
+      run: |
+        p=0451-m30-melfas-touch.patch
+        grep -q "Applying patch: .*$p" build.log
+        if grep -q "Skipping patch .*$p" build.log; then
+          echo "ERROR: patch $p was skipped by the tolerant build script"
+          exit 1
+        fi
+        python3 - <<'PY'
+        import hashlib
+        from pathlib import Path
+        rel = "bsd/dev/m30lte_touch.c"
+        want = "0240f7c6166a251d8397bcfebb80b29c65edb611f0da182cc2c3afc5c7cdfc94"
+        got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
+        if got != want:
+            raise SystemExit(f"ERROR: {rel} sha256 {got} != {want}")
+        print(f"PASS {rel} {got}")
+        src = (Path("dxb/xnu") / rel).read_text()
+        assert "m30touchhid" in src and "m30_irq_sample()" in src
+        lines = src.splitlines()
+        calls = [i for i, line in enumerate(lines) if "sweet_hid_touch(" in line]
+        assert len(calls) == 5
+        assert all("m30_hid_enabled" in lines[i - 1] for i in calls[1:])
+        print("PASS Melfas driver hash, IRQ sampler, and 4 gated HID calls")
+        PY
     - name: Verify XNU target (iOS vs OSX)
       run: |
         echo "=== XNU_TARGET=$XNU_TARGET ==="
