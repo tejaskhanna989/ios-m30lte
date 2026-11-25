@@ -116,6 +116,25 @@ jobs:
             --output "$WORK/out/extracted" --extract --force \
             > "$WORK/out/backboardd-macho.txt" 2>&1 || true
 
+          for IMAGE in \
+            QuartzCore \
+            CoreBrightness \
+            libEDR \
+            BackBoardServices \
+            SpringBoard; do
+            "$WORK/bin/ipsw" dyld macho "$DSC" "$IMAGE" \
+              --loads --symbols --strings --starts --stubs --demangle \
+              --output "$WORK/out/extracted" --extract --force \
+              > "$WORK/out/${IMAGE}-macho.txt" 2>&1 || true
+          done
+
+          # backboardd is a standalone executable in the root filesystem, not an
+          # in-cache dylib. Copy it read-only from the verified HFSX mount.
+          if sudo test -f "$WORK/mnt/usr/libexec/backboardd"; then
+            sudo cp "$WORK/mnt/usr/libexec/backboardd" "$WORK/out/extracted/backboardd"
+            sudo chown "$(id -u):$(id -g)" "$WORK/out/extracted/backboardd"
+          fi
+
           python3 - <<'PY' > "$WORK/out/symbols.json"
           import json
           names = [
