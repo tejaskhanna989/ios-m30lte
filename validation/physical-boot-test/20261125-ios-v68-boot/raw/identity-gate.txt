@@ -1,0 +1,9 @@
+IDENTITY_GATE_TIME_UTC=2026-11-25T05:56:45Z
+ro.boot.em.model=SM-M305F
+ro.product.device=m30lte
+ro.boot.bootloader=M305FDDU8CVK1
+ro.boot.serialno=<redacted>
+ro.serialno=<redacted>
+ro.twrp.boot=1
+image_sha256=629843b597fd665b7de6b6578a1605455ef5786ae9e06101b591d13a80bf8c50
+IDENTITY_GATE=PASS

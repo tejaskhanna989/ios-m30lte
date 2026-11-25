@@ -1,0 +1,12 @@
+0dee7be86ce07edf8f83a4f7d32ed74824181eb1933895500d973f54c1b2fb61  ./README.md
+45763d62c977849a5433d190ac39ccffec8fd4fc96db7ceca53886dc8da87b38  ./observation.txt
+b689fb4ba211375c8b1aa2c05c8d96d80c41ae4767993d39f149743df9e6c0d3  ./raw/download-mode-gate.txt
+c2d6abaee258d00c67affe45c0b48dc7e2ade7f4f930626c27d5270f6a97267c  ./raw/flash-end.txt
+1efda7d0fa1682bda5ae928bd7bcbd0bd5f630a0a01d967aec11790f5215d370  ./raw/flash-start.txt
+1597dca2456786c4e498a32fb96a7fd85d61f5c6e194572add4643381797ae5a  ./raw/heimdall-detect.txt
+4bf2478fcc951372568ebaba583f3bf005df3bedf67a5f85337ccc1d817d2a4c  ./raw/heimdall-flash.log
+558d1a992f037bf960e790d97cd3111be9547c8a8ded2396dbd58b50a7aa8885  ./raw/heimdall-info.txt
+2e6343fd55400e62f98e01abb58e7d299601417a8e70a07233b031f483cf94be  ./raw/identity-gate.txt
+2e34d9c2998390c0c59556296336d39bb341a5989566b7222ea3fc05acab5f02  ./raw/resume-end.txt
+976bfbc1f24490c104e56b66df50dea00a09959115d921fb0e38b39e77f07b4a  ./raw/resume.log
+f7c1c01c6e704db970de18ab95bd116172bc2dba5c4babc8b1d9e3faa14a7741  ./raw/resume-start.txt

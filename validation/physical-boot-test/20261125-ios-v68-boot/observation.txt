@@ -1,0 +1,52 @@
+v68 physical observation record (MAIN only)
+===========================================
+
+Times are UTC with IST in parentheses. All visual statements below are direct
+user reports; no lock-screen claim is inferred from build logs, framebuffer
+activity, process liveness, IRT counters or pstore alone.
+
+Candidate: validation/ios-candidate-v68-out/ios-boot.img
+SHA256: 629843b597fd665b7de6b6578a1605455ef5786ae9e06101b591d13a80bf8c50
+Implementation commit: 18322e15
+Candidate commit: 7c583deb
+GREEN kernel CI: 45529035057
+
+Boot timeline
+-------------
+2026-11-25T05:56:45Z (11:26:45 IST) identity gate PASS in TWRP; serial redacted
+                                   in the committed evidence file
+2026-11-25T05:56:46Z (11:26:46 IST) adb reboot download
+2026-11-25T05:56:54Z (11:26:54 IST) Heimdall Download Mode detect PASS
+2026-11-25T05:56:58Z (11:26:58 IST) Download Mode gate PASS for exact image
+2026-11-25T05:57:07Z (11:27:07 IST) BOOT-only Heimdall flash started
+2026-11-25T05:57:11Z (11:27:11 IST) BOOT upload successful
+2026-11-25T05:57:28Z (11:27:28 IST) heimdall print-pit --resume started
+2026-11-25T05:57:33Z (11:27:33 IST) device rebooting into iOS
+
+Visual checks
+-------------
+2026-11-25T05:59:38Z (11:29:38 IST), about 2 minutes after reboot:
+  User first reported "i see ₢iverd lines" and clarified "i mean i see CRASH
+  driverd lines". This was transient early display text, not a lock screen.
+
+2026-11-25T06:07:50Z (11:37:50 IST), about 10 minutes after reboot:
+  Asked whether the screen still showed CRASH/driverd lines or had changed to a
+  lock screen; user answered "Persistent lock screen". Asked for exact visual
+  confirmation; user answered "Yes, iOS lock screen" (iOS wallpaper with
+  clock/date and unlock controls, stable).
+
+2026-11-25T06:22:49Z (11:52:49 IST), about 25 minutes after reboot:
+  Asked whether the lock screen was still visible and unchanged; user answered
+  "Still lock screen".
+
+Result
+------
+PHYSICAL LOCK-SCREEN OBSERVATION: PASS. A genuine iOS lock screen was observed
+by the user and remained stable for at least ~15 minutes after it appeared,
+with the last check at ~25 minutes after boot. This is a physical visual
+observation, not an inference from logs or counters.
+
+No rollback was performed. The user chose to keep iOS running, so no TWRP
+return, pstore pull or further device write was performed after this boot.
+Supporting build, package, identity, Download Mode and BOOT-only flash logs are
+in this directory and in validation/ios-candidate-v68-out/.

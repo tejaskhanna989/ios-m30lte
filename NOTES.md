@@ -3586,3 +3586,35 @@ authorization for a BOOT-only test of candidate v6.
   identity + Samsung Download Mode gate and explicit instruction. The purpose
   of this candidate is to capture real selector-79 block IDs and scalar inputs
   in pstore before any response is implemented.
+
+## 2026-11-25 - v68 BOOT-only physical test: persistent lock screen observed (MAIN only)
+
+- With explicit user approval, fresh identity gate PASS in TWRP (`SM-M305F`,
+  `m30lte`, bootloader `M305FDDU8CVK1`, exact known serial, `ro.twrp.boot=1`;
+  serial redacted in committed evidence) and Heimdall Download Mode detect PASS
+  preceded the only write. BOOT-only flash of v68 `ios-boot.img`
+  `629843b597fd665b7de6b6578a1605455ef5786ae9e06101b591d13a80bf8c50` ran
+  `2026-11-25T05:57:07Z..05:57:11Z` (`11:27:07..11:27:11 IST`) with `--no-reboot`;
+  `BOOT upload successful`. Resume was `heimdall print-pit --resume`
+  `05:57:28Z..05:57:33Z` (`11:27:28..11:27:33 IST`). USERDATA, SYSTEM and
+  RECOVERY were untouched; no Fastboot and no rollback.
+- Physical observation: at ~2 min after boot the user saw transient
+  CRASH/driverd-style lines. At ~10 min (`06:07:50Z`, `11:37:50 IST`) the user
+  reported a persistent lock screen and confirmed it was the iOS wallpaper with
+  clock/date and unlock controls. At ~25 min (`06:22:49Z`, `11:52:49 IST`) the
+  user confirmed it was still the lock screen. This is a genuine physical
+  visual observation; v68 is ACCEPTED for the persistent lock-screen objective
+  on that basis. It is not inferred from flash logs, Apple logo, console text,
+  framebuffer activity, process liveness, IRT counters or pstore alone.
+- The user chose to keep iOS running, so the device was not returned to TWRP and
+  no pstore pull was attempted after this boot. Evidence:
+  `validation/physical-boot-test/20261125-ios-v68-boot/` including
+  `observation.txt`, `README.md`, `SHA256SUMS` and the exact raw identity,
+  Download Mode, Heimdall flash and resume logs. The selector-79 block IDs and
+  scalar inputs remain unobserved; do not synthesize a selector response from
+  the 1,580-byte output size.
+- NEXT: leave the device running until the user permits a TWRP return. Then
+  capture `pmsg-ramoops-0` read-only, decode it, and use the real
+  `M30 FB: ABI sel=` lines to complete the selector contract. No further BOOT
+  write is planned without a fresh identity + Download Mode gate and explicit
+  instruction.

@@ -1,0 +1,5 @@
+attempt=1 time=2026-11-25T05:56:51Z
+ERROR: Failed to detect compatible download-mode device.
+attempt=2 time=2026-11-25T05:56:54Z
+Device detected
+heimdall_detect=PASS time=2026-11-25T05:56:54Z
