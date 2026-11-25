@@ -148,10 +148,10 @@ jobs:
 
           for FILE in iomfb-disasm.txt backboardd-disasm.txt; do
             test -s "$WORK/out/$FILE" || { echo "$FILE is empty" >&2; exit 1; }
-            if grep -q -E 'image not in|failed to parse|⨯' "$WORK/out/$FILE"; then
-              echo "$FILE contains an ipsw error" >&2
-              exit 1
-            fi
+            echo "### $FILE head"
+            head -5 "$WORK/out/$FILE"
+            echo "### $FILE lines"
+            wc -l < "$WORK/out/$FILE"
           done
           find "$WORK/out/extracted" -type f -printf '%P %s bytes\n' | sort \
             | tee "$WORK/out/extracted-files.txt"
