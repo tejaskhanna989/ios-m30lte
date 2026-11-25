@@ -1,0 +1,22 @@
+name: M30Touch host utility tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: m30touch focused tests
+        run: python3 tools/test_m30touch.py
+      - name: Utility smoke checks
+        run: |
+          python3 tools/m30touch.py tap 540 960
+          python3 tools/m30touch.py --steps 3 --delay-ms 0 swipe 540 1500 540 500
+          python3 tools/m30touch.py tap 1080 960 >/dev/null 2>&1 && exit 1 || true
