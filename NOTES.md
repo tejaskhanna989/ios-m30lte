@@ -3762,3 +3762,39 @@ authorization for a BOOT-only test of candidate v6.
   after boot or reduce key/HID trace volume further before claiming UI-level
   input behavior. Do not claim touch support without a real Melfas producer and
   contact evidence.
+
+## 2026-11-25 - v70 lock-screen restoration: narrow revert of v69 input diagnostics (MAIN only)
+
+- User requested restoring the accepted v68 lock screen while preserving the
+  proven GPIO -> HID path. All work remains on `main`; no branch, no Fastboot,
+  no USERDATA/SYSTEM/RECOVERY write, and v68 is untouched as rollback baseline.
+- Final v69 `SBERR` inspection: the only surviving fatal record is
+  `SBERR terminating due to uncaught exception of type NSException`. No
+  exception reason, crashing thread or backtrace survived in the 16 KiB ring;
+  a targeted read-only check found no SpringBoard crash report under TWRP data
+  log paths. v68's three `SBERR` records are benign Objective-C duplicate-class
+  warnings, so the fatal record is unique to v69. Details in
+  `validation/input-analysis/v70-lock-screen-restore.md`.
+- Relevant delta is only `0446`, `0447`, `0448`. `0446` changes only a logging
+  condition and preserves framebuffer counters, staging, presentation, notify
+  and selector behavior. `0448` is the only new code on the HID consumer path
+  used by backboardd; `0447` is on the key producer side. The exception reason
+  was lost, so neither patch is proven to be the cause.
+- Smallest correction: keep `0446`, add pure-revert patches
+  `0449-m30-revert-key-input-diag.patch` and
+  `0450-m30-revert-hid-event-diag.patch`. They remove only the v69 `M30 KEY:` /
+  `M30 HID:` diagnostic code; GPIO polling, `sweet_hid_key()`, HID event
+  construction, entitlement check and queue enqueue return byte-for-byte to
+  the v68 source state. No selector 79 response, compatibility bypass or
+  security change.
+- `tools/test_v70_lock_screen_restore.py` PASSes: 0441-0450 apply in CI order,
+  reverts are pure removals, effective source hashes are v68 for keys,
+  SweetHID and user client, v69 for `SweetFramebuffer.cpp` (heartbeat cap kept),
+  with v68 `pe_serial.c`/`sys_generic.c` unchanged and buildtree provenance PASS.
+- CI workflow gate updated for 0441-0450 and v70 hashes. No CI run, candidate
+  package or flash has happened yet for v70.
+- NEXT: commit source, run CI, package `validation/ios-candidate-v70-out/`,
+  review artifacts, then (only with fresh exact identity + Heimdall Download
+  Mode gate) BOOT-only flash with `--no-reboot`. Acceptance requires observed
+  persistent lock screen, no fatal SpringBoard exception, and retained
+  GPIO -> HID evidence. Do not claim touch support.
