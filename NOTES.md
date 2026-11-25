@@ -3662,10 +3662,27 @@ authorization for a BOOT-only test of candidate v6.
   with v68 `pe_serial.c`/`sys_generic.c` hashes unchanged. All other focused
   M30 tests PASS except the pre-existing `test_m30_16k_pages.py` missing-patch
   failure.
-- CI workflow hash/patch gates updated for v69. No CI run, candidate package,
-  device write or flash has happened yet for v69. The device is not currently
-  visible over ADB; connect it in TWRP before any physical test.
-- NEXT: commit/push source, run CI, validate linked symbols and candidate
+- A deeper local evidence pass concluded that a register-level XNU touch
+  driver is **not feasible** from available evidence: no Melfas register map,
+  chip-ID procedure, packet layout, XNU I²C controller for `0x13870000`, or
+  proof that IRQ 243 can be routed into XNU. The stock boot image does prove
+  `CONFIG_TOUCHSCREEN_MELFAS_MSS100=y` and `CONFIG_I2C_S3C2410=y`, with driver
+  strings present; its ramdisk has no touch firmware or source. No touch driver
+  will be invented.
+- First CI run `45572008470` (head `30badb2a`,
+  `2026-11-25T07:56:04Z..08:17:52Z` / `13:26:04..13:47:52 IST`) compiled the
+  kernel and passed the patch/hash gates, but FAILED
+  `Verify exact M30 kernel binary` with `missing M30 GPA1 CON offset`. Cause:
+  the v69 key diagnostics legitimately changed clang register allocation, while
+  `tools/verify_m30_kernel.py` hard-coded the destination registers
+  (`w9/x0`, `w10/x10`, `w8/x8`). The linked kernel itself
+  (`dc1e095bd69e0d5a2b81ef9ffcd5208bec3b0d05c9680d3193563592f41b6a52`) now
+  passes the same verifier after the offsets are checked register-agnostically
+  inside `_a5xelte_keys_init`; no hardware constant or control-flow requirement
+  was weakened.
+- NEXT: rerun CI with the verifier fix, validate linked symbols and candidate
   hashes, then (after fresh exact identity + Heimdall Download Mode gate)
-  BOOT-only flash for runtime input diagnostics. Do not claim input support
-  from compilation or logs alone; keep v68 available as rollback baseline.
+  BOOT-only flash for runtime input diagnostics. The device is not currently
+  visible over ADB; connect it in TWRP before any physical test. Do not claim
+  input support from compilation or logs alone; keep v68 available as rollback
+  baseline.

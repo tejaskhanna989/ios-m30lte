@@ -123,3 +123,30 @@ and the linked kernel
 - No touch-controller driver is added in this candidate: there is still no
   evidence-backed XNU register map or chip-ID procedure. The touch and button
   paths remain separate.
+
+## Touch-driver feasibility conclusion
+
+A further local evidence pass examined the stock boot image, its kernel config
+and ramdisk, the v68 XNU build tree and the linked kernel. An evidence-backed
+register-level XNU touch driver is **not feasible from the available local
+evidence**. This is a blocker, not a reason to guess.
+
+- `m30-boot-original/boot.img` layout: kernel at byte `0x800`, size `0x1732788`;
+  ramdisk at `0x1733000`, size `0xd6b74`; DTB magic at `0x180a800`.
+- Stock kernel gzip config at boot offset `0xaa2218` contains
+  `CONFIG_TOUCHSCREEN_MELFAS_MSS100=y` (line 1827) and
+  `CONFIG_I2C_S3C2410=y` (line 1995).
+- Stock kernel strings prove the Melfas driver is present (`mms_interrupt`,
+  `mms_probe`, `mms_parse_devicetree`, `melfas,mms_ts`, `MSS100`,
+  `melfas_mss100`), but no trustworthy kallsyms/virtual-address table or
+  source-level register map was recovered.
+- The ramdisk has only 10 cpio entries and no Melfas firmware, `.fw` file or
+  driver source. No Melfas register map or packet layout exists in the XNU
+  trees; the only XNU touch/I²C code is the excluded A5XELTE ZT7538 experiment
+  at `0x13850000`, not M30 hardware.
+- The v68 linked kernel contains no `mms_ts`, `MELFAS`, `MSS100`, `melfas` or
+  `_mms_probe` strings and no XNU I²C driver for `0x13870000`.
+
+Required before any touch implementation: a credible Melfas MSS100 register
+map and packet format, an XNU-side I²C controller path for `0x13870000`, and
+evidence that touch IRQ 243 can be routed into XNU. None is available locally.

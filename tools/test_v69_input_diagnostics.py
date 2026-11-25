@@ -102,6 +102,11 @@ def main() -> None:
     for name, text in (("0446", quiet), ("0447", keys), ("0448", hid)):
         for bad in FORBIDDEN:
             assert bad not in text, f"{name}: {bad}"
+    verifier = (ROOT / "tools/verify_m30_kernel.py").read_text()
+    for offset in ("0x60", "0x64", "0x68"):
+        assert (
+            f'ldr\\s+w[0-9]+,\\s+\\[x[0-9]+,\\s+#{offset}\\]' in verifier
+        ), offset
     print("[PASS] v69 patches are bounded diagnostics only")
 
     assert BASE.exists(), BASE

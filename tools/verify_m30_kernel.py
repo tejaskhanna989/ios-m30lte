@@ -147,9 +147,13 @@ def verify(
     require_pattern(emmc, r"mov\s+w0,\s+#0x13500000", "M30 eMMC mapping base")
     forbid_text(disassembly, "0x13540000", "donor eMMC base")
     require_pattern(keys, r"mov\s+w0,\s+#0x11cb0000", "M30 ALIVE base")
-    require_pattern(keys, r"ldr\s+w9,\s+\[x0,\s+#0x60\]", "M30 GPA1 CON offset")
-    require_pattern(keys, r"ldr\s+w10,\s+\[x10,\s+#0x64\]", "M30 GPA1 DAT offset")
-    require_pattern(keys, r"ldr\s+w8,\s+\[x8,\s+#0x68\]", "M30 GPA1 PUD offset")
+    # v69's bounded key diagnostics legitimately change compiler register
+    # allocation.  Check the verified offsets regardless of which general
+    # registers clang chooses, while still requiring them inside the linked
+    # a5xelte_keys_init block.
+    require_pattern(keys, r"ldr\s+w[0-9]+,\s+\[x[0-9]+,\s+#0x60\]", "M30 GPA1 CON offset")
+    require_pattern(keys, r"ldr\s+w[0-9]+,\s+\[x[0-9]+,\s+#0x64\]", "M30 GPA1 DAT offset")
+    require_pattern(keys, r"ldr\s+w[0-9]+,\s+\[x[0-9]+,\s+#0x68\]", "M30 GPA1 PUD offset")
     forbid_text(disassembly, "0x139b0000", "donor ALIVE base")
     checks.append("linked M30 eMMC and ALIVE/GPA1 constants")
 
