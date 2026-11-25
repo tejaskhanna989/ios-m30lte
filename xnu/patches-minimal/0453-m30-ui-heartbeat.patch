@@ -1,0 +1,79 @@
+diff --git a/osfmk/vm/vm_fault.c b/osfmk/vm/vm_fault.c
+--- a/osfmk/vm/vm_fault.c
++++ b/osfmk/vm/vm_fault.c
+@@ -181,6 +181,8 @@
+ #define M30_IRT_MAX_EARLY_ATTEMPTS 4
+ 
+ static int       m30_irt_state = M30_IRT_STATE_NEED_DSC;
++/* v72 diagnostic-only read-only accessor (no state changes). */
++int m30_irt_state_snapshot(void) { return m30_irt_state; }
+ static uint64_t  m30_irt_file_offset = 0;
+ static int       m30_irt_last_err = 0;
+ static uint64_t  m30_irt_diag_seen = 0;
+diff --git a/bsd/dev/sweet_sample.c b/bsd/dev/sweet_sample.c
+--- a/bsd/dev/sweet_sample.c
++++ b/bsd/dev/sweet_sample.c
+@@ -25,6 +25,7 @@
+ extern int hz;
+ extern void sweet_sample_start(void);
+ extern char m30_last_crash_reason[];   /* osfmk/kern/exception.c */
++extern int m30_irt_state_snapshot(void);  /* osfmk/vm/vm_fault.c, read-only */
+ 
+ static char sweet_sample_names[128];
+ 
+@@ -106,10 +107,55 @@
+ 	}
+ }
+ 
++
++/* v72 diagnostic-only UI heartbeat. Disabled by default: boot-arg
++ * m30uihb=1 enables one bounded line per second for at most 30 minutes.
++ * Fields with no safe/reliable source are reported as "unknown". */
++static int hb_sb_pid;
++static int hb_bb_pid;
++
++static int
++sweet_hb_proc(proc_t p, __unused void *arg)
++{
++	char name[32];
++	proc_name(proc_pid(p), name, sizeof(name));
++	if (strcmp(name, "SpringBoard") == 0) {
++		hb_sb_pid = proc_pid(p);
++	} else if (strcmp(name, "backboardd") == 0) {
++		hb_bb_pid = proc_pid(p);
++	}
++	return PROC_RETURNED;
++}
++
++static void
++sweet_hb_thread(__unused void *arg, __unused wait_result_t wr)
++{
++	static int chan;
++	for (int i = 0; i < 1800; i++) {
++		hb_sb_pid = 0;
++		hb_bb_pid = 0;
++		proc_iterate(PROC_ALLPROCLIST, sweet_hb_proc, NULL, NULL, NULL);
++		printf("M30 UI HB: sb=%d bb=%d reason=%s irt=%d "
++		    "hid=unknown scene=unknown surface=unknown\n",
++		    hb_sb_pid, hb_bb_pid,
++		    m30_last_crash_reason[0] != '\0' ? m30_last_crash_reason : "none",
++		    m30_irt_state_snapshot());
++		(void)tsleep(&chan, PZERO, "m30uihb", hz);
++	}
++	printf("M30 UI HB: stopped after 1800 samples\n");
++}
++
+ void
+ sweet_sample_start(void)
+ {
+ 	thread_t thread;
++	int heartbeat = 0;
++	(void)PE_parse_boot_argn("m30uihb", &heartbeat, sizeof(heartbeat));
++	if (heartbeat) {
++		if (kernel_thread_start(sweet_hb_thread, NULL, &thread) == KERN_SUCCESS) {
++			thread_deallocate(thread);
++		}
++	}
+ 	if (kernel_thread_start(sweet_sample_thread, NULL, &thread) == KERN_SUCCESS) {
+ 		thread_deallocate(thread);
+ 	}
