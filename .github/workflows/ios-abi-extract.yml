@@ -119,17 +119,20 @@ jobs:
             --output "$WORK/out/extracted" --extract --force \
             > "$WORK/out/backboardd-macho.txt" 2>&1 || true
 
-          for IMAGE in \
+          for SPEC in \
             QuartzCore \
             CoreBrightness \
             libEDR \
-            IOKit \
+            IOKit=/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit \
             BackBoardServices \
             SpringBoard; do
+            NAME="${SPEC%%=*}"
+            IMAGE="${SPEC#*=}"
+            if [ "$IMAGE" = "$SPEC" ]; then IMAGE="$NAME"; fi
             "$WORK/bin/ipsw" dyld macho "$DSC" "$IMAGE" \
               --loads --symbols --strings --starts --stubs --demangle \
               --output "$WORK/out/extracted" --extract --force \
-              > "$WORK/out/${IMAGE}-macho.txt" 2>&1 || true
+              > "$WORK/out/${NAME}-macho.txt" 2>&1 || true
           done
 
           # backboardd is a standalone executable in the root filesystem, not an
@@ -165,6 +168,36 @@ jobs:
           PY
           "$WORK/bin/ipsw" dyld symaddr "$DSC" --in "$WORK/out/symbols.json" --all \
             > "$WORK/out/symaddr.json" 2>&1 || true
+
+          # Resolve the indirect branch/stub islands seen in genuine IOMFB,
+          # QuartzCore and CoreBrightness disassembly. These addresses are
+          # unslid DSC addresses, not guesses from our kernel stub.
+          cat > "$WORK/out/resolve-addresses.txt" <<'EOF'
+          0x1afb974bc
+          0x1afb974c8
+          0x1afb974d4
+          0x1afb977e0
+          0x1afb95df8
+          0x1afb962f0
+          0x1afb96344
+          0x1afb96350
+          0x18dbcc238
+          0x18dbcc808
+          0x18dbcc8e0
+          0x18dbca4f8
+          0x18dbca5d0
+          0x18dbcd288
+          0x18dbcd2ac
+          EOF
+          : > "$WORK/out/resolved-addresses.txt"
+          while read -r ADDR; do
+            echo "### $ADDR" >> "$WORK/out/resolved-addresses.txt"
+            "$WORK/bin/ipsw" dyld a2s "$DSC" "$ADDR" -i -m \
+              >> "$WORK/out/resolved-addresses.txt" 2>&1 || true
+            "$WORK/bin/ipsw" dyld a2f "$DSC" "$ADDR" -j \
+              >> "$WORK/out/resolved-addresses.txt" 2>&1 || true
+          done < "$WORK/out/resolve-addresses.txt"
+          "$WORK/bin/ipsw" dyld stubs "$DSC" 2>&1 | gzip -9 > "$WORK/out/dyld-stubs.txt.gz"
 
           "$WORK/bin/ipsw" dyld disass "$DSC" \
             --image '/System/Library/PrivateFrameworks/IOMobileFramebuffer.framework/IOMobileFramebuffer' \
