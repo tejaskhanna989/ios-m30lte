@@ -1,0 +1,123 @@
+[
+  {
+    "source_name": "com.apple.SpringBoard.plist",
+    "output": "validation/physical-boot-test/20261125-ios-v68t-boot/host-logs/00029e50_com.apple.SpringBoard.plist",
+    "size": 2415,
+    "sha256": "4b7ba9f778a4f092a363e732697aa973f3ea91cb409305b9ba6a673ca985431a",
+    "file_id": 171600,
+    "parent": 15490,
+    "create": "2026-11-25T16:12:29Z",
+    "modify": "2026-04-30T03:13:14Z",
+    "rsrc_fork_size": 0
+  },
+  {
+    "source_name": "com.apple.purplebuddy.plist",
+    "output": "validation/physical-boot-test/20261125-ios-v68t-boot/host-logs/0002a132_com.apple.purplebuddy.plist",
+    "size": 780,
+    "sha256": "0f630ac1710b518f5fa172dcf717c8798b2c9ccb55f84519c29daca90b446520",
+    "file_id": 172338,
+    "parent": 170992,
+    "create": "2026-11-25T16:12:30Z",
+    "modify": "2026-04-30T03:13:14Z",
+    "rsrc_fork_size": 0
+  },
+  {
+    "source_name": "com.apple.SpringBoard.plist",
+    "output": "validation/physical-boot-test/20261125-ios-v68t-boot/host-logs/0002f712_com.apple.SpringBoard.plist",
+    "size": 1768,
+    "sha256": "be09c732f8970532023a36d3b376420abcb695fbb50c1693d1f6b83d18e7a224",
+    "file_id": 194322,
+    "parent": 193842,
+    "create": "2026-11-25T16:12:44Z",
+    "modify": "2026-04-30T03:13:14Z",
+    "rsrc_fork_size": 0
+  },
+  {
+    "source_name": "com.apple.migration.plist",
+    "output": "validation/physical-boot-test/20261125-ios-v68t-boot/host-logs/0002f7a6_com.apple.migration.plist",
+    "size": 195,
+    "sha256": "4e0d082e29cf9435a4bc0f42d96df34fc1b32ab668b7a666c14f4c6edce8cc4f",
+    "file_id": 194470,
+    "parent": 193842,
+    "create": "2026-11-25T16:12:44Z",
+    "modify": "2026-04-30T03:13:14Z",
+    "rsrc_fork_size": 0
+  },
+  {
+    "source_name": "com.apple.purplebuddy.plist",
+    "output": "validation/physical-boot-test/20261125-ios-v68t-boot/host-logs/0002f7d9_com.apple.purplebuddy.plist",
+    "size": 175,
+    "sha256": "d72075df50afdd4075584b1e5488a6330296a730b584fac2236f28ccc32b8d10",
+    "file_id": 194521,
+    "parent": 193842,
+    "create": "2026-11-25T16:12:44Z",
+    "modify": "2026-04-30T03:13:14Z",
+    "rsrc_fork_size": 0
+  },
+  {
+    "source_name": "com.apple.purplebuddy.plist",
+    "output": "validation/physical-boot-test/20261125-ios-v68t-boot/host-logs/0003ed44_com.apple.purplebuddy.plist",
+    "size": 175,
+    "sha256": "90dbd79a7e6aa60d6711b051ddaa0f5777ed0b3f3f96f0f4dd1fd59d3b8b288f",
+    "file_id": 257348,
+    "parent": 199511,
+    "create": "2026-11-25T16:13:29Z",
+    "modify": "2026-04-30T03:13:14Z",
+    "rsrc_fork_size": 0
+  },
+  {
+    "source_name": "launchd.log",
+    "output": "validation/physical-boot-test/20261125-ios-v68t-boot/host-logs/0004e76f_launchd.log",
+    "size": 196608,
+    "sha256": "2442350ee16d2dd8c9c8e193b412251da7f2c5f9f425eba0a2053a17c8bb0580",
+    "file_id": 321391,
+    "parent": 306792,
+    "create": "1970-01-01T00:00:06Z",
+    "modify": "1970-01-01T00:05:32Z",
+    "rsrc_fork_size": 0
+  },
+  {
+    "source_name": "com.apple.purplebuddy.plist",
+    "output": "validation/physical-boot-test/20261125-ios-v68t-boot/host-logs/0004e761_com.apple.purplebuddy.plist",
+    "size": 130,
+    "sha256": "abcbddfc473a6a97fe19a3c70ac9e5c0c2935b49ea73a5b215dfa265f62c5549",
+    "file_id": 321377,
+    "parent": 306809,
+    "create": "2026-11-25T16:14:56Z",
+    "modify": "2026-11-25T16:14:56Z",
+    "rsrc_fork_size": 0
+  },
+  {
+    "source_name": "com.apple.springboard.plist",
+    "output": "validation/physical-boot-test/20261125-ios-v68t-boot/host-logs/0004e807_com.apple.springboard.plist",
+    "size": 273,
+    "sha256": "db006ed53b0eeb76ec4bd5407346e919073b9bb2cdcddda62131665462931c97",
+    "file_id": 321543,
+    "parent": 306809,
+    "create": "1970-01-01T00:00:36Z",
+    "modify": "1970-01-01T00:00:36Z",
+    "rsrc_fork_size": 0
+  },
+  {
+    "source_name": "com.apple.migration.plist",
+    "output": "validation/physical-boot-test/20261125-ios-v68t-boot/host-logs/0004e75f_com.apple.migration.plist",
+    "size": 145,
+    "sha256": "2c8b8563b740e9fdf44cd9d0ca7a18157f54513d583f19963cc3c7817b81d499",
+    "file_id": 321375,
+    "parent": 306809,
+    "create": "2026-11-25T16:14:56Z",
+    "modify": "2026-11-25T16:14:56Z",
+    "rsrc_fork_size": 0
+  },
+  {
+    "source_name": "mobileactivationd.log.0",
+    "output": "validation/physical-boot-test/20261125-ios-v68t-boot/host-logs/0004e89c_mobileactivationd.log.0",
+    "size": 2077,
+    "sha256": "1deae38fcf413babb59a1aebbfc4ed1636ca61a95282c3eaa973e6102a77b776",
+    "file_id": 321692,
+    "parent": 321690,
+    "create": "1970-01-01T00:00:59Z",
+    "modify": "1970-01-01T00:00:59Z",
+    "rsrc_fork_size": 0
+  }
+]

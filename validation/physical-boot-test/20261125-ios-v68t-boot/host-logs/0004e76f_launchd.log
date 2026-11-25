@@ -1,0 +1,1797 @@
+1970-01-01 00:00:02.405789 <Notice>: hello
+1970-01-01 00:00:02.418578 <Error>: Could not opt into 50 MB Jetsam high watermark: 22: Invalid argument
+1970-01-01 00:00:02.419065 <Notice>: Darwin Bootstrapper Version 7.0.0: Thu Feb  1 20:33:09 PST 2024; root:libxpc_executables-2462.140.4.702.1~1/launchd/RELEASE_ARM64
+1970-01-01 00:00:02.419219 <Notice>: boot-args = debug=0xc serial=3 cpus=6 keepsyms=1 maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1 a5fb_noconsole=1 a5fb_keep_on=1 m30touch=1 m30touchhid=1
+1970-01-01 00:00:02.433379 (system) <Notice>: entering ondemand mode
+1970-01-01 00:00:02.434849 (system) <Notice>: created
+1970-01-01 00:00:02.437240 (fsck) <Notice>: Doing boot task
+1970-01-01 00:00:03.124332 (mount-phase-1) <Notice>: Doing boot task
+1970-01-01 00:00:03.319978 (data-protection) <Notice>: Doing boot task
+1970-01-01 00:00:04.160049 (finish-obliteration) <Notice>: Doing boot task
+1970-01-01 00:00:04.521752 (detect-installed-roots) <Notice>: Doing boot task
+1970-01-01 00:00:04.524201 <Notice>: No cookie from system volume
+1970-01-01 00:00:04.524551 <Notice>: No cookie: /private/preboot/AE4797F8399C19FFEE77D2F58DEE886381B245190ABE1B5684DEC49566508882EDCEA021F4F54EC64A4C8B8BE21ACFB3/.roots-installed
+1970-01-01 00:00:04.524638 (commit-boot-mode) <Notice>: Doing boot task
+1970-01-01 00:00:04.524701 <Notice>: boot-mode committed: (null)
+1970-01-01 00:00:04.524763 (restore-datapartition) <Notice>: Doing boot task
+1970-01-01 00:00:04.526404 (restore-datapartition) <Notice>: optional boot task not present
+1970-01-01 00:00:04.526537 (mount-phase-2) <Notice>: Doing boot task
+1970-01-01 00:00:04.541502 (init-with-data-volume) <Notice>: Doing boot task
+1970-01-01 00:00:04.571037 (MSUEarlyBootTask) <Notice>: Doing boot task
+1970-01-01 00:00:05.025886 (fips) <Notice>: Doing boot task
+1970-01-01 00:00:05.216271 (keybag) <Notice>: Doing boot task
+1970-01-01 00:00:05.587634 (usermanagerd) <Notice>: Doing boot task
+1970-01-01 00:00:06.762919 (dirs_cleaner) <Notice>: Doing boot task
+1970-01-01 00:00:06.789835 <Notice>: launchd logging initialized. name: com.apple.xpc.launchd pid: 1
+1970-01-01 00:00:06.789844 (xpcroleaccountd) <Notice>: Doing boot task
+1970-01-01 00:00:06.929516 <Notice>: Flushed 26 logs [limit: 20]
+1970-01-01 00:00:06.822912 (init_featureflags) <Notice>: Doing boot task
+1970-01-01 00:00:07.219138 (auearlyboot) <Notice>: Doing boot task
+1970-01-01 00:00:07.369113 (tzinit) <Notice>: Doing boot task
+1969-12-31 16:00:07.400947 (finish-restore) <Notice>: Doing boot task
+1969-12-31 16:00:07.417214 (finish-demo-restore) <Notice>: Doing boot task
+1969-12-31 16:00:07.461083 (sysstatuscheck) <Notice>: Doing boot task
+1969-12-31 16:00:07.490795 (prng_seedctl) <Notice>: Doing boot task
+1969-12-31 16:00:07.518130 (launchd_cache_loader) <Notice>: Doing boot task
+1969-12-31 16:00:08.502451 <Notice>: launchd UUID: 5C15DB07-B3BC-3DF3-B62F-3E498B993B8E
+1969-12-31 16:00:08.502490 (boot) <Notice>: Early boot complete. Continuing system boot.
+1969-12-31 16:00:08.502535 (user/501) <Notice>: entering ondemand mode
+1969-12-31 16:00:08.502573 (user/501) <Notice>: created
+1969-12-31 16:00:08.502780 (system) <Notice>: entering bootstrap mode
+1969-12-31 16:00:08.502786 (user/501) <Notice>: entering bootstrap mode
+1969-12-31 16:00:08.512724 (com.apple.AdminLite) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.513456 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.AppleCredentialManagerDaemon
+1969-12-31 16:00:08.513810 (com.apple.AuthenticationServicesCore.AuthenticationServicesAgent) <Error>: Unknown key for plist importer (key: EnabledPressureExit type: bool)
+1969-12-31 16:00:08.513993 (com.apple.BTServer.avrcp) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.514340 (com.apple.BTServer.map) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.514513 (com.apple.BTServer.pbap) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.514857 (com.apple.BlueTool) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.518926 (user/501/com.apple.CarPlayApp) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.520295 (user/501/com.apple.ClarityBoard) <Notice>: Did not import service from caller: path = /System/Library/LaunchDaemons/com.apple.ClarityBoard.plist, caller = launchd[1], error = 152: Service cannot load in current boot environment
+1969-12-31 16:00:08.521043 (com.apple.CommCenterMobileHelper) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.521056 (com.apple.CommCenterMobileHelper) <Error>: Unknown key for plist importer (key: application-identifier type: string)
+1969-12-31 16:00:08.521083 (com.apple.CommCenterMobileHelper) <Error>: Unknown key for plist importer (key: com.apple.private.attribution.implicitly-assumed-identity type: dictionary)
+1969-12-31 16:00:08.521297 (com.apple.CommCenterRootHelper) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.521844 (com.apple.DMHelper) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.522728 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.DumpPanic
+1969-12-31 16:00:08.523337 (com.apple.FileCoordination) <Error>: Unknown key for plist importer (key: TransactionTimeLimitEnabled type: bool)
+1969-12-31 16:00:08.523737 (com.apple.FileProvider) <Error>: Unknown key for plist importer (key: com.apple.xpc.activity type: dictionary)
+1969-12-31 16:00:08.523993 (com.apple.GSSCred) <Error>: Unknown key for plist importer (key: RunLoopType type: string)
+1969-12-31 16:00:08.525418 (com.apple.Maps.mapspushd) <Error>: Unknown key for plist importer (key: SBMachServices type: array)
+1969-12-31 16:00:08.525780 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.MobileFileIntegrity
+1969-12-31 16:00:08.525994 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.MobileInternetSharing
+1969-12-31 16:00:08.526364 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.OTACrashCopier
+1969-12-31 16:00:08.528543 (com.apple.ReportCrash) <Error>: Unknown key for plist importer (key: EfficiencyMode type: string)
+1969-12-31 16:00:08.528858 (user/501/com.apple.ReportMemoryException) <Error>: (lint): Unrecognized MachService property: DrainMessagesOnCrash
+1969-12-31 16:00:09.098640 <Notice>: Last log repeated 1 times
+1969-12-31 16:00:08.539288 (user/501/com.apple.SepUpdateTimer) <Error>: Could not import service from caller: path = /System/Library/LaunchDaemons/com.apple.SepUpdateTimer.plist, caller = launchd[1], error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.539640 (com.apple.SpringBoard) <Error>: Unknown key for plist importer (key: HighPriorityIO type: bool)
+1969-12-31 16:00:08.539659 (user/501/com.apple.SpringBoard) <Warning>: (lint): The HideUntilCheckIn property is an architectural performance issue. Please transition away from it.
+1969-12-31 16:00:09.098773 <Notice>: Last log repeated 1 times
+1969-12-31 16:00:08.539709 (com.apple.SpringBoard) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.541233 (user/501/com.apple.SpringBoard) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.543418 (user/501/com.apple.TextInput.kbd) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.543983 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.ManagedSettingsAgent
+1969-12-31 16:00:08.544208 (com.apple.UserEventAgent-System) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.544448 (user/501/com.apple.UserEventAgent-System) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:08.544680 (user/501/com.apple.UserEventAgent-System) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:08.544691 (user/501/com.apple.UserEventAgent-System) <Notice>: service state: spawning
+1969-12-31 16:00:08.545065 (user/501/com.apple.UserEventAgent-System) <Notice>: launching: system support
+1969-12-31 16:00:08.559946 (user/501/com.apple.UserEventAgent-System [24]) <Notice>: xpcproxy spawned with pid 24
+1969-12-31 16:00:08.559999 (user/501/com.apple.UserEventAgent-System [24]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:08.560011 (user/501/com.apple.UserEventAgent-System [24]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:08.561607 (user/501/com.apple.VoiceOverTouch) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.562177 (com.apple.WirelessRadioManager) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.562218 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.WirelessRadioManager
+1969-12-31 16:00:08.562529 (com.apple.absd) <Error>: Unknown key for plist importer (key: CFBundleName type: string)
+1969-12-31 16:00:08.562960 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.accessibility.axassetsd
+1969-12-31 16:00:08.563734 (user/501/com.apple.accessoryd) <Warning>: (lint): The HideUntilCheckIn property is an architectural performance issue. Please transition away from it.
+1969-12-31 16:00:09.099262 <Notice>: Last log repeated 1 times
+1969-12-31 16:00:08.564074 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.accessoryupdaterd
+1969-12-31 16:00:08.564579 (com.apple.adid) <Error>: Unknown key for plist importer (key: adi-client type: string)
+1969-12-31 16:00:08.564601 (com.apple.adid) <Error>: Unknown key for plist importer (key: CFBundleName type: string)
+1969-12-31 16:00:08.564614 (com.apple.adid) <Error>: Unknown key for plist importer (key: com.apple.security.system-container type: bool)
+1969-12-31 16:00:08.565108 (com.apple.aggregated) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.565147 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.aggregated
+1969-12-31 16:00:08.565740 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.amsaccountsd
+1969-12-31 16:00:08.567202 (user/501/com.apple.anomalydetectiond) <Error>: Could not import service from caller: path = /System/Library/LaunchDaemons/com.apple.anomalydetectiond.plist, caller = launchd[1], error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.567511 (com.apple.ap.adprivacyd) <Error>: Invalid type for plist importer (key: StartInterval type: double), accepted types: [integer]
+1969-12-31 16:00:08.569911 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.askpermissiond
+1969-12-31 16:00:08.572136 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.assistantd
+1969-12-31 16:00:08.573912 (user/501/com.apple.assistivetouchd) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.574241 (com.apple.atc) <Error>: Unknown key for plist importer (key: com.apple.security.exception.mach-lookup.global-name type: array)
+1969-12-31 16:00:08.574385 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.atc
+1969-12-31 16:00:08.576036 (com.apple.awdd) <Error>: The ServiceIPC key is no longer respected. Please remove it.
+1969-12-31 16:00:08.576291 (com.apple.backboardd) <Error>: Unknown key for plist importer (key: HighPriorityIO type: bool)
+1969-12-31 16:00:08.576317 (com.apple.backboardd) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.576404 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.backboardd
+1969-12-31 16:00:08.576829 (user/501/com.apple.backupd) <Error>: (lint): Invalid type for a LaunchEvent stream, should be a dictionary (stream/type): com.apple.alarm/bool
+1969-12-31 16:00:08.578341 (user/501/com.apple.biometrickitd.pearl) <Error>: Could not import service from caller: path = /System/Library/LaunchDaemons/com.apple.biometrickitd.pearl.plist, caller = launchd[1], error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.578678 (user/501/com.apple.bird) <Notice>: draining messages from com.apple.bird.token
+1969-12-31 16:00:08.578688 (user/501/com.apple.bird) <Notice>: draining messages from com.apple.bird.push
+1969-12-31 16:00:08.578697 (user/501/com.apple.bird) <Notice>: draining messages from com.apple.bird.cache-delete
+1969-12-31 16:00:08.578706 (user/501/com.apple.bird) <Notice>: draining messages from com.apple.bird
+1969-12-31 16:00:08.578925 (com.apple.bluetoothd) <Error>: Unknown key for plist importer (key: SuccessfulExit type: bool)
+1969-12-31 16:00:08.579022 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.bluetoothd
+1969-12-31 16:00:08.580796 (user/501/com.apple.BluetoothUIService) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.581033 (com.apple.bluetoothuserd) <Error>: Unknown key for plist importer (key: com.apple.alarm type: bool)
+1969-12-31 16:00:08.581118 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.bluetoothuserd
+1969-12-31 16:00:08.582323 (user/501/com.apple.calaccessd) <Warning>: (lint): The HideUntilCheckIn property is an architectural performance issue. Please transition away from it.
+1969-12-31 16:00:08.583768 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.biomed
+1969-12-31 16:00:08.584165 (com.apple.certui.relay) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.585913 (user/501/com.apple.checkerboard) <Error>: Could not import service from caller: path = /System/Library/LaunchDaemons/com.apple.checkerboard.plist, caller = launchd[1], error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.586054 (user/501/com.apple.checkerboardd) <Error>: Could not import service from caller: path = /System/Library/LaunchDaemons/com.apple.checkerboardd.plist, caller = launchd[1], error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.586315 (com.apple.chronod) <Error>: Invalid type for plist importer (key: ThrottleInterval type: string), accepted types: [integer]
+1969-12-31 16:00:08.587370 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.cloudpaird
+1969-12-31 16:00:08.589490 (user/501/com.apple.commandandcontrol) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.590157 (com.apple.configd) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.590223 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.configd
+1969-12-31 16:00:08.591637 (com.apple.containermanagerd) <Error>: Unknown key for plist importer (key: _PanicOnCrasX type: dictionary)
+1969-12-31 16:00:08.591831 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.containermanagerd
+1969-12-31 16:00:08.592474 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.contextstored
+1969-12-31 16:00:08.594515 (com.apple.coreservices.useractivityd) <Error>: Unknown key for plist importer (key: DrainMessagesAfterFailedInit type: bool)
+1969-12-31 16:00:08.595040 (user/501/com.apple.corespeechd) <Error>: Invalid type for event (event/type): Name/string
+1969-12-31 16:00:08.596753 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.dasd
+1969-12-31 16:00:08.599101 (user/501/com.apple.dietapplecamerad) <Error>: Could not import service from caller: path = /System/Library/LaunchDaemons/com.apple.dietapplecamerad.plist, caller = launchd[1], error = 158: Service cannot be loaded on current os variant
+1969-12-31 16:00:08.600131 (com.apple.distnoted.xpc.daemon) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.600180 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.distnoted.xpc.daemon
+1969-12-31 16:00:08.600922 (user/501/com.apple.donotdisturbd) <Error>: (lint): Invalid type for a LaunchEvent stream, should be a dictionary (stream/type): com.apple.alarm/bool
+1969-12-31 16:00:08.601662 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.driverkitd
+1969-12-31 16:00:08.602663 (com.apple.dt.remotepairingdeviced) <Error>: Unknown key for plist importer (key: _PanicOnCrasX type: dictionary)
+1969-12-31 16:00:08.604728 (user/501/com.apple.duetexpertd) <Warning>: The endpoint "com.apple.proactive.HomeScreenSuggestion.xpc" defined in plist already exists and is owned by: com.apple.SpringBoard
+1969-12-31 16:00:08.605659 (user/501/com.apple.email.maild) <Error>: (lint): Invalid type for a LaunchEvent stream, should be a dictionary (stream/type): com.apple.alarm/bool
+1969-12-31 16:00:08.606250 (com.apple.fairplayd.H2) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.606262 (com.apple.fairplayd.H2) <Error>: Unknown key for plist importer (key: CFBundleName type: string)
+1969-12-31 16:00:08.606405 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.fairplayd.H2
+1969-12-31 16:00:08.612975 (com.apple.fairplaydeviceidentityd) <Error>: Disallowing environment variable: DYLD_PAGEIN_LINKING
+1969-12-31 16:00:08.613231 (com.apple.familycircled) <Error>: Unknown key for plist importer (key: EnvironmentalVariables type: dictionary)
+1969-12-31 16:00:08.613473 (com.apple.familynotification) <Error>: Unknown key for plist importer (key: EnvironmentalVariables type: dictionary)
+1969-12-31 16:00:08.613530 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.familynotification
+1969-12-31 16:00:08.616644 (com.apple.followupd) <Error>: Unknown key for plist importer (key: TransactionTimeLimitTimeoutDelta type: int64)
+1969-12-31 16:00:08.619162 (user/501/com.apple.fullkeyboardaccess) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.621416 (com.apple.healthd) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.621446 (com.apple.healthd) <Error>: Unknown key for plist importer (key: CFBundleAllowMixedLocalizations type: bool)
+1969-12-31 16:00:08.621613 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.healthd
+1969-12-31 16:00:08.622788 (user/501/com.apple.iapd) <Warning>: (lint): The HideUntilCheckIn property is an architectural performance issue. Please transition away from it.
+1969-12-31 16:00:09.268600 <Notice>: Last log repeated 1 times
+1969-12-31 16:00:08.624929 (com.apple.icloud.fmfd) <Error>: The Debug key is no longer respected. Please remove it.
+1969-12-31 16:00:08.627153 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.identityservicesd
+1969-12-31 16:00:08.627511 (com.apple.idsfoundation.IDSRemoteURLConnectionAgent) <Error>: Unknown key for plist importer (key: EnablePressureExit type: bool)
+1969-12-31 16:00:08.627953 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.imagent
+1969-12-31 16:00:08.631583 (com.apple.keychainsharingmessagingd) <Error>: Unknown key for plist importer (key: CFBundleName type: string)
+1969-12-31 16:00:08.632564 (com.apple.liveactivitiesd) <Error>: Invalid type for plist importer (key: ThrottleInterval type: string), accepted types: [integer]
+1969-12-31 16:00:08.633403 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.locationd
+1969-12-31 16:00:08.635445 (com.apple.lskdd) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.635477 (com.apple.lskdd) <Error>: Unknown key for plist importer (key: CFBundleName type: string)
+1969-12-31 16:00:08.635501 (com.apple.lskdd) <Error>: Unknown key for plist importer (key: CFBundleVersion type: string)
+1969-12-31 16:00:08.636769 (com.apple.managedconfiguration.profiled) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.638594 (com.apple.mediaartworkd) <Warning>: Unknown ProcessType: AdaptiveUtility
+1969-12-31 16:00:08.639355 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.mediaremoted
+1969-12-31 16:00:08.640858 (com.apple.mediaserverd) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.641240 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.mediaserverd
+1969-12-31 16:00:08.642268 (com.apple.memory-maintenance) <Error>: Unknown key for plist importer (key: com.apple.private.memoryinfo type: bool)
+1969-12-31 16:00:08.642973 (user/501/com.apple.midiserver) <Warning>: (lint): The HideUntilCheckIn property is an architectural performance issue. Please transition away from it.
+1969-12-31 16:00:08.645477 (com.apple.mobile.keybagd) <Notice>: This key does not do anything: OnDemand
+1969-12-31 16:00:08.645539 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.mobile.keybagd
+1969-12-31 16:00:08.645859 (com.apple.mobile.lockdown) <Error>: Unknown key for plist importer (key: _PanicOnCrasX type: dictionary)
+1969-12-31 16:00:08.645867 (com.apple.mobile.lockdown) <Error>: The ServiceIPC key is no longer respected. Please remove it.
+1969-12-31 16:00:08.646710 (user/501) <Notice>: pending spawn, service not yet activated: com.apple.mobile.lockdown
+1969-12-31 16:00:08.647410 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.mobile.softwareupdated
+1969-12-31 16:00:08.648012 (com.apple.mobile.usermanagerd) <Notice>: This key does not do anything: OnDemand
+1969-12-31 16:00:08.648024 (com.apple.mobile.usermanagerd) <Error>: Unknown key for plist importer (key: _PanicOnCrasX type: dictionary)
+1969-12-31 16:00:08.648086 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.mobile.usermanagerd
+1969-12-31 16:00:08.650401 (user/501/com.apple.mobiletimerd) <Error>: (lint): Invalid type for a LaunchEvent stream, should be a dictionary (stream/type): com.apple.alarm/bool
+1969-12-31 16:00:08.650521 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.mobiletimerd
+1969-12-31 16:00:08.650972 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.mtmergeprops
+1969-12-31 16:00:08.651763 (com.apple.nanoprefsyncd.2) <Error>: Unknown key for plist importer (key: AfterInitialDemand type: bool)
+1969-12-31 16:00:08.651842 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.nanoprefsyncd.2
+1969-12-31 16:00:08.652020 (com.apple.nanoregistryd) <Error>: Unknown key for plist importer (key: TransactionTimeLimitEnabled type: bool)
+1969-12-31 16:00:08.653070 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.navd
+1969-12-31 16:00:08.653776 (user/501/com.apple.nearbyd) <Error>: Invalid type for event (event/type): Notification/string
+1969-12-31 16:00:08.657752 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.passd
+1969-12-31 16:00:08.658296 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.peakpowermanagerd
+1969-12-31 16:00:08.658455 (com.apple.peopled) <Error>: Unknown key for plist importer (key: EnvironmentalVariables type: dictionary)
+1969-12-31 16:00:08.658533 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.peopled
+1969-12-31 16:00:08.660265 (com.apple.powerd) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.660334 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.powerd
+1969-12-31 16:00:08.660708 (com.apple.powerlogHelperd) <Error>: Unknown key for plist importer (key: UNUserNotificationCenter type: dictionary)
+1969-12-31 16:00:08.661102 (com.apple.preboardservice_v2) <Error>: Invalid type for plist importer (key: Debug type: dictionary), accepted types: [bool]
+1969-12-31 16:00:08.661114 (com.apple.preboardservice_v2) <Error>: Unknown key for plist importer (key: Info type: dictionary)
+1969-12-31 16:00:08.661124 (com.apple.preboardservice_v2) <Error>: Unknown key for plist importer (key: DEFAULT-OPTIONS type: dictionary)
+1969-12-31 16:00:08.661332 (com.apple.printd) <Error>: Unknown key for plist importer (key: TransactionTimeLimitEnabled type: bool)
+1969-12-31 16:00:08.663851 (user/501/com.apple.proximitycontrold) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.664363 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.ptpd
+1969-12-31 16:00:08.674307 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.rapportd
+1969-12-31 16:00:08.675072 (user/501/com.apple.remindd) <Error>: (lint): Invalid type for a LaunchEvent stream, should be a dictionary (stream/type): com.apple.alarm/bool
+1969-12-31 16:00:08.675167 (user/501/com.apple.remindd) <Error>: Invalid type for event (event/type): Name/string
+1969-12-31 16:00:08.675199 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.remindd
+1969-12-31 16:00:08.675444 (user/501/com.apple.remoted) <Warning>: (lint): The HideUntilCheckIn property is an architectural performance issue. Please transition away from it.
+1969-12-31 16:00:08.675471 (com.apple.remoted) <Error>: Unknown key for plist importer (key: _PanicOnCrasX type: dictionary)
+1969-12-31 16:00:08.675597 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.remoted
+1969-12-31 16:00:08.675873 (user/501/com.apple.remotemanagementd) <Warning>: The endpoint "com.apple.aps.remotemanagementd.http.apns-dev" defined in plist already exists and is owned by: com.apple.RemoteManagementAgent
+1969-12-31 16:00:08.675895 (user/501/com.apple.remotemanagementd) <Warning>: The endpoint "com.apple.aps.remotemanagementd.http.apns-prod" defined in plist already exists and is owned by: com.apple.RemoteManagementAgent
+1969-12-31 16:00:08.676114 (com.apple.replayd) <Error>: Unknown key for plist importer (key: com.apple.private.security.no-sandbox type: bool)
+1969-12-31 16:00:08.676130 (com.apple.replayd) <Error>: Unknown key for plist importer (key: UNUserNotificationCenter type: dictionary)
+1969-12-31 16:00:08.677222 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.routined
+1969-12-31 16:00:08.677585 (com.apple.runningboardd) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.677637 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.runningboardd
+1969-12-31 16:00:08.678157 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.safetyalertsd
+1969-12-31 16:00:08.678925 (com.apple.searchd) <Error>: Unknown key for plist importer (key: NO_StandardOutPath type: string)
+1969-12-31 16:00:08.678938 (com.apple.searchd) <Error>: Unknown key for plist importer (key: NO_StandardErrorPath type: string)
+1969-12-31 16:00:08.681653 (com.apple.seld) <Warning>: Service has increased maximum shutdown time to 45 seconds. This will create a poor experience for the user.
+1969-12-31 16:00:08.681729 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.seld
+1969-12-31 16:00:08.682413 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.nfcd
+1969-12-31 16:00:08.682744 (com.apple.sharingd) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.682972 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.sharingd
+1969-12-31 16:00:08.689107 (user/501/com.apple.sleepd) <Error>: (lint): Invalid type for a LaunchEvent stream, should be a dictionary (stream/type): com.apple.alarm/bool
+1969-12-31 16:00:08.689213 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.sleepd
+1969-12-31 16:00:08.690023 (com.apple.softwareupdateservicesd) <Notice>: This key does not do anything: OnDemand
+1969-12-31 16:00:08.691692 (com.apple.spotlightknowledged) <Error>: Unknown key for plist importer (key: NO_EnvironmentVariables type: dictionary)
+1969-12-31 16:00:08.706027 (user/501/com.apple.sysdiagnose) <Error>: Could not import service from caller: path = /System/Library/LaunchDaemons/com.apple.sysdiagnose.darwinos.plist, caller = launchd[1], error = 158: Service cannot be loaded on current os variant
+1969-12-31 16:00:08.706219 (com.apple.sysdiagnose) <Error>: Unknown key for plist importer (key: EfficiencyMode type: string)
+1969-12-31 16:00:08.706552 (com.apple.sysdiagnose_helper) <Error>: Unknown key for plist importer (key: EfficiencyMode type: string)
+1969-12-31 16:00:08.707553 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.tccd
+1969-12-31 16:00:08.708704 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.thermalmonitord
+1969-12-31 16:00:08.708891 (com.apple.timed) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.709074 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.timed
+1969-12-31 16:00:08.711869 (com.apple.trustd) <Error>: Unknown key for plist importer (key: _PanicOnCrasX type: dictionary)
+1969-12-31 16:00:08.712100 (com.apple.tvremoted) <Error>: Unknown key for plist importer (key: _STAttributionDisplayName type: string)
+1969-12-31 16:00:08.717298 (com.apple.watchdogd) <Error>: Unknown key for plist importer (key: _PanicOnCrasX type: dictionary)
+1969-12-31 16:00:08.717349 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.watchdogd
+1969-12-31 16:00:08.717918 (com.apple.watchpresenced) <Error>: Unknown key for plist importer (key: EnablePressureExit type: bool)
+1969-12-31 16:00:08.718132 (com.apple.wcd) <Error>: Unknown key for plist importer (key: TransactionTimeLimitEnabled type: bool)
+1969-12-31 16:00:08.718273 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.wcd
+1969-12-31 16:00:08.719328 (com.apple.wifi.hostapd) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.719508 (com.apple.wifi.wapic) <Error>: ThrottleInterval set to zero. You're not that important. Ignoring.
+1969-12-31 16:00:08.720600 (user/501/com.apple.wifid) <Error>: Could not import service from caller: path = /System/Library/LaunchDaemons/com.apple.wifid.plist, caller = launchd[1], error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.754229 (com.apple.fseventsd) <Error>: The HopefullyExitsLast key is no longer respected. Please remove it.
+1969-12-31 16:00:08.754245 (com.apple.fseventsd) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.754290 (system) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.fseventsd
+1969-12-31 16:00:08.759057 (system/com.apple.iomfb_bics_daemon) <Error>: Could not import service from caller: path = /System/Library/LaunchDaemons/com.apple.iomfb_bics_daemon.plist, caller = launchd[1], error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.759336 (system) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.iomfb_fdr_loader
+1969-12-31 16:00:08.761053 (com.apple.logd) <Error>: Unknown key for plist importer (key: BeginTransactionAtShutdown type: bool)
+1969-12-31 16:00:08.761084 (com.apple.logd) <Notice>: This service is defined to be constantly running and is inherently inefficient.
+1969-12-31 16:00:08.761136 (system) <Notice>: pending spawn, service not yet activated: com.apple.logd
+1969-12-31 16:00:08.769655 (system) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.notifyd
+1969-12-31 16:00:08.793488 (user/501/com.apple.UserEventAgent-System [24]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:08.795334 (user/501/com.apple.AccessibilityUIServer) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.797623 (user/501/com.apple.ClockAngel) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.800085 (user/501/com.apple.InputUI) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.801735 (user/501/com.apple.MediaRemoteUI) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.803474 (user/501/com.apple.PaperBoard) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.804270 (user/501/com.apple.PassbookUISceneService) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.806600 (user/501/com.apple.PosterBoard) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.808248 (user/501/com.apple.ShortcutsUI) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.809901 (user/501/com.apple.UIKit.OverlayUI) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.811537 (user/501/com.apple.livetranscriptionui) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.813135 (user/501/com.apple.replaykitangel) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.814927 (user/501/com.apple.sharing.airdropui) <Notice>: service will attempt to elide xpcproxy
+1969-12-31 16:00:08.816455 (system/com.apple.logd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:08.816472 (system/com.apple.logd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:08.816480 (system/com.apple.logd) <Notice>: service state: spawning
+1969-12-31 16:00:08.816716 (system/com.apple.logd) <Notice>: launching: ipc (socket)
+1969-12-31 16:00:09.271825 <Notice>: Flushed 237 logs [limit: 20]
+1969-12-31 16:00:08.818641 (system/com.apple.logd [25]) <Notice>: xpcproxy spawned with pid 25
+1969-12-31 16:00:08.818680 (system/com.apple.logd [25]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:08.818691 (system/com.apple.logd [25]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:08.819096 (system/com.apple.logd [25]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:08.820869 (com.apple.magicswitchd.companion) <Error>: Unknown key for plist importer (key: TransactionTimeLimitEnabled type: bool)
+1969-12-31 16:00:08.820974 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.magicswitchd.companion
+1969-12-31 16:00:08.826994 (user/501/com.apple.accessibility.axAuditDaemon.deviceservice) <Notice>: Did not import service from caller: path = /System/Library/DeveloperModeLaunchDaemons/com.apple.accessibility.axAuditDaemon.deviceservice.plist, caller = launchd[1], error = 152: Service cannot load in current boot environment
+1969-12-31 16:00:08.827127 (user/501/com.apple.instruments.deviceservice) <Notice>: Did not import service from caller: path = /System/Library/DeveloperModeLaunchDaemons/com.apple.instruments.deviceservice.plist, caller = launchd[1], error = 152: Service cannot load in current boot environment
+1969-12-31 16:00:08.827230 (user/501/com.apple.sysmond) <Notice>: Did not import service from caller: path = /System/Library/DeveloperModeLaunchDaemons/com.apple.sysmond.plist, caller = launchd[1], error = 152: Service cannot load in current boot environment
+1969-12-31 16:00:08.827242 (user/501) <Error>: Failed to bootstrap path: path = /System/Library/LaunchDaemons/com.apple.biometrickitd.pearl.plist, error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.827252 (user/501) <Error>: Failed to bootstrap path: path = /System/Library/LaunchDaemons/com.apple.wifid.plist, error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.827262 (user/501) <Error>: Failed to bootstrap path: path = /System/Library/LaunchDaemons/com.apple.dietapplecamerad.plist, error = 158: Service cannot be loaded on current os variant
+1969-12-31 16:00:08.827271 (user/501) <Error>: Failed to bootstrap path: path = /System/Library/LaunchDaemons/com.apple.checkerboard.plist, error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.827279 (user/501) <Error>: Failed to bootstrap path: path = /System/Library/LaunchDaemons/com.apple.SepUpdateTimer.plist, error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.827287 (user/501) <Error>: Failed to bootstrap path: path = /System/Library/LaunchDaemons/com.apple.anomalydetectiond.plist, error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.827297 (user/501) <Error>: Failed to bootstrap path: path = /System/Library/LaunchDaemons/com.apple.sysdiagnose.darwinos.plist, error = 158: Service cannot be loaded on current os variant
+1969-12-31 16:00:08.827304 (user/501) <Error>: Failed to bootstrap path: path = /System/Library/LaunchDaemons/com.apple.checkerboardd.plist, error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:08.827518 (user/501) <Notice>: exiting bootstrap mode
+1969-12-31 16:00:08.827589 (user/501/com.apple.SpringBoard) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:08.827607 (user/501/com.apple.SpringBoard) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:08.827618 (user/501/com.apple.SpringBoard) <Notice>: service state: spawning
+1969-12-31 16:00:08.828028 (user/501/com.apple.SpringBoard) <Warning>: Skipping remaining service endpoints for importance boosting.
+1969-12-31 16:00:08.828039 (user/501/com.apple.SpringBoard) <Warning>: Skipping remaining event endpoints for importance boosting.
+1969-12-31 16:00:08.828049 (user/501/com.apple.SpringBoard) <Warning>: Skipping remaining instance endpoints for importance boosting.
+1969-12-31 16:00:08.828121 (user/501/com.apple.SpringBoard) <Notice>: launching: system support
+1969-12-31 16:00:08.828472 (user/501) <Notice>: pending spawn, domain in on-demand-only mode: com.apple.mobile.lockdown
+1969-12-31 16:00:08.828494 (user/501) <Notice>: exiting ondemand mode
+1969-12-31 16:00:08.828508 (user/501/com.apple.runningboardd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:08.828523 (user/501/com.apple.runningboardd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:08.828533 (user/501/com.apple.runningboardd) <Notice>: service state: spawning
+1969-12-31 16:00:08.828624 (user/501/com.apple.runningboardd) <Notice>: launching: speculative
+1969-12-31 16:00:08.830663 (user/501/com.apple.runningboardd [26]) <Notice>: xpcproxy spawned with pid 26
+1969-12-31 16:00:08.830700 (user/501/com.apple.runningboardd [26]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:08.830713 (user/501/com.apple.runningboardd [26]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:08.830728 (user/501/com.apple.peopled) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:08.830742 (user/501/com.apple.peopled) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:08.830752 (user/501/com.apple.peopled) <Notice>: service state: spawning
+1969-12-31 16:00:08.830847 (user/501/com.apple.peopled) <Notice>: launching: speculative
+1969-12-31 16:00:08.913815 (user/501/com.apple.peopled [28]) <Notice>: xpcproxy spawned with pid 28
+1969-12-31 16:00:08.913854 (user/501/com.apple.peopled [28]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:08.913866 (user/501/com.apple.peopled [28]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:08.913880 (user/501/com.apple.mediaserverd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:08.913905 (user/501/com.apple.mediaserverd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:08.913914 (user/501/com.apple.mediaserverd) <Notice>: service state: spawning
+1969-12-31 16:00:08.914184 (user/501/com.apple.mediaserverd) <Warning>: Skipping remaining service endpoints for importance boosting.
+1969-12-31 16:00:08.914195 (user/501/com.apple.mediaserverd) <Warning>: Skipping remaining event endpoints for importance boosting.
+1969-12-31 16:00:08.914204 (user/501/com.apple.mediaserverd) <Warning>: Skipping remaining instance endpoints for importance boosting.
+1969-12-31 16:00:08.914282 (user/501/com.apple.mediaserverd) <Notice>: launching: speculative
+1969-12-31 16:00:08.916220 (user/501/com.apple.mediaserverd [29]) <Notice>: xpcproxy spawned with pid 29
+1969-12-31 16:00:08.916258 (user/501/com.apple.mediaserverd [29]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:08.916270 (user/501/com.apple.mediaserverd [29]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:08.916284 (user/501/com.apple.assistantd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:08.916300 (user/501/com.apple.assistantd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:08.916310 (user/501/com.apple.assistantd) <Notice>: service state: spawning
+1969-12-31 16:00:08.916611 (user/501/com.apple.assistantd) <Warning>: Skipping remaining event endpoints for importance boosting.
+1969-12-31 16:00:08.916621 (user/501/com.apple.assistantd) <Warning>: Skipping remaining instance endpoints for importance boosting.
+1969-12-31 16:00:08.916695 (user/501/com.apple.assistantd) <Notice>: launching: speculative
+1969-12-31 16:00:08.975698 (user/501/com.apple.assistantd [30]) <Notice>: xpcproxy spawned with pid 30
+1969-12-31 16:00:08.975735 (user/501/com.apple.assistantd [30]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:08.975748 (user/501/com.apple.assistantd [30]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:08.975762 (user/501/com.apple.routined) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:08.975777 (user/501/com.apple.routined) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:08.975786 (user/501/com.apple.routined) <Notice>: service state: spawning
+1969-12-31 16:00:08.975900 (user/501/com.apple.routined) <Notice>: launching: speculative
+1969-12-31 16:00:08.977804 (user/501/com.apple.routined [31]) <Notice>: xpcproxy spawned with pid 31
+1969-12-31 16:00:08.977841 (user/501/com.apple.routined [31]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:08.977853 (user/501/com.apple.routined [31]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:08.977866 (user/501/com.apple.mediaremoted) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:08.977881 (user/501/com.apple.mediaremoted) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:08.977890 (user/501/com.apple.mediaremoted) <Notice>: service state: spawning
+1969-12-31 16:00:08.977979 (user/501/com.apple.mediaremoted) <Notice>: launching: semaphore
+1969-12-31 16:00:09.043423 (user/501/com.apple.mediaremoted [32]) <Notice>: xpcproxy spawned with pid 32
+1969-12-31 16:00:09.043462 (user/501/com.apple.mediaremoted [32]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:09.043474 (user/501/com.apple.mediaremoted [32]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:09.043489 (user/501/com.apple.accessibility.axassetsd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:09.043504 (user/501/com.apple.accessibility.axassetsd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:09.043514 (user/501/com.apple.accessibility.axassetsd) <Notice>: service state: spawning
+1969-12-31 16:00:09.043623 (user/501/com.apple.accessibility.axassetsd) <Notice>: launching: speculative
+1969-12-31 16:00:09.103637 (user/501/com.apple.accessibility.axassetsd [33]) <Notice>: xpcproxy spawned with pid 33
+1969-12-31 16:00:09.103692 (user/501/com.apple.accessibility.axassetsd [33]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:09.103704 (user/501/com.apple.accessibility.axassetsd [33]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:09.103718 (user/501/com.apple.MobileInternetSharing) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:09.103732 (user/501/com.apple.MobileInternetSharing) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:09.103741 (user/501/com.apple.MobileInternetSharing) <Notice>: service state: spawning
+1969-12-31 16:00:09.103837 (user/501/com.apple.MobileInternetSharing) <Notice>: launching: speculative
+1969-12-31 16:00:09.245384 (user/501/com.apple.MobileInternetSharing [34]) <Notice>: xpcproxy spawned with pid 34
+1969-12-31 16:00:09.245421 (user/501/com.apple.MobileInternetSharing [34]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:09.245433 (user/501/com.apple.MobileInternetSharing [34]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:09.245448 (user/501/com.apple.healthd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:09.245462 (user/501/com.apple.healthd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:09.245470 (user/501/com.apple.healthd) <Notice>: service state: spawning
+1969-12-31 16:00:09.245626 (user/501/com.apple.healthd) <Notice>: launching: speculative
+1969-12-31 16:00:09.321906 (user/501/com.apple.healthd [35]) <Notice>: xpcproxy spawned with pid 35
+1969-12-31 16:00:09.321944 (user/501/com.apple.healthd [35]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:09.321955 (user/501/com.apple.healthd [35]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:09.321967 (user/501/com.apple.configd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:09.321981 (user/501/com.apple.configd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:09.321990 (user/501/com.apple.configd) <Notice>: service state: spawning
+1969-12-31 16:00:09.322120 (user/501/com.apple.configd) <Notice>: launching: speculative
+1969-12-31 16:00:09.390023 (user/501/com.apple.configd [36]) <Notice>: xpcproxy spawned with pid 36
+1969-12-31 16:00:09.390060 (user/501/com.apple.configd [36]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:09.390071 (user/501/com.apple.configd [36]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:09.390084 (user/501/com.apple.accessoryupdaterd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:09.390099 (user/501/com.apple.accessoryupdaterd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:09.390108 (user/501/com.apple.accessoryupdaterd) <Notice>: service state: spawning
+1969-12-31 16:00:09.390343 (user/501/com.apple.accessoryupdaterd) <Notice>: launching: speculative
+1969-12-31 16:00:09.654202 <Notice>: Flushed 106 logs [limit: 20]
+1969-12-31 16:00:09.552455 (user/501/com.apple.accessoryupdaterd [37]) <Notice>: xpcproxy spawned with pid 37
+1969-12-31 16:00:09.552492 (user/501/com.apple.accessoryupdaterd [37]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:09.552504 (user/501/com.apple.accessoryupdaterd [37]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:09.552517 (user/501/com.apple.tccd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:09.552531 (user/501/com.apple.tccd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:09.552540 (user/501/com.apple.tccd) <Notice>: service state: spawning
+1969-12-31 16:00:09.552715 (user/501/com.apple.tccd) <Notice>: launching: event publisher
+1969-12-31 16:00:09.637398 (user/501/com.apple.tccd [38]) <Notice>: xpcproxy spawned with pid 38
+1969-12-31 16:00:09.637436 (user/501/com.apple.tccd [38]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:09.637447 (user/501/com.apple.tccd [38]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:09.637460 (user/501/com.apple.powerd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:09.637473 (user/501/com.apple.powerd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:09.637482 (user/501/com.apple.powerd) <Notice>: service state: spawning
+1969-12-31 16:00:09.637590 (user/501/com.apple.powerd) <Notice>: launching: speculative
+1969-12-31 16:00:09.708632 (user/501/com.apple.powerd [39]) <Notice>: xpcproxy spawned with pid 39
+1969-12-31 16:00:09.708692 (user/501/com.apple.powerd [39]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:09.708704 (user/501/com.apple.powerd [39]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:09.708717 (user/501/com.apple.atc) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:09.708731 (user/501/com.apple.atc) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:09.708740 (user/501/com.apple.atc) <Notice>: service state: spawning
+1969-12-31 16:00:09.708906 (user/501/com.apple.atc) <Notice>: launching: speculative
+1969-12-31 16:00:09.789519 (user/501/com.apple.atc [40]) <Notice>: xpcproxy spawned with pid 40
+1969-12-31 16:00:09.789555 (user/501/com.apple.atc [40]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:09.789566 (user/501/com.apple.atc [40]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:09.789579 (user/501/com.apple.WirelessRadioManager) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:09.789593 (user/501/com.apple.WirelessRadioManager) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:09.789602 (user/501/com.apple.WirelessRadioManager) <Notice>: service state: spawning
+1969-12-31 16:00:09.789686 (user/501/com.apple.WirelessRadioManager) <Notice>: launching: speculative
+1969-12-31 16:00:09.873634 (user/501/com.apple.WirelessRadioManager [41]) <Notice>: xpcproxy spawned with pid 41
+1969-12-31 16:00:09.873672 (user/501/com.apple.WirelessRadioManager [41]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:09.873684 (user/501/com.apple.WirelessRadioManager [41]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:09.873698 (user/501/com.apple.biomed) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:09.873712 (user/501/com.apple.biomed) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:09.873721 (user/501/com.apple.biomed) <Notice>: service state: spawning
+1969-12-31 16:00:09.873846 (user/501/com.apple.biomed) <Notice>: launching: event publisher
+1969-12-31 16:00:09.874632 <Notice>: Flushed 21 logs [limit: 20]
+1969-12-31 16:00:10.018915 (user/501/com.apple.biomed [42]) <Notice>: xpcproxy spawned with pid 42
+1969-12-31 16:00:10.018975 (user/501/com.apple.biomed [42]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:10.018986 (user/501/com.apple.biomed [42]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:10.018999 (user/501/com.apple.remoted) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:10.019013 (user/501/com.apple.remoted) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:10.019021 (user/501/com.apple.remoted) <Notice>: service state: spawning
+1969-12-31 16:00:10.019136 (user/501/com.apple.remoted) <Notice>: launching: event publisher
+1969-12-31 16:00:10.248952 (user/501/com.apple.remoted [43]) <Notice>: xpcproxy spawned with pid 43
+1969-12-31 16:00:10.249014 (user/501/com.apple.remoted [43]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:10.249026 (user/501/com.apple.remoted [43]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:10.249039 (user/501/com.apple.mobile.keybagd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:10.249054 (user/501/com.apple.mobile.keybagd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:10.249063 (user/501/com.apple.mobile.keybagd) <Notice>: service state: spawning
+1969-12-31 16:00:10.249162 (user/501/com.apple.mobile.keybagd) <Notice>: launching: speculative
+1969-12-31 16:00:10.318070 (user/501/com.apple.mobile.keybagd [44]) <Notice>: xpcproxy spawned with pid 44
+1969-12-31 16:00:10.318107 (user/501/com.apple.mobile.keybagd [44]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:10.318119 (user/501/com.apple.mobile.keybagd [44]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:10.318133 (user/501/com.apple.familynotification) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:10.318148 (user/501/com.apple.familynotification) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:10.318157 (user/501/com.apple.familynotification) <Notice>: service state: spawning
+1969-12-31 16:00:10.318264 (user/501/com.apple.familynotification) <Notice>: launching: speculative
+1969-12-31 16:00:10.394809 (user/501/com.apple.familynotification [45]) <Notice>: xpcproxy spawned with pid 45
+1969-12-31 16:00:10.394847 (user/501/com.apple.familynotification [45]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:10.394859 (user/501/com.apple.familynotification [45]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:10.394873 (user/501/com.apple.MobileFileIntegrity) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:10.394888 (user/501/com.apple.MobileFileIntegrity) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:10.394898 (user/501/com.apple.MobileFileIntegrity) <Notice>: service state: spawning
+1969-12-31 16:00:10.394993 (user/501/com.apple.MobileFileIntegrity) <Notice>: launching: speculative
+1969-12-31 16:00:10.418348 <Notice>: Flushed 21 logs [limit: 20]
+1969-12-31 16:00:10.460115 (user/501/com.apple.MobileFileIntegrity [46]) <Notice>: xpcproxy spawned with pid 46
+1969-12-31 16:00:10.460177 (user/501/com.apple.MobileFileIntegrity [46]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:10.460190 (user/501/com.apple.MobileFileIntegrity [46]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:10.460203 (user/501/com.apple.DumpPanic) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:10.460216 (user/501/com.apple.DumpPanic) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:10.460224 (user/501/com.apple.DumpPanic) <Notice>: service state: spawning
+1969-12-31 16:00:10.460292 (user/501/com.apple.DumpPanic) <Notice>: launching: speculative
+1969-12-31 16:00:10.532103 (user/501/com.apple.DumpPanic [47]) <Notice>: xpcproxy spawned with pid 47
+1969-12-31 16:00:10.532141 (user/501/com.apple.DumpPanic [47]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:10.532153 (user/501/com.apple.DumpPanic [47]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:10.532165 (user/501/com.apple.seld) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:10.532179 (user/501/com.apple.seld) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:10.532187 (user/501/com.apple.seld) <Notice>: service state: spawning
+1969-12-31 16:00:10.532284 (user/501/com.apple.seld) <Notice>: launching: speculative
+1969-12-31 16:00:10.682669 (user/501/com.apple.seld [48]) <Notice>: xpcproxy spawned with pid 48
+1969-12-31 16:00:10.682729 (user/501/com.apple.seld [48]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:10.682740 (user/501/com.apple.seld [48]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:10.682752 (user/501/com.apple.mobiletimerd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:10.682766 (user/501/com.apple.mobiletimerd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:10.682775 (user/501/com.apple.mobiletimerd) <Notice>: service state: spawning
+1969-12-31 16:00:10.682940 (user/501/com.apple.mobiletimerd) <Notice>: launching: speculative
+1969-12-31 16:00:10.759631 (user/501/com.apple.mobiletimerd [49]) <Notice>: xpcproxy spawned with pid 49
+1969-12-31 16:00:10.759671 (user/501/com.apple.mobiletimerd [49]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:10.759685 (user/501/com.apple.mobiletimerd [49]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:10.759700 (user/501/com.apple.mobile.softwareupdated) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:10.759715 (user/501/com.apple.mobile.softwareupdated) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:10.759726 (user/501/com.apple.mobile.softwareupdated) <Notice>: service state: spawning
+1969-12-31 16:00:10.759836 (user/501/com.apple.mobile.softwareupdated) <Notice>: launching: speculative
+1969-12-31 16:00:10.832570 (user/501/com.apple.mobile.softwareupdated [50]) <Notice>: xpcproxy spawned with pid 50
+1969-12-31 16:00:10.832608 (user/501/com.apple.mobile.softwareupdated [50]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:10.832620 (user/501/com.apple.mobile.softwareupdated [50]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:10.832634 (user/501/com.apple.watchdogd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:10.832647 (user/501/com.apple.watchdogd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:10.832655 (user/501/com.apple.watchdogd) <Notice>: service state: spawning
+1969-12-31 16:00:10.832738 (user/501/com.apple.watchdogd) <Notice>: launching: semaphore
+1969-12-31 16:00:10.845237 <Notice>: Flushed 21 logs [limit: 20]
+1969-12-31 16:00:10.970543 (user/501/com.apple.watchdogd [51]) <Notice>: xpcproxy spawned with pid 51
+1969-12-31 16:00:10.970608 (user/501/com.apple.watchdogd [51]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:10.970620 (user/501/com.apple.watchdogd [51]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:10.970633 (user/501/com.apple.nfcd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:10.970647 (user/501/com.apple.nfcd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:10.970655 (user/501/com.apple.nfcd) <Notice>: service state: spawning
+1969-12-31 16:00:10.970875 (user/501/com.apple.nfcd) <Notice>: launching: event publisher
+1969-12-31 16:00:11.038664 (user/501/com.apple.nfcd [52]) <Notice>: xpcproxy spawned with pid 52
+1969-12-31 16:00:11.038702 (user/501/com.apple.nfcd [52]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:11.038714 (user/501/com.apple.nfcd [52]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:11.038727 (user/501/com.apple.identityservicesd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:11.038742 (user/501/com.apple.identityservicesd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:11.038752 (user/501/com.apple.identityservicesd) <Notice>: service state: spawning
+1969-12-31 16:00:11.038874 (user/501/com.apple.identityservicesd) <Notice>: launching: speculative
+1969-12-31 16:00:11.106379 (user/501/com.apple.identityservicesd [53]) <Notice>: xpcproxy spawned with pid 53
+1969-12-31 16:00:11.106416 (user/501/com.apple.identityservicesd [53]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:11.106428 (user/501/com.apple.identityservicesd [53]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:11.106445 (user/501/com.apple.wcd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:11.106458 (user/501/com.apple.wcd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:11.106467 (user/501/com.apple.wcd) <Notice>: service state: spawning
+1969-12-31 16:00:11.106611 (user/501/com.apple.wcd) <Notice>: launching: speculative
+1969-12-31 16:00:11.123896 <Notice>: Flushed 21 logs [limit: 20]
+1969-12-31 16:00:11.254454 (user/501/com.apple.wcd [54]) <Notice>: xpcproxy spawned with pid 54
+1969-12-31 16:00:11.254534 (user/501/com.apple.wcd [54]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:11.254547 (user/501/com.apple.wcd [54]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:11.254560 (user/501/com.apple.thermalmonitord) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:11.254580 (user/501/com.apple.thermalmonitord) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:11.254589 (user/501/com.apple.thermalmonitord) <Notice>: service state: spawning
+1969-12-31 16:00:11.254703 (user/501/com.apple.thermalmonitord) <Notice>: launching: semaphore
+1969-12-31 16:00:11.256618 (user/501/com.apple.thermalmonitord [55]) <Notice>: xpcproxy spawned with pid 55
+1969-12-31 16:00:11.256655 (user/501/com.apple.thermalmonitord [55]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:11.256667 (user/501/com.apple.thermalmonitord [55]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:11.256682 (user/501/com.apple.contextstored) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:11.256696 (user/501/com.apple.contextstored) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:11.256706 (user/501/com.apple.contextstored) <Notice>: service state: spawning
+1969-12-31 16:00:11.256870 (user/501/com.apple.contextstored) <Notice>: launching: event publisher
+1969-12-31 16:00:11.338457 (user/501/com.apple.contextstored [56]) <Notice>: xpcproxy spawned with pid 56
+1969-12-31 16:00:11.338494 (user/501/com.apple.contextstored [56]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:11.338507 (user/501/com.apple.contextstored [56]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:11.338524 (user/501/com.apple.backboardd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:11.338539 (user/501/com.apple.backboardd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:11.338548 (user/501/com.apple.backboardd) <Notice>: service state: spawning
+1969-12-31 16:00:11.338748 (user/501/com.apple.backboardd) <Notice>: launching: speculative
+1969-12-31 16:00:11.410249 (user/501/com.apple.backboardd [57]) <Notice>: xpcproxy spawned with pid 57
+1969-12-31 16:00:11.410286 (user/501/com.apple.backboardd [57]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:11.410299 (user/501/com.apple.backboardd [57]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:11.410313 (user/501/com.apple.askpermissiond) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:11.410327 (user/501/com.apple.askpermissiond) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:11.410336 (user/501/com.apple.askpermissiond) <Notice>: service state: spawning
+1969-12-31 16:00:11.410441 (user/501/com.apple.askpermissiond) <Notice>: launching: speculative
+1969-12-31 16:00:11.411466 <Notice>: Flushed 28 logs [limit: 20]
+1969-12-31 16:00:11.488306 (user/501/com.apple.askpermissiond [58]) <Notice>: xpcproxy spawned with pid 58
+1969-12-31 16:00:11.488383 (user/501/com.apple.askpermissiond [58]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:11.488395 (user/501/com.apple.askpermissiond [58]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:11.488409 (user/501/com.apple.magicswitchd.companion) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:11.488423 (user/501/com.apple.magicswitchd.companion) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:11.488433 (user/501/com.apple.magicswitchd.companion) <Notice>: service state: spawning
+1969-12-31 16:00:11.488523 (user/501/com.apple.magicswitchd.companion) <Notice>: launching: speculative
+1969-12-31 16:00:11.554330 (user/501/com.apple.magicswitchd.companion [59]) <Notice>: xpcproxy spawned with pid 59
+1969-12-31 16:00:11.554369 (user/501/com.apple.magicswitchd.companion [59]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:11.554382 (user/501/com.apple.magicswitchd.companion [59]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:11.554395 (user/501/com.apple.timed) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:11.554498 (user/501/com.apple.timed) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:11.554508 (user/501/com.apple.timed) <Notice>: service state: spawning
+1969-12-31 16:00:11.554618 (user/501/com.apple.timed) <Notice>: launching: speculative
+1969-12-31 16:00:11.706178 (user/501/com.apple.timed [60]) <Notice>: xpcproxy spawned with pid 60
+1969-12-31 16:00:11.706215 (user/501/com.apple.timed [60]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:11.706227 (user/501/com.apple.timed [60]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:11.706239 (user/501/com.apple.sharingd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:11.706255 (user/501/com.apple.sharingd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:11.706264 (user/501/com.apple.sharingd) <Notice>: service state: spawning
+1969-12-31 16:00:11.706514 (user/501/com.apple.sharingd) <Notice>: launching: speculative
+1969-12-31 16:00:11.707341 <Notice>: Flushed 21 logs [limit: 20]
+1969-12-31 16:00:11.852881 (user/501/com.apple.sharingd [61]) <Notice>: xpcproxy spawned with pid 61
+1969-12-31 16:00:11.852945 (user/501/com.apple.sharingd [61]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:11.852957 (user/501/com.apple.sharingd [61]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:11.852971 (user/501/com.apple.ManagedSettingsAgent) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:11.852985 (user/501/com.apple.ManagedSettingsAgent) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:11.852995 (user/501/com.apple.ManagedSettingsAgent) <Notice>: service state: spawning
+1969-12-31 16:00:11.853088 (user/501/com.apple.ManagedSettingsAgent) <Notice>: launching: event publisher
+1969-12-31 16:00:12.000620 (user/501/com.apple.ManagedSettingsAgent [62]) <Notice>: xpcproxy spawned with pid 62
+1969-12-31 16:00:12.000658 (user/501/com.apple.ManagedSettingsAgent [62]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:12.000670 (user/501/com.apple.ManagedSettingsAgent [62]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:12.000685 (user/501/com.apple.locationd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:12.000784 (user/501/com.apple.locationd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:12.000793 (user/501/com.apple.locationd) <Notice>: service state: spawning
+1969-12-31 16:00:12.000962 (user/501/com.apple.locationd) <Notice>: launching: speculative
+1969-12-31 16:00:12.002917 (user/501/com.apple.locationd [63]) <Notice>: xpcproxy spawned with pid 63
+1969-12-31 16:00:12.002954 (user/501/com.apple.locationd [63]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:12.002967 (user/501/com.apple.locationd [63]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:12.002982 (user/501/com.apple.imagent) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:12.002995 (user/501/com.apple.imagent) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:12.003004 (user/501/com.apple.imagent) <Notice>: service state: spawning
+1969-12-31 16:00:12.003139 (user/501/com.apple.imagent) <Notice>: launching: speculative
+1969-12-31 16:00:12.068701 (user/501/com.apple.imagent [64]) <Notice>: xpcproxy spawned with pid 64
+1969-12-31 16:00:12.068738 (user/501/com.apple.imagent [64]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:12.068750 (user/501/com.apple.imagent [64]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:12.068764 (user/501/com.apple.containermanagerd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:12.068778 (user/501/com.apple.containermanagerd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:12.068788 (user/501/com.apple.containermanagerd) <Notice>: service state: spawning
+1969-12-31 16:00:12.068887 (user/501/com.apple.containermanagerd) <Notice>: launching: speculative
+1969-12-31 16:00:12.123929 (user/501/com.apple.containermanagerd [65]) <Notice>: xpcproxy spawned with pid 65
+1969-12-31 16:00:12.123966 (user/501/com.apple.containermanagerd [65]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:12.123978 (user/501/com.apple.containermanagerd [65]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:12.123991 (user/501/com.apple.cloudpaird) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:12.124005 (user/501/com.apple.cloudpaird) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:12.124014 (user/501/com.apple.cloudpaird) <Notice>: service state: spawning
+1969-12-31 16:00:12.124189 (user/501/com.apple.cloudpaird) <Notice>: launching: semaphore
+1969-12-31 16:00:12.170632 <Notice>: Flushed 35 logs [limit: 20]
+1969-12-31 16:00:12.276791 (user/501/com.apple.cloudpaird [66]) <Notice>: xpcproxy spawned with pid 66
+1969-12-31 16:00:12.276852 (user/501/com.apple.cloudpaird [66]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:12.276865 (user/501/com.apple.cloudpaird [66]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:12.276880 (user/501/com.apple.nanoprefsyncd.2) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:12.276895 (user/501/com.apple.nanoprefsyncd.2) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:12.276904 (user/501/com.apple.nanoprefsyncd.2) <Notice>: service state: spawning
+1969-12-31 16:00:12.277089 (user/501/com.apple.nanoprefsyncd.2) <Notice>: launching: speculative
+1969-12-31 16:00:12.345091 (user/501/com.apple.nanoprefsyncd.2 [67]) <Notice>: xpcproxy spawned with pid 67
+1969-12-31 16:00:12.345130 (user/501/com.apple.nanoprefsyncd.2 [67]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:12.345143 (user/501/com.apple.nanoprefsyncd.2 [67]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:12.345156 (user/501/com.apple.driverkitd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:12.345171 (user/501/com.apple.driverkitd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:12.345180 (user/501/com.apple.driverkitd) <Notice>: service state: spawning
+1969-12-31 16:00:12.345274 (user/501/com.apple.driverkitd) <Notice>: launching: speculative
+1969-12-31 16:00:12.480463 (user/501/com.apple.driverkitd [68]) <Notice>: xpcproxy spawned with pid 68
+1969-12-31 16:00:12.480525 (user/501/com.apple.driverkitd [68]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:12.480538 (user/501/com.apple.driverkitd [68]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:12.480552 (user/501/com.apple.dasd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:12.480567 (user/501/com.apple.dasd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:12.480575 (user/501/com.apple.dasd) <Notice>: service state: spawning
+1969-12-31 16:00:12.480692 (user/501/com.apple.dasd) <Notice>: launching: event publisher
+1969-12-31 16:00:12.555822 (user/501/com.apple.dasd [69]) <Notice>: xpcproxy spawned with pid 69
+1969-12-31 16:00:12.555859 (user/501/com.apple.dasd [69]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:12.555872 (user/501/com.apple.dasd [69]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:12.555886 (user/501/com.apple.bluetoothuserd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:12.555901 (user/501/com.apple.bluetoothuserd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:12.555910 (user/501/com.apple.bluetoothuserd) <Notice>: service state: spawning
+1969-12-31 16:00:12.556016 (user/501/com.apple.bluetoothuserd) <Notice>: launching: semaphore
+1969-12-31 16:00:12.684239 (user/501/com.apple.bluetoothuserd [70]) <Notice>: xpcproxy spawned with pid 70
+1969-12-31 16:00:12.684301 (user/501/com.apple.bluetoothuserd [70]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:12.684313 (user/501/com.apple.bluetoothuserd [70]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:12.684327 (user/501/com.apple.sleepd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:12.684341 (user/501/com.apple.sleepd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:12.684351 (user/501/com.apple.sleepd) <Notice>: service state: spawning
+1969-12-31 16:00:12.684520 (user/501/com.apple.sleepd) <Notice>: launching: speculative
+1969-12-31 16:00:12.759371 (user/501/com.apple.sleepd [71]) <Notice>: xpcproxy spawned with pid 71
+1969-12-31 16:00:12.759408 (user/501/com.apple.sleepd [71]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:12.759420 (user/501/com.apple.sleepd [71]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:12.759433 (user/501/com.apple.ptpd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:12.759447 (user/501/com.apple.ptpd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:12.759456 (user/501/com.apple.ptpd) <Notice>: service state: spawning
+1969-12-31 16:00:12.759544 (user/501/com.apple.ptpd) <Notice>: launching: semaphore
+1969-12-31 16:00:12.913725 (user/501/com.apple.ptpd [72]) <Notice>: xpcproxy spawned with pid 72
+1969-12-31 16:00:12.913786 (user/501/com.apple.ptpd [72]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:12.913798 (user/501/com.apple.ptpd [72]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:12.913811 (user/501/com.apple.passd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:12.913827 (user/501/com.apple.passd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:12.913836 (user/501/com.apple.passd) <Notice>: service state: spawning
+1969-12-31 16:00:12.914053 (user/501/com.apple.passd) <Notice>: launching: event publisher
+1969-12-31 16:00:13.061425 (user/501/com.apple.passd [73]) <Notice>: xpcproxy spawned with pid 73
+1969-12-31 16:00:13.061462 (user/501/com.apple.passd [73]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:13.061474 (user/501/com.apple.passd [73]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:13.061488 (user/501/com.apple.mobile.lockdown) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:13.061506 (user/501/com.apple.mobile.lockdown) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:13.061515 (user/501/com.apple.mobile.lockdown) <Notice>: service state: spawning
+1969-12-31 16:00:13.061614 (user/501/com.apple.mobile.lockdown) <Notice>: launching: speculative
+1969-12-31 16:00:13.140859 (user/501/com.apple.mobile.lockdown [74]) <Notice>: xpcproxy spawned with pid 74
+1969-12-31 16:00:13.140897 (user/501/com.apple.mobile.lockdown [74]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:13.140909 (user/501/com.apple.mobile.lockdown [74]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:13.140923 (user/501/com.apple.distnoted.xpc.daemon) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:13.140938 (user/501/com.apple.distnoted.xpc.daemon) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:13.140947 (user/501/com.apple.distnoted.xpc.daemon) <Notice>: service state: spawning
+1969-12-31 16:00:13.141054 (user/501/com.apple.distnoted.xpc.daemon) <Notice>: launching: speculative
+1969-12-31 16:00:13.215389 (user/501/com.apple.distnoted.xpc.daemon [75]) <Notice>: xpcproxy spawned with pid 75
+1969-12-31 16:00:13.215430 (user/501/com.apple.distnoted.xpc.daemon [75]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:13.215444 (user/501/com.apple.distnoted.xpc.daemon [75]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:13.215459 (user/501/com.apple.aggregated) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:13.215477 (user/501/com.apple.aggregated) <Notice>: Enabling Probabilistic Guard Malloc
+1969-12-31 16:00:13.215488 (user/501/com.apple.aggregated) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:13.215499 (user/501/com.apple.aggregated) <Notice>: service state: spawning
+1969-12-31 16:00:13.215618 (user/501/com.apple.aggregated) <Notice>: launching: speculative
+1969-12-31 16:00:13.372826 (user/501/com.apple.aggregated [76]) <Notice>: xpcproxy spawned with pid 76
+1969-12-31 16:00:13.372910 (user/501/com.apple.aggregated [76]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:13.372924 (user/501/com.apple.aggregated [76]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:13.372940 (user/501/com.apple.OTACrashCopier) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:13.372952 (user/501/com.apple.OTACrashCopier) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:13.372964 (user/501/com.apple.OTACrashCopier) <Notice>: service state: spawning
+1969-12-31 16:00:13.373086 (user/501/com.apple.OTACrashCopier) <Notice>: launching: speculative
+1969-12-31 16:00:13.459902 (user/501/com.apple.OTACrashCopier [77]) <Notice>: xpcproxy spawned with pid 77
+1969-12-31 16:00:13.459941 (user/501/com.apple.OTACrashCopier [77]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:13.459954 (user/501/com.apple.OTACrashCopier [77]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:13.459967 (user/501/com.apple.AppleCredentialManagerDaemon) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:13.459978 (user/501/com.apple.AppleCredentialManagerDaemon) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:13.459988 (user/501/com.apple.AppleCredentialManagerDaemon) <Notice>: service state: spawning
+1969-12-31 16:00:13.460079 (user/501/com.apple.AppleCredentialManagerDaemon) <Notice>: launching: speculative
+1969-12-31 16:00:13.531677 (user/501/com.apple.AppleCredentialManagerDaemon [78]) <Notice>: xpcproxy spawned with pid 78
+1969-12-31 16:00:13.531715 (user/501/com.apple.AppleCredentialManagerDaemon [78]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:13.531731 (user/501/com.apple.AppleCredentialManagerDaemon [78]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:13.531745 (user/501/com.apple.remindd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:13.531757 (user/501/com.apple.remindd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:13.531766 (user/501/com.apple.remindd) <Notice>: service state: spawning
+1969-12-31 16:00:13.531965 (user/501/com.apple.remindd) <Notice>: launching: speculative
+1969-12-31 16:00:13.532789 <Notice>: Flushed 21 logs [limit: 20]
+1969-12-31 16:00:13.677656 (user/501/com.apple.remindd [79]) <Notice>: xpcproxy spawned with pid 79
+1969-12-31 16:00:13.677717 (user/501/com.apple.remindd [79]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:13.677729 (user/501/com.apple.remindd [79]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:13.677742 (user/501/com.apple.peakpowermanagerd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:13.677753 (user/501/com.apple.peakpowermanagerd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:13.677764 (user/501/com.apple.peakpowermanagerd) <Notice>: service state: spawning
+1969-12-31 16:00:13.677854 (user/501/com.apple.peakpowermanagerd) <Notice>: launching: speculative
+1969-12-31 16:00:13.765185 (user/501/com.apple.peakpowermanagerd [80]) <Notice>: xpcproxy spawned with pid 80
+1969-12-31 16:00:13.765226 (user/501/com.apple.peakpowermanagerd [80]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:13.765241 (user/501/com.apple.peakpowermanagerd [80]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:13.765256 (user/501/com.apple.navd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:13.765268 (user/501/com.apple.navd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:13.765279 (user/501/com.apple.navd) <Notice>: service state: spawning
+1969-12-31 16:00:13.765443 (user/501/com.apple.navd) <Notice>: launching: speculative
+1969-12-31 16:00:13.913288 (user/501/com.apple.navd [81]) <Notice>: xpcproxy spawned with pid 81
+1969-12-31 16:00:13.913348 (user/501/com.apple.navd [81]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:13.913360 (user/501/com.apple.navd [81]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:13.913375 (user/501/com.apple.safetyalertsd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:13.913386 (user/501/com.apple.safetyalertsd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:13.913396 (user/501/com.apple.safetyalertsd) <Notice>: service state: spawning
+1969-12-31 16:00:13.913526 (user/501/com.apple.safetyalertsd) <Notice>: launching: speculative
+1969-12-31 16:00:13.987967 (user/501/com.apple.safetyalertsd [82]) <Notice>: xpcproxy spawned with pid 82
+1969-12-31 16:00:13.988006 (user/501/com.apple.safetyalertsd [82]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:13.988018 (user/501/com.apple.safetyalertsd [82]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:13.988032 (user/501/com.apple.rapportd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:13.988042 (user/501/com.apple.rapportd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:13.988051 (user/501/com.apple.rapportd) <Notice>: service state: spawning
+1969-12-31 16:00:13.988187 (user/501/com.apple.rapportd) <Notice>: launching: event publisher
+1969-12-31 16:00:14.059981 (user/501/com.apple.rapportd [83]) <Notice>: xpcproxy spawned with pid 83
+1969-12-31 16:00:14.060020 (user/501/com.apple.rapportd [83]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:14.060032 (user/501/com.apple.rapportd [83]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:14.060046 (user/501/com.apple.mtmergeprops) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:14.060056 (user/501/com.apple.mtmergeprops) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:14.060065 (user/501/com.apple.mtmergeprops) <Notice>: service state: spawning
+1969-12-31 16:00:14.060132 (user/501/com.apple.mtmergeprops) <Notice>: launching: speculative
+1969-12-31 16:00:14.076944 <Notice>: Flushed 21 logs [limit: 20]
+1969-12-31 16:00:14.209291 (user/501/com.apple.mtmergeprops [84]) <Notice>: xpcproxy spawned with pid 84
+1969-12-31 16:00:14.209353 (user/501/com.apple.mtmergeprops [84]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:14.209365 (user/501/com.apple.mtmergeprops [84]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:14.209378 (user/501/com.apple.mobile.usermanagerd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:14.209389 (user/501/com.apple.mobile.usermanagerd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:14.209398 (user/501/com.apple.mobile.usermanagerd) <Notice>: service state: spawning
+1969-12-31 16:00:14.209498 (user/501/com.apple.mobile.usermanagerd) <Notice>: launching: speculative
+1969-12-31 16:00:14.364516 (user/501/com.apple.mobile.usermanagerd [85]) <Notice>: xpcproxy spawned with pid 85
+1969-12-31 16:00:14.364554 (user/501/com.apple.mobile.usermanagerd [85]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:14.364567 (user/501/com.apple.mobile.usermanagerd [85]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:14.364580 (user/501/com.apple.bluetoothd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:14.364591 (user/501/com.apple.bluetoothd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:14.364600 (user/501/com.apple.bluetoothd) <Notice>: service state: spawning
+1969-12-31 16:00:14.364804 (user/501/com.apple.bluetoothd) <Notice>: launching: speculative
+1969-12-31 16:00:14.440903 (user/501/com.apple.bluetoothd [86]) <Notice>: xpcproxy spawned with pid 86
+1969-12-31 16:00:14.440967 (user/501/com.apple.bluetoothd [86]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:14.440980 (user/501/com.apple.bluetoothd [86]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:14.440995 (user/501/com.apple.amsaccountsd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:14.441005 (user/501/com.apple.amsaccountsd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:14.441015 (user/501/com.apple.amsaccountsd) <Notice>: service state: spawning
+1969-12-31 16:00:14.441132 (user/501/com.apple.amsaccountsd) <Notice>: launching: speculative
+1969-12-31 16:00:14.443136 (user/501/com.apple.amsaccountsd [87]) <Notice>: xpcproxy spawned with pid 87
+1969-12-31 16:00:14.443174 (user/501/com.apple.amsaccountsd [87]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:14.443187 (user/501/com.apple.amsaccountsd [87]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:14.443202 (user/501/com.apple.fairplayd.H2) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:14.443214 (user/501/com.apple.fairplayd.H2) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:14.443223 (user/501/com.apple.fairplayd.H2) <Notice>: service state: spawning
+1969-12-31 16:00:14.443315 (user/501/com.apple.fairplayd.H2) <Notice>: launching: speculative
+1969-12-31 16:00:14.517423 (user/501/com.apple.fairplayd.H2 [88]) <Notice>: xpcproxy spawned with pid 88
+1969-12-31 16:00:14.517460 (user/501/com.apple.fairplayd.H2 [88]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:14.517472 (user/501/com.apple.fairplayd.H2 [88]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:14.519081 (system) <Error>: Failed to bootstrap path: path = /System/Library/LaunchDaemons/com.apple.iomfb_bics_daemon.plist, error = 138: Service cannot be loaded on this hardware
+1969-12-31 16:00:14.519113 (system) <Notice>: exiting bootstrap mode
+1969-12-31 16:00:14.519121 (system) <Notice>: exiting ondemand mode
+1969-12-31 16:00:14.519131 (system/com.apple.fseventsd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:14.519140 (system/com.apple.fseventsd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:14.519149 (system/com.apple.fseventsd) <Notice>: service state: spawning
+1969-12-31 16:00:14.519239 (system/com.apple.fseventsd) <Notice>: launching: speculative
+1969-12-31 16:00:14.585633 (system/com.apple.fseventsd [89]) <Notice>: xpcproxy spawned with pid 89
+1969-12-31 16:00:14.585669 (system/com.apple.fseventsd [89]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:14.585680 (system/com.apple.fseventsd [89]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:14.585692 (system/com.apple.iomfb_fdr_loader) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:14.585702 (system/com.apple.iomfb_fdr_loader) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:14.585711 (system/com.apple.iomfb_fdr_loader) <Notice>: service state: spawning
+1969-12-31 16:00:14.585802 (system/com.apple.iomfb_fdr_loader) <Notice>: launching: speculative
+1969-12-31 16:00:14.602802 <Notice>: Flushed 31 logs [limit: 20]
+1969-12-31 16:00:14.732677 (system/com.apple.iomfb_fdr_loader [90]) <Notice>: xpcproxy spawned with pid 90
+1969-12-31 16:00:14.732753 (system/com.apple.iomfb_fdr_loader [90]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:14.732765 (system/com.apple.iomfb_fdr_loader [90]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:14.732778 (system/com.apple.notifyd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:14.732787 (system/com.apple.notifyd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:14.732795 (system/com.apple.notifyd) <Notice>: service state: spawning
+1969-12-31 16:00:14.732890 (system/com.apple.notifyd) <Notice>: launching: event publisher
+1969-12-31 16:00:14.805698 (system/com.apple.notifyd [91]) <Notice>: xpcproxy spawned with pid 91
+1969-12-31 16:00:14.805736 (system/com.apple.notifyd [91]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:14.805748 (system/com.apple.notifyd [91]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:14.881703 (user/501/com.apple.runningboardd [26]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881718 (user/501/com.apple.SpringBoard [27]) <Notice>: service spawned with pid 27
+1969-12-31 16:00:14.881754 (user/501/com.apple.SpringBoard [27]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:14.881765 (user/501/com.apple.SpringBoard [27]) <Notice>: service state: spawned
+1969-12-31 16:00:14.881789 (user/501/com.apple.SpringBoard [27]) <Notice>: service state: running
+1969-12-31 16:00:14.881799 (user/501/com.apple.SpringBoard [27]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:14.881819 (user/501/com.apple.SpringBoard [27]) <Notice>: Successfully spawned SpringBoard[27] because system support
+1969-12-31 16:00:14.881832 (user/501/com.apple.peopled [28]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881843 (user/501/com.apple.mediaserverd [29]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881854 (user/501/com.apple.assistantd [30]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881865 (user/501/com.apple.routined [31]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881876 (user/501/com.apple.mediaremoted [32]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881888 (user/501/com.apple.accessibility.axassetsd [33]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881900 (user/501/com.apple.MobileInternetSharing [34]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881911 (user/501/com.apple.healthd [35]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881922 (user/501/com.apple.configd [36]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881933 (user/501/com.apple.accessoryupdaterd [37]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881945 (user/501/com.apple.tccd [38]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881955 (user/501/com.apple.powerd [39]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881966 (user/501/com.apple.atc [40]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881977 (user/501/com.apple.WirelessRadioManager [41]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881987 (user/501/com.apple.biomed [42]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.881998 (user/501/com.apple.remoted [43]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882009 (user/501/com.apple.mobile.keybagd [44]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882020 (user/501/com.apple.familynotification [45]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882051 (user/501/com.apple.MobileFileIntegrity [46]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882062 (user/501/com.apple.DumpPanic [47]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882073 (user/501/com.apple.seld [48]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882084 (user/501/com.apple.mobiletimerd [49]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882096 (user/501/com.apple.mobile.softwareupdated [50]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882108 (user/501/com.apple.watchdogd [51]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882119 (user/501/com.apple.nfcd [52]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882130 (user/501/com.apple.identityservicesd [53]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882141 (user/501/com.apple.wcd [54]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882152 (user/501/com.apple.thermalmonitord [55]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882164 (user/501/com.apple.contextstored [56]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882176 (user/501/com.apple.backboardd [57]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882187 (user/501/com.apple.askpermissiond [58]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882199 (user/501/com.apple.magicswitchd.companion [59]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882213 (user/501/com.apple.timed [60]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882225 (user/501/com.apple.sharingd [61]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882236 (user/501/com.apple.ManagedSettingsAgent [62]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882250 (user/501/com.apple.locationd [63]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882262 (user/501/com.apple.imagent [64]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882286 (user/501/com.apple.containermanagerd [65]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882298 (user/501/com.apple.cloudpaird [66]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882310 (user/501/com.apple.nanoprefsyncd.2 [67]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882333 (user/501/com.apple.driverkitd [68]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882346 (user/501/com.apple.dasd [69]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882357 (user/501/com.apple.bluetoothuserd [70]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882369 (user/501/com.apple.sleepd [71]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882380 (user/501/com.apple.ptpd [72]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882391 (user/501/com.apple.passd [73]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882475 (user/501/com.apple.mobile.lockdown [74]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882487 (user/501/com.apple.distnoted.xpc.daemon [75]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882499 (user/501/com.apple.aggregated [76]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882512 (user/501/com.apple.OTACrashCopier [77]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882524 (user/501/com.apple.AppleCredentialManagerDaemon [78]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882536 (user/501/com.apple.remindd [79]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882547 (user/501/com.apple.peakpowermanagerd [80]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882559 (user/501/com.apple.navd [81]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882570 (user/501/com.apple.safetyalertsd [82]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882582 (user/501/com.apple.rapportd [83]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882594 (user/501/com.apple.mtmergeprops [84]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882606 (user/501/com.apple.mobile.usermanagerd [85]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882618 (user/501/com.apple.bluetoothd [86]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882630 (user/501/com.apple.amsaccountsd [87]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882653 (user/501/com.apple.fairplayd.H2 [88]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882825 (system/com.apple.fseventsd [89]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882838 (system/com.apple.iomfb_fdr_loader [90]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882850 (system/com.apple.notifyd [91]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:14.882861 (user/501/com.apple.SpringBoard [27]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:15.443082 (user/501/com.apple.UserEventAgent-System [24]) <Notice>: service state: running
+1969-12-31 16:00:15.443099 (user/501/com.apple.UserEventAgent-System [24]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:15.443124 (user/501/com.apple.UserEventAgent-System [24]) <Notice>: Successfully spawned UserEventAgent[24] because system support
+1969-12-31 16:00:15.609759 <Notice>: Flushed 85 logs [limit: 20]
+1969-12-31 16:00:15.764203 (user/501/com.apple.mobile.keybagd [44]) <Notice>: service state: running
+1969-12-31 16:00:15.764216 (user/501/com.apple.mobile.keybagd [44]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:15.764237 (user/501/com.apple.mobile.keybagd [44]) <Notice>: Successfully spawned keybagd[44] because speculative
+1969-12-31 16:00:15.810197 (user/501/com.apple.DumpPanic [47]) <Notice>: service state: running
+1969-12-31 16:00:15.810235 (user/501/com.apple.DumpPanic [47]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:15.810256 (user/501/com.apple.DumpPanic [47]) <Notice>: Successfully spawned DumpPanic[47] because speculative
+1969-12-31 16:00:15.810287 (user/501/com.apple.configd [36]) <Notice>: service state: running
+1969-12-31 16:00:15.810296 (user/501/com.apple.configd [36]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:15.810314 (user/501/com.apple.configd [36]) <Notice>: Successfully spawned configd[36] because speculative
+1969-12-31 16:00:15.810337 (user/501/com.apple.remoted [43]) <Notice>: service state: running
+1969-12-31 16:00:15.810347 (user/501/com.apple.remoted [43]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:15.810363 (user/501/com.apple.remoted [43]) <Notice>: Successfully spawned remoted[43] because event publisher
+1969-12-31 16:00:16.035538 (pid/44 [keybagd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:16.035585 (pid/44 [keybagd]) <Notice>: created
+1969-12-31 16:00:16.338145 (user/501/com.apple.watchdogd [51]) <Notice>: service state: running
+1969-12-31 16:00:16.338184 (user/501/com.apple.watchdogd [51]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:16.338206 (user/501/com.apple.watchdogd [51]) <Notice>: Successfully spawned watchdogd[51] because semaphore
+1969-12-31 16:00:16.549208 (system/com.apple.logd [25]) <Notice>: service state: running
+1969-12-31 16:00:16.549222 (system/com.apple.logd [25]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:16.549242 (system/com.apple.logd [25]) <Notice>: Successfully spawned logd[25] because ipc (socket)
+1969-12-31 16:00:16.635250 (user/501/com.apple.MobileFileIntegrity [46]) <Notice>: service state: running
+1969-12-31 16:00:16.635263 (user/501/com.apple.MobileFileIntegrity [46]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:16.635285 (user/501/com.apple.MobileFileIntegrity [46]) <Notice>: Successfully spawned amfid[46] because speculative
+1969-12-31 16:00:16.635312 (user/501/com.apple.timed [60]) <Notice>: service state: running
+1969-12-31 16:00:16.635321 (user/501/com.apple.timed [60]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:16.635338 (user/501/com.apple.timed [60]) <Notice>: Successfully spawned timed[60] because speculative
+1969-12-31 16:00:16.635362 (user/501/com.apple.containermanagerd [65]) <Notice>: service state: running
+1969-12-31 16:00:16.635372 (user/501/com.apple.containermanagerd [65]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:16.635390 (user/501/com.apple.containermanagerd [65]) <Notice>: Successfully spawned containermanagerd[65] because speculative
+1969-12-31 16:00:16.820352 (user/501/com.apple.nfcd [52]) <Notice>: service state: running
+1969-12-31 16:00:16.820365 (user/501/com.apple.nfcd [52]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:16.820387 (user/501/com.apple.nfcd [52]) <Notice>: Successfully spawned nfcd[52] because event publisher
+1969-12-31 16:00:16.935681 (user/501/com.apple.locationd [63]) <Notice>: service state: running
+1969-12-31 16:00:16.935695 (user/501/com.apple.locationd [63]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:16.935719 (user/501/com.apple.locationd [63]) <Notice>: Successfully spawned locationd[63] because speculative
+1969-12-31 16:00:17.025319 (user/501/com.apple.mobile.usermanagerd [85]) <Notice>: service state: running
+1969-12-31 16:00:17.025333 (user/501/com.apple.mobile.usermanagerd [85]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:17.025357 (user/501/com.apple.mobile.usermanagerd [85]) <Notice>: Successfully spawned usermanagerd[85] because speculative
+1969-12-31 16:00:17.025396 (user/501/com.apple.mediaserverd [29]) <Notice>: service state: running
+1969-12-31 16:00:17.025407 (user/501/com.apple.mediaserverd [29]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:17.025427 (user/501/com.apple.mediaserverd [29]) <Notice>: Successfully spawned mediaserverd[29] because speculative
+1969-12-31 16:00:17.303245 (user/501/com.apple.backboardd [57]) <Notice>: service state: running
+1969-12-31 16:00:17.303259 (user/501/com.apple.backboardd [57]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:17.303282 (user/501/com.apple.backboardd [57]) <Notice>: Successfully spawned backboardd[57] because speculative
+1969-12-31 16:00:17.332282 (pid/27 [SpringBoard]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:17.332306 (pid/27 [SpringBoard]) <Notice>: created
+1969-12-31 16:00:17.498056 (user/501/com.apple.imagent [64]) <Notice>: service state: running
+1969-12-31 16:00:17.498069 (user/501/com.apple.imagent [64]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:17.498092 (user/501/com.apple.imagent [64]) <Notice>: Successfully spawned imagent[64] because speculative
+1969-12-31 16:00:17.610779 (pid/85 [usermanagerd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:17.610806 (pid/85 [usermanagerd]) <Notice>: created
+1969-12-31 16:00:17.805616 (user/501/com.apple.distnoted.xpc.daemon [75]) <Notice>: service state: running
+1969-12-31 16:00:17.805629 (user/501/com.apple.distnoted.xpc.daemon [75]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:17.805653 (user/501/com.apple.distnoted.xpc.daemon [75]) <Notice>: Successfully spawned distnoted[75] because speculative
+1969-12-31 16:00:17.898757 (user/501/com.apple.driverkitd [68]) <Notice>: service state: running
+1969-12-31 16:00:17.898771 (user/501/com.apple.driverkitd [68]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:17.898796 (user/501/com.apple.driverkitd [68]) <Notice>: Successfully spawned driverkitd[68] because speculative
+1969-12-31 16:00:17.985726 (system/com.apple.notifyd [91]) <Notice>: service state: running
+1969-12-31 16:00:17.985739 (system/com.apple.notifyd [91]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:17.985761 (system/com.apple.notifyd [91]) <Notice>: Successfully spawned notifyd[91] because event publisher
+1969-12-31 16:00:18.289001 (system/com.apple.iomfb_fdr_loader [90]) <Notice>: service state: running
+1969-12-31 16:00:18.289014 (system/com.apple.iomfb_fdr_loader [90]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:18.289038 (system/com.apple.iomfb_fdr_loader [90]) <Notice>: Successfully spawned IOMFB_FDR_Loader[90] because speculative
+1969-12-31 16:00:18.486544 (pid/65 [containermanage]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:18.486569 (pid/65 [containermanage]) <Notice>: created
+1969-12-31 16:00:18.587886 (user/501/com.apple.sharingd [61]) <Notice>: service state: running
+1969-12-31 16:00:18.587900 (user/501/com.apple.sharingd [61]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:18.587923 (user/501/com.apple.sharingd [61]) <Notice>: Successfully spawned sharingd[61] because speculative
+1969-12-31 16:00:18.650397 <Notice>: Flushed 54 logs [limit: 20]
+1969-12-31 16:00:19.187591 (system/com.apple.fseventsd [89]) <Notice>: service state: running
+1969-12-31 16:00:19.187630 (system/com.apple.fseventsd [89]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:19.187651 (system/com.apple.fseventsd [89]) <Notice>: Successfully spawned fseventsd[89] because speculative
+1969-12-31 16:00:19.483987 (user/501/com.apple.mtmergeprops [84]) <Notice>: service state: running
+1969-12-31 16:00:19.484000 (user/501/com.apple.mtmergeprops [84]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:19.484022 (user/501/com.apple.mtmergeprops [84]) <Notice>: Successfully spawned mtmergeprops[84] because speculative
+1969-12-31 16:00:19.573175 (pid/46 [amfid]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:19.573201 (pid/46 [amfid]) <Notice>: created
+1969-12-31 16:00:19.674725 (user/501/com.apple.AppleCredentialManagerDaemon [78]) <Notice>: service state: running
+1969-12-31 16:00:19.674740 (user/501/com.apple.AppleCredentialManagerDaemon [78]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:19.674761 (user/501/com.apple.AppleCredentialManagerDaemon [78]) <Notice>: Successfully spawned AppleCredentialManagerDaemon[78] because speculative
+1969-12-31 16:00:19.810362 (pid/29 [mediaserverd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:19.810403 (pid/29 [mediaserverd]) <Notice>: created
+1969-12-31 16:00:20.260409 (user/501/com.apple.identityservicesd [53]) <Notice>: service state: running
+1969-12-31 16:00:20.260448 (user/501/com.apple.identityservicesd [53]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:20.260469 (user/501/com.apple.identityservicesd [53]) <Notice>: Successfully spawned identityservicesd[53] because speculative
+1969-12-31 16:00:20.354334 (pid/25 [logd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:20.354362 (pid/25 [logd]) <Notice>: created
+1969-12-31 16:00:20.859350 (pid/89 [fseventsd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:20.859393 (pid/89 [fseventsd]) <Notice>: created
+1969-12-31 16:00:20.965754 (pid/51 [watchdogd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:20.965780 (pid/51 [watchdogd]) <Notice>: created
+1969-12-31 16:00:21.160755 (pid/90 [IOMFB_FDR_Loade]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:21.160781 (pid/90 [IOMFB_FDR_Loade]) <Notice>: created
+1969-12-31 16:00:21.161022 (pid/84 [mtmergeprops]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:21.161045 (pid/84 [mtmergeprops]) <Notice>: created
+1969-12-31 16:00:21.924971 (pid/91 [notifyd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:21.925011 (pid/91 [notifyd]) <Notice>: created
+1969-12-31 16:00:21.925268 (pid/78 [AppleCredential]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:21.925292 (pid/78 [AppleCredential]) <Notice>: created
+1969-12-31 16:00:22.408845 (user/501/com.apple.ptpd [72]) <Notice>: service state: running
+1969-12-31 16:00:22.408883 (user/501/com.apple.ptpd [72]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:22.408905 (user/501/com.apple.ptpd [72]) <Notice>: Successfully spawned ptpd[72] because semaphore
+1969-12-31 16:00:22.709657 (user/501/com.apple.thermalmonitord [55]) <Notice>: service state: running
+1969-12-31 16:00:22.709692 (user/501/com.apple.thermalmonitord [55]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:22.709714 (user/501/com.apple.thermalmonitord [55]) <Notice>: Successfully spawned thermalmonitord[55] because semaphore
+1969-12-31 16:00:22.791158 (user/501/com.apple.rapportd [83]) <Notice>: service state: running
+1969-12-31 16:00:22.791171 (user/501/com.apple.rapportd [83]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:22.791193 (user/501/com.apple.rapportd [83]) <Notice>: Successfully spawned rapportd[83] because event publisher
+1969-12-31 16:00:22.896651 (user/501/com.apple.fairplayd.H2 [88]) <Notice>: service state: running
+1969-12-31 16:00:22.896666 (user/501/com.apple.fairplayd.H2 [88]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:22.896687 (user/501/com.apple.fairplayd.H2 [88]) <Notice>: Successfully spawned fairplayd.H2[88] because speculative
+1969-12-31 16:00:22.896867 (pid/43 [remoted]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:22.896891 (pid/43 [remoted]) <Notice>: created
+1969-12-31 16:00:23.086607 (user/501/com.apple.bluetoothd [86]) <Notice>: service state: running
+1969-12-31 16:00:23.086621 (user/501/com.apple.bluetoothd [86]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:23.086643 (user/501/com.apple.bluetoothd [86]) <Notice>: Successfully spawned bluetoothd[86] because speculative
+1969-12-31 16:00:23.086679 (user/501/com.apple.mobile.lockdown [74]) <Notice>: service state: running
+1969-12-31 16:00:23.086689 (user/501/com.apple.mobile.lockdown [74]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:23.086707 (user/501/com.apple.mobile.lockdown [74]) <Notice>: Successfully spawned lockdownd[74] because speculative
+1969-12-31 16:00:23.277648 (user/501/com.apple.sleepd [71]) <Notice>: service state: running
+1969-12-31 16:00:23.277661 (user/501/com.apple.sleepd [71]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:23.277686 (user/501/com.apple.sleepd [71]) <Notice>: Successfully spawned sleepd[71] because speculative
+1969-12-31 16:00:23.277724 (user/501/com.apple.mobiletimerd [49]) <Notice>: service state: running
+1969-12-31 16:00:23.277736 (user/501/com.apple.mobiletimerd [49]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:23.277757 (user/501/com.apple.mobiletimerd [49]) <Notice>: Successfully spawned mobiletimerd[49] because speculative
+1969-12-31 16:00:23.442508 <Notice>: Flushed 23 logs [limit: 20]
+1969-12-31 16:00:24.348717 (pid/24 [UserEventAgent]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:24.348760 (pid/24 [UserEventAgent]) <Notice>: created
+1969-12-31 16:00:24.349137 (pid/60 [timed]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:24.349164 (pid/60 [timed]) <Notice>: created
+1969-12-31 16:00:24.496584 (pid/49 [mobiletimerd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:24.496609 (pid/49 [mobiletimerd]) <Notice>: created
+1969-12-31 16:00:24.647229 (pid/47 [DumpPanic]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:24.647263 (pid/47 [DumpPanic]) <Notice>: created
+1969-12-31 16:00:25.148967 (system/com.apple.logd_helper) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:25.149005 (system/com.apple.logd_helper) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:25.149015 (system/com.apple.logd_helper) <Notice>: service state: spawning
+1969-12-31 16:00:25.149094 (system/com.apple.logd_helper) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:25.158058 (system/com.apple.logd_helper [92]) <Notice>: xpcproxy spawned with pid 92
+1969-12-31 16:00:25.158095 (system/com.apple.logd_helper [92]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:25.158106 (system/com.apple.logd_helper [92]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:25.158229 (system/com.apple.logd_helper [92]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:25.175421 (system/com.apple.logd_helper [92]) <Notice>: service state: running
+1969-12-31 16:00:25.175434 (system/com.apple.logd_helper [92]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:25.175457 (system/com.apple.logd_helper [92]) <Notice>: Successfully spawned logd_helper[92] because ipc (mach)
+1969-12-31 16:00:25.175569 (pid/92 [logd_helper]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:25.175592 (pid/92 [logd_helper]) <Notice>: created
+1969-12-31 16:00:25.492624 (user/501/com.apple.cfprefsd.xpc.daemon) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:25.492639 (user/501/com.apple.cfprefsd.xpc.daemon) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:25.492649 (user/501/com.apple.cfprefsd.xpc.daemon) <Notice>: service state: spawning
+1969-12-31 16:00:25.492727 (user/501/com.apple.cfprefsd.xpc.daemon) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:25.500213 (user/501/com.apple.cfprefsd.xpc.daemon [93]) <Notice>: xpcproxy spawned with pid 93
+1969-12-31 16:00:25.500250 (user/501/com.apple.cfprefsd.xpc.daemon [93]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:25.500262 (user/501/com.apple.cfprefsd.xpc.daemon [93]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:25.500376 (user/501/com.apple.cfprefsd.xpc.daemon [93]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:25.513028 (user/501/com.apple.cfprefsd.xpc.daemon [93]) <Notice>: service state: running
+1969-12-31 16:00:25.513043 (user/501/com.apple.cfprefsd.xpc.daemon [93]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:25.513068 (user/501/com.apple.cfprefsd.xpc.daemon [93]) <Notice>: Successfully spawned cfprefsd[93] because ipc (mach)
+1969-12-31 16:00:25.513189 (pid/93 [cfprefsd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:25.513214 (pid/93 [cfprefsd]) <Notice>: created
+1969-12-31 16:00:26.552606 (user/501/com.apple.chronod) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:26.552645 (user/501/com.apple.chronod) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:26.552654 (user/501/com.apple.chronod) <Notice>: service state: spawning
+1969-12-31 16:00:26.552776 (user/501/com.apple.chronod) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:26.626130 (user/501/com.apple.chronod [94]) <Notice>: xpcproxy spawned with pid 94
+1969-12-31 16:00:26.626169 (user/501/com.apple.chronod [94]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:26.626180 (user/501/com.apple.chronod [94]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:26.626534 (user/501/com.apple.chronod [94]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:26.963133 (user/501/com.apple.runningboardd [26]) <Notice>: service state: running
+1969-12-31 16:00:26.963171 (user/501/com.apple.runningboardd [26]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:26.963192 (user/501/com.apple.runningboardd [26]) <Notice>: Successfully spawned runningboardd[26] because speculative
+1969-12-31 16:00:26.963298 (pid/26 [runningboardd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:26.963321 (pid/26 [runningboardd]) <Notice>: created
+1969-12-31 16:00:27.402899 (pid/68 [driverkitd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:27.402962 (pid/68 [driverkitd]) <Notice>: created
+1969-12-31 16:00:27.876873 (user/501/com.apple.runningboardd [26]) <Notice>: job state = running
+1969-12-31 16:00:27.905197 (user/501/com.apple.SpringBoard [27]) <Notice>: job state = running
+1969-12-31 16:00:27.995269 (user/501) <Warning>: failed activation: name = com.apple.mobile.usermanagerd.xpc, flags = 0x0, requestor = usermanagerd[85], error = 37: Operation already in progress
+1969-12-31 16:00:28.323558 (user/501/com.apple.chronod [94]) <Notice>: service state: running
+1969-12-31 16:00:28.323572 (user/501/com.apple.chronod [94]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:28.323593 (user/501/com.apple.chronod [94]) <Notice>: Successfully spawned chronod[94] because ipc (mach)
+1969-12-31 16:00:28.450524 (pid/57 [backboardd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:28.450549 (pid/57 [backboardd]) <Notice>: created
+1969-12-31 16:00:28.498271 (user/501) <Warning>: failed lookup: name = com.apple.oscard, flags = 0x8, requestor = backboardd[57], error = 3: No such process
+1969-12-31 16:00:28.542053 (pid/57 [backboardd]) <Notice>: uncorking domain
+1969-12-31 16:00:28.543377 (user/501/com.apple.audio.toolbox.reporting.service) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:28.543404 (user/501/com.apple.audio.toolbox.reporting.service) <Notice>: draining messages from com.apple.audio.toolbox.reporting.service
+1969-12-31 16:00:28.543587 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.tailspin.symbolicationserver
+1969-12-31 16:00:28.543691 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.externalaccessory.WACEAService
+1969-12-31 16:00:28.543728 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.icloud.FindMyDevice.FindMyDeviceBTDiscoveryXPCService
+1969-12-31 16:00:28.543750 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.icloud.FindMyDevice.FindMyDeviceEmergencyCallInfoPublisherXPCService
+1969-12-31 16:00:28.543772 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.icloud.FindMyDevice.FindMyDeviceEraseXPCService
+1969-12-31 16:00:28.543900 (user/501/com.apple.icloud.FindMyDevice.FindMyDeviceHelperXPCService) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:28.543924 (user/501/com.apple.icloud.FindMyDevice.FindMyDeviceHelperXPCService) <Notice>: draining messages from com.apple.icloud.FindMyDevice.FindMyDeviceHelperXPCService
+1969-12-31 16:00:28.543947 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.icloud.FindMyDevice.FindMyDeviceIdentityXPCService
+1969-12-31 16:00:28.543968 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.icloud.FindMyDevice.FindMyDeviceUserNotificationsXPCService
+1969-12-31 16:00:28.544189 (pid/57/com.apple.MTLCompilerService) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:28.544201 (pid/57/com.apple.MTLCompilerService) <Notice>: draining messages from com.apple.MTLCompilerService
+1969-12-31 16:00:28.544450 (user/501/com.apple.accessibility.mediaaccessibilityd) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:28.544470 (user/501/com.apple.accessibility.mediaaccessibilityd) <Notice>: draining messages from com.apple.accessibility.mediaaccessibilityd
+1969-12-31 16:00:28.544606 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.OSLogService
+1969-12-31 16:00:28.544662 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.intents.intents-helper
+1969-12-31 16:00:28.544771 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.coreaccessories.ACCAppLinksIconService
+1969-12-31 16:00:28.544792 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.coreaccessories.ACCCarPlayService
+1969-12-31 16:00:28.544813 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.ACCHWComponentAuthService
+1969-12-31 16:00:28.544899 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.backboard.display.archive
+1969-12-31 16:00:28.545035 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.FontServices.UserFontManager
+1969-12-31 16:00:28.545056 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.FontServices.UserFontServices
+1969-12-31 16:00:28.545077 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.FontServices.FontProviderLoader
+1969-12-31 16:00:28.545562 (user/501/com.apple.datamigrator) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:28.545586 (user/501/com.apple.datamigrator) <Notice>: draining messages from com.apple.datamigrator
+1969-12-31 16:00:28.545715 (user/501/com.apple.migrationpluginwrapper) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:28.545737 (user/501/com.apple.migrationpluginwrapper) <Notice>: draining messages from com.apple.migrationpluginwrapper
+1969-12-31 16:00:28.545861 (user/501/com.apple.TrustedPeersHelper) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:28.545884 (user/501/com.apple.TrustedPeersHelper) <Notice>: draining messages from com.apple.TrustedPeersHelper
+1969-12-31 16:00:28.545904 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.security.XPCAcmeService
+1969-12-31 16:00:28.546165 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.avfaudio.devicetest.service
+1969-12-31 16:00:28.546239 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.Quagga.Decode.xpc
+1969-12-31 16:00:28.546607 (user/501/com.apple.MobileInstallationHelperService) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:28.546631 (user/501/com.apple.MobileInstallationHelperService) <Notice>: draining messages from com.apple.MobileInstallationHelperService
+1969-12-31 16:00:28.547239 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.extensionkitservice
+1969-12-31 16:00:28.547576 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.PerfPowerTelemetryClientRegistrationService
+1969-12-31 16:00:28.547662 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.coremedia.videodecodeservice
+1969-12-31 16:00:28.549141 (pid/57 [backboardd]) <Notice>: Service stub initialized for com.apple.ACCHWComponentAuthService
+1969-12-31 16:00:28.549175 (pid/57/com.apple.ACCHWComponentAuthService) <Notice>: initialized endpoint after lookup
+1969-12-31 16:00:28.610740 (pid/57/com.apple.ACCHWComponentAuthService) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:28.610753 (pid/57/com.apple.ACCHWComponentAuthService) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:28.610763 (pid/57/com.apple.ACCHWComponentAuthService) <Notice>: service state: spawning
+1969-12-31 16:00:28.610803 (pid/57/com.apple.ACCHWComponentAuthService) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:28.612807 (pid/57/com.apple.ACCHWComponentAuthService [95]) <Notice>: xpcproxy spawned with pid 95
+1969-12-31 16:00:28.612845 (pid/57/com.apple.ACCHWComponentAuthService [95]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:28.612857 (pid/57/com.apple.ACCHWComponentAuthService [95]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:28.613343 (user/501/com.apple.powerd [39]) <Notice>: service state: running
+1969-12-31 16:00:28.613356 (user/501/com.apple.powerd [39]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:28.613379 (user/501/com.apple.powerd [39]) <Notice>: Successfully spawned powerd[39] because speculative
+1969-12-31 16:00:28.613402 (pid/57/com.apple.ACCHWComponentAuthService [95]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:29.016026 (user/501/com.apple.backboardd [57]) <Notice>: job state = running
+1969-12-31 16:00:30.192368 (pid/71 [sleepd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:30.192395 (pid/71 [sleepd]) <Notice>: created
+1969-12-31 16:00:30.199687 <Notice>: Flushed 64 logs [limit: 20]
+1969-12-31 16:00:30.364802 (user/501/com.apple.mobilegestalt.xpc) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:30.364843 (user/501/com.apple.mobilegestalt.xpc) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:30.364852 (user/501/com.apple.mobilegestalt.xpc) <Notice>: service state: spawning
+1969-12-31 16:00:30.364924 (user/501/com.apple.mobilegestalt.xpc) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:30.375173 (user/501/com.apple.mobilegestalt.xpc [96]) <Notice>: xpcproxy spawned with pid 96
+1969-12-31 16:00:30.375241 (user/501/com.apple.mobilegestalt.xpc [96]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:30.375253 (user/501/com.apple.mobilegestalt.xpc [96]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:30.375375 (user/501/com.apple.mobilegestalt.xpc [96]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:30.419657 (user/501/com.apple.mobilegestalt.xpc [96]) <Notice>: service state: running
+1969-12-31 16:00:30.419670 (user/501/com.apple.mobilegestalt.xpc [96]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:30.419693 (user/501/com.apple.mobilegestalt.xpc [96]) <Notice>: Successfully spawned MobileGestaltHelper[96] because ipc (mach)
+1969-12-31 16:00:30.419806 (pid/96 [MobileGestaltHe]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:30.419828 (pid/96 [MobileGestaltHe]) <Notice>: created
+1969-12-31 16:00:30.514672 (user/501/com.apple.routined [31]) <Notice>: service state: running
+1969-12-31 16:00:30.514685 (user/501/com.apple.routined [31]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:30.514707 (user/501/com.apple.routined [31]) <Notice>: Successfully spawned routined[31] because speculative
+1969-12-31 16:00:30.684573 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.STSXPCHelper
+1969-12-31 16:00:30.684661 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.PassKitCoreXPCService
+1969-12-31 16:00:30.684998 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.internal.DataDetectorsRemoteScanner
+1969-12-31 16:00:30.685463 (user/501/com.apple.MobileBackup.MBHelperService) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:30.685488 (user/501/com.apple.MobileBackup.MBHelperService) <Notice>: draining messages from com.apple.MobileBackup.MBHelperService
+1969-12-31 16:00:30.685875 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.uifoundation-bundle-helper
+1969-12-31 16:00:30.685910 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.textkit.nsattributedstringagent
+1969-12-31 16:00:30.686156 (user/501/com.apple.CallKit.CallDirectory) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:30.686178 (user/501/com.apple.CallKit.CallDirectory) <Notice>: draining messages from com.apple.CallKit.CallDirectory
+1969-12-31 16:00:30.686200 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.CallKit.CallDirectoryMaintenance
+1969-12-31 16:00:30.686499 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.StreamingUnzipService.privileged
+1969-12-31 16:00:30.686520 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.StreamingUnzipService
+1969-12-31 16:00:30.686764 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.DPSubmissionService
+1969-12-31 16:00:30.687100 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.FTLivePhotoService
+1969-12-31 16:00:30.687125 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.FaceTime.FTConversationService
+1969-12-31 16:00:31.827683 (user/501/com.apple.gamecontroller.ConfigService) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:31.827714 (user/501/com.apple.gamecontroller.ConfigService) <Notice>: draining messages from com.apple.gamecontroller.ConfigService
+1969-12-31 16:00:32.091364 (user/501/com.apple.driverkitd [68]) <Notice>: exited with exit reason (namespace: 1 code: 0x7) - JETSAM_REASON_MEMORY_PERPROCESSLIMIT
+1969-12-31 16:00:32.091379 (user/501/com.apple.driverkitd [68]) <Notice>: service state: exited
+1969-12-31 16:00:32.091392 (user/501/com.apple.driverkitd [68]) <Notice>: internal event: EXITED, code = 0
+1969-12-31 16:00:32.091399 (user/501) <Notice>: service inactive: com.apple.driverkitd
+1969-12-31 16:00:32.091444 (user/501/com.apple.driverkitd [68]) <Notice>: service state: not running
+1969-12-31 16:00:32.091469 (user/501/com.apple.ReportCrash) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:32.091480 (user/501/com.apple.ReportCrash) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:32.091489 (user/501/com.apple.ReportCrash) <Notice>: service state: spawning
+1969-12-31 16:00:32.091581 (user/501/com.apple.ReportCrash) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:32.093533 (user/501/com.apple.ReportCrash [97]) <Notice>: xpcproxy spawned with pid 97
+1969-12-31 16:00:32.093570 (user/501/com.apple.ReportCrash [97]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:32.093583 (user/501/com.apple.ReportCrash [97]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:32.125675 (user/501/com.apple.ReportCrash [97]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:32.283046 <Notice>: Flushed 30 logs [limit: 20]
+1969-12-31 16:00:32.632627 (pid/55 [thermalmonitord]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:32.632663 (pid/55 [thermalmonitord]) <Notice>: created
+1969-12-31 16:00:32.633239 (pid/57 [backboardd]) <Notice>: Service stub created for com.apple.ZhuGeService
+1969-12-31 16:00:32.858124 (pid/39 [powerd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:32.858157 (pid/39 [powerd]) <Notice>: created
+1969-12-31 16:00:33.191999 (user/501/com.apple.bluetoothuserd [70]) <Notice>: service state: running
+1969-12-31 16:00:33.192040 (user/501/com.apple.bluetoothuserd [70]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:33.192062 (user/501/com.apple.bluetoothuserd [70]) <Notice>: Successfully spawned bluetoothuserd[70] because semaphore
+1969-12-31 16:00:33.252132 (user/501/com.apple.lsd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:33.252148 (user/501/com.apple.lsd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:33.252160 (user/501/com.apple.lsd) <Notice>: service state: spawning
+1969-12-31 16:00:33.252354 (user/501/com.apple.lsd) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:33.262674 (user/501/com.apple.lsd [98]) <Notice>: xpcproxy spawned with pid 98
+1969-12-31 16:00:33.262712 (user/501/com.apple.lsd [98]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:33.262724 (user/501/com.apple.lsd [98]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:33.262915 (user/501/com.apple.lsd [98]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:33.290112 (user/501/com.apple.lsd [98]) <Notice>: service state: running
+1969-12-31 16:00:33.290128 (user/501/com.apple.lsd [98]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:33.290150 (user/501/com.apple.lsd [98]) <Notice>: Successfully spawned lsd[98] because ipc (mach)
+1969-12-31 16:00:33.297839 (pid/98 [lsd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:33.297864 (pid/98 [lsd]) <Notice>: created
+1969-12-31 16:00:33.394784 (user/501/com.apple.accessoryupdaterd [37]) <Notice>: service state: running
+1969-12-31 16:00:33.394798 (user/501/com.apple.accessoryupdaterd [37]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:33.394821 (user/501/com.apple.accessoryupdaterd [37]) <Notice>: Successfully spawned accessoryupdaterd[37] because speculative
+1969-12-31 16:00:33.543469 (pid/36 [configd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:33.543495 (pid/36 [configd]) <Notice>: created
+1969-12-31 16:00:33.564568 (user/501/com.apple.mediaserverd [29]) <Notice>: job state = running
+1969-12-31 16:00:33.609476 (pid/94 [chronod]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:33.609504 (pid/94 [chronod]) <Notice>: created
+1969-12-31 16:00:33.860351 <Notice>: Flushed 24 logs [limit: 20]
+1969-12-31 16:00:34.098774 (user/501/com.apple.datamigrator) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:34.098872 (user/501/com.apple.datamigrator) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:34.098882 (user/501/com.apple.datamigrator) <Notice>: service state: spawning
+1969-12-31 16:00:34.098954 (user/501/com.apple.datamigrator) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:34.109289 (user/501/com.apple.datamigrator [99]) <Notice>: xpcproxy spawned with pid 99
+1969-12-31 16:00:34.109327 (user/501/com.apple.datamigrator [99]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:34.109340 (user/501/com.apple.datamigrator [99]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:34.109382 (user/501/com.apple.datamigrator [99]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:34.131554 (user/501/com.apple.datamigrator [99]) <Notice>: service state: running
+1969-12-31 16:00:34.131568 (user/501/com.apple.datamigrator [99]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:34.131595 (user/501/com.apple.datamigrator [99]) <Notice>: Successfully spawned datamigrator[99] because ipc (mach)
+1969-12-31 16:00:34.171865 (pid/99 [com.apple.datam]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:34.171890 (pid/99 [com.apple.datam]) <Notice>: created
+1969-12-31 16:00:34.184285 (pid/99 [com.apple.datam]) <Notice>: uncorking domain
+1969-12-31 16:00:34.184954 (pid/99/com.apple.MTLCompilerService) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:34.184970 (pid/99/com.apple.MTLCompilerService) <Notice>: draining messages from com.apple.MTLCompilerService
+1969-12-31 16:00:34.185782 (pid/99 [com.apple.datam]) <Notice>: Service stub created for com.apple.backboard.display.archive
+1969-12-31 16:00:34.185904 (pid/99 [com.apple.datam]) <Notice>: Service stub created for com.apple.FontServices.UserFontManager
+1969-12-31 16:00:34.185926 (pid/99 [com.apple.datam]) <Notice>: Service stub created for com.apple.FontServices.UserFontServices
+1969-12-31 16:00:34.185947 (pid/99 [com.apple.datam]) <Notice>: Service stub created for com.apple.FontServices.FontProviderLoader
+1969-12-31 16:00:34.186017 (pid/99 [com.apple.datam]) <Notice>: Service stub created for com.apple.coreaccessories.ACCAppLinksIconService
+1969-12-31 16:00:34.186038 (pid/99 [com.apple.datam]) <Notice>: Service stub created for com.apple.coreaccessories.ACCCarPlayService
+1969-12-31 16:00:34.186059 (pid/99 [com.apple.datam]) <Notice>: Service stub created for com.apple.ACCHWComponentAuthService
+1969-12-31 16:00:34.186252 (pid/99 [com.apple.datam]) <Notice>: Service stub created for com.apple.security.XPCAcmeService
+1969-12-31 16:00:34.186761 (pid/99 [com.apple.datam]) <Notice>: Service stub created for com.apple.extensionkitservice
+1969-12-31 16:00:34.187054 (pid/99 [com.apple.datam]) <Notice>: Service stub created for com.apple.PerfPowerTelemetryClientRegistrationService
+1969-12-31 16:00:34.469189 (user/501/com.apple.watchdogd [51]) <Notice>: exited due to exit(0)
+1969-12-31 16:00:34.469204 (user/501/com.apple.watchdogd [51]) <Notice>: service state: exited
+1969-12-31 16:00:34.469221 (user/501/com.apple.watchdogd [51]) <Notice>: internal event: EXITED, code = 0
+1969-12-31 16:00:34.469232 (user/501) <Notice>: service inactive: com.apple.watchdogd
+1969-12-31 16:00:34.469264 (user/501/com.apple.watchdogd [51]) <Notice>: service state: not running
+1969-12-31 16:00:34.469500 (pid/51 [watchdogd]) <Notice>: shutting down
+1969-12-31 16:00:34.469513 (pid/51 [watchdogd]) <Notice>: cleaning up
+1969-12-31 16:00:34.469538 (system) <Notice>: removing child: pid/51
+1969-12-31 16:00:34.473788 (user/501/com.apple.triald) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:34.473802 (user/501/com.apple.triald) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:34.473812 (user/501/com.apple.triald) <Notice>: service state: spawning
+1969-12-31 16:00:34.473929 (user/501/com.apple.triald) <Notice>: launching: xpc event
+1969-12-31 16:00:34.476081 (user/501/com.apple.triald [100]) <Notice>: xpcproxy spawned with pid 100
+1969-12-31 16:00:34.476121 (user/501/com.apple.triald [100]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:34.476135 (user/501/com.apple.triald [100]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:34.476178 (user/501/com.apple.triald [100]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:34.495917 <Notice>: Flushed 42 logs [limit: 20]
+1969-12-31 16:00:34.534603 (user/501/com.apple.ReportCrash [97]) <Notice>: service state: running
+1969-12-31 16:00:34.534640 (user/501/com.apple.ReportCrash [97]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:34.534662 (user/501/com.apple.ReportCrash [97]) <Notice>: Successfully spawned ReportCrash[97] because ipc (mach)
+1969-12-31 16:00:34.925918 (user/501/com.apple.powerd [39]) <Notice>: job state = running
+1969-12-31 16:00:35.017049 (user/501/com.apple.analyticsd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:35.017061 (user/501/com.apple.analyticsd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:35.017070 (user/501/com.apple.analyticsd) <Notice>: service state: spawning
+1969-12-31 16:00:35.017167 (user/501/com.apple.analyticsd) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:35.021708 (user/501/com.apple.analyticsd [101]) <Notice>: xpcproxy spawned with pid 101
+1969-12-31 16:00:35.021747 (user/501/com.apple.analyticsd [101]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:35.021759 (user/501/com.apple.analyticsd [101]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:35.021916 (user/501/com.apple.analyticsd [101]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:35.034971 (pid/57/com.apple.ACCHWComponentAuthService [95]) <Notice>: service state: running
+1969-12-31 16:00:35.034986 (pid/57/com.apple.ACCHWComponentAuthService [95]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:35.035009 (pid/57/com.apple.ACCHWComponentAuthService [95]) <Notice>: Successfully spawned ACCHWComponentAuthService[95] because ipc (mach)
+1969-12-31 16:00:35.073259 (pid/47 [DumpPanic]) <Notice>: shutting down
+1969-12-31 16:00:35.073273 (pid/47 [DumpPanic]) <Notice>: cleaning up
+1969-12-31 16:00:35.073360 (user/501/com.apple.DumpPanic [47]) <Notice>: exited due to exit(1)
+1969-12-31 16:00:35.073373 (user/501/com.apple.DumpPanic [47]) <Notice>: service state: exited
+1969-12-31 16:00:35.073386 (user/501/com.apple.DumpPanic [47]) <Notice>: internal event: EXITED, code = 0
+1969-12-31 16:00:35.073393 (user/501) <Notice>: service inactive: com.apple.DumpPanic
+1969-12-31 16:00:35.073406 (user/501/com.apple.DumpPanic [47]) <Notice>: service state: not running
+1969-12-31 16:00:35.073425 (system) <Notice>: removing child: pid/47
+1969-12-31 16:00:35.203121 <Notice>: Flushed 23 logs [limit: 20]
+1969-12-31 16:00:35.502891 (user/501/com.apple.triald [100]) <Notice>: service state: running
+1969-12-31 16:00:35.502928 (user/501/com.apple.triald [100]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:35.502950 (user/501/com.apple.triald [100]) <Notice>: Successfully spawned triald[100] because xpc event
+1969-12-31 16:00:35.548221 (user/501/com.apple.biomed [42]) <Notice>: service state: running
+1969-12-31 16:00:35.548259 (user/501/com.apple.biomed [42]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:35.548280 (user/501/com.apple.biomed [42]) <Notice>: Successfully spawned biomed[42] because event publisher
+1969-12-31 16:00:35.548384 (pid/42 [biomed]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:35.548406 (pid/42 [biomed]) <Notice>: created
+1969-12-31 16:00:35.713449 (user/501/com.apple.remindd [79]) <Notice>: service state: running
+1969-12-31 16:00:35.713463 (user/501/com.apple.remindd [79]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:35.713485 (user/501/com.apple.remindd [79]) <Notice>: Successfully spawned remindd[79] because speculative
+1969-12-31 16:00:35.740710 (user/501/com.apple.biomed [42]) <Notice>: job state = running
+1969-12-31 16:00:36.186401 (user/501/com.apple.contextstored [56]) <Notice>: service state: running
+1969-12-31 16:00:36.186443 (user/501/com.apple.contextstored [56]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:36.186465 (user/501/com.apple.contextstored [56]) <Notice>: Successfully spawned contextstored[56] because event publisher
+1969-12-31 16:00:36.205021 (user/501/com.apple.PowerUIAgent) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:36.205035 (user/501/com.apple.PowerUIAgent) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:36.205045 (user/501/com.apple.PowerUIAgent) <Notice>: service state: spawning
+1969-12-31 16:00:36.205202 (user/501/com.apple.PowerUIAgent) <Notice>: launching: xpc event
+1969-12-31 16:00:36.212408 (user/501/com.apple.PowerUIAgent [102]) <Notice>: xpcproxy spawned with pid 102
+1969-12-31 16:00:36.212447 (user/501/com.apple.PowerUIAgent [102]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:36.212459 (user/501/com.apple.PowerUIAgent [102]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:36.212587 (user/501/com.apple.PowerUIAgent [102]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:36.376762 (pid/97 [ReportCrash]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:36.376794 (pid/97 [ReportCrash]) <Notice>: created
+1969-12-31 16:00:36.431955 (user/501/com.apple.WirelessRadioManager [41]) <Notice>: service state: running
+1969-12-31 16:00:36.431970 (user/501/com.apple.WirelessRadioManager [41]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:36.431995 (user/501/com.apple.WirelessRadioManager [41]) <Notice>: Successfully spawned WirelessRadioManagerd[41] because speculative
+1969-12-31 16:00:36.887629 (pid/75 [distnoted]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:36.887661 (pid/75 [distnoted]) <Notice>: created
+1969-12-31 16:00:37.659656 (user/501/com.apple.healthd [35]) <Notice>: service state: running
+1969-12-31 16:00:37.659748 (user/501/com.apple.healthd [35]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:37.659773 (user/501/com.apple.healthd [35]) <Notice>: Successfully spawned healthd[35] because speculative
+1969-12-31 16:00:37.706418 (pid/64 [imagent]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:37.706450 (pid/64 [imagent]) <Notice>: created
+1969-12-31 16:00:37.706710 (pid/88 [fairplayd.H2]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:37.706733 (pid/88 [fairplayd.H2]) <Notice>: created
+1969-12-31 16:00:38.686519 (user/501/com.apple.seld [48]) <Notice>: service state: running
+1969-12-31 16:00:38.686556 (user/501/com.apple.seld [48]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:38.686578 (user/501/com.apple.seld [48]) <Notice>: Successfully spawned seld[48] because speculative
+1969-12-31 16:00:38.935320 (pid/56 [contextstored]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:38.935352 (pid/56 [contextstored]) <Notice>: created
+1969-12-31 16:00:39.300494 (user/501/com.apple.MobileInternetSharing [34]) <Notice>: service state: running
+1969-12-31 16:00:39.300531 (user/501/com.apple.MobileInternetSharing [34]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:39.300553 (user/501/com.apple.MobileInternetSharing [34]) <Notice>: Successfully spawned misd[34] because speculative
+1969-12-31 16:00:39.446713 (pid/72 [ptpd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:39.446746 (pid/72 [ptpd]) <Notice>: created
+1969-12-31 16:00:39.674380 (user/501/com.apple.PowerUIAgent [102]) <Notice>: service state: running
+1969-12-31 16:00:39.674420 (user/501/com.apple.PowerUIAgent [102]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:39.674443 (user/501/com.apple.PowerUIAgent [102]) <Notice>: Successfully spawned PowerUIAgent[102] because xpc event
+1969-12-31 16:00:39.774412 (user/501/com.apple.mediaremoted [32]) <Notice>: service state: running
+1969-12-31 16:00:39.774426 (user/501/com.apple.mediaremoted [32]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:39.774450 (user/501/com.apple.mediaremoted [32]) <Notice>: Successfully spawned mediaremoted[32] because semaphore
+1969-12-31 16:00:40.024977 (user/501/com.apple.peakpowermanagerd [80]) <Notice>: service state: running
+1969-12-31 16:00:40.025012 (user/501/com.apple.peakpowermanagerd [80]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:40.025035 (user/501/com.apple.peakpowermanagerd [80]) <Notice>: Successfully spawned peakpowermanagerd[80] because speculative
+1969-12-31 16:00:40.643428 (pid/83 [rapportd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:40.643459 (pid/83 [rapportd]) <Notice>: created
+1969-12-31 16:00:40.781742 (user/501/com.apple.assistantd [30]) <Notice>: service state: running
+1969-12-31 16:00:40.781782 (user/501/com.apple.assistantd [30]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:40.781805 (user/501/com.apple.assistantd [30]) <Notice>: Successfully spawned assistantd[30] because speculative
+1969-12-31 16:00:41.246800 (user/501/com.apple.wcd [54]) <Notice>: service state: running
+1969-12-31 16:00:41.246836 (user/501/com.apple.wcd [54]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:41.246861 (user/501/com.apple.wcd [54]) <Notice>: Successfully spawned wcd[54] because speculative
+1969-12-31 16:00:41.271250 (user/501/com.apple.navd [81]) <Notice>: service state: running
+1969-12-31 16:00:41.271264 (user/501/com.apple.navd [81]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:41.271288 (user/501/com.apple.navd [81]) <Notice>: Successfully spawned navd[81] because speculative
+1969-12-31 16:00:41.405741 (user/501) <Warning>: failed lookup: name = com.apple.private.corewifi-xpc, flags = 0x8, requestor = mediaserverd[29], error = 3: No such process
+1969-12-31 16:00:42.056505 (user/501/com.apple.aggregated [76]) <Notice>: service state: running
+1969-12-31 16:00:42.056550 (user/501/com.apple.aggregated [76]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:42.056578 (user/501/com.apple.aggregated [76]) <Notice>: Successfully spawned aggregated[76] because speculative
+1969-12-31 16:00:42.122949 (user/501/com.apple.timesync.audioclocksyncd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:42.122968 (user/501/com.apple.timesync.audioclocksyncd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:42.122979 (user/501/com.apple.timesync.audioclocksyncd) <Notice>: service state: spawning
+1969-12-31 16:00:42.123122 (user/501/com.apple.timesync.audioclocksyncd) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:42.451846 (user/501/com.apple.timesync.audioclocksyncd [103]) <Notice>: xpcproxy spawned with pid 103
+1969-12-31 16:00:42.451885 (user/501/com.apple.timesync.audioclocksyncd [103]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:42.451898 (user/501/com.apple.timesync.audioclocksyncd [103]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:42.451979 (user/501/com.apple.timesync.audioclocksyncd [103]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:43.142314 (user/501/com.apple.magicswitchd.companion [59]) <Notice>: service state: running
+1969-12-31 16:00:43.142352 (user/501/com.apple.magicswitchd.companion [59]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:43.142381 (user/501/com.apple.magicswitchd.companion [59]) <Notice>: Successfully spawned magicswitchd[59] because speculative
+1969-12-31 16:00:43.142419 (user/501/com.apple.peopled [28]) <Notice>: service state: running
+1969-12-31 16:00:43.142432 (user/501/com.apple.peopled [28]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:43.142455 (user/501/com.apple.peopled [28]) <Notice>: Successfully spawned peopled[28] because speculative
+1969-12-31 16:00:43.391826 (pid/76 [aggregated]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:43.391857 (pid/76 [aggregated]) <Notice>: created
+1969-12-31 16:00:43.519887 (pid/100 [triald]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:43.519921 (pid/100 [triald]) <Notice>: created
+1969-12-31 16:00:43.734538 (user/501/com.apple.cloudpaird [66]) <Notice>: service state: running
+1969-12-31 16:00:43.734553 (user/501/com.apple.cloudpaird [66]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:43.734582 (user/501/com.apple.cloudpaird [66]) <Notice>: Successfully spawned cloudpaird[66] because semaphore
+1969-12-31 16:00:43.734618 (user/501/com.apple.familynotification [45]) <Notice>: service state: running
+1969-12-31 16:00:43.734632 (user/501/com.apple.familynotification [45]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:43.734656 (user/501/com.apple.familynotification [45]) <Notice>: Successfully spawned familynotificationd[45] because speculative
+1969-12-31 16:00:43.753751 (user/501/com.apple.analyticsd [101]) <Notice>: service state: running
+1969-12-31 16:00:43.753766 (user/501/com.apple.analyticsd [101]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:43.753791 (user/501/com.apple.analyticsd [101]) <Notice>: Successfully spawned analyticsd[101] because ipc (mach)
+1969-12-31 16:00:43.782223 (pid/101 [analyticsd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:43.782250 (pid/101 [analyticsd]) <Notice>: created
+1969-12-31 16:00:44.064674 (user/501/com.apple.safetyalertsd [82]) <Notice>: service state: running
+1969-12-31 16:00:44.064715 (user/501/com.apple.safetyalertsd [82]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:44.064740 (user/501/com.apple.safetyalertsd [82]) <Notice>: Successfully spawned safetyalertsd[82] because speculative
+1969-12-31 16:00:44.064778 (user/501/com.apple.atc [40]) <Notice>: service state: running
+1969-12-31 16:00:44.064792 (user/501/com.apple.atc [40]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:44.064813 (user/501/com.apple.atc [40]) <Notice>: Successfully spawned atc[40] because speculative
+1969-12-31 16:00:44.719774 (user/501) <Warning>: failed activation: name = com.apple.private.alloy.cmsession-idswake, flags = 0x0, requestor = mediaserverd[29], error = 1: Operation not permitted
+1969-12-31 16:00:45.040099 (pid/95 [ACCHWComponentA]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:45.040132 (pid/95 [ACCHWComponentA]) <Notice>: created
+1969-12-31 16:00:45.040263 (user/501/com.apple.timesync.audioclocksyncd [103]) <Notice>: service state: running
+1969-12-31 16:00:45.040276 (user/501/com.apple.timesync.audioclocksyncd [103]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:45.040299 (user/501/com.apple.timesync.audioclocksyncd [103]) <Notice>: Successfully spawned audioclocksyncd[103] because ipc (mach)
+1969-12-31 16:00:45.040326 (user/501/com.apple.amsaccountsd [87]) <Notice>: service state: running
+1969-12-31 16:00:45.040339 (user/501/com.apple.amsaccountsd [87]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:45.040359 (user/501/com.apple.amsaccountsd [87]) <Notice>: Successfully spawned amsaccountsd[87] because speculative
+1969-12-31 16:00:45.360945 (pid/63 [locationd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:45.360977 (pid/63 [locationd]) <Notice>: created
+1969-12-31 16:00:45.396265 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.xpc, flags = 0x8, requestor = UserEventAgent[24], error = 3: No such process
+1969-12-31 16:00:45.519932 (pid/52 [nfcd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:45.519965 (pid/52 [nfcd]) <Notice>: created
+1969-12-31 16:00:46.291554 (user/501/com.apple.mobileassetd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:46.291592 (user/501/com.apple.mobileassetd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:46.291603 (user/501/com.apple.mobileassetd) <Notice>: service state: spawning
+1969-12-31 16:00:46.291747 (user/501/com.apple.mobileassetd) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:46.293955 (user/501/com.apple.mobileassetd [104]) <Notice>: xpcproxy spawned with pid 104
+1969-12-31 16:00:46.293994 (user/501/com.apple.mobileassetd [104]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:46.294007 (user/501/com.apple.mobileassetd [104]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:46.294049 (user/501/com.apple.mobileassetd [104]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:46.739498 (user/501/com.apple.dasd [69]) <Notice>: service state: running
+1969-12-31 16:00:46.739534 (user/501/com.apple.dasd [69]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:46.739557 (user/501/com.apple.dasd [69]) <Notice>: Successfully spawned dasd[69] because event publisher
+1969-12-31 16:00:46.939224 (pid/74 [lockdownd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:46.939259 (pid/74 [lockdownd]) <Notice>: created
+1969-12-31 16:00:46.985895 (user/501/com.apple.passd [73]) <Notice>: service state: running
+1969-12-31 16:00:46.985909 (user/501/com.apple.passd [73]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:46.985932 (user/501/com.apple.passd [73]) <Notice>: Successfully spawned passd[73] because event publisher
+1969-12-31 16:00:47.322992 (user/501) <Warning>: failed lookup: name = com.apple.nfcd.xpc.homed.uaevents, flags = 0x8, requestor = nfcd[52], error = 3: No such process
+1969-12-31 16:00:47.666033 (pid/53 [identityservice]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:47.666065 (pid/53 [identityservice]) <Notice>: created
+1969-12-31 16:00:47.732543 (user/501/com.apple.mobileassetd [104]) <Notice>: service state: running
+1969-12-31 16:00:47.732558 (user/501/com.apple.mobileassetd [104]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:47.732582 (user/501/com.apple.mobileassetd [104]) <Notice>: Successfully spawned mobileassetd[104] because ipc (mach)
+1969-12-31 16:00:47.992689 (pid/90 [IOMFB_FDR_Loade]) <Notice>: shutting down
+1969-12-31 16:00:47.992721 (pid/90 [IOMFB_FDR_Loade]) <Notice>: cleaning up
+1969-12-31 16:00:47.992834 (system/com.apple.iomfb_fdr_loader [90]) <Notice>: exited due to exit(1)
+1969-12-31 16:00:47.992847 (system/com.apple.iomfb_fdr_loader [90]) <Notice>: service state: exited
+1969-12-31 16:00:47.992863 (system/com.apple.iomfb_fdr_loader [90]) <Notice>: internal event: EXITED, code = 0
+1969-12-31 16:00:47.992872 (system) <Notice>: service inactive: com.apple.iomfb_fdr_loader
+1969-12-31 16:00:47.992903 (system/com.apple.iomfb_fdr_loader [90]) <Notice>: service state: not running
+1969-12-31 16:00:47.992928 (system) <Notice>: removing child: pid/90
+1969-12-31 16:00:48.058171 (user/501/com.apple.askpermissiond [58]) <Notice>: service state: running
+1969-12-31 16:00:48.058186 (user/501/com.apple.askpermissiond [58]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:48.058211 (user/501/com.apple.askpermissiond [58]) <Notice>: Successfully spawned askpermissiond[58] because speculative
+1969-12-31 16:00:48.295802 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.coretelephony.xpc, flags = 0x8, requestor = identityservice[53], error = 3: No such process
+1969-12-31 16:00:48.486495 (user/501/com.apple.mobile.softwareupdated [50]) <Notice>: service state: running
+1969-12-31 16:00:48.486509 (user/501/com.apple.mobile.softwareupdated [50]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:48.486532 (user/501/com.apple.mobile.softwareupdated [50]) <Notice>: Successfully spawned softwareupdated[50] because speculative
+1969-12-31 16:00:48.525551 (pid/103 [audioclocksyncd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:48.525577 (pid/103 [audioclocksyncd]) <Notice>: created
+1969-12-31 16:00:48.548161 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.xpc, flags = 0x8, requestor = identityservice[53], error = 3: No such process
+1969-12-31 16:00:48.671011 (user/501) <Warning>: failed lookup: name = com.apple.wifi.manager, flags = 0x1, requestor = mediaserverd[29], error = 3: No such process
+1969-12-31 16:00:48.725189 (user/501/com.apple.coreduetd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:48.725203 (user/501/com.apple.coreduetd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:48.725212 (user/501/com.apple.coreduetd) <Notice>: service state: spawning
+1969-12-31 16:00:48.725444 (user/501/com.apple.coreduetd) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:48.744920 (user/501/com.apple.coreduetd [105]) <Notice>: xpcproxy spawned with pid 105
+1969-12-31 16:00:48.744960 (user/501/com.apple.coreduetd [105]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:48.744973 (user/501/com.apple.coreduetd [105]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:48.745015 (user/501/com.apple.coreduetd [105]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:48.841260 (user/501/com.apple.coreduetd [105]) <Notice>: service state: running
+1969-12-31 16:00:48.841297 (user/501/com.apple.coreduetd [105]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:48.841319 (user/501/com.apple.coreduetd [105]) <Notice>: Successfully spawned coreduetd[105] because ipc (mach)
+1969-12-31 16:00:48.863731 (pid/105 [coreduetd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:48.863757 (pid/105 [coreduetd]) <Notice>: created
+1969-12-31 16:00:49.197502 (user/501/com.apple.tccd [38]) <Notice>: service state: running
+1969-12-31 16:00:49.197538 (user/501/com.apple.tccd [38]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:49.197561 (user/501/com.apple.tccd [38]) <Notice>: Successfully spawned tccd[38] because event publisher
+1969-12-31 16:00:49.410530 (pid/102 [PowerUIAgent]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:49.410564 (pid/102 [PowerUIAgent]) <Notice>: created
+1969-12-31 16:00:49.476853 (user/501/com.apple.ManagedSettingsAgent [62]) <Notice>: service state: running
+1969-12-31 16:00:49.476867 (user/501/com.apple.ManagedSettingsAgent [62]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:49.476891 (user/501/com.apple.ManagedSettingsAgent [62]) <Notice>: Successfully spawned ManagedSettingsAgent[62] because event publisher
+1969-12-31 16:00:49.755058 (user/501/com.apple.apsd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:49.755097 (user/501/com.apple.apsd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:49.755107 (user/501/com.apple.apsd) <Notice>: service state: spawning
+1969-12-31 16:00:49.755207 (user/501/com.apple.apsd) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:49.773122 (user/501/com.apple.apsd [106]) <Notice>: xpcproxy spawned with pid 106
+1969-12-31 16:00:49.773159 (user/501/com.apple.apsd [106]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:49.773171 (user/501/com.apple.apsd [106]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:49.773214 (user/501/com.apple.apsd [106]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:49.793127 (user/501/com.apple.apsd [106]) <Notice>: service state: running
+1969-12-31 16:00:49.793142 (user/501/com.apple.apsd [106]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:49.793167 (user/501/com.apple.apsd [106]) <Notice>: Successfully spawned apsd[106] because ipc (mach)
+1969-12-31 16:00:49.889490 (pid/106 [apsd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:49.889516 (pid/106 [apsd]) <Notice>: created
+1969-12-31 16:00:50.086548 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.xpc, flags = 0x8, requestor = apsd[106], error = 3: No such process
+1969-12-31 16:00:50.104100 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.coretelephony.xpc, flags = 0x8, requestor = apsd[106], error = 3: No such process
+1969-12-31 16:00:50.135708 (user/501) <Warning>: failed lookup: name = com.apple.wifi.manager, flags = 0x1, requestor = apsd[106], error = 3: No such process
+1969-12-31 16:00:50.423422 <Notice>: Last log repeated 4 times
+1969-12-31 16:00:50.181711 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.xpc, flags = 0x8, requestor = apsd[106], error = 3: No such process
+1969-12-31 16:00:50.182078 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.coretelephony.xpc, flags = 0x8, requestor = imagent[64], error = 3: No such process
+1969-12-31 16:00:50.267755 (user/501/com.apple.securityd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:50.267769 (user/501/com.apple.securityd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:50.267778 (user/501/com.apple.securityd) <Notice>: service state: spawning
+1969-12-31 16:00:50.267942 (user/501/com.apple.securityd) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:50.274471 (user/501/com.apple.securityd [107]) <Notice>: xpcproxy spawned with pid 107
+1969-12-31 16:00:50.274510 (user/501/com.apple.securityd [107]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:50.274523 (user/501/com.apple.securityd [107]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:50.274565 (user/501/com.apple.securityd [107]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:50.308391 (user/501/com.apple.securityd [107]) <Notice>: service state: running
+1969-12-31 16:00:50.308405 (user/501/com.apple.securityd [107]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:50.308429 (user/501/com.apple.securityd [107]) <Notice>: Successfully spawned securityd[107] because ipc (mach)
+1969-12-31 16:00:50.373391 (user/501) <Warning>: failed lookup: name = com.apple.wifi.manager, flags = 0x1, requestor = apsd[106], error = 3: No such process
+1969-12-31 16:00:50.423828 <Notice>: Flushed 20 logs [limit: 20]
+1969-12-31 16:00:50.481725 (pid/107 [securityd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:50.481757 (pid/107 [securityd]) <Notice>: created
+1969-12-31 16:00:50.676842 (user/501/com.apple.coreduetd [105]) <Notice>: job state = running
+1969-12-31 16:00:50.711783 (user/501) <Warning>: failed lookup: name = com.apple.wifi.manager, flags = 0x1, requestor = apsd[106], error = 3: No such process
+1969-12-31 16:00:50.941442 (pid/104 [mobileassetd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:50.941506 (pid/104 [mobileassetd]) <Notice>: created
+1969-12-31 16:00:50.941759 (user/501) <Warning>: failed lookup: name = com.apple.wifi.manager, flags = 0x1, requestor = apsd[106], error = 3: No such process
+1969-12-31 16:00:51.418285 (user/501/com.apple.mobileactivationd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:51.418326 (user/501/com.apple.mobileactivationd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:51.418338 (user/501/com.apple.mobileactivationd) <Notice>: service state: spawning
+1969-12-31 16:00:51.418439 (user/501/com.apple.mobileactivationd) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:51.430802 (user/501/com.apple.mobileactivationd [108]) <Notice>: xpcproxy spawned with pid 108
+1969-12-31 16:00:51.430840 (user/501/com.apple.mobileactivationd [108]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:51.430852 (user/501/com.apple.mobileactivationd [108]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:51.430894 (user/501/com.apple.mobileactivationd [108]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:51.455697 (user/501) <Warning>: failed lookup: name = com.apple.wifi.manager, flags = 0x1, requestor = apsd[106], error = 3: No such process
+1969-12-31 16:00:51.472444 (user/501/com.apple.mobileactivationd [108]) <Notice>: service state: running
+1969-12-31 16:00:51.472459 (user/501/com.apple.mobileactivationd [108]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:51.472483 (user/501/com.apple.mobileactivationd [108]) <Notice>: Successfully spawned mobileactivationd[108] because ipc (mach)
+1969-12-31 16:00:51.533066 (pid/108 [mobileactivatio]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:51.533098 (pid/108 [mobileactivatio]) <Notice>: created
+1969-12-31 16:00:51.977476 (user/501/com.apple.icloud.findmydeviced) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:51.977508 (user/501/com.apple.icloud.findmydeviced) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:51.977518 (user/501/com.apple.icloud.findmydeviced) <Notice>: service state: spawning
+1969-12-31 16:00:51.977637 (user/501/com.apple.icloud.findmydeviced) <Notice>: launching: xpc event
+1969-12-31 16:00:51.980016 (user/501/com.apple.icloud.findmydeviced [109]) <Notice>: xpcproxy spawned with pid 109
+1969-12-31 16:00:51.980055 (user/501/com.apple.icloud.findmydeviced [109]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:51.980068 (user/501/com.apple.icloud.findmydeviced [109]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:51.980195 (user/501/com.apple.icloud.findmydeviced [109]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:52.037458 (user/501/com.apple.icloud.findmydeviced [109]) <Notice>: service state: running
+1969-12-31 16:00:52.037496 (user/501/com.apple.icloud.findmydeviced [109]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:52.037521 (user/501/com.apple.icloud.findmydeviced [109]) <Notice>: Successfully spawned findmydeviced[109] because xpc event
+1969-12-31 16:00:52.181545 (user/501/com.apple.iconservices.iconservicesagent) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:52.181649 (user/501/com.apple.iconservices.iconservicesagent) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:52.181661 (user/501/com.apple.iconservices.iconservicesagent) <Notice>: service state: spawning
+1969-12-31 16:00:52.181753 (user/501/com.apple.iconservices.iconservicesagent) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:52.198305 (user/501/com.apple.iconservices.iconservicesagent [110]) <Notice>: xpcproxy spawned with pid 110
+1969-12-31 16:00:52.198343 (user/501/com.apple.iconservices.iconservicesagent [110]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:52.198355 (user/501/com.apple.iconservices.iconservicesagent [110]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:52.198451 (user/501/com.apple.iconservices.iconservicesagent [110]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:52.223201 (user/501/com.apple.iconservices.iconservicesagent [110]) <Notice>: service state: running
+1969-12-31 16:00:52.223216 (user/501/com.apple.iconservices.iconservicesagent [110]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:52.223241 (user/501/com.apple.iconservices.iconservicesagent [110]) <Notice>: Successfully spawned iconservicesagent[110] because ipc (mach)
+1969-12-31 16:00:52.247205 (pid/110 [iconservicesage]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:52.247231 (pid/110 [iconservicesage]) <Notice>: created
+1969-12-31 16:00:52.433408 (user/501/com.apple.awdd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:52.433441 (user/501/com.apple.awdd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:52.433450 (user/501/com.apple.awdd) <Notice>: service state: spawning
+1969-12-31 16:00:52.433535 (user/501/com.apple.awdd) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:52.435608 (user/501/com.apple.awdd [111]) <Notice>: xpcproxy spawned with pid 111
+1969-12-31 16:00:52.435647 (user/501/com.apple.awdd [111]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:52.435660 (user/501/com.apple.awdd [111]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:52.435705 (user/501/com.apple.awdd [111]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:52.453590 (user/501/com.apple.awdd [111]) <Notice>: service state: running
+1969-12-31 16:00:52.453605 (user/501/com.apple.awdd [111]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:52.453627 (user/501/com.apple.awdd [111]) <Notice>: Successfully spawned awdd[111] because ipc (mach)
+1969-12-31 16:00:52.544776 (pid/95 [ACCHWComponentA]) <Notice>: uncorking domain
+1969-12-31 16:00:52.545174 (pid/95 [ACCHWComponentA]) <Notice>: Service stub created for com.apple.security.XPCAcmeService
+1969-12-31 16:00:52.545245 (pid/95 [ACCHWComponentA]) <Notice>: Service stub created for com.apple.MFAAuthentication.MFAANetwork
+1969-12-31 16:00:52.545363 (pid/95 [ACCHWComponentA]) <Notice>: Service stub created for com.apple.ZhuGeService
+1969-12-31 16:00:52.593864 (pid/61 [sharingd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:52.593892 (pid/61 [sharingd]) <Notice>: created
+1969-12-31 16:00:52.863294 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.coretelephony.xpc, flags = 0x8, requestor = identityservice[53], error = 3: No such process
+1969-12-31 16:00:52.883459 (pid/86 [bluetoothd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:52.883486 (pid/86 [bluetoothd]) <Notice>: created
+1969-12-31 16:00:53.402546 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.coretelephony.xpc, flags = 0x8, requestor = imagent[64], error = 3: No such process
+1969-12-31 16:00:54.959453 (user/501/com.apple.chronod [94]) <Notice>: job state = running
+1969-12-31 16:00:55.179199 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.xpc, flags = 0x8, requestor = mediaserverd[29], error = 3: No such process
+1969-12-31 16:00:56.305408 (pid/29 [mediaserverd]) <Notice>: uncorking domain
+1969-12-31 16:00:56.307758 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.tailspin.symbolicationserver
+1969-12-31 16:00:56.308376 (user/501/com.apple.CoreRoutine.helperservice) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:56.308404 (user/501/com.apple.CoreRoutine.helperservice) <Notice>: draining messages from com.apple.CoreRoutine.helperservice
+1969-12-31 16:00:56.308688 (user/501/com.apple.siri-distributed-evaluation) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:56.308711 (user/501/com.apple.siri-distributed-evaluation) <Notice>: draining messages from com.apple.siri-distributed-evaluation
+1969-12-31 16:00:56.309093 (pid/29/com.apple.MTLCompilerService) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:56.309105 (pid/29/com.apple.MTLCompilerService) <Notice>: draining messages from com.apple.MTLCompilerService
+1969-12-31 16:00:56.309319 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.OSLogService
+1969-12-31 16:00:56.309629 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.intents.intents-helper
+1969-12-31 16:00:56.309679 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.internal.DataDetectorsRemoteScanner
+1969-12-31 16:00:56.310021 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.backboard.display.archive
+1969-12-31 16:00:56.310138 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.FontServices.UserFontManager
+1969-12-31 16:00:56.310160 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.FontServices.UserFontServices
+1969-12-31 16:00:56.310181 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.FontServices.FontProviderLoader
+1969-12-31 16:00:56.310314 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.coreaccessories.ACCAppLinksIconService
+1969-12-31 16:00:56.310337 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.coreaccessories.ACCCarPlayService
+1969-12-31 16:00:56.310357 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.ACCHWComponentAuthService
+1969-12-31 16:00:56.310957 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.SiriTTSService.TrialProxy
+1969-12-31 16:00:56.311313 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.ctcategories.service
+1969-12-31 16:00:56.311472 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.security.XPCAcmeService
+1969-12-31 16:00:56.311817 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.Quagga.Decode.xpc
+1969-12-31 16:00:56.311845 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.avfaudio.devicetest.service
+1969-12-31 16:00:56.311910 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.AssetCacheLocatorService
+1969-12-31 16:00:56.312053 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.uifoundation-bundle-helper
+1969-12-31 16:00:56.312076 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.textkit.nsattributedstringagent
+1969-12-31 16:00:56.314523 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.speech.localspeechrecognition
+1969-12-31 16:00:56.315516 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.CallKit.CallDirectoryMaintenance
+1969-12-31 16:00:56.315581 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.MFAAuthentication.MFAANetwork
+1969-12-31 16:00:56.315973 (user/501/com.apple.tonelibraryd) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:56.316001 (user/501/com.apple.tonelibraryd) <Notice>: draining messages from com.apple.tonelibraryd
+1969-12-31 16:00:56.316040 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.SensorKitDataExport
+1969-12-31 16:00:56.316056 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.SensorKit.CHSupportService
+1969-12-31 16:00:56.316074 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.SensorKitAppHelper
+1969-12-31 16:00:56.316188 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.Photos.CPLDiagnose
+1969-12-31 16:00:56.316533 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.extensionkitservice
+1969-12-31 16:00:56.316720 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.StreamingUnzipService.privileged
+1969-12-31 16:00:56.316742 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.StreamingUnzipService
+1969-12-31 16:00:56.317115 (pid/29/com.apple.siri.embeddedspeech) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:56.317128 (pid/29/com.apple.siri.embeddedspeech) <Notice>: draining messages from com.apple.siri.embeddedspeech
+1969-12-31 16:00:56.317211 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.siri.DeepSyncVerificationService
+1969-12-31 16:00:56.317233 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.siri.OpportuneSpeakingModelService
+1969-12-31 16:00:56.317356 (user/501/com.apple.siri.acousticsignature) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:56.317379 (user/501/com.apple.siri.acousticsignature) <Notice>: draining messages from com.apple.siri.acousticsignature
+1969-12-31 16:00:56.317404 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.siri.analyzer
+1969-12-31 16:00:56.317523 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.CoreMLModelSecurityService
+1969-12-31 16:00:56.317720 (user/501/com.apple.siri.context.service) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:56.317741 (user/501/com.apple.siri.context.service) <Notice>: draining messages from com.apple.siri.context.service
+1969-12-31 16:00:56.317785 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.icprefd-xpc
+1969-12-31 16:00:56.317802 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.mscamerad-xpc
+1969-12-31 16:00:56.317965 (user/501/com.apple.AXMediaUtilitiesService) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:00:56.317984 (user/501/com.apple.AXMediaUtilitiesService) <Notice>: draining messages from com.apple.AXMediaUtilitiesService
+1969-12-31 16:00:56.318258 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.PerfPowerTelemetryClientRegistrationService
+1969-12-31 16:00:56.318352 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.coremedia.videodecodeservice
+1969-12-31 16:00:56.318725 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.FTLivePhotoService
+1969-12-31 16:00:56.318748 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.FaceTime.FTConversationService
+1969-12-31 16:00:56.318808 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.ZhuGeService
+1969-12-31 16:00:56.318964 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.corespeech.xpc
+1969-12-31 16:00:56.318987 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.fides.phs-remote-evaluator
+1969-12-31 16:00:56.319061 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.DPSubmissionService
+1969-12-31 16:00:56.325611 <Notice>: Flushed 61 logs [limit: 20]
+1969-12-31 16:00:56.424556 (user/501/com.apple.audio.toolbox.reporting.service) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:56.424591 (user/501/com.apple.audio.toolbox.reporting.service) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:56.424600 (user/501/com.apple.audio.toolbox.reporting.service) <Notice>: service state: spawning
+1969-12-31 16:00:56.424688 (user/501/com.apple.audio.toolbox.reporting.service) <Notice>: launching: ipc (mach)
+1969-12-31 16:00:56.429434 (user/501/com.apple.audio.toolbox.reporting.service [112]) <Notice>: xpcproxy spawned with pid 112
+1969-12-31 16:00:56.429467 (user/501/com.apple.audio.toolbox.reporting.service [112]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:56.429479 (user/501/com.apple.audio.toolbox.reporting.service [112]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:56.429514 (user/501/com.apple.audio.toolbox.reporting.service [112]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:57.041402 (user/501/com.apple.corespeechd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:57.041435 (user/501/com.apple.corespeechd) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:57.041444 (user/501/com.apple.corespeechd) <Notice>: service state: spawning
+1969-12-31 16:00:57.041643 (user/501/com.apple.corespeechd) <Notice>: launching: xpc event
+1969-12-31 16:00:57.055392 (user/501/com.apple.corespeechd [113]) <Notice>: xpcproxy spawned with pid 113
+1969-12-31 16:00:57.055430 (user/501/com.apple.corespeechd [113]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:57.055443 (user/501/com.apple.corespeechd [113]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:57.055485 (user/501/com.apple.corespeechd [113]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:57.080591 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.USDLib.FormatLoader
+1969-12-31 16:00:57.080635 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.ModelIO.AssetLoader
+1969-12-31 16:00:57.285247 (user/501/com.apple.corespeechd [113]) <Notice>: service state: running
+1969-12-31 16:00:57.285285 (user/501/com.apple.corespeechd [113]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:57.285311 (user/501/com.apple.corespeechd [113]) <Notice>: Successfully spawned corespeechd[113] because xpc event
+1969-12-31 16:00:57.527363 (pid/111 [awdd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:00:57.527397 (pid/111 [awdd]) <Notice>: created
+1969-12-31 16:00:57.539979 (user/501/com.apple.audio.toolbox.reporting.service [112]) <Notice>: service state: running
+1969-12-31 16:00:57.539996 (user/501/com.apple.audio.toolbox.reporting.service [112]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:00:57.540021 (user/501/com.apple.audio.toolbox.reporting.service [112]) <Notice>: Successfully spawned CAReportingService[112] because ipc (mach)
+1969-12-31 16:00:58.290063 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.coretelephony.xpc, flags = 0x8, requestor = apsd[106], error = 3: No such process
+1969-12-31 16:00:58.840791 (user/501/com.apple.fairplayd.H2 [88]) <Notice>: exited due to exit(0)
+1969-12-31 16:00:58.840827 (user/501/com.apple.fairplayd.H2 [88]) <Notice>: service state: exited
+1969-12-31 16:00:58.840841 (user/501/com.apple.fairplayd.H2 [88]) <Notice>: internal event: EXITED, code = 0
+1969-12-31 16:00:58.840847 (user/501) <Notice>: service inactive: com.apple.fairplayd.H2
+1969-12-31 16:00:58.840892 (user/501/com.apple.fairplayd.H2 [88]) <Notice>: service state: not running
+1969-12-31 16:00:58.840905 (user/501/com.apple.fairplayd.H2) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:00:58.840916 (user/501/com.apple.fairplayd.H2) <Notice>: service state: spawn scheduled
+1969-12-31 16:00:58.840925 (user/501/com.apple.fairplayd.H2) <Notice>: service state: spawning
+1969-12-31 16:00:58.840970 (user/501/com.apple.fairplayd.H2) <Notice>: launching: inefficient
+1969-12-31 16:00:58.904195 (user/501/com.apple.fairplayd.H2 [114]) <Notice>: xpcproxy spawned with pid 114
+1969-12-31 16:00:58.904233 (user/501/com.apple.fairplayd.H2 [114]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:00:58.904246 (user/501/com.apple.fairplayd.H2 [114]) <Notice>: service state: xpcproxy
+1969-12-31 16:00:58.904454 (pid/88 [fairplayd.H2]) <Notice>: shutting down
+1969-12-31 16:00:58.904465 (pid/88 [fairplayd.H2]) <Notice>: cleaning up
+1969-12-31 16:00:58.904483 (user/501/com.apple.fairplayd.H2 [114]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:00:58.904495 (system) <Notice>: removing child: pid/88
+1969-12-31 16:00:59.292830 (user/501) <Warning>: failed activation: name = com.apple.private.alloy.pushproxy-idswake, flags = 0x0, requestor = apsd[106], error = 1: Operation not permitted
+1969-12-31 16:00:59.395293 (user/501/com.apple.UserEventAgent-System [24]) <Notice>: job state = running
+1969-12-31 16:01:00.690610 (pid/109 [findmydeviced]) <Notice>: uncorking exec source upfront
+1969-12-31 16:01:00.690645 (pid/109 [findmydeviced]) <Notice>: created
+1969-12-31 16:01:00.697663 (user/501/com.apple.dmd) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:01:00.697679 (user/501/com.apple.dmd) <Notice>: service state: spawn scheduled
+1969-12-31 16:01:00.697688 (user/501/com.apple.dmd) <Notice>: service state: spawning
+1969-12-31 16:01:00.697811 (user/501/com.apple.dmd) <Notice>: launching: ipc (mach)
+1969-12-31 16:01:00.703081 (user/501/com.apple.dmd [115]) <Notice>: xpcproxy spawned with pid 115
+1969-12-31 16:01:00.703117 (user/501/com.apple.dmd [115]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:01:00.703129 (user/501/com.apple.dmd [115]) <Notice>: service state: xpcproxy
+1969-12-31 16:01:00.703173 (user/501/com.apple.dmd [115]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:01:00.729286 (user/501/com.apple.dmd [115]) <Notice>: service state: running
+1969-12-31 16:01:00.729301 (user/501/com.apple.dmd [115]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:01:00.729324 (user/501/com.apple.dmd [115]) <Notice>: Successfully spawned dmd[115] because ipc (mach)
+1969-12-31 16:01:00.798359 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.xpc, flags = 0x8, requestor = imagent[64], error = 3: No such process
+1969-12-31 16:01:00.965302 (pid/112 [CAReportingServ]) <Notice>: uncorking exec source upfront
+1969-12-31 16:01:00.965330 (pid/112 [CAReportingServ]) <Notice>: created
+1969-12-31 16:01:01.251666 (user/501/com.apple.fairplayd.H2 [114]) <Notice>: service state: running
+1969-12-31 16:01:01.251705 (user/501/com.apple.fairplayd.H2 [114]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:01:01.251729 (user/501/com.apple.fairplayd.H2 [114]) <Notice>: Successfully spawned fairplayd.H2[114] because inefficient
+1969-12-31 16:01:01.718725 (user/501/com.apple.nehelper) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:01:01.718759 (user/501/com.apple.nehelper) <Notice>: service state: spawn scheduled
+1969-12-31 16:01:01.718770 (user/501/com.apple.nehelper) <Notice>: service state: spawning
+1969-12-31 16:01:01.718880 (user/501/com.apple.nehelper) <Notice>: launching: ipc (mach)
+1969-12-31 16:01:01.728053 (user/501/com.apple.nehelper [116]) <Notice>: xpcproxy spawned with pid 116
+1969-12-31 16:01:01.728091 (user/501/com.apple.nehelper [116]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:01:01.728105 (user/501/com.apple.nehelper [116]) <Notice>: service state: xpcproxy
+1969-12-31 16:01:01.728148 (user/501/com.apple.nehelper [116]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:01:01.764282 (user/501/com.apple.nehelper [116]) <Notice>: service state: running
+1969-12-31 16:01:01.764297 (user/501/com.apple.nehelper [116]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:01:01.764320 (user/501/com.apple.nehelper [116]) <Notice>: Successfully spawned nehelper[116] because ipc (mach)
+1969-12-31 16:01:01.830082 (pid/116 [nehelper]) <Notice>: uncorking exec source upfront
+1969-12-31 16:01:01.830107 (pid/116 [nehelper]) <Notice>: created
+1969-12-31 16:01:02.479476 (pid/114 [fairplayd.H2]) <Notice>: uncorking exec source upfront
+1969-12-31 16:01:02.479510 (pid/114 [fairplayd.H2]) <Notice>: created
+1969-12-31 16:01:02.552053 (user/501/com.apple.nsurlsessiond) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:01:02.552094 (user/501/com.apple.nsurlsessiond) <Notice>: service state: spawn scheduled
+1969-12-31 16:01:02.552104 (user/501/com.apple.nsurlsessiond) <Notice>: service state: spawning
+1969-12-31 16:01:02.552292 (user/501/com.apple.nsurlsessiond) <Notice>: launching: ipc (mach)
+1969-12-31 16:01:02.559536 (user/501/com.apple.nsurlsessiond [117]) <Notice>: xpcproxy spawned with pid 117
+1969-12-31 16:01:02.559575 (user/501/com.apple.nsurlsessiond [117]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:01:02.559587 (user/501/com.apple.nsurlsessiond [117]) <Notice>: service state: xpcproxy
+1969-12-31 16:01:02.559630 (user/501/com.apple.nsurlsessiond [117]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:01:02.578519 (user/501/com.apple.nsurlsessiond [117]) <Notice>: service state: running
+1969-12-31 16:01:02.578533 (user/501/com.apple.nsurlsessiond [117]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:01:02.578556 (user/501/com.apple.nsurlsessiond [117]) <Notice>: Successfully spawned nsurlsessiond[117] because ipc (mach)
+1969-12-31 16:01:02.632995 (pid/117 [nsurlsessiond]) <Notice>: uncorking exec source upfront
+1969-12-31 16:01:02.633020 (pid/117 [nsurlsessiond]) <Notice>: created
+1969-12-31 16:01:03.975203 (pid/73 [passd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:01:03.975235 (pid/73 [passd]) <Notice>: created
+1969-12-31 16:01:04.307621 (user/501/com.apple.fairplayd.H2 [114]) <Notice>: exited due to exit(0)
+1969-12-31 16:01:04.307645 (user/501/com.apple.fairplayd.H2 [114]) <Notice>: service state: exited
+1969-12-31 16:01:04.307658 (user/501/com.apple.fairplayd.H2 [114]) <Notice>: internal event: EXITED, code = 0
+1969-12-31 16:01:04.307665 (user/501) <Notice>: service inactive: com.apple.fairplayd.H2
+1969-12-31 16:01:04.307708 (user/501/com.apple.fairplayd.H2 [114]) <Notice>: service state: not running
+1969-12-31 16:01:04.307723 (user/501/com.apple.fairplayd.H2) <Notice>: Service only ran for 5 seconds. Pushing respawn out by 5 seconds.
+1969-12-31 16:01:04.307856 (user/501/com.apple.fairplayd.H2) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:01:04.307869 (user/501/com.apple.fairplayd.H2) <Notice>: service state: spawn scheduled
+1969-12-31 16:01:04.307878 (user/501/com.apple.fairplayd.H2) <Notice>: service throttled by 5 seconds
+1969-12-31 16:01:04.308057 (pid/114 [fairplayd.H2]) <Notice>: shutting down
+1969-12-31 16:01:04.308070 (pid/114 [fairplayd.H2]) <Notice>: cleaning up
+1969-12-31 16:01:04.308091 (system) <Notice>: removing child: pid/114
+1969-12-31 16:01:04.441707 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.DocumentManagerCore.Downloads
+1969-12-31 16:01:04.441733 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.DocumentManagerCore.Rename
+1969-12-31 16:01:04.442008 (user/501/com.apple.UIKit.SecureControlService) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:01:04.442034 (user/501/com.apple.UIKit.SecureControlService) <Notice>: draining messages from com.apple.UIKit.SecureControlService
+1969-12-31 16:01:04.442149 (user/501/com.apple.UIKit.KeyboardManagement) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:01:04.442172 (user/501/com.apple.UIKit.KeyboardManagement) <Notice>: draining messages from com.apple.UIKit.KeyboardManagement
+1969-12-31 16:01:04.442379 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.SensorKit.SKMediaEventsHelper
+1969-12-31 16:01:04.442420 (pid/29 [mediaserverd]) <Notice>: Service stub created for com.apple.desktopservices.ArchiveService
+1969-12-31 16:01:04.846725 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.xpc, flags = 0x8, requestor = timed[60], error = 3: No such process
+1969-12-31 16:01:04.924832 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.xpc, flags = 0x8, requestor = identityservice[53], error = 3: No such process
+1969-12-31 16:01:04.986447 (pid/112 [CAReportingServ]) <Notice>: uncorking domain
+1969-12-31 16:01:04.986987 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.tailspin.symbolicationserver
+1969-12-31 16:01:04.987723 (pid/112/com.apple.MTLCompilerService) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:01:04.987737 (pid/112/com.apple.MTLCompilerService) <Notice>: draining messages from com.apple.MTLCompilerService
+1969-12-31 16:01:04.987847 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.OSLogService
+1969-12-31 16:01:04.988086 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.backboard.display.archive
+1969-12-31 16:01:04.988127 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.FontServices.UserFontManager
+1969-12-31 16:01:04.988149 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.FontServices.UserFontServices
+1969-12-31 16:01:04.988170 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.FontServices.FontProviderLoader
+1969-12-31 16:01:04.988284 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.coreaccessories.ACCAppLinksIconService
+1969-12-31 16:01:04.988305 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.coreaccessories.ACCCarPlayService
+1969-12-31 16:01:04.988327 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.ACCHWComponentAuthService
+1969-12-31 16:01:04.988606 (user/501/com.apple.PerformanceTrace.PerformanceTraceService) <Notice>: created the implicit endpoint upfront
+1969-12-31 16:01:04.988631 (user/501/com.apple.PerformanceTrace.PerformanceTraceService) <Notice>: draining messages from com.apple.PerformanceTrace.PerformanceTraceService
+1969-12-31 16:01:04.988797 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.security.XPCAcmeService
+1969-12-31 16:01:04.989573 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.extensionkitservice
+1969-12-31 16:01:04.989732 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.PerfPowerTelemetryClientRegistrationService
+1969-12-31 16:01:04.989950 (pid/112 [CAReportingServ]) <Notice>: Service stub created for com.apple.coremedia.videodecodeservice
+1969-12-31 16:01:05.041804 <Notice>: Flushed 20 logs [limit: 20]
+1969-12-31 16:01:05.156199 (user/501) <Warning>: failed lookup: name = com.apple.commcenter.coretelephony.xpc, flags = 0x8, requestor = identityservice[53], error = 3: No such process
+1969-12-31 16:01:05.378938 (user/501/com.apple.seserviced) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:01:05.378971 (user/501/com.apple.seserviced) <Notice>: service state: spawn scheduled
+1969-12-31 16:01:05.378981 (user/501/com.apple.seserviced) <Notice>: service state: spawning
+1969-12-31 16:01:05.379137 (user/501/com.apple.seserviced) <Notice>: launching: ipc (mach)
+1969-12-31 16:01:05.397283 (user/501/com.apple.seserviced [118]) <Notice>: xpcproxy spawned with pid 118
+1969-12-31 16:01:05.397321 (user/501/com.apple.seserviced [118]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:01:05.397334 (user/501/com.apple.seserviced [118]) <Notice>: service state: xpcproxy
+1969-12-31 16:01:05.397461 (user/501/com.apple.seserviced [118]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:01:05.411522 (user/501/com.apple.seserviced [118]) <Notice>: service state: running
+1969-12-31 16:01:05.411535 (user/501/com.apple.seserviced [118]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:01:05.411559 (user/501/com.apple.seserviced [118]) <Notice>: Successfully spawned seserviced[118] because ipc (mach)
+1969-12-31 16:01:05.487981 (pid/118 [seserviced]) <Notice>: uncorking exec source upfront
+1969-12-31 16:01:05.488013 (pid/118 [seserviced]) <Notice>: created
+1969-12-31 16:01:05.600735 (user/501/com.apple.seserviced [118]) <Notice>: job state = running
+1969-12-31 16:01:05.877481 (user/501/com.apple.nfcd [52]) <Notice>: job state = running
+1969-12-31 16:01:06.403083 (user/501/com.apple.OTACrashCopier [77]) <Notice>: service state: running
+1969-12-31 16:01:06.403119 (user/501/com.apple.OTACrashCopier [77]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:01:06.403141 (user/501/com.apple.OTACrashCopier [77]) <Notice>: Successfully spawned OTACrashCopier[77] because speculative
+1969-12-31 16:01:07.119557 (user/501/com.apple.security.cloudkeychainproxy3) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:01:07.119655 (user/501/com.apple.security.cloudkeychainproxy3) <Notice>: service state: spawn scheduled
+1969-12-31 16:01:07.119666 (user/501/com.apple.security.cloudkeychainproxy3) <Notice>: service state: spawning
+1969-12-31 16:01:07.119755 (user/501/com.apple.security.cloudkeychainproxy3) <Notice>: launching: ipc (mach)
+1969-12-31 16:01:07.121954 (user/501/com.apple.security.cloudkeychainproxy3 [119]) <Notice>: xpcproxy spawned with pid 119
+1969-12-31 16:01:07.121993 (user/501/com.apple.security.cloudkeychainproxy3 [119]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:01:07.122007 (user/501/com.apple.security.cloudkeychainproxy3 [119]) <Notice>: service state: xpcproxy
+1969-12-31 16:01:07.122049 (user/501/com.apple.security.cloudkeychainproxy3 [119]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:01:07.654946 (user/501/com.apple.security.cloudkeychainproxy3 [119]) <Notice>: service state: running
+1969-12-31 16:01:07.654983 (user/501/com.apple.security.cloudkeychainproxy3 [119]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:01:07.655006 (user/501/com.apple.security.cloudkeychainproxy3 [119]) <Notice>: Successfully spawned CloudKeychainProxy[119] because ipc (mach)
+1969-12-31 16:01:08.030596 (pid/119 [CloudKeychainPr]) <Notice>: uncorking exec source upfront
+1969-12-31 16:01:08.030627 (pid/119 [CloudKeychainPr]) <Notice>: created
+1969-12-31 16:01:08.229181 (user/501/com.apple.CoreAuthentication.daemon) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:01:08.229196 (user/501/com.apple.CoreAuthentication.daemon) <Notice>: service state: spawn scheduled
+1969-12-31 16:01:08.229208 (user/501/com.apple.CoreAuthentication.daemon) <Notice>: service state: spawning
+1969-12-31 16:01:08.229329 (user/501/com.apple.CoreAuthentication.daemon) <Notice>: launching: ipc (mach)
+1969-12-31 16:01:08.234130 (user/501/com.apple.CoreAuthentication.daemon [120]) <Notice>: xpcproxy spawned with pid 120
+1969-12-31 16:01:08.234166 (user/501/com.apple.CoreAuthentication.daemon [120]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:01:08.234178 (user/501/com.apple.CoreAuthentication.daemon [120]) <Notice>: service state: xpcproxy
+1969-12-31 16:01:08.234220 (user/501/com.apple.CoreAuthentication.daemon [120]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:01:08.254604 (user/501/com.apple.CoreAuthentication.daemon [120]) <Notice>: service state: running
+1969-12-31 16:01:08.254644 (user/501/com.apple.CoreAuthentication.daemon [120]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:01:08.254669 (user/501/com.apple.CoreAuthentication.daemon [120]) <Notice>: Successfully spawned coreauthd[120] because ipc (mach)
+1969-12-31 16:01:08.295297 (pid/120 [coreauthd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:01:08.295323 (pid/120 [coreauthd]) <Notice>: created
+1969-12-31 16:01:09.135789 (pid/69 [dasd]) <Notice>: uncorking exec source upfront
+1969-12-31 16:01:09.135822 (pid/69 [dasd]) <Notice>: created
+1969-12-31 16:01:09.308840 (user/501/com.apple.fairplayd.H2) <Notice>: service state: spawning
+1969-12-31 16:01:09.308902 (user/501/com.apple.fairplayd.H2) <Notice>: launching: inefficient
+1969-12-31 16:01:09.313967 (user/501/com.apple.fairplayd.H2 [121]) <Notice>: xpcproxy spawned with pid 121
+1969-12-31 16:01:09.314005 (user/501/com.apple.fairplayd.H2 [121]) <Notice>: internal event: SPAWNED, code = 0
+1969-12-31 16:01:09.314017 (user/501/com.apple.fairplayd.H2 [121]) <Notice>: service state: xpcproxy
+1969-12-31 16:01:09.314030 (user/501/com.apple.fairplayd.H2 [121]) <Notice>: deferred event: domain spawn response: 0
+1969-12-31 16:01:09.314049 (user/501/com.apple.fairplayd.H2 [121]) <Notice>: internal event: SOURCE_ATTACH, code = 0
+1969-12-31 16:01:09.625586 (user/501/com.apple.fairplayd.H2 [121]) <Notice>: service state: running
+1969-12-31 16:01:09.625628 (user/501/com.apple.fairplayd.H2 [121]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:01:09.625652 (user/501/com.apple.fairplayd.H2 [121]) <Notice>: Successfully spawned fairplayd.H2[121] because inefficient
+1969-12-31 16:01:09.759029 (pid/121 [fairplayd.H2]) <Notice>: uncorking exec source upfront
+1969-12-31 16:01:09.759062 (pid/121 [fairplayd.H2]) <Notice>: created
+1969-12-31 16:01:09.790302 (user/501/com.apple.fairplayd.H2 [121]) <Notice>: exited due to exit(0)
+1969-12-31 16:01:09.790317 (user/501/com.apple.fairplayd.H2 [121]) <Notice>: service state: exited
+1969-12-31 16:01:09.790334 (user/501/com.apple.fairplayd.H2 [121]) <Notice>: internal event: EXITED, code = 0
+1969-12-31 16:01:09.790342 (user/501) <Notice>: service inactive: com.apple.fairplayd.H2
+1969-12-31 16:01:09.790392 (user/501/com.apple.fairplayd.H2 [121]) <Notice>: service state: not running
+1969-12-31 16:01:09.790408 (user/501/com.apple.fairplayd.H2) <Notice>: Service only ran for 0 seconds. Pushing respawn out by 10 seconds.
+1969-12-31 16:01:09.790559 (user/501/com.apple.fairplayd.H2) <Notice>: internal event: WILL_SPAWN, code = 0
+1969-12-31 16:01:09.790574 (user/501/com.apple.fairplayd.H2) <Notice>: service state: spawn scheduled
+1969-12-31 16:01:09.790585 (user/501/com.apple.fairplayd.H2) <Notice>: service throttled by 10 seconds
+1969-12-31 16:01:09.790759 (pid/121 [fairplayd.H2]) <Notice>: shutting down
+1969-12-31 16:01:09.790771 (pid/121 [fairplayd.H2]) <Notice>: cleaning up
+1969-12-31 16:01:09.790789 (system) <Notice>: removing child: pid/121
+1969-12-31 16:01:10.223513 (user/501/com.apple.nanoprefsyncd.2 [67]) <Notice>: service state: running
+1969-12-31 16:01:10.223551 (user/501/com.apple.nanoprefsyncd.2 [67]) <Notice>: internal event: INIT, code = 0
+1969-12-31 16:01:10.223574 (user/501/com.apple.nanoprefsyncd.2 [67]) <Notice>: Successfully spawned nanoprefsyncd[67] because speculative
+1969-12-31 16:01:12.033238 (pid/99 [com.apple.datam]) <Notice>: shutting down
+1969-12-31 16:01:12.033282 (pid/99/com.apple.MTLCompilerService) <Notice>: internal event: PETRIFIED, code = 0
+1969-12-31 16:01:12.033353 (pid/99 [com.apple.datam]) <Notice>: cleaning up
+1969-12-31 16:01:12.033509 (user/501/com.apple.datamigrator [99]) <Notice>: exited due to exit(0)
+1969-12-31 16:01:12.033522 (user/501/com.apple.datamigrator [99]) <Notice>: service state: exited
+1969-12-31 16:01:12.033536 (user/501/com.apple.datamigrator [99]) <Notice>: internal event: EXITED, code = 0
+1969-12-31 16:01:12.033547 (user/501/com.apple.datamigrator [99]) <Notice>: service state: not running
+1969-12-31 16:01:12.033732 (system) <Notice>: removing child: pid/99
+1969-12-31 16:01:12.033801 (user/501) <Notice>: service inactive: com.apple.datamigrator
+1969-12-31 16:01:15.816806 (user/501/com.apple.locationd [63]) <Notice>

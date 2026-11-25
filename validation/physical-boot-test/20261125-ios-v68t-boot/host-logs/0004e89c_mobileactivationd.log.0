@@ -1,0 +1,20 @@
+Wed Dec 31 16:00:58 1969 [108] <debug> (0x16f23b000) MA: main: ____________________ Mobile Activation Startup _____________________
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: build_version: 20H392
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: internal_build: true
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: uid: 501
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: user_name: mobile
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: system_container_path: /private/var/containers/Data/System/0CC816D2-451F-4EB0-8379-34C1229FE0F4
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: regulatory_images_path: /private/var/containers/Shared/SystemGroup/7501BDDB-1D16-4AE9-A7E0-6DE6B418098B
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: hardware_model: samsung,m30lte
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: product_type: iPhone10,3
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: device_class: iPhone
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: has_baseband: false
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: should_hactivate: true
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: is_fpga: false
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: is_devfused_undemoted: true
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: is_prodfused_demoted: false
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: soc_generation: (null)
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: main: ____________________________________________________________________
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: perform_data_migration: Upgrade from  () to 20H392 (16.7.16) detected.
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: dealwith_activation: Hactivation is enabled, short circuiting activation state to Activated.
+Wed Dec 31 16:00:59 1969 [108] <debug> (0x16f23b000) MA: dealwith_activation: Activation State: Activated
