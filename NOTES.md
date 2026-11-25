@@ -3866,3 +3866,25 @@ authorization for a BOOT-only test of candidate v6.
   driver justified by concrete device-tree/hardware evidence. If the register
   map/protocol or GPIO/I2C identity is not proven, report the missing evidence
   instead of guessing.
+
+## 2026-11-25 - m30touch host utility on restored v68 baseline (no flash)
+
+- Verified baseline before edits: `main` at `6689d234ed8d4378552a4c31212d71fdb08228dd`,
+  tree `b5ad418f6de62b0318a8480452e4eafd9958c3fa`, exact tracked-tree match.
+- Source inspection: `sweet_hid_touch()` exists in
+  `iokit/Kernel/arm/hid/SweetHID.cpp`; HID user client has no injection selector;
+  `M30LTE.h` defines `SWEET=1` so `sweet_usb.c` is compiled, but its ep0 handler
+  only accepts standard requests and ignores OUT data. `serial_getc()` exists
+  but no M30 command consumer. No ADB/input service. Therefore no verified
+  host-to-device command transport exists in v68; no connection is claimed.
+- Added `tools/m30touch.py` (dry-run by default, `--debug-enable` + explicit
+  transport required for I/O), `tools/test_m30touch.py` (11 tests), protocol spec
+  `validation/input-analysis/v68-synthetic-touch-protocol.md`, and CI workflow
+  `.github/workflows/m30touch.yml`. No XNI source or xnu CI changes.
+- XNU source and `.github/workflows/xnu.yml` remain byte-identical to v68;
+  existing v68 focused sweep: 30 PASS / 1 known unrelated `0417` FAIL.
+- CI `45628662489` (M30Touch host utility tests) GREEN on head `a89406a8`.
+- No physical flash/reboot/partition write. Device-side transport (USB vendor
+  control OUT or polled serial, gated by `m30touchinject=1`) is specified but
+  not implemented. Synthetic events reaching HID and SpringBoard response are
+  therefore NOT established.
