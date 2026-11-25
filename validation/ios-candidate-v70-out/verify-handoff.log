@@ -1,0 +1,30 @@
+  PASS  boot.img ANDROID! magic: 
+  PASS  kernel_addr == 0x80080000 (proven shim link): 0x80080000
+  PASS  no ramdisk: 
+  PASS  combined == shim Image + 0x20000 pad + payload: shim=5456 pad_to=0x20000 payload=16179712
+  PASS  payload seg0 embedded in linked kernel: 
+  PASS  kernel SHA256 matches manifest: 
+  PASS  payload SHA256 matches manifest: 
+  PASS  kernel contains SBERR/BBERR diagnostic tags: 
+  PASS  ELF entry 0x80080000: 
+  PASS  CurrentEL dispatch present: 
+  PASS  EL2 state install (HCR/SCTLR/CNTHCTL/eret) present: 
+  PASS  GICv2 init present (gicv2_init): 
+  PASS  watchdog 0x10160000 absent: 
+  PASS  payload M30LTXNU v1, 10 segs: 
+  PASS  ADT SHA256 matches manifest: 
+  PASS  ADT PA 0x82454000 in RAM: 
+  PASS  boot_args PA 0x82458000: 
+  PASS  entry VA 0xfffffff007411488: 
+  PASS  v70 payload cmdline uses cpus=6: debug=0xc serial=3 cpus=6 keepsyms=1 maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1 a5fb_noconsole=1 a5fb_keep_on=1
+  PASS  v70 keeps serial console: 
+  PASS  v70 mutes M30/A5 framebuffer console: 
+  PASS  v70 keeps display on: 
+  PASS  manifest payload runtime address 0x800a0000: 
+  PASS  payload starts after complete shim footprint: 
+  PASS  payload offset in kernel 0x20000: 
+  PASS  kernel contains M30 FB status/ABI tags: 
+  PASS  kernel contains v68 GPIO-to-HID producer strings: 
+  PASS  v69 M30-specific input diagnostics reverted: 
+  PASS  kernel has no Melfas hardware-driver strings: 
+RESULT: 29/29 PASS

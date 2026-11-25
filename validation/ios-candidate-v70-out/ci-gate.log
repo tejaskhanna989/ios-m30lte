@@ -1,0 +1,16 @@
+build (macos-15-intel)	Verify effective M30 source tree	2026-11-25T10:24:14.8554070Z   "result": "PASS",
+build (macos-15-intel)	Verify M30 v70 lock-screen restore patch chain applied	2026-11-25T10:24:19.9964900Z PASS pexpert/arm/pe_serial.c 0567414c2f004778bba71a01b2723202af5bde98bf1ca6ec035856b086c2a772
+build (macos-15-intel)	Verify M30 v70 lock-screen restore patch chain applied	2026-11-25T10:24:19.9967020Z PASS bsd/kern/sys_generic.c 438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f
+build (macos-15-intel)	Verify M30 v70 lock-screen restore patch chain applied	2026-11-25T10:24:19.9969310Z PASS iokit/Kernel/arm/SweetFramebuffer.cpp d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f
+build (macos-15-intel)	Verify M30 v70 lock-screen restore patch chain applied	2026-11-25T10:24:19.9971410Z PASS bsd/dev/a5xelte_keys.c d53238ba0ca163a36ef17d1847d56f442bca3964001e0b998aa50d073a6f12db
+build (macos-15-intel)	Verify M30 v70 lock-screen restore patch chain applied	2026-11-25T10:24:19.9973360Z PASS iokit/Kernel/arm/hid/SweetHID.cpp d30c9adf85a89b5c94151e57bad24007655d1a9beb06742fc3d821a0f89805f3
+build (macos-15-intel)	Verify M30 v70 lock-screen restore patch chain applied	2026-11-25T10:24:19.9976960Z PASS iokit/Kernel/arm/hid/IOHIDEventServiceUserClient.cpp 0e8df68c047322c220cdbd1b4c9db194c5dc1fb80117bfc8c726e9fab967637e
+build (macos-15-intel)	Verify exact M30 kernel binary	2026-11-25T10:24:21.7235600Z ^[[36;1mecho "kernel path: $kernel"^[[0m
+build (macos-15-intel)	Verify exact M30 kernel binary	2026-11-25T10:24:21.7620790Z kernel path: dxb/fakeroot/mach.development.m30lte
+build (macos-15-intel)	Verify exact M30 kernel binary	2026-11-25T10:24:41.2511570Z   "result": "PASS",
+build (macos-15-intel)	Verify exact M30 kernel binary	2026-11-25T10:24:41.2514260Z   "kernel_sha256": "1537f9add321d2fada363788d7c9532660c6c29df476e7cb7fd785f17d2e2e28",
+build (macos-15-intel)	Verify exact M30 kernel binary	2026-11-25T10:24:41.2515610Z     "linked M30 framebuffer base 0xec000000",
+build (macos-15-intel)	Verify exact M30 kernel binary	2026-11-25T10:24:41.2517050Z     "linked M30 eMMC and ALIVE/GPA1 constants",
+build (macos-15-intel)	Verify exact M30 kernel binary	2026-11-25T10:24:41.2517900Z     "donor Exynos7580 touch implementation absent",
+build (macos-15-intel)	Verify exact M30 kernel binary	2026-11-25T10:24:41.2518800Z     "linked GICv2 MMIO initialization and acknowledge/EOI path",
+build (macos-15-intel)	Verify exact M30 kernel binary	2026-11-25T10:24:41.2519540Z     "linked XNU virtual-timer ownership"

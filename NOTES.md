@@ -3791,10 +3791,21 @@ authorization for a BOOT-only test of candidate v6.
   reverts are pure removals, effective source hashes are v68 for keys,
   SweetHID and user client, v69 for `SweetFramebuffer.cpp` (heartbeat cap kept),
   with v68 `pe_serial.c`/`sys_generic.c` unchanged and buildtree provenance PASS.
-- CI workflow gate updated for 0441-0450 and v70 hashes. No CI run, candidate
-  package or flash has happened yet for v70.
-- NEXT: commit source, run CI, package `validation/ios-candidate-v70-out/`,
-  review artifacts, then (only with fresh exact identity + Heimdall Download
-  Mode gate) BOOT-only flash with `--no-reboot`. Acceptance requires observed
+- CI workflow gate updated for 0441-0450 and v70 hashes.
+- CI `45592281185` GREEN on head `528bb2760e040f1e23ae4f94ae8f870775188797`,
+  `2026-11-25T10:09:40Z..10:25:21Z` (`15:39:40..15:55:21 IST`). Patch-chain
+  gate PASS for 0441-0450 with exact source hashes; exact kernel gate PASS,
+  kernel SHA256 `1537f9add321d2fada363788d7c9532660c6c29df476e7cb7fd785f17d2e2e28`.
+- v70 candidate certified in `validation/ios-candidate-v70-out/`: payload
+  `61f21979227c09c01dd6e2a57e8ef7fdaf1bca9f330d77cd59bf271aa9c56d7b`,
+  `shim-boot.img` `4a3ae86cd7cba0692322d06aa7204aba36d21809567ed42b48e4208a288493cf`,
+  `ios-boot.img` `51eef66440cc4abb0fe99db6a28628e440ee2406813929e587f3b5d5fce4a6e9`.
+  Review PASS: boot-image structural, handoff 29/29, kernel 6/6, buildtree 4/4,
+  platform 9/9, focused tests 26 PASS / 1 known unrelated `0417` FAIL. Kernel
+  still contains v68 GPIO/HID producer strings and M30 framebuffer tags;
+  bounded v69 `M30 KEY:` / `M30 HID:` tags are absent; no Melfas strings.
+- No v70 BOOT write or device action has happened yet. NEXT: commit candidate
+  metadata/evidence, then with fresh exact identity + Heimdall Download Mode
+  gate perform BOOT-only flash with `--no-reboot`. Acceptance requires observed
   persistent lock screen, no fatal SpringBoard exception, and retained
   GPIO -> HID evidence. Do not claim touch support.
