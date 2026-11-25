@@ -3468,6 +3468,10 @@ authorization for a BOOT-only test of candidate v6.
 - `adb reboot` issued at `2026-11-24T19:54:34Z` (`2026-11-25 01:24:34 IST`).
   No BOOT/USERDATA/SYSTEM/RECOVERY write, no Heimdall write, no Fastboot;
   this simply booted the already-installed v67 BOOT image.
-- Physical 10-15 minute observation is pending from the user. Accept only a
-  persistent visible iOS lock screen plus supporting logs; Apple logo,
-  console text, process liveness or pstore activity alone remain rejection.
+- Physical observation result: user reports **logo only** after the direct
+  boot. This is REJECTED for the lock-screen objective. No rollback or new
+  BOOT flash was performed; v67 BOOT remains installed.
+- The direct boot adds no new lock-screen evidence beyond the prior v67
+  rejection. Fresh pstore was not pulled because the existing v67 capture
+  already documents the same BOOT's selector/commit state; returning to TWRP
+  would be needed only if a new capture is explicitly requested.
