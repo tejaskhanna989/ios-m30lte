@@ -33,6 +33,18 @@ CRITICAL_PATCHES = (
     "0403-m30lte-hardware-overrides.patch",
 )
 
+# v69 diagnostics overlay files that a critical patch also touches.  These are
+# reverse-applied first when their marker is present, so the critical-patch
+# round trip still proves the hardware/board changes survived unchanged.
+OPTIONAL_OVERLAYS = (
+    ("0446-m30-framebuffer-status-quiet.patch",
+     "iokit/Kernel/arm/SweetFramebuffer.cpp", "fb->fDiagTick <= 4800"),
+    ("0447-m30-key-input-diag.patch",
+     "bsd/dev/a5xelte_keys.c", "m30_key_diag_count[key] < 4"),
+    ("0448-m30-hid-event-diag.patch",
+     "iokit/Kernel/arm/hid/SweetHID.cpp", "M30 HID: key usage=0x%x down=%d clients=%u"),
+)
+
 
 def fail(message: str) -> None:
     raise ValueError(message)
@@ -97,6 +109,39 @@ def reverse_patch_provenance(tree: Path, patch_dir: Path) -> list[dict[str, obje
         else:
             apply_root = temp_tree
             directory = []
+
+        # Peel diagnostic overlays off first.  Earlier candidates do not ship
+        # these patches, so an absent patch or marker is not a failure; a
+        # present marker with a failed reverse apply is a failure.
+        for name, relative, marker in reversed(OPTIONAL_OVERLAYS):
+            overlay = patch_dir / name
+            if not overlay.is_file():
+                continue
+            marked = temp_tree / relative
+            if not marked.is_file() or marker not in marked.read_text(
+                encoding="utf-8", errors="ignore"
+            ):
+                continue
+            completed = subprocess.run(
+                [
+                    git,
+                    "-C",
+                    str(apply_root),
+                    "apply",
+                    "--reverse",
+                    *directory,
+                    str(overlay),
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                check=False,
+            )
+            require(
+                completed.returncode == 0 and "Skipped patch" not in completed.stdout,
+                f"diagnostic overlay was not applied cleanly: {name}\n"
+                f"{completed.stdout.strip()}",
+            )
 
         results: list[dict[str, object]] = []
         for name, patch in reversed(patches):

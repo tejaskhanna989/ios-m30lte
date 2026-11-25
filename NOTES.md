@@ -3623,3 +3623,49 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: if selector ABI completion is still desired, capture much earlier after
   boot or use a lower-volume diagnostic. No further BOOT write is planned
   without a fresh identity + Download Mode gate and explicit instruction.
+
+## 2026-11-25 - v69 input investigation and logging-only patches (MAIN only)
+
+- User requested v69 touchscreen/physical-button support from the accepted v68
+  baseline, with v68 preserved as the known-good display milestone. All work
+  remains on `main`; no branch, Fastboot, partition write or rollback.
+- Evidence recorded in `validation/input-analysis/v69-m30-input-evidence.md`:
+  the M30 touch controller is Melfas MSS100 (`melfas,mms_ts`) at I²C `0x48` on
+  `0x13870000`, IRQ GPA0-0/GPIO 6/IRQ 243, supply `tsp_ldo_en`, proven from the
+  stock DTB, stock kernel strings and Android physical boot logs. The README
+  Goodix GT9896 narrative and donor ZT7538/HX83112A code are not M30 hardware
+  evidence. v68 has no active hardware touch producer and no XNU I²C driver.
+- Buttons already have an active XNU producer: `a5xelte_keys_init()` polls
+  GPA1DAT every 10 ms and calls `sweet_hid_key()`; `SweetHIDButtons`,
+  `SweetHIDTouch`, `IOHIDEventServiceUserClient` and the entitlement-checked
+  shared queue are compiled and linked. No runtime proof yet that GPIO levels
+  change, events are enqueued, or backboardd/SpringBoard receives them.
+- Prepared three logging-only patches after v68's 0445:
+  - `0446-m30-framebuffer-status-quiet.patch`: cap the 10 s status heartbeat at
+    the first eight records so early ABI/input diagnostics survive the 16 KiB
+    ramoops ring. Framebuffer counters, notify path and power behavior are
+    unchanged.
+  - `0447-m30-key-input-diag.patch`: bounded M30 key init/failure and first-four
+    transitions per key into pstore; polling and HID dispatch unchanged.
+  - `0448-m30-hid-event-diag.patch`: bounded service registration, producer
+    dispatch, user-client open and successful enqueue records; HID event
+    construction, entitlement check and queue state machine unchanged.
+- `tools/verify_m30_buildtree.py` now peels these optional diagnostic overlays
+  before its critical-patch reverse-apply provenance check; absent patches are
+  skipped, present markers with failed reverse apply fail closed.
+- `tools/test_v69_input_diagnostics.py` PASSes: 0441-0448 apply in CI order,
+  exact hashes are
+  `SweetFramebuffer.cpp=d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f`,
+  `a5xelte_keys.c=af37254e7d55aa8214dd6065b40f453446df237845752ace334db46f4a7760c9`,
+  `SweetHID.cpp=7ff75ede15bd64a8c700e964668006194b65a0ad3f18510afbe85c3293c054d2`,
+  `IOHIDEventServiceUserClient.cpp=2f1a40711448dea0a93305a4549b563f4334efb623969520f6d73a1f43dc100a`,
+  with v68 `pe_serial.c`/`sys_generic.c` hashes unchanged. All other focused
+  M30 tests PASS except the pre-existing `test_m30_16k_pages.py` missing-patch
+  failure.
+- CI workflow hash/patch gates updated for v69. No CI run, candidate package,
+  device write or flash has happened yet for v69. The device is not currently
+  visible over ADB; connect it in TWRP before any physical test.
+- NEXT: commit/push source, run CI, validate linked symbols and candidate
+  hashes, then (after fresh exact identity + Heimdall Download Mode gate)
+  BOOT-only flash for runtime input diagnostics. Do not claim input support
+  from compilation or logs alone; keep v68 available as rollback baseline.
