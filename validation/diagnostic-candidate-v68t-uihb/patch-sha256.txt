@@ -1,0 +1,1 @@
+9656b35f4fe50ac879d2899c474dcc8704ba2647ce3593f2372e801c4786ec25  xnu/patches-minimal/0453-m30-ui-heartbeat.patch
