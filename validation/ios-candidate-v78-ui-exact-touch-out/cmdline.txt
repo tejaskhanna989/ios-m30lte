@@ -1,0 +1,1 @@
+debug=0xc serial=3 cpus=6 keepsyms=1 maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1 a5fb_noconsole=1 a5fb_keep_on=1 m30touch=1 m30touchhid=1
