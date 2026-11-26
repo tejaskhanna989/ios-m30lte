@@ -69,6 +69,17 @@ def main():
         assert "m30_irt_state_snapshot" in fault
     print("[PASS] 0453: patch applies to exact v68 buildtree")
 
+    t4 = (ROOT / "xnu/patches-minimal/0454-m30-ui-hb-framebuffer.patch").read_text()
+    for token in (
+        'PE_parse_boot_argn("m30uihb", &hb_enabled, sizeof(hb_enabled))',
+        "if ((++hb_ticks % 60) == 0)",
+        "m30_ui_snapshot(&sb, &bb, &irt, &reason)",
+        "M30 UI HB: sb=%d bb=%d reason=%s irt=%d",
+        "hid=unknown scene=unknown surface=unknown",
+    ):
+        assert token in t4, token
+    print("[PASS] 0454: framebuffer heartbeat gated, 1 Hz, measured/unknown fields")
+
 
 if __name__ == "__main__":
     main()

@@ -173,8 +173,29 @@ jobs:
         import hashlib
         from pathlib import Path
         want = {
-          "bsd/dev/sweet_sample.c": "29b11e7b62bb39f35c0e52a824b549450ebb2c95edec33a265ad2091f5f63ba9",
+          "bsd/dev/sweet_sample.c": "5e6c594e9ab1e5112c28ce43dcdd2f9d753edca4886f718bae63e772efed2c74",
           "osfmk/vm/vm_fault.c": "de26a8e91b0fdb3504d4172f6a7324c532a9c82c8ff15f4da6699fc2c59ba133",
+        }
+        for rel, expect in want.items():
+            got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
+            if got != expect:
+                raise SystemExit(f"ERROR: {rel} sha256 {got} != {expect}")
+            print(f"PASS {rel} {got}")
+        PY
+    - name: Verify M30 UI heartbeat framebuffer patch applied
+      run: |
+        p=0454-m30-ui-hb-framebuffer.patch
+        grep -q "Applying patch: .*$p" build.log
+        if grep -q "Skipping patch .*$p" build.log; then
+          echo "ERROR: patch $p was skipped by the tolerant build script"
+          exit 1
+        fi
+        python3 - <<'PY'
+        import hashlib
+        from pathlib import Path
+        want = {
+          "bsd/dev/sweet_sample.c": "5e6c594e9ab1e5112c28ce43dcdd2f9d753edca4886f718bae63e772efed2c74",
+          "iokit/Kernel/arm/SweetFramebuffer.cpp": "37dc99a2636d6ef097f2e13f34990321f9399e05bf65713d8df26494a0804b32",
         }
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()

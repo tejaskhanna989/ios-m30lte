@@ -1,0 +1,52 @@
+diff --git a/bsd/dev/sweet_sample.c b/bsd/dev/sweet_sample.c
+--- a/bsd/dev/sweet_sample.c
++++ b/bsd/dev/sweet_sample.c
+@@ -81,6 +81,18 @@
+ 	return PROC_RETURNED;
+ }
+ 
++/* Diagnostic snapshot used by the proven framebuffer heartbeat path. */
++void m30_ui_snapshot(int *sb, int *bb, int *irt, const char **reason)
++{
++	sweet_ui_sb_pid = 0;
++	sweet_ui_bb_pid = 0;
++	proc_iterate(PROC_ALLPROCLIST, sweet_ui_proc, NULL, NULL, NULL);
++	*sb = sweet_ui_sb_pid;
++	*bb = sweet_ui_bb_pid;
++	*irt = m30_irt_state_snapshot();
++	*reason = m30_last_crash_reason[0] != '\0' ? m30_last_crash_reason : "none";
++}
++
+ static void
+ sweet_sample_thread(__unused void *arg, __unused wait_result_t wr)
+ {
+diff --git a/iokit/Kernel/arm/SweetFramebuffer.cpp b/iokit/Kernel/arm/SweetFramebuffer.cpp
+--- a/iokit/Kernel/arm/SweetFramebuffer.cpp
++++ b/iokit/Kernel/arm/SweetFramebuffer.cpp
+@@ -337,6 +337,26 @@
+ 		    fb->fClients->getCount(), fb->fFlushTicks);
+ 		m30_pmsg_diag_line(line);
+ 	}
++	/* v72 diagnostic heartbeat on a path proven active every boot. */
++	{
++		int hb_enabled = 0;
++		(void)PE_parse_boot_argn("m30uihb", &hb_enabled, sizeof(hb_enabled));
++		if (hb_enabled) {
++			static unsigned hb_ticks;
++			if ((++hb_ticks % 60) == 0) {
++				extern void m30_ui_snapshot(int *, int *, int *, const char **);
++				int sb = 0, bb = 0, irt = 0;
++				const char *reason = "unknown";
++				char hline[192];
++				m30_ui_snapshot(&sb, &bb, &irt, &reason);
++				snprintf(hline, sizeof(hline),
++				    "M30 UI HB: sb=%d bb=%d reason=%s irt=%d "
++				    "hid=unknown scene=unknown surface=unknown",
++				    sb, bb, reason, irt);
++				m30_pmsg_diag_line(hline);
++			}
++		}
++	}
+ #endif
+ 	if (fb->fPowerOff) {
+ 		/* Fade out: halve every channel each vsync, then black, then idle. */
