@@ -27,7 +27,7 @@ screen (image versions v8-v14 in NOTES.md):
                   comes from its Hactivation branch, selected by the /chosen
                   security-status properties in tools/mkadt.py
 """
-import glob, os, plistlib, shutil, sys
+import glob, os, plistlib, re, shutil, stat, sys
 
 BUILD, VERSION = '20H392', '16.7.16'
 MOBILE = 501
@@ -129,13 +129,30 @@ def ensure_metadata_uuid_dirs(root):
             except Exception:
                 continue
             uuid = data.get('MCMMetadataUUID')
-            if not isinstance(uuid, str) or not uuid:
+            if not isinstance(uuid, str) or not re.fullmatch(r"[0-9A-Fa-f-]{36}", uuid):
                 continue
-            target = os.path.join(path, '..', uuid)
-            target = os.path.normpath(target)
+            target = os.path.normpath(os.path.join(path, '..', uuid))
+            # Never copy into the source tree or a path outside its parent.
+            if os.path.commonpath([os.path.realpath(path), os.path.realpath(target)]) == os.path.realpath(path):
+                continue
+            if os.path.dirname(os.path.realpath(target)) != os.path.realpath(os.path.dirname(path)):
+                continue
             if os.path.isdir(target):
                 continue
             shutil.copytree(path, target, symlinks=True)
+            # copytree preserves mode/times but not uid/gid; mirror those too.
+            for src_dir, _dirs, files in os.walk(path, followlinks=False):
+                rel = os.path.relpath(src_dir, path)
+                dst_dir = target if rel == '.' else os.path.join(target, rel)
+                for src_name in ['.'] + _dirs + files:
+                    sp = src_dir if src_name == '.' else os.path.join(src_dir, src_name)
+                    dp = dst_dir if src_name == '.' else os.path.join(dst_dir, src_name)
+                    st = os.lstat(sp)
+                    if stat.S_ISLNK(st.st_mode):
+                        os.chown(dp, st.st_uid, st.st_gid, follow_symlinks=False)
+                        continue
+                    os.chown(dp, st.st_uid, st.st_gid)
+                    os.chmod(dp, stat.S_IMODE(st.st_mode))
             created += 1
     print(f'container UUID directories: {created} created')
     return created
@@ -197,8 +214,10 @@ def main():
     root = sys.argv[1]
     launchd(root)
     containers(root)
-    fix_container_metadata(root)
+    # Create UUID-named dirs from the original metadata BEFORE rewriting the
+    # metadata, because iOS restores those original UUID values at boot.
     ensure_metadata_uuid_dirs(root)
+    fix_container_metadata(root)
     activation(root)
     audio(root)
     merge_pref(root, 'com.apple.migration', {

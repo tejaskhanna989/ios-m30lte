@@ -102,6 +102,18 @@ class ContainerMetadataTests(unittest.TestCase):
             target = d.parent / "AAD4FDC5-016A-4A46-8DCD-0C7E85EB53E2"
             self.assertTrue(target.is_dir())
             self.assertTrue((target / verify.MCM_META).is_file())
+            self.assertEqual(tweaks.ensure_metadata_uuid_dirs(root), 0)
+
+    def test_invalid_uuid_is_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            base = root / "private/var/containers/Data/System" / "6561B268-BDB7-42A2-986F-8A6E4861FBE0"
+            base.mkdir(parents=True)
+            with (base / verify.MCM_META).open("wb") as fh:
+                plistlib.dump({"MCMMetadataIdentifier": "com.apple.lsd",
+                               "MCMMetadataUUID": "../../escaped-path-0000"}, fh)
+            self.assertEqual(tweaks.ensure_metadata_uuid_dirs(root), 0)
+            self.assertTrue(not (base / "../../escaped-path-0000").exists())
 
 
 if __name__ == "__main__":
