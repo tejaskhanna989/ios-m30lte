@@ -20,6 +20,9 @@ name: M30LTE XNU Kernel Build
       xnu_target:
         description: XNU target SDK (iphoneos = genuine iOS 16, macosx = legacy reference)
         default: 'iphoneos'
+      ui_exact:
+        description: 'true = exclude post-v68 diagnostic patches (0453/0454/0455) for exact v68 UI path'
+        default: 'false'
 concurrency:
   group: xnu-${{ github.ref }}
   cancel-in-progress: true
@@ -46,6 +49,12 @@ jobs:
         git -C dxb fetch -q --depth 1 "$DXB_REPO" "$DXB_SHA"
         git -C dxb checkout -q FETCH_HEAD
         cp xnu/patches-minimal/*.patch xnu/patches-minimal/*.sh dxb/patches/ 2>/dev/null || true
+        if [ "${{ inputs.ui_exact }}" = "true" ]; then
+          rm -f dxb/patches/0453-m30-ui-heartbeat.patch \
+                dxb/patches/0454-m30-ui-hb-framebuffer.patch \
+                dxb/patches/0455-m30-lockscreen-diag.patch
+          echo "UI_EXACT: post-v68 diagnostic patches excluded"
+        fi
         python3 tools/patch_build_sh.py dxb/build.sh "$MACHINE_CONFIG"
         if [ "$XNU_TARGET" = "iphoneos" ]; then
           python3 tools/patch_build_sh_ios.py dxb/build.sh
@@ -162,6 +171,7 @@ jobs:
         print("PASS Melfas driver hash, IRQ sampler, and 4 gated HID calls")
         PY
     - name: Verify M30 UI heartbeat diagnostic patch applied
+      if: inputs.ui_exact != 'true'
       run: |
         p=0453-m30-ui-heartbeat.patch
         grep -q "Applying patch: .*$p" build.log
@@ -183,6 +193,7 @@ jobs:
             print(f"PASS {rel} {got}")
         PY
     - name: Verify M30 lock-screen diagnostic patch applied
+      if: inputs.ui_exact != 'true'
       run: |
         p=0455-m30-lockscreen-diag.patch
         grep -q "Applying patch: .*$p" build.log
@@ -194,6 +205,7 @@ jobs:
         python3 tools/test_m30_lockscreen_diag.py
 
     - name: Verify M30 UI heartbeat framebuffer patch applied
+      if: inputs.ui_exact != 'true'
       run: |
         p=0454-m30-ui-hb-framebuffer.patch
         grep -q "Applying patch: .*$p" build.log
