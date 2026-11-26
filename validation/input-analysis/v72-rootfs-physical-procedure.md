@@ -41,3 +41,27 @@ authorized.
 - No `CRASH lsd` records in pstore; no `NSException`/`BBERR` fatal record.
 - MCM UUID directories present; `lsd` stays running.
 - Touch is a separate task; no touch claim from this test.
+
+## Update: CI evidence changes the premise (2026-11-26)
+
+CI diagnostics from run `45809286569` show the built image contains only empty
+container skeleton dirs; `find` over `$MNT/private/var` returned **zero**
+`.com.apple.mobile_container_manager.metadata.plist` files. The 595 plists
+recorded in `v68-container-metadata-finding.md` were read from device USERDATA
+**before** the 2026-11-25 USERDATA write (finding commit `bd9dada6` 21:24 IST,
+install commit `b7cd214f` 22:49 IST). They are not part of the IPSW-derived
+OS volume.
+
+Consequently:
+- `fix_container_metadata()` and `ensure_metadata_uuid_dirs()` are **no-ops**
+  on the CI-built rootfs; this image does not carry the lsd UUID fix.
+- Writing this image to USERDATA does not by itself deliver the fix. It also
+  removes the existing container metadata; iOS repopulates containers at boot.
+- The earlier claim of "595 UUIDs verified in CI" is unsupported and should
+  not be relied upon.
+
+Do not flash this artifact expecting the lsd fix. Either (a) supply the real
+device metadata plists as an explicitly approved, out-of-git build input so
+the staging tool has something to reconcile, or (b) apply the reconciliation
+directly on the device under separate explicit authorization with a verified
+read-only backup first. Both are blocked until the user authorizes them.
