@@ -1,0 +1,4 @@
+lrwxrwxrwx 1 root root 21 2026-11-26 06:05 /dev/block/by-name/BOOT -> /dev/block/mmcblk0p12
+lrwxrwxrwx 1 root root 21 2026-11-26 06:05 /dev/block/by-name/RECOVERY -> /dev/block/mmcblk0p13
+lrwxrwxrwx 1 root root 21 2026-11-26 06:05 /dev/block/by-name/SYSTEM -> /dev/block/mmcblk0p20
+lrwxrwxrwx 1 root root 21 2026-11-26 06:05 /dev/block/by-name/USERDATA -> /dev/block/mmcblk0p28
