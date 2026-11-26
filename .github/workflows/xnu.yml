@@ -190,7 +190,7 @@ jobs:
           echo "ERROR: patch $p was skipped by the tolerant build script"
           exit 1
         fi
-        grep -q 'm30sblockdiag' xnu/bsd/dev/sweet_sample.c
+        grep -q 'm30sblockdiag' dxb/xnu/bsd/dev/sweet_sample.c
         python3 tools/test_m30_lockscreen_diag.py
 
     - name: Verify M30 UI heartbeat framebuffer patch applied
