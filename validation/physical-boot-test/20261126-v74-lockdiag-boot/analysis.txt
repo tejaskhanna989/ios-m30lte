@@ -1,0 +1,39 @@
+v74 authorized BOOT-only diagnostic test (2026-11-26)
+
+PREFLIGHT / WRITE
+- Device: m30lte, bootloader M305FDDU8CVK1, serial 320081735bb166a3, TWRP,
+  ro.twrp.boot=1; Download Mode detect PASS. BOOT backup hash unchanged
+  469c12d2... Candidate ios-boot.img 1b5143e7... verified before flash.
+- heimdall flash --BOOT ... --no-reboot: "BOOT upload successful" at 16:43:36Z.
+  heimdall print-pit --resume at 16:43:48Z. No USERDATA/SYSTEM/RECOVERY write.
+
+PSTORE (pulled 16:46, ~3 min after resume)
+- 16372 bytes, SHA256 3d4c17171957f85293b307d139a28e7ad4ca7fa6285028ae6cc7f23878616720.
+  148 decoded records, clean=False (wrapped ring).
+- The durable sampler worked: "M30 LS DIAG sample 0" and 29 SMP backtrace lines
+  (SpringBoard[27] and backboardd[57]) are present; later sample markers were
+  overwritten by the 16 KiB ring.
+- CRASH records: 4, ALL driverkitd[68] sig 9 (JETSAM_REASON_MEMORY_PERPROCESSLIMIT),
+  pre-existing. ZERO CRASH lsd, zero corpses, zero NSException/BBERR/SBERR.
+- M30 UI: sb=27 bb=57 reason=none (twice). SpringBoard and backboardd alive.
+
+BACKTRACE RESULT (not decisive)
+- SpringBoard t0 is byte-identical across samples: pc 0x20c4c1030,
+  lr 0x20c4d2b18, bt starts 0x20c4d2db8 0x20c4c1524. The same first frames
+  appear for backboardd t0, indicating a common libobjc msgSend/stub wait.
+- Symbol lookup against the genuine dyld symbol table resolves these first
+  frames only to objc_msgSend stub variants (section 10); subsequent frame-
+  pointer frames resolve to data/stub symbols (protocol method types, ObjC
+  class RO, swift_memcpy), i.e. the chain is unreliable beyond the stubs.
+- Concrete failing SpringBoard call is therefore STILL UNNAMED. No functional
+  patch is justified by this capture.
+
+LIMITATION
+- The sampler's 253-byte SMP lines consumed most of the 16 KiB ring: only 4
+  framebuffer records (copied=0, sw=0) and no SWEET SURF records survived.
+  This capture cannot assess framebuffer presentation.
+
+CONCLUSION
+v73 lsd stability is preserved under the diagnostic BOOT (no lsd crash). The
+lock-screen blocker remains unobserved at the userspace scene-creation boundary.
+Native lock-screen rendering and touch remain unproven.
