@@ -4037,3 +4037,25 @@ authorization for a BOOT-only test of candidate v6.
 - Conclusion: prior lsd SIGABRT loop is absent post-boot. Lock screen NOT visually
   confirmed by this agent; touch untouched and unproven. No further device writes.
 - Temporary parts/logs deleted from host after evidence was preserved.
+
+## 2026-11-26 - v74 lock-screen blocker determination (no device write)
+
+- User confirmed visually: v73 userspace + current BOOT still shows NO native
+  lock screen, despite stable lsd (0 CRASH, single spawn).
+- Correlated v73 pstore/launchd.log with v68 accepted capture. Framebuffer
+  activity is backboardd surface creation + kernel copies (5 frames then
+  stalled), not proof of SpringBoard content presentation.
+- Exact blocker remains UNOBSERVED: no record of SBWindowScene creation or
+  SBCoverSheetPresentationManager invocation. `sweetsample=SpringBoard,backboardd`
+  is in cmdline but sampler patch 0054 is absent from current tree, so 0 SMP
+  records; 16 KiB ring wrapped during ~29 min iOS run.
+- No functional UI/XNU change justified. Added bounded, disabled-by-default
+  durable diagnostic patch `0455-m30-lockscreen-diag.patch` (m30sblockdiag=1,
+  6 samples, durable m30_pmsg_diag_line sink) + tests. Host CI `45844630276`
+  GREEN; XNU CI `45844638652` running.
+- Touch audited: dormant unless m30touch=1 / m30touchhid=1; bounded, no IRQ
+  handler, no dynamic allocation. Risks if enabled: unproven I2C power/IRQ and
+  1080x1920 vs 1080x2340 coordinate mismatch. Touch NOT enabled; no claim.
+- Evidence/analysis: `validation/input-analysis/v74-lockscreen-blocker-and-diagnostic.md`.
+- NEXT: authorized boot with `m30sblockdiag=1`, prompt pstore pull, decode SMP
+  backtrace to name the failing SpringBoard call before any functional patch.
