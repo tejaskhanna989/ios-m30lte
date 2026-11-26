@@ -4059,3 +4059,13 @@ authorization for a BOOT-only test of candidate v6.
 - Evidence/analysis: `validation/input-analysis/v74-lockscreen-blocker-and-diagnostic.md`.
 - NEXT: authorized boot with `m30sblockdiag=1`, prompt pstore pull, decode SMP
   backtrace to name the failing SpringBoard call before any functional patch.
+
+## 2026-11-26 - v74 lock-screen diagnostic candidate packaged (no device write)
+
+- Source `275dcf3d`; XNU CI `45857232644` GREEN, host CI `45854698703` GREEN.
+- Kernel SHA `9cd703f14dea423db64b7c4b9b0746718c36c812dde54be9a7af5678819edfd5`
+  (contains `M30 LS DIAG` / `m30sblockdiag`). Payload `9f33d9cc…`;
+  `ios-boot.img` `1b5143e72e4a502ad05b87f7b96d2ccbc93d187de647d9fb70bb6b2b1ad09f77`.
+- Candidate `validation/ios-candidate-v74-lockdiag-out/`; structural validation
+  PASS; README has exact physical procedure. USERDATA v73 unchanged.
+- Touch compiled but dormant (no m30touch args); no touch claim. No device write.
