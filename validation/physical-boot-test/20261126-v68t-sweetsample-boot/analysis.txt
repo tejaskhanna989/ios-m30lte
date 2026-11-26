@@ -1,0 +1,32 @@
+# Sweetsample diagnostic boot — read-only result
+
+Candidate `validation/ios-candidate-v68t-sweetsample-out/ios-boot.img`,
+SHA256 2dbd2ffaf3112b132278244b5d35dc256320fb0775427f173439ff4fa714b7d2,
+cmdline = exact v68 + `sweetsample=SpringBoard,backboardd`. BOOT-only flash
+and authorized automatic resume succeeded; screen stayed on Apple logo; user
+forced TWRP.
+
+Pstore SHA256 1191f5377e1845ba9ff0259a219f4b817e3a167748a79f8badaab19d60febbb6,
+16372 bytes, 170 records, clean=False.
+
+## Captured evidence
+- `M30 UI: sb=26 bb=57 reason=none` (one record) — SpringBoard and backboardd
+  were alive when the sampler emitted its liveness line.
+- `SMP --- sample N` records: **0**.
+- `SMP SpringBoard[...]` / thread backtrace records: **0**.
+- `tools/decode_sweet_sample.py` produced an empty sample list.
+- 21 `M30 FB: v=` heartbeats (`v=2400..14400`, `sw=0..4 pr=0..3 copied=0..30326400 cl=1`).
+- 0 `NSException`, 0 `BBERR`/`SBERR`, 0 panic/watchdog.
+- 12 `M30 IRT` records (state 2 then state 3).
+
+## Conclusion
+The sweetsample boot arg enabled the sampler thread's `M30 UI:` liveness line
+but **no `SMP` user-space backtrace was captured in the surviving pstore
+window**. Therefore the requested SpringBoard backtrace is not available from
+this boot; `backtraces.json` is empty and no symbolication was attempted.
+
+This does not prove the sampler never ran: the 16 KiB pstore ring wrapped and
+only the tail of the boot survives. It does mean the specific failing call
+inside SpringBoard lock-screen scene construction remains unobserved.
+
+No flash, reboot or partition write was performed during this analysis.

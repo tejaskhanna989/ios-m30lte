@@ -1,0 +1,1 @@
+1191f5377e1845ba9ff0259a219f4b817e3a167748a79f8badaab19d60febbb6  validation/physical-boot-test/20261126-v68t-sweetsample-boot/raw/pmsg-ramoops-0
