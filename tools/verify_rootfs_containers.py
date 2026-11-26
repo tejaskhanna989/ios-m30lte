@@ -58,6 +58,9 @@ def main() -> int:
             print('LSD ' + ' '.join(f'{k}={v}' for k, v in r.items()))
     print(f'metadata records: {len(rows)}; UUID dir failures: '
           f'{sum(1 for r in rows if not r["uuid_dir_exists"])}')
+    if not rows:
+        print('FAIL no MCM metadata records found (wrong user, path, or image)')
+        return 1
     for f in failures[:20]:
         print('FAIL', f)
     if args.expect:

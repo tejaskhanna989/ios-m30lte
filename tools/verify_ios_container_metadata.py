@@ -53,6 +53,14 @@ def main() -> int:
     ap.add_argument("root", type=Path, help="staged rootfs directory")
     args = ap.parse_args()
     issues = check(args.root)
+    # A silent empty inventory must never pass the gate.
+    found = sum(1 for base in ("private/var/containers", "private/var/mobile/Containers")
+                for _p, _d, files in os.walk(args.root / base)
+                if MCM_META in files)
+    if found == 0:
+        print("FAIL no MCM metadata records found (wrong user, path, or image)")
+        return 1
+    print(f"metadata records found: {found}")
     if issues:
         for line in issues[:50]:
             print("FAIL", line)

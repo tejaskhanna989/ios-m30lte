@@ -119,7 +119,7 @@ jobs:
         run: |
           MNT=$(mktemp -d /home/runner/work/rootfs/verify.XXXXXX)
           sudo mount -t hfsplus -o loop,force,ro "$WORK/ios-root-20H392.img" "$MNT"
-          python3 tools/verify_ios_container_metadata.py "$MNT" | tee "$WORK/container-verification.log"
+          sudo python3 tools/verify_ios_container_metadata.py "$MNT" | tee "$WORK/container-verification.log"
           rc=${PIPESTATUS[0]}
           sudo umount "$MNT"
           rmdir "$MNT"
@@ -130,7 +130,7 @@ jobs:
         run: |
           MNT=$(mktemp -d)
           sudo mount -t hfsplus -o loop,force,ro "$WORK/ios-root-20H392.img" "$MNT"
-          python3 tools/verify_rootfs_containers.py "$MNT" \
+          sudo python3 tools/verify_rootfs_containers.py "$MNT" \
             --expect AAD4FDC5-016A-4A46-8DCD-0C7E85EB53E2 \
             --expect 58B7EA8C-8845-480F-8612-750117473D24 \
             --expect DBD5D5E0-E129-471E-A351-0DB73584D03F \
