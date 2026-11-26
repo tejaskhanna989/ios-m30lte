@@ -158,12 +158,27 @@ def ensure_metadata_uuid_dirs(root):
     return created
 
 def containers(root):
+    # System containers (root-owned) exist in the donor OS volume.
     base = os.path.join(root, 'private/var/containers')
     for sub, uid in (('Bundle', 33), ('Data/System', 0), ('Shared/SystemGroup', 0), ('Temp', 0)):
         d = os.path.join(base, sub)
         if not os.path.isdir(d):
             os.makedirs(d)
             os.chown(d, uid, uid)
+            os.chmod(d, 0o755)
+            print('mkdir', d)
+    # The user container tree lives on /private/var/mobile (USERDATA) on the
+    # device and is absent from the IPSW OS volume used for this image.  It is
+    # referenced by MCM metadata (e.g. lsd's InternalDaemon container) and by
+    # SpringBoard application containers, so create the skeleton with mobile
+    # ownership (501:501).  No metadata is fabricated.
+    mobile = os.path.join(root, 'private/var/mobile/Containers')
+    for sub in ('Bundle', 'Data/Application', 'Data/InternalDaemon',
+                'Shared/AppGroup', 'Temp'):
+        d = os.path.join(mobile, sub)
+        if not os.path.isdir(d):
+            os.makedirs(d)
+            os.chown(d, 501, 501)
             os.chmod(d, 0o755)
             print('mkdir', d)
 

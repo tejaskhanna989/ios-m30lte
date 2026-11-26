@@ -130,5 +130,20 @@ def test_rootfs_container_inventory(self):
             self.assertEqual(len(rows), 1)
             self.assertEqual(failures, [])
 
+def test_containers_creates_mobile_tree(self):
+        import os as _os
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            tweaks.containers(root)
+            base = root / "private/var/mobile/Containers"
+            for sub in ("Bundle", "Data/Application", "Data/InternalDaemon",
+                        "Shared/AppGroup", "Temp"):
+                d = base / sub
+                self.assertTrue(d.is_dir(), sub)
+                st = d.stat()
+                self.assertEqual((st.st_uid, st.st_gid), (501, 501))
+                self.assertEqual(_os.stat.S_IMODE(st.st_mode), 0o755)
+            tweaks.containers(root)  # idempotent
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
