@@ -164,7 +164,8 @@ def containers(root):
         d = os.path.join(base, sub)
         if not os.path.isdir(d):
             os.makedirs(d)
-            os.chown(d, uid, uid)
+            if hasattr(os, 'geteuid') and os.geteuid() == 0:
+                os.chown(d, uid, uid)
             os.chmod(d, 0o755)
             print('mkdir', d)
     # The user container tree lives on /private/var/mobile (USERDATA) on the
@@ -178,7 +179,8 @@ def containers(root):
         d = os.path.join(mobile, sub)
         if not os.path.isdir(d):
             os.makedirs(d)
-            os.chown(d, 501, 501)
+            if hasattr(os, 'geteuid') and os.geteuid() == 0:
+                os.chown(d, 501, 501)
             os.chmod(d, 0o755)
             print('mkdir', d)
 
@@ -229,10 +231,21 @@ def main():
     root = sys.argv[1]
     launchd(root)
     containers(root)
-    # Create UUID-named dirs from the original metadata BEFORE rewriting the
-    # metadata, because iOS restores those original UUID values at boot.
-    ensure_metadata_uuid_dirs(root)
-    fix_container_metadata(root)
+    # Device-derived MCM metadata is applied ONLY when an explicit build input
+    # is supplied.  The IPSW-derived image contains no metadata plists, so the
+    # generic UUID-dir/metadata helpers are inert here and must not be mistaken
+    # for a fix.  With input, the strict reconciler replaces those helpers so
+    # no generic rewrite can undo the allow-listed mappings.
+    build_input = os.environ.get('MCM_BUILD_INPUT')
+    if build_input:
+        import mcm_reconcile
+        entries = mcm_reconcile.load_input(build_input)
+        lines = mcm_reconcile.reconcile(root, entries)
+        print(f'MCM_BUILD_INPUT: applied {len(lines)} container(s) from explicit build input')
+        for line in lines:
+            print('MCM ' + line)
+    else:
+        print('MCM_BUILD_INPUT: absent; no MCM reconciliation performed')
     activation(root)
     audio(root)
     merge_pref(root, 'com.apple.migration', {

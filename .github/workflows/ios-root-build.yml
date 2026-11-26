@@ -18,6 +18,9 @@ name: iOS 16 HFSX Root Filesystem Build
       dry_run:
         description: Only verify IPSW + tooling, do not build the image
         default: 'false'
+      require_mcm_input:
+        description: Fail the build if no device-derived MCM build input is supplied
+        default: 'false'
 
 permissions:
   contents: write
@@ -36,6 +39,7 @@ jobs:
       IMG_SIZE: ${{ inputs.image_size }}
       PUBLISH: ${{ inputs.publish_release }}
       DRY: ${{ inputs.dry_run }}
+      REQUIRE_MCM: ${{ inputs.require_mcm_input }}
       WORK: /home/runner/work/rootfs
     steps:
       - name: Checkout repository
@@ -86,9 +90,30 @@ jobs:
           rm -f "$WORK/ipsw.ipsw"
           df -h "$WORK"
 
+      - name: Prepare explicit device-derived MCM build input
+        if: env.DRY != 'true'
+        env:
+          MCM_B64: ${{ secrets.MCM_METADATA_B64 }}
+        run: |
+          # Secret value is masked by Actions.  The decoded bundle is written to
+          # RUNNER_TEMP (outside WORK) so it can never become a release asset,
+          # and its raw contents are never printed.
+          if [ -n "$MCM_B64" ]; then
+            printf '%s' "$MCM_B64" | base64 -d > "$RUNNER_TEMP/mcm-input.json"
+            echo "MCM build input: supplied (5 allow-listed records max)"
+            sha256sum "$RUNNER_TEMP/mcm-input.json"
+          else
+            rm -f "$RUNNER_TEMP/mcm-input.json"
+            echo "MCM build input: ABSENT - no MCM reconciliation will occur"
+          fi
+
       - name: Convert APFS DMGs to HFSX and validate (donor method)
         if: env.DRY != 'true'
         run: |
+          export MCM_BUILD_INPUT=""
+          if [ -f "$RUNNER_TEMP/mcm-input.json" ]; then
+            export MCM_BUILD_INPUT="$RUNNER_TEMP/mcm-input.json"
+          fi
           bash tools/build_ios_root.sh \
             "$WORK/dmgs/087-86698-044.dmg" \
             "$WORK/dmgs/087-86593-047.dmg" \
@@ -133,7 +158,9 @@ jobs:
                  -name '.com.apple.mobile_container_manager.metadata.plist' \
                  2>/dev/null | wc -l)
             echo "MCM metadata plists in image: $N"
-            if [ "$N" -gt 0 ]; then
+            if [ "$N" -gt 0 ] && [ -f "$RUNNER_TEMP/mcm-input.json" ]; then
+              echo "STATUS: MCM metadata from explicit build input; validated by the dedicated MCM gate"
+            elif [ "$N" -gt 0 ]; then
               # If donor plists are present, validate them fail-closed.
               sudo python3 tools/verify_ios_container_metadata.py "$MNT" || exit 1
               sudo python3 tools/verify_rootfs_containers.py "$MNT" && \
@@ -155,6 +182,47 @@ jobs:
         run: |
           echo "## Staged container verification" >> "$GITHUB_STEP_SUMMARY"
           cat "$WORK/container-verification.log" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify device-derived MCM reconciliation in final image
+        if: env.DRY != 'true'
+        run: |
+          MNT=$(mktemp -d /home/runner/work/rootfs/mcmverify.XXXXXX)
+          sudo mount -t hfsplus -o loop,force,ro "$WORK/ios-root-20H392.img" "$MNT"
+          {
+            echo "MCM reconciliation gate"
+            date -u +%Y-%m-%dT%H:%M:%SZ
+            grep -E '^MCM_BUILD_INPUT:' "$WORK/build.log" || true
+            if [ -f "$RUNNER_TEMP/mcm-input.json" ]; then
+              if ! grep -q 'MCM_BUILD_INPUT: applied' "$WORK/build.log"; then
+                echo "FAIL build log does not show the MCM input was consumed"
+                sudo umount "$MNT" || true
+                exit 1
+              fi
+              sudo python3 tools/verify_mcm_reconciliation.py \
+                "$MNT" "$RUNNER_TEMP/mcm-input.json" || {
+                  sudo umount "$MNT" || true
+                  exit 1
+                }
+            else
+              echo "NO RECONCILIATION OCCURRED: no device-derived MCM build input supplied"
+              if [ "$REQUIRE_MCM" = "true" ]; then
+                echo "FAIL require_mcm_input=true but no input supplied"
+                sudo umount "$MNT" || true
+                exit 1
+              fi
+              echo "PASS zero-input build (reconciliation explicitly skipped)"
+            fi
+          } | tee "$WORK/mcm-verification.log"
+          rc=${PIPESTATUS[0]}
+          sudo umount "$MNT" || true
+          rmdir "$MNT" || true
+          exit "$rc"
+
+      - name: Append MCM gate to summary
+        if: env.DRY != 'true'
+        run: |
+          echo "## MCM reconciliation gate" >> "$GITHUB_STEP_SUMMARY"
+          cat "$WORK/mcm-verification.log" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Compress and split for release assets (Actions artifacts are 500 MB total)
         if: env.DRY != 'true' && env.PUBLISH == 'true'

@@ -116,34 +116,36 @@ class ContainerMetadataTests(unittest.TestCase):
             self.assertTrue(not (base / "../../escaped-path-0000").exists())
 
 
-def test_rootfs_container_inventory(self):
-        import verify_rootfs_containers as vr
-        with tempfile.TemporaryDirectory() as td:
-            root = Path(td)
-            d = root / "private/var/containers/Data/System" / "6561B268-BDB7-42A2-986F-8A6E4861FBE0"
-            d.mkdir(parents=True)
-            with (d / verify.MCM_META).open("wb") as fh:
-                plistlib.dump({"MCMMetadataIdentifier": "com.apple.lsd",
-                               "MCMMetadataUUID": "AAD4FDC5-016A-4A46-8DCD-0C7E85EB53E2"}, fh)
-            tweaks.ensure_metadata_uuid_dirs(root)
-            rows, failures = vr.inventory(root)
-            self.assertEqual(len(rows), 1)
-            self.assertEqual(failures, [])
+    def test_rootfs_container_inventory(self):
+            import verify_rootfs_containers as vr
+            with tempfile.TemporaryDirectory() as td:
+                root = Path(td)
+                d = root / "private/var/containers/Data/System" / "6561B268-BDB7-42A2-986F-8A6E4861FBE0"
+                d.mkdir(parents=True)
+                with (d / verify.MCM_META).open("wb") as fh:
+                    plistlib.dump({"MCMMetadataIdentifier": "com.apple.lsd",
+                                   "MCMMetadataUUID": "AAD4FDC5-016A-4A46-8DCD-0C7E85EB53E2"}, fh)
+                tweaks.ensure_metadata_uuid_dirs(root)
+                rows, failures = vr.inventory(root)
+                self.assertEqual(len(rows), 2)  # original + UUID-named copy
+                self.assertEqual(failures, [])
 
-def test_containers_creates_mobile_tree(self):
-        import os as _os
-        with tempfile.TemporaryDirectory() as td:
-            root = Path(td)
-            tweaks.containers(root)
-            base = root / "private/var/mobile/Containers"
-            for sub in ("Bundle", "Data/Application", "Data/InternalDaemon",
-                        "Shared/AppGroup", "Temp"):
-                d = base / sub
-                self.assertTrue(d.is_dir(), sub)
-                st = d.stat()
-                self.assertEqual((st.st_uid, st.st_gid), (501, 501))
-                self.assertEqual(_os.stat.S_IMODE(st.st_mode), 0o755)
-            tweaks.containers(root)  # idempotent
+    def test_containers_creates_mobile_tree(self):
+            import os as _os
+            import stat as _stat
+            with tempfile.TemporaryDirectory() as td:
+                root = Path(td)
+                tweaks.containers(root)
+                base = root / "private/var/mobile/Containers"
+                for sub in ("Bundle", "Data/Application", "Data/InternalDaemon",
+                            "Shared/AppGroup", "Temp"):
+                    d = base / sub
+                    self.assertTrue(d.is_dir(), sub)
+                    st = d.stat()
+                    if hasattr(_os, "geteuid") and _os.geteuid() == 0:
+                        self.assertEqual((st.st_uid, st.st_gid), (501, 501))
+                    self.assertEqual(_stat.S_IMODE(st.st_mode), 0o755)
+                tweaks.containers(root)  # idempotent
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

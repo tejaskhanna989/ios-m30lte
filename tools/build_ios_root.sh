@@ -17,7 +17,13 @@ echo "Applying M30 root tweaks ..."
 MNT=$(mktemp -d /tmp/iosroot.XXXXXX)
 sudo fsck.hfsplus -fy "$OUT" || true
 sudo mount -t hfsplus -o loop,force,rw "$OUT" "$MNT"
-sudo "$ROOT/tools/m30lte-root-tweaks.py" "$MNT"
+# MCM_BUILD_INPUT is an explicit, device-derived build input path.  sudo drops
+# the environment by default, so forward it deliberately; never echo its data.
+if [ -n "${MCM_BUILD_INPUT:-}" ]; then
+  sudo env MCM_BUILD_INPUT="$MCM_BUILD_INPUT" "$ROOT/tools/m30lte-root-tweaks.py" "$MNT"
+else
+  sudo "$ROOT/tools/m30lte-root-tweaks.py" "$MNT"
+fi
 sudo umount "$MNT"; rmdir "$MNT"
 echo "Validating ..."
 sudo fsck.hfsplus -n "$OUT"
