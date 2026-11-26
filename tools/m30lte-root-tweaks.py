@@ -317,9 +317,13 @@ def main():
         'BKNoWatchdogs': True,
         'FBLaunchWatchdogExceptions': {'com.apple.purplebuddy': 100.0},
         'MCForceShowCloudConfigurationUI': False})
+    # Setup state is independently switchable.  Default keeps the proven v73
+    # lockscreen baseline; M30_SETUP_DONE=false lets the user run Setup Assistant
+    # on the first boot (no lockscreen is shown until setup completes).
+    setup_done = os.environ.get('M30_SETUP_DONE', 'true').lower() != 'false'
     merge_pref(root, 'com.apple.purplebuddy', {
-        'SetupDone': True, 'SetupFinishedAllSteps': True, 'SetupVersion': 11,
-        'daemonizeNeedsToRun': False})
+        'SetupDone': setup_done, 'SetupFinishedAllSteps': setup_done,
+        'SetupVersion': 11, 'daemonizeNeedsToRun': not setup_done})
     merge_pref(root, 'com.apple.purplebuddy.notbackedup', {
         k: False for k in ('ShouldRunDiagnosticsMiniBuddy', 'ShouldRunHSA2MiniBuddy',
                            'ShouldRunKeychainSyncMiniBuddy', 'ShouldRunMesaMiniBuddy',

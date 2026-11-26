@@ -65,6 +65,13 @@ class SpringBoardContainerTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 tweaks.ensure_ui_daemon_containers(root)
 
+    def test_setup_switch_is_independent(self):
+        src = (ROOT / "tools/m30lte-root-tweaks.py").read_text()
+        assert "M30_SETUP_DONE" in src
+        assert "'SetupDone': setup_done" in src
+        # Touch state is not tied to the setup switch.
+        assert "m30touch" not in src
+
     def test_only_springboard_in_allow_list(self):
         self.assertEqual(tweaks.UI_DAEMON_CONTAINERS,
                          {"com.apple.springboard": UUID})

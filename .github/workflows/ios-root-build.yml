@@ -21,6 +21,9 @@ name: iOS 16 HFSX Root Filesystem Build
       require_mcm_input:
         description: Fail the build if no device-derived MCM build input is supplied
         default: 'false'
+      setup_done:
+        description: 'true = proven lockscreen baseline; false = run Setup Assistant on first boot'
+        default: 'true'
 
 permissions:
   contents: write
@@ -40,6 +43,7 @@ jobs:
       PUBLISH: ${{ inputs.publish_release }}
       DRY: ${{ inputs.dry_run }}
       REQUIRE_MCM: ${{ inputs.require_mcm_input }}
+      SETUP_DONE: ${{ inputs.setup_done }}
       WORK: /home/runner/work/rootfs
     steps:
       - name: Checkout repository
@@ -114,6 +118,7 @@ jobs:
           if [ -f "$RUNNER_TEMP/mcm-input.json" ]; then
             export MCM_BUILD_INPUT="$RUNNER_TEMP/mcm-input.json"
           fi
+          export M30_SETUP_DONE="$SETUP_DONE"
           bash tools/build_ios_root.sh \
             "$WORK/dmgs/087-86698-044.dmg" \
             "$WORK/dmgs/087-86593-047.dmg" \
