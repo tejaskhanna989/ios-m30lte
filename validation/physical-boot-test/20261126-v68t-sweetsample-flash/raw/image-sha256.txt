@@ -1,0 +1,1 @@
+2dbd2ffaf3112b132278244b5d35dc256320fb0775427f173439ff4fa714b7d2  validation/ios-candidate-v68t-sweetsample-out/ios-boot.img
