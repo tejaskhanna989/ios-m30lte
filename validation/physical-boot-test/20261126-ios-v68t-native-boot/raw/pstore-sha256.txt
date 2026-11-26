@@ -1,0 +1,1 @@
+d05b1b41c7689c17c0c79dac20394fbc8ee025305aa254c43ae614e177db92ee  validation/physical-boot-test/20261126-ios-v68t-native-boot/raw/pmsg-ramoops-0

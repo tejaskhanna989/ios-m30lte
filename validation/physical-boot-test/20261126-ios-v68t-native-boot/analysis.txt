@@ -1,0 +1,29 @@
+# v68t-native physical boot — read-only analysis
+
+Candidate: `validation/ios-candidate-v68t-native-out/ios-boot.img`, SHA256
+`9c022561c09b53de1ab613b4ca37fb42acd4aaa7899302138c35bdd8298cbe26`,
+exact v68 cmdline (no m30touch / m30touchhid / m30uihb). BOOT-only flash with
+all gates PASS; device resumed manually; screen stayed on Apple logo; user
+returned to TWRP.
+
+Pstore SHA256 d05b1b41c7689c17c0c79dac20394fbc8ee025305aa254c43ae614e177db92ee,
+16372 bytes, 170 records, clean=False.
+
+## Confirmed
+- `M30 UI: sb=27 bb=57 reason=none` — SpringBoard and backboardd alive, no crash.
+- IRT patched `_internal_release_type` 0 -> 3 and reached `final state=3`.
+- 34 `M30 FB: v=` heartbeats (to v=22200), `sw=4 pr=3 copied=30326400 cl=1`;
+  3 `M30 FB: done` records. Presentation active.
+- 0 `NSException`, `BBERR`, `SBERR`, panic or watchdog records.
+- 0 `M30 TOUCH` records (driver dormant by cmdline, as designed).
+- 67 `SWEET AKS` records, 15 `SWEET FB`, 8 `SWEET SURF` — display/userland activity.
+
+## Conclusion
+The exact-v68 runtime configuration also stays on the Apple logo. This rules
+out the added Melfas/heartbeat boot args and early probe as the cause of the
+missing lock screen. The stall is in SpringBoard lock-screen scene
+construction/presentation, with SpringBoard and backboardd alive and no fatal
+record. No kernel-side evidence supports a functional XNU fix, and no
+SpringBoard/framework patch is permitted. Touch support remains unproven.
+
+No flash, reboot or partition write was performed for this analysis.
