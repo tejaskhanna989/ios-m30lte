@@ -1,4 +1,6 @@
 diff --git a/bsd/dev/sweet_sample.c b/bsd/dev/sweet_sample.c
+--- a/bsd/dev/sweet_sample.c	2026-11-26 20:29:27.392642768 +0530
++++ b/bsd/dev/sweet_sample.c	2026-11-26 20:29:27.501059311 +0530
 @@ -26,6 +26,14 @@
  extern void sweet_sample_start(void);
  extern char m30_last_crash_reason[];   /* osfmk/kern/exception.c */
@@ -55,6 +57,8 @@ diff --git a/bsd/dev/sweet_sample.c b/bsd/dev/sweet_sample.c
  		thread_deallocate(thread);
  	}
 diff --git a/osfmk/kern/exception.c b/osfmk/kern/exception.c
+--- a/osfmk/kern/exception.c	2026-11-26 20:29:27.400150786 +0530
++++ b/osfmk/kern/exception.c	2026-11-26 20:29:27.501601086 +0530
 @@ -1036,6 +1036,8 @@
   * SWEET process sampler (bsd/dev/sweet_sample.c): user pc/lr/sp and a frame
   * pointer backtrace of every thread of a task, from the saved user state.

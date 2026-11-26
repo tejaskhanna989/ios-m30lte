@@ -28,9 +28,9 @@ def main() -> None:
         assert banned not in text, banned
     # Applies cleanly to the exact v68 buildtree with 0451/0453/0454 already applied.
     if (BUILDTREE / "bsd/dev/sweet_sample.c").is_file():
-        r = subprocess.run(["patch", "--dry-run", "-p1"], cwd=BUILDTREE,
-                           input=PATCH.read_bytes(), capture_output=True)
-        assert r.returncode == 0, r.stderr.decode()
+        r = subprocess.run(["git", "apply", "--check", str(PATCH)], cwd=BUILDTREE,
+                           capture_output=True)
+        assert r.returncode == 0, (r.stderr + r.stdout).decode()
         print("[PASS] 0455 applies to v68 buildtree, gated, bounded, durable-only")
     else:
         print("[PASS] 0455 source checks (buildtree not present locally)")
