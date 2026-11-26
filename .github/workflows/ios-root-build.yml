@@ -223,6 +223,17 @@ jobs:
           rmdir "$MNT" || true
           exit "$rc"
 
+      - name: Verify first-boot setup state in final image
+        if: env.DRY != 'true'
+        run: |
+          MNT=$(mktemp -d /home/runner/work/rootfs/setupverify.XXXXXX)
+          sudo mount -t hfsplus -o loop,force,ro "$WORK/ios-root-20H392.img" "$MNT"
+          sudo python3 tools/verify_setup_prefs.py "$MNT" "$SETUP_DONE" | tee "$WORK/setup-verification.log"
+          rc=${PIPESTATUS[0]}
+          sudo umount "$MNT" || true
+          rmdir "$MNT" || true
+          exit "$rc"
+
       - name: Verify SpringBoard native container registration
         if: env.DRY != 'true'
         run: |
