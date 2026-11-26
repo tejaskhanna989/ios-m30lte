@@ -4013,3 +4013,27 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT (requires explicit user authorization): verify read-only USERDATA backup,
   then a physical boot with zero `CRASH lsd` records. Do not claim lsd fixed,
   lock screen, or touch until that evidence exists.
+
+## 2026-11-26 - AUTHORIZED v73 physical rootfs test (completed, no further writes)
+
+- User explicitly authorized USERDATA overwrite + reboot; no backup requested.
+- Device preflight: m30lte / M305FDDU8CVK1 / serial 320081735bb166a3 / TWRP recovery;
+  USERDATA by-name -> mmcblk0p28 (57038340096 bytes); BOOT -> p12 and
+  RECOVERY -> p13 verified and NOT touched; BOOT backup hash still 469c12d2...
+- Four release parts downloaded to host temp, all four SHA256 OK vs release
+  parts-sha256.txt; concatenated gzip -t OK. Streamed parts | gunzip | adb shell
+  dd of=/dev/block/by-name/USERDATA bs=4194304: 21474836480 bytes, 765.756 s,
+  sync rc 0; first-64-MiB readback hash matched source exactly. No device staging.
+- adb reboot rc 0; no ADB for >300 s (no iOS gadget). User returned device to TWRP.
+- pstore pulled read-only: 16372 bytes SHA 412052f6..., 168 decoded records,
+  **0 CRASH**, no lsd/SIGABRT/corpse/NSException/BBERR/watchdog. One
+  `M30 UI: sb=27 bb=57 reason=none`; IRT final state 3; 1080x2340 surface;
+  framebuffer copies to end of ring.
+- Read-only HFSX inspection of written USERDATA: launchd.log SHA 051a4b0a...,
+  exactly ONE `Successfully spawned lsd[103]`, state running, ZERO lsd exits/crashes,
+  log extends to 16:11:19 with no respawn; SpringBoard[27]/backboardd[57] running;
+  no .ips crash reports. Evidence in
+  `validation/physical-boot-test/20261126-v73-rootfs-boot/` (commit `32aec359`).
+- Conclusion: prior lsd SIGABRT loop is absent post-boot. Lock screen NOT visually
+  confirmed by this agent; touch untouched and unproven. No further device writes.
+- Temporary parts/logs deleted from host after evidence was preserved.
