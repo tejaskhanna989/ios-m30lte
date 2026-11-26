@@ -15,6 +15,8 @@ jobs:
           python-version: '3.11'
       - name: m30touch focused tests
         run: python3 tools/test_m30touch.py
+      - name: UI + touch boot-arg invariants
+        run: python3 tools/test_boot_ui_cmdline.py
       - name: Lock-screen diagnostic patch checks
         run: python3 tools/test_m30_lockscreen_diag.py
       - name: Native lock-screen candidate boot-args check
