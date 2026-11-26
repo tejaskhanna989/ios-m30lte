@@ -135,7 +135,8 @@ jobs:
             date -u +%Y-%m-%dT%H:%M:%SZ
             for spec in \
               "private/var/containers/Data/System/AAD4FDC5-016A-4A46-8DCD-0C7E85EB53E2" \
-              "private/var/containers/Shared/SystemGroup/58B7EA8C-8845-480F-8612-750117473D24"; do
+              "private/var/mobile/Containers/Data/InternalDaemon/58B7EA8C-8845-480F-8612-750117473D24" \
+              "private/var/containers/Shared/SystemGroup/DBD5D5E0-E129-471E-A351-0DB73584D03F"; do
               if test -d "$MNT/$spec" && test -f "$MNT/$spec/.com.apple.mobile_container_manager.metadata.plist"; then
                 echo "PASS $spec"
               else
