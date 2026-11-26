@@ -17,6 +17,8 @@ jobs:
         run: python3 tools/test_m30touch.py
       - name: Native lock-screen candidate boot-args check
         run: python3 tools/test_m30_native_bootargs.py
+      - name: Sweetsample candidate boot-args and decoder tests
+        run: python3 tools/test_m30_sweetsample.py
       - name: Utility smoke checks
         run: |
           python3 tools/m30touch.py tap 540 960
