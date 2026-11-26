@@ -218,6 +218,17 @@ jobs:
           rmdir "$MNT" || true
           exit "$rc"
 
+      - name: Verify SpringBoard native container registration
+        if: env.DRY != 'true'
+        run: |
+          MNT=$(mktemp -d /home/runner/work/rootfs/sbverify.XXXXXX)
+          sudo mount -t hfsplus -o loop,force,ro "$WORK/ios-root-20H392.img" "$MNT"
+          sudo python3 tools/verify_springboard_container.py "$MNT" | tee "$WORK/springboard-container.log"
+          rc=${PIPESTATUS[0]}
+          sudo umount "$MNT" || true
+          rmdir "$MNT" || true
+          exit "$rc"
+
       - name: Append MCM gate to summary
         if: env.DRY != 'true'
         run: |

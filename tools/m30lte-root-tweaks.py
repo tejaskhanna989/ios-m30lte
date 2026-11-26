@@ -185,6 +185,67 @@ def containers(root):
             print('mkdir', d)
 
 
+# System daemons whose MCM container is required for UI scene creation.  The
+# UUIDs are the values recorded by the read-only USERDATA inspection in
+# validation/input-analysis/v68-container-metadata-finding.md (the USERDATA on
+# which the native lock screen was observed).  The v73 rebuild carries only the
+# five LaunchServices/backboardd records from the build input, so SpringBoard's
+# own container path cannot be resolved by BaseBoard.
+UI_DAEMON_CONTAINERS = {
+    'com.apple.springboard': '97F8E922-00A4-48E1-B62F-CC799A4D0795',
+}
+
+
+def ensure_ui_daemon_containers(root):
+    """Register the native SpringBoard system container in the staged rootfs.
+
+    BaseBoard resolves a daemon's system/data container from its MCM metadata
+    plist.  With no SpringBoard metadata in the IPSW-derived image the path is
+    nil and SpringBoard cannot build a window scene.  Create the container at
+    the UUID recorded on the known-good device, with a matching metadata plist
+    (UUID == directory name, the invariant fix_container_metadata enforces).
+    Existing valid metadata is never overwritten.
+    """
+    created = 0
+    base = os.path.join(root, 'private/var/containers/Data/System')
+    for identifier, uuid in UI_DAEMON_CONTAINERS.items():
+        d = os.path.join(base, uuid)
+        if not os.path.isdir(d):
+            os.makedirs(d)
+            if hasattr(os, 'geteuid') and os.geteuid() == 0:
+                os.chown(d, 0, 0)
+            os.chmod(d, 0o755)
+        caches = os.path.join(d, 'Library/Caches')
+        if not os.path.isdir(caches):
+            os.makedirs(caches)
+            if hasattr(os, 'geteuid') and os.geteuid() == 0:
+                os.chown(caches, 0, 0)
+            os.chmod(caches, 0o755)
+        meta = os.path.join(d, MCM_META)
+        if os.path.isfile(meta):
+            try:
+                data = load(meta)
+                if (data.get('MCMMetadataIdentifier') == identifier
+                        and data.get('MCMMetadataUUID') == uuid):
+                    continue
+            except Exception:
+                pass
+            raise RuntimeError(f'{identifier}: conflicting MCM metadata in {d}')
+        plist = {
+            'MCMMetadataIdentifier': identifier,
+            'MCMMetadataUUID': uuid,
+            'MCMMetadataVersion': 6,
+        }
+        with open(meta, 'wb') as fh:
+            plistlib.dump(plist, fh)
+        if hasattr(os, 'geteuid') and os.geteuid() == 0:
+            os.chown(meta, 0, 0)
+        os.chmod(meta, 0o644)
+        created += 1
+    print(f'UI daemon containers: {created} registered')
+    return created
+
+
 def find_container(root, kind, identifier):
     for meta in glob.glob(os.path.join(root, 'private/var/containers', kind, '*',
                                        '.com.apple.mobile_container_manager.metadata.plist')):
@@ -231,6 +292,7 @@ def main():
     root = sys.argv[1]
     launchd(root)
     containers(root)
+    ensure_ui_daemon_containers(root)
     # Device-derived MCM metadata is applied ONLY when an explicit build input
     # is supplied.  The IPSW-derived image contains no metadata plists, so the
     # generic UUID-dir/metadata helpers are inert here and must not be mistaken
