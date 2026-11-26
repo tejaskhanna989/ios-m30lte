@@ -1,0 +1,4 @@
+total 0
+drwxr-xr-x  2 root root     0 2026-11-26 02:26 .
+drwxr-xr-x 10 root root     0 2026-11-26 02:26 ..
+-r--r--r--  1 root root 16372 2026-11-26 02:26 pmsg-ramoops-0
