@@ -3948,3 +3948,27 @@ authorization for a BOOT-only test of candidate v6.
   the real device metadata plists as an approved build input, or apply the
   reconciliation on-device under separate explicit authorization. Do not claim
   lock-screen/touch success without physical evidence.
+
+### v72 rootfs rebuild result (2026-11-26, final for this session)
+
+- CI `45812788743` **GREEN** at head `2ef1c163` (13m45s). Release
+  `ios-root-20H392-45812788743`, 6 assets (4 gz parts + manifest +
+  parts-sha256.txt); previous release `ios-root-20H392-44905109656` untouched.
+- Image SHA256 `75fb3b968eac95074e45e6e332db5fa0bac1f7cef3e665937ffda5e4071aa02c`,
+  size `21474836480` bytes, HFSX signature `4858`, launchd present.
+- CI container verification: all five skeleton dirs PASS
+  (`private/var/containers/{Bundle,Data,Shared/SystemGroup,Temp}`,
+  `private/var/mobile/Containers`), **MCM metadata plists in image: 0** —
+  recorded explicitly as device-populated. Strict metadata verifiers are
+  skipped when the count is 0 (they remain fail-closed when donor plists exist).
+- Part SHA256s in `parts-sha256.txt` of the release; reassemble with
+  `cat ios-root-20H392.img.gz.part-* | gunzip > ios-root.img`.
+- Comparison: old known-good image `5f2e2aa6…`; previously written "fixed"
+  image `dea9110c…`; new `75fb3b96…`. Same size/signature/IPSW provenance.
+  Differences are the staging-tool changes (user container skeleton added;
+  UUID-dir/metadata fix present but inert because no plists exist in the image).
+- Full local test sweep: 35 PASS / 1 known unrelated `0417` (`test_m30_16k_pages.py`).
+- **No device flash/reboot/partition write.** No USERDATA backup exists; one is
+  mandatory before any authorized write. Do not claim the lsd fix is in this
+  artifact: it is not. Next requires explicit user decision on supplying real
+  device metadata as a build input or authorizing on-device reconciliation.
