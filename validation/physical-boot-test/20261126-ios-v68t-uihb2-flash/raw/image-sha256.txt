@@ -1,0 +1,1 @@
+bb7fb39a95fcbd3ad79950dc66c0f41ac11bed52b69ba8a0b0a225afe86def4b  validation/ios-candidate-v68t-uihb2-out/ios-boot.img
