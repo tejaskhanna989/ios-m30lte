@@ -3972,3 +3972,28 @@ authorization for a BOOT-only test of candidate v6.
   mandatory before any authorized write. Do not claim the lsd fix is in this
   artifact: it is not. Next requires explicit user decision on supplying real
   device metadata as a build input or authorizing on-device reconciliation.
+
+## 2026-11-26 - v73 real device-level MCM correction (host/CI only, no device access)
+
+- Built on `a62e42d3`. New commits on `main`: `1a857310` (implementation).
+- Established: CI rootfs `45812788743` has 0 MCM plists; the 595 records were
+  device USERDATA-only and predate the 2026-11-25 write. No prior artifact
+  fixes lsd. See `validation/input-analysis/v73-mcm-build-input.md`.
+- Controlled input: 5 allow-listed records (4 lsd + backboardd), generated from
+  the read-only catalog/meta2 cache by `tools/make_mcm_build_input.py` to
+  `/home/tejas/opencode-work/mcm-input/lsd-chain.json` (0600, 4,614 bytes, SHA
+  `84df4250f448aee6ddbd626cfaeba84649ad6bd0181a9099a2fec9e68843ec31`) — outside
+  git. Supplied to CI via repo secret `MCM_METADATA_B64`; decoded only into
+  `$RUNNER_TEMP`, never a release asset, raw bytes never logged.
+- `tools/mcm_reconcile.py` applies/verifies with strict allow-list, hash and
+  conflict checks; fail closed, no invented UUID mappings. Missing container
+  dirs get correct owner (root/501) and `Library/Caches`; missing UUID dirs are
+  copied from container contents with mode/owner/symlinks preserved.
+- Zero-input path reports explicitly; `require_mcm_input=true` makes it fatal.
+- Tests: new `tools/test_mcm_build_input.py` (11 tests) covering valid mappings,
+  missing dirs, conflicts, malformed plists, bad hashes, unknown UUID, traversal,
+  absent input, verify detection. Also fixed two previously non-running tests
+  in `tools/test_ios_container_metadata.py`. Local sweep 36 PASS / 1 known 0417.
+- Host CI `45819967805`; rootfs build `45819973935` with `require_mcm_input=true`.
+- No device flash/reboot/partition write; no USERDATA backup exists. Do NOT
+  claim lsd fixed until a separately authorized boot shows 0 `CRASH lsd`.
