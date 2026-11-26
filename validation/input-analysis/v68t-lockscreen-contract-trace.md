@@ -50,3 +50,27 @@ with a separately approved physical test): boot the current v68t kernel with
 `sweetsample=1` (and optionally `a5log=1`) and decode the SpringBoard user
 backtrace from pstore/console ring. That will identify the first failing call
 inside step 3/4. Until then, no functional patch is justified.
+
+## Update: concrete failing dependency identified (2026-11-26)
+
+A fresh pstore pull (`77f3a5e5…`) contained 42 `CRASH` records:
+- repeated `CRASH lsd[97/101/102/...] sig 6 code 0x0 sub 0x0` with an identical
+  user backtrace (`pc 0x1d1daf198`, `lr 0x1e133e5f8`, same 10 frames) and
+  `reason ns 2 code 0x6: (none)` — `OS_REASON_SIGNAL` / SIGABRT with no string.
+- `CODE SIGNING: cs_invalid_page ... p=100[ReportCrash] final status 0x22000000, allowing (remove VALID) page`
+- `Process[104] crashed: lsd. Too many corpses being created.`
+- `CRASH driverkitd[68] sig 9 ... reason ns 1 code 0x7: (none)`
+
+Root cause of the `lsd` abort: its MCM metadata declares
+`MCMMetadataUUID = AAD4FDC5-016A-4A46-8DCD-0C7E85EB53E2` (and
+`58B7EA8C-…` for the second lsd container) but no directory with either UUID
+exists in the rootfs. The containing directories are `6561B268-…` and
+`3EA10E23-…`. BaseBoard/MCM therefore resolves a nil container path,
+Foundation's `+[NSURL fileURLWithPath:]` raises, and Swift `lsd` aborts in a
+loop. LaunchServices is a required dependency for SpringBoard scene creation;
+this is the first concrete failing contract.
+
+Fix implemented in `tools/m30lte-root-tweaks.py`:
+`ensure_metadata_uuid_dirs()` creates a UUID-named directory as a content copy
+of each metadata's containing directory, so the path is valid regardless of
+which UUID value iOS uses at runtime. Host-staged rootfs only; no device write.

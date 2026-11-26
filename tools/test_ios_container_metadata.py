@@ -88,5 +88,21 @@ class ContainerMetadataTests(unittest.TestCase):
             self.assertFalse((d / "Library/Caches").is_dir())
 
 
+    def test_missing_metadata_uuid_directory_is_created(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            d = root / "private/var/containers/Data/System" / "6561B268-BDB7-42A2-986F-8A6E4861FBE0"
+            d.mkdir(parents=True)
+            meta = d / verify.MCM_META
+            with meta.open("wb") as fh:
+                plistlib.dump({"MCMMetadataIdentifier": "com.apple.lsd",
+                               "MCMMetadataUUID": "AAD4FDC5-016A-4A46-8DCD-0C7E85EB53E2"}, fh)
+            n = tweaks.ensure_metadata_uuid_dirs(root)
+            self.assertEqual(n, 1)
+            target = d.parent / "AAD4FDC5-016A-4A46-8DCD-0C7E85EB53E2"
+            self.assertTrue(target.is_dir())
+            self.assertTrue((target / verify.MCM_META).is_file())
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

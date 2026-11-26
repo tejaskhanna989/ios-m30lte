@@ -104,6 +104,42 @@ def fix_container_metadata(root):
     return fixed, total
 
 
+
+def ensure_metadata_uuid_dirs(root):
+    """Materialize container directories named by MCMMetadataUUID.
+
+    iOS rewrites the metadata UUID at boot.  If it names a directory that is
+    absent from the staged rootfs, BaseBoard/MCM resolves a nil container path,
+    Foundation's +[NSURL fileURLWithPath:] raises, and daemons such as lsd
+    abort in a loop (see the 2026-11-26 CRASH lsd records).  Create the UUID
+    directory as a content copy of the metadata's containing directory so the
+    path is valid whichever UUID value the daemon uses.  Host staging only.
+    """
+    created = 0
+    for base in ('private/var/containers', 'private/var/mobile/Containers'):
+        top = os.path.join(root, base)
+        if not os.path.isdir(top):
+            continue
+        for path, _dirs, files in os.walk(top):
+            if MCM_META not in files:
+                continue
+            meta = os.path.join(path, MCM_META)
+            try:
+                data = load(meta)
+            except Exception:
+                continue
+            uuid = data.get('MCMMetadataUUID')
+            if not isinstance(uuid, str) or not uuid:
+                continue
+            target = os.path.join(path, '..', uuid)
+            target = os.path.normpath(target)
+            if os.path.isdir(target):
+                continue
+            shutil.copytree(path, target, symlinks=True)
+            created += 1
+    print(f'container UUID directories: {created} created')
+    return created
+
 def containers(root):
     base = os.path.join(root, 'private/var/containers')
     for sub, uid in (('Bundle', 33), ('Data/System', 0), ('Shared/SystemGroup', 0), ('Temp', 0)):
@@ -162,6 +198,7 @@ def main():
     launchd(root)
     containers(root)
     fix_container_metadata(root)
+    ensure_metadata_uuid_dirs(root)
     activation(root)
     audio(root)
     merge_pref(root, 'com.apple.migration', {
