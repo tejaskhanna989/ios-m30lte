@@ -1,0 +1,13 @@
+[
+  {
+    "source_name": "launchd.log",
+    "output": "/home/tejas/opencode-work/v73-userdata-evidence/0004e79f_launchd.log",
+    "size": 449343,
+    "sha256": "051a4b0affd1b2ab3d0e1a4c56a98508a99bbd7714a7fd3608e3f8136d3b6931",
+    "file_id": 321439,
+    "parent": 306792,
+    "create": "1970-01-01T00:00:06Z",
+    "modify": "1970-01-01T00:11:33Z",
+    "rsrc_fork_size": 0
+  }
+]

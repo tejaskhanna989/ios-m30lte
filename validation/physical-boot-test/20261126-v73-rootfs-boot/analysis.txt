@@ -1,0 +1,40 @@
+v73 physical rootfs test — authorized USERDATA write and reboot (2026-11-26)
+
+WRITE
+- Identity: m30lte / bootloader M305FDDU8CVK1 / serial 320081735bb166a3 / TWRP recovery.
+- Target resolved by by-name: /dev/block/by-name/USERDATA -> /dev/block/mmcblk0p28,
+  capacity 57038340096 bytes. BOOT -> mmcblk0p12, RECOVERY -> mmcblk0p13 (NOT touched).
+- Four release parts downloaded to host storage (/home/tejas/opencode-work/v73-parts),
+  each SHA256 verified against release parts-sha256.txt: all OK; concatenated gzip -t OK.
+- Streamed cat parts | gunzip | adb shell dd of=/dev/block/by-name/USERDATA bs=4194304.
+  dd: 0+127127 records in/out, 21474836480 bytes in 765.756 s; adb shell sync rc 0.
+- Bounded readback of first 64 MiB: SHA256
+  23c9d39fed8faa573f9ec5cb81211001aa0a6825c372bc2bc6c94632003353c6, identical to the
+  source decompressed prefix. No staging on device, no 20 GiB host image, no other partition.
+
+BOOT / PSTORE
+- adb reboot rc 0 at 14:12:25Z; device did not expose ADB for >300 s (expected: no iOS ADB gadget).
+- Device returned in TWRP recovery; pstore /sys/fs/pstore/pmsg-ramoops-0 pulled read-only:
+  16372 bytes, SHA256 412052f6a3ae2507963b789bb7d3507a01c072d2f300652ef67bf82e36faa856.
+- Decoded 168 records (ring wrapped; framing warning only at the wrap boundaries).
+- CRASH records: 0. No lsd, SIGABRT, "Too many corpses", NSException, BBERR/SBERR,
+  watchdog or panic records.
+- UI heartbeat: "M30 UI: sb=27 bb=57 reason=none" (SpringBoard pid 27, backboardd pid 57).
+- IRT reached final state=3; backboardd created a 1080x2340 surface; framebuffer copy records
+  continue to the end of the captured ring.
+
+USERSPACE (read-only HFSX inspection of the written USERDATA, no mount/write)
+- launchd.log (449343 bytes, SHA256 051a4b0affd1b2ab3d0e1a4c56a98508a99bbd7714a7fd3608e3f8136d3b6931):
+  * lsd: exactly ONE "Successfully spawned lsd[103]" at 16:02:31, "service state: running";
+    ZERO lsd exit/crash lines; log continues to 16:11:19 with lsd still not respawned.
+  * SpringBoard[27] spawned 16:00:14, backboardd[57] spawned 16:00:17, both "job state = running".
+  * No "Process ... crashed: lsd" or "Too many corpses being created".
+- No .ips crash-report files found in the image catalog.
+
+CONCLUSION (bounded)
+The prior lsd SIGABRT crash loop is NOT present after this boot: 0 pstore CRASH records,
+one lsd spawn with no exit, no corpses. This is positive post-boot evidence that the
+reconciled MCM metadata removed the observed lsd failure. It does NOT by itself prove
+the lock screen is displayed — no visual confirmation was captured here, and no touch
+claim is made. Framebuffer activity and SpringBoard/backboardd liveness are necessary
+but not sufficient.
