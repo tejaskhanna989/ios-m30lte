@@ -4069,3 +4069,22 @@ authorization for a BOOT-only test of candidate v6.
 - Candidate `validation/ios-candidate-v74-lockdiag-out/`; structural validation
   PASS; README has exact physical procedure. USERDATA v73 unchanged.
 - Touch compiled but dormant (no m30touch args); no touch claim. No device write.
+
+## 2026-11-26 - v74 authorized BOOT diagnostic test (completed, no further writes)
+
+- User approved; BOOT-only flash of `ios-boot.img` `1b5143e7...` at 16:43:36Z
+  with identity/Download Mode gates PASS; resume 16:43:48Z; USERDATA untouched.
+- pstore pulled 16:46: 16372 bytes SHA `3d4c1717...`, 148 records. Durable
+  sampler WORKED: `M30 LS DIAG sample 0` + 29 SMP SpringBoard/backboardd
+  backtrace lines. CRASH records: 4, all pre-existing driverkitd JETSAM; ZERO
+  CRASH lsd/corpses/NSException. `M30 UI: sb=27 bb=57 reason=none`.
+- SpringBoard t0 byte-identical across samples, pc 0x20c4c1030 / lr 0x20c4d2b18;
+  first frames resolve only to objc_msgSend stubs, later frame-pointer frames to
+  data/stub symbols -> chain unreliable; exact failing call STILL UNNAMED.
+- Sampler lines consumed most of 16 KiB ring: only 4 FB records (copied=0) and
+  no SWEET SURF records survived; presentation cannot be assessed from this pull.
+- Evidence `validation/physical-boot-test/20261126-v74-lockdiag-boot/`
+  (commit `64133908`). No further device write. Do NOT claim lockscreen/touch.
+- NEXT: user visual observation of this boot; then choose (a) a second pull with
+  sampler disabled to assess framebuffer/scene, or (b) targeted symbolication,
+  before any functional patch.
