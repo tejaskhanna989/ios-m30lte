@@ -182,6 +182,17 @@ jobs:
                 raise SystemExit(f"ERROR: {rel} sha256 {got} != {expect}")
             print(f"PASS {rel} {got}")
         PY
+    - name: Verify M30 lock-screen diagnostic patch applied
+      run: |
+        p=0455-m30-lockscreen-diag.patch
+        grep -q "Applying patch: .*$p" build.log
+        if grep -q "Skipping patch .*$p" build.log; then
+          echo "ERROR: patch $p was skipped by the tolerant build script"
+          exit 1
+        fi
+        grep -q 'm30sblockdiag' xnu/bsd/dev/sweet_sample.c
+        python3 tools/test_m30_lockscreen_diag.py
+
     - name: Verify M30 UI heartbeat framebuffer patch applied
       run: |
         p=0454-m30-ui-hb-framebuffer.patch

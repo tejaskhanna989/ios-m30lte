@@ -1,0 +1,86 @@
+diff --git a/bsd/dev/sweet_sample.c b/bsd/dev/sweet_sample.c
+@@ -26,6 +26,14 @@
+ extern void sweet_sample_start(void);
+ extern char m30_last_crash_reason[];   /* osfmk/kern/exception.c */
+ 
++extern void m30_pmsg_diag_line(const char *line); /* pexpert/arm/pe_serial.c */
++
++/* v74 lock-screen diagnostic: read-only, bounded, disabled by default.
++ * m30sblockdiag=1 routes the existing SMP sampler into the durable pmsg sink
++ * so SpringBoard scene-creation backtraces survive the 16 KiB ring wrap. */
++int m30_ls_diag_enabled;
++void m30_ls_diag_line(const char *line) { m30_pmsg_diag_line(line); }
++
+ static char sweet_sample_names[128];
+ 
+ static bool
+@@ -106,10 +114,39 @@
+ 	}
+ }
+ 
++/* Bounded durable sampler. No state changes, no injection, no UI code patched.
++ * First sample 45 s after start, then every 60 s, at most 6 samples. */
++static void
++m30_ls_diag_thread(__unused void *arg, __unused wait_result_t wr)
++{
++	static int chan;
++	char names[64];
++	(void)strlcpy(names, "SpringBoard,backboardd", sizeof(names));
++	(void)tsleep(&chan, PZERO, "m30lsdiag", 45 * hz);
++	for (int i = 0; i < 6; i++) {
++		char line[96];
++		(void)snprintf(line, sizeof(line), "M30 LS DIAG sample %d", i);
++		m30_pmsg_diag_line(line);
++		(void)strlcpy(sweet_sample_names, names, sizeof(sweet_sample_names));
++		proc_iterate(PROC_ALLPROCLIST, sweet_sample_proc, NULL, NULL, NULL);
++		(void)tsleep(&chan, PZERO, "m30lsdiag", 60 * hz);
++	}
++	m30_ls_diag_enabled = 0;
++	m30_pmsg_diag_line("M30 LS DIAG stopped after 6 samples");
++}
++
+ void
+ sweet_sample_start(void)
+ {
+ 	thread_t thread;
++	int lsdiag = 0;
++	(void)PE_parse_boot_argn("m30sblockdiag", &lsdiag, sizeof(lsdiag));
++	if (lsdiag) {
++		m30_ls_diag_enabled = 1;
++		if (kernel_thread_start(m30_ls_diag_thread, NULL, &thread) == KERN_SUCCESS) {
++			thread_deallocate(thread);
++		}
++	}
+ 	if (kernel_thread_start(sweet_sample_thread, NULL, &thread) == KERN_SUCCESS) {
+ 		thread_deallocate(thread);
+ 	}
+diff --git a/osfmk/kern/exception.c b/osfmk/kern/exception.c
+@@ -1036,6 +1036,8 @@
+  * SWEET process sampler (bsd/dev/sweet_sample.c): user pc/lr/sp and a frame
+  * pointer backtrace of every thread of a task, from the saved user state.
+  */
++extern int  m30_ls_diag_enabled;     /* bsd/dev/sweet_sample.c */
++extern void m30_ls_diag_line(const char *line); /* bsd/dev/sweet_sample.c */
+ void sweet_sample_task(const char *name, int pid, task_t task);
+ 
+ void
+@@ -1051,7 +1053,9 @@
+ 		slide = sr->sr_slide;
+ 		vm_shared_region_deallocate(sr);
+ 	}
+-	printf("SMP %s[%d] slide 0x%llx mh 0x%llx\n", name, pid, slide, task->mach_header_vm_address);
++	char hdr[192];
++	snprintf(hdr, sizeof(hdr), "SMP %s[%d] slide 0x%llx mh 0x%llx", name, pid, slide, task->mach_header_vm_address);
++	if (m30_ls_diag_enabled) m30_ls_diag_line(hdr); else printf("%s\n", hdr);
+ 
+ 	task_lock(task);
+ 	queue_iterate(&task->threads, thread, thread_t, task_threads) {
+@@ -1077,7 +1081,7 @@
+ 			}
+ 			fp = frame[0];
+ 		}
+-		printf("%s\n", line);
++		if (m30_ls_diag_enabled) m30_ls_diag_line(line); else printf("%s\n", line);
+ 	}
+ 	task_unlock(task);
+ }

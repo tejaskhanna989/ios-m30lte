@@ -15,6 +15,8 @@ jobs:
           python-version: '3.11'
       - name: m30touch focused tests
         run: python3 tools/test_m30touch.py
+      - name: Lock-screen diagnostic patch checks
+        run: python3 tools/test_m30_lockscreen_diag.py
       - name: Native lock-screen candidate boot-args check
         run: python3 tools/test_m30_native_bootargs.py
       - name: Sweetsample candidate boot-args and decoder tests
