@@ -136,7 +136,10 @@ jobs:
         from pathlib import Path
         expect = {
             "pexpert/arm/pe_serial.c": "0567414c2f004778bba71a01b2723202af5bde98bf1ca6ec035856b086c2a772",
-            "iokit/Kernel/arm/SweetFramebuffer.cpp": "11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f",
+            "iokit/Kernel/arm/SweetFramebuffer.cpp": (
+        "695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3"
+        if "${{ inputs.ui_exact }}" == "true" else
+        "11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f"),
             "bsd/kern/sys_generic.c": "438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f",
         }
         for rel, want in expect.items():
@@ -218,7 +221,10 @@ jobs:
         from pathlib import Path
         want = {
           "bsd/dev/sweet_sample.c": "d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0",
-          "iokit/Kernel/arm/SweetFramebuffer.cpp": "11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f",
+          "iokit/Kernel/arm/SweetFramebuffer.cpp": (
+        "695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3"
+        if "${{ inputs.ui_exact }}" == "true" else
+        "11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f"),
         }
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
