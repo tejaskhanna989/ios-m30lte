@@ -3997,3 +3997,19 @@ authorization for a BOOT-only test of candidate v6.
 - Host CI `45819967805`; rootfs build `45819973935` with `require_mcm_input=true`.
 - No device flash/reboot/partition write; no USERDATA backup exists. Do NOT
   claim lsd fixed until a separately authorized boot shows 0 `CRASH lsd`.
+
+### v73 final CI result (2026-11-26)
+
+- CI `45819973935` **GREEN** (14m58s) with `require_mcm_input=true`; host CI
+  `45819967805` GREEN. Release `ios-root-20H392-45819973935` (6 assets).
+- Image SHA256 `b0f5dba6080294ca7a050260842707bcda2e39b2f07555b3ea006e076408263f`,
+  size `21474836480`, HFSX `4858`, launchd present. Part hashes in release's
+  `parts-sha256.txt`; last part size changed 1397356899 -> 1397122320 bytes.
+- Gate output: `MCM_BUILD_INPUT: applied 5 container(s) from explicit build
+  input`; `MCM reconciliation verified: 5/5 containers`; 5 `PASS … metadata+
+  UUID dir+ownership verified` lines; image has 10 MCM plists (5 originals +
+  5 UUID-dir copies) vs 0 in v72 artifact `75fb3b96…`.
+- Previous releases and original BOOT backup untouched. No device access.
+- NEXT (requires explicit user authorization): verify read-only USERDATA backup,
+  then a physical boot with zero `CRASH lsd` records. Do not claim lsd fixed,
+  lock screen, or touch until that evidence exists.
