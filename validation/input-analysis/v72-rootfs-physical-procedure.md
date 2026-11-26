@@ -1,0 +1,43 @@
+# Corrected rootfs — physical test procedure (NOT executed)
+
+Artifact: released by CI run `45804599066` as `ios-root-20H392-<run id>`
+(new tag; the previous release `ios-root-20H392-44905109656` is preserved).
+
+## Safety boundary
+No device operation has been performed for this artifact. A physical rootfs
+test requires separate explicit authorization. USERDATA is protected.
+
+## Backup requirement
+There is currently **no preserved USERDATA image backup**. Before any rootfs
+write, with the device in TWRP:
+1. `adb shell blockdev --getsize64 /dev/block/by-name/USERDATA` (expect
+   `57038340096`).
+2. Stream a read-only copy to host storage (do not write to the device):
+   `adb exec-out 'dd if=/dev/block/by-name/USERDATA bs=4194304 2>/dev/null' > userdata-backup.img`
+3. Verify size and SHA-256; record both. Keep this file untouched.
+4. Verify the original BOOT backup `m30-boot-original/boot.img` SHA-256 is
+   `469c12d2d304ff4b2f07ea89ff1bc329a77f8f73037420aa260c9e68db441e78`.
+
+## Restore path if the test is rejected
+Only after explicit authorization, from TWRP:
+`cat userdata-backup.img | adb shell dd of=/dev/block/by-name/USERDATA bs=4194304`
+then `adb shell sync`. Verify restored size/hash before booting. BOOT can be
+restored independently from `m30-boot-original/boot.img` only if explicitly
+authorized.
+
+## Test sequence (after authorization)
+1. Verify exact SM-M305F / m30lte / M305FDDU8CVK1 / known serial identity and
+   TWRP state.
+2. Verify the new rootfs image SHA-256 and size against the CI manifest.
+3. Stream the image directly to `/dev/block/by-name/USERDATA` with `dd bs=4M`
+   (no `/sdcard` staging, no Fastboot).
+4. `adb shell sync`; verify a bounded readback hash.
+5. Reboot only if explicitly authorized; observe whether the native lock
+   screen appears (not merely process liveness).
+6. If rejected, return to TWRP and restore from `userdata-backup.img` as above.
+
+## Expected verification signals
+- Lock screen visible and persistent (primary success condition).
+- No `CRASH lsd` records in pstore; no `NSException`/`BBERR` fatal record.
+- MCM UUID directories present; `lsd` stays running.
+- Touch is a separate task; no touch claim from this test.
