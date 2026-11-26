@@ -65,3 +65,23 @@ device metadata plists as an explicitly approved, out-of-git build input so
 the staging tool has something to reconcile, or (b) apply the reconciliation
 directly on the device under separate explicit authorization with a verified
 read-only backup first. Both are blocked until the user authorizes them.
+
+## v73 update — artifact now carries an explicit, limited reconciliation
+
+A new CI candidate (`45819973935`, workflow input `require_mcm_input=true`)
+consumes the device-derived build input described in
+`v73-mcm-build-input.md`. Unlike the v72 artifacts, its image contains the
+five allow-listed metadata plists and UUID-named directories for the
+LaunchServices chain plus backboardd. It still does NOT contain the other
+~590 containers from the original USERDATA.
+
+Limitations that remain:
+- No physical boot has been performed; `lsd` stability is unverified.
+- No USERDATA backup exists; one is mandatory before any authorized write.
+- Writing any rootfs image to USERDATA removes the existing container metadata;
+  iOS repopulates containers at boot. The five reconciled records are the only
+  ones this build controls.
+- Lock-screen and touch claims remain separate and unproven.
+
+Do not flash until the user explicitly authorizes a physical test and a
+read-only USERDATA backup has been verified.
