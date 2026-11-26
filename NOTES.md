@@ -3911,3 +3911,40 @@ authorization for a BOOT-only test of candidate v6.
   (vendor control OUT or polled serial, gated by `m30touchinject=1`) is still
   required before synthetic HID injection can be tested. Physical Melfas
   driver remains a separate task.
+
+## 2026-11-26 - v72 rootfs build: container gate disproves staged-metadata premise (no device write)
+
+- Starting point `ea2f6138` (lsd UUID-dir fix). All work on `main`, no branch.
+- Audio/audit: four read-only subagent audits (containers, HID, SpringBoard,
+  launchd) consolidated in `validation/input-analysis/v72-userspace-dependency-audit.md`
+  (commit `0c041d47`). Confirmed: lsd SIGABRT loop is the first failing dependency;
+  HID entitlements/services are present; SpringBoard/backboardd/activation gates
+  are satisfied; lock-screen scene creation remains unobserved (0 SMP samples).
+- `ensure_metadata_uuid_dirs()` audited: idempotent, traversal-safe, preserves
+  uid/gid/mode/symlinks, runs before metadata rewrite. Hardened in `5d23b963`;
+  tests in `tools/test_ios_container_metadata.py`; focused sweep 35 PASS /
+  1 known unrelated `0417` FAIL. CI `45797033869` GREEN.
+- CI rootfs attempts: `45804599066` (bad CI gate path), `45806225340`
+  (gate ran as non-root, saw 0 records), `45807783985` (empty-inventory check),
+  `45809286569` (added diagnostics). Committed fixes: `eb58547a`, `50147c7b`,
+  `04c49add`, `e2a39a39`.
+- **Key finding from `45809286569` diagnostics:** the built image has container
+  skeleton dirs (`Bundle`, `Data`, `Shared/SystemGroup`, `Temp`) but **0**
+  `.com.apple.mobile_container_manager.metadata.plist` files. The 595 plists
+  are on device USERDATA only, not in the IPSW-derived OS volume. Therefore
+  `fix_container_metadata()` and `ensure_metadata_uuid_dirs()` are **no-ops**
+  on the CI-built rootfs, and the earlier "595 UUIDs verified in CI" claim
+  (`validation/ios-candidate-v68t-out/README.md`) is unsupported — the old
+  workflow had no such gate. This must be resolved before claiming any fix.
+- `6b8fe526` changed the CI gate to validate the image's actual contract
+  (skeleton dirs; strict metadata verifiers only if donor plists are present)
+  and to record the metadata status explicitly in the job summary. Rebuild
+  running as `45810968545` at head `6b8fe526`.
+- Physical procedure (NOT executed): `validation/input-analysis/v72-rootfs-physical-procedure.md`
+  (commit `f433328e`). No preserved USERDATA backup exists; one is mandatory
+  before any rootfs write. No flash/reboot/partition write performed.
+- NEXT: finish `45810968545`, record artifact hash/size/release. Then report
+  honestly that the UUID fix cannot be embedded in this image; either obtain
+  the real device metadata plists as an approved build input, or apply the
+  reconciliation on-device under separate explicit authorization. Do not claim
+  lock-screen/touch success without physical evidence.
