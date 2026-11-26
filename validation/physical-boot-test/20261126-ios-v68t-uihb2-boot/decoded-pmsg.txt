@@ -1,0 +1,159 @@
+# M30LTE pstore pmsg decode
+# input_sha256=83c8cca8e6634c436e0473a5626adf0416ed8095822e27d58adceb99ab53a4ab
+# input_bytes=16372 records=154 consumed=16372 clean=False
+[000] @0x000006 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[001] @0x000070 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[002] @0x0000da len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[003] @0x000144 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[004] @0x0001ae len=109 XNU: M30 FB: v=31200 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[005] @0x00021b len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[006] @0x000285 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[007] @0x0002ef len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[008] @0x000359 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[009] @0x0003c3 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[010] @0x00042d len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[011] @0x000497 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[012] @0x000501 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[013] @0x00056b len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[014] @0x0005d5 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[015] @0x00063f len=109 XNU: M30 FB: v=31800 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[016] @0x0006ac len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[017] @0x000716 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[018] @0x000780 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[019] @0x0007ea len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[020] @0x000854 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[021] @0x0008be len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[022] @0x000928 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[023] @0x000992 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[024] @0x0009fc len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[025] @0x000a66 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[026] @0x000ad0 len=109 XNU: M30 FB: v=32400 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[027] @0x000b3d len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[028] @0x000ba7 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[029] @0x000c11 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[030] @0x000c7b len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[031] @0x000ce5 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[032] @0x000d4f len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[033] @0x000db9 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[034] @0x000e23 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[035] @0x000e8d len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[036] @0x000ef7 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[037] @0x000f61 len=109 XNU: M30 FB: v=33000 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[038] @0x000fce len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[039] @0x001038 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[040] @0x0010a2 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[041] @0x00110c len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[042] @0x001176 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[043] @0x0011e0 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[044] @0x00124a len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[045] @0x0012b4 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[046] @0x00131e len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[047] @0x001388 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[048] @0x0013f2 len=109 XNU: M30 FB: v=33600 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[049] @0x00145f len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[050] @0x0014c9 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[051] @0x001533 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[052] @0x00159d len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[053] @0x001607 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[054] @0x001671 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[055] @0x0016db len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[056] @0x001745 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[057] @0x0017af len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[058] @0x001819 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[059] @0x001883 len=109 XNU: M30 FB: v=34200 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[060] @0x0018f0 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[061] @0x00195a len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[062] @0x0019c4 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[063] @0x001a2e len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[064] @0x001a98 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[065] @0x001b02 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[066] @0x001b6c len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[067] @0x001bd6 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[068] @0x001c40 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[069] @0x001caa len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[070] @0x001d14 len=109 XNU: M30 FB: v=34800 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[071] @0x001d81 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[072] @0x001deb len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[073] @0x001e55 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[074] @0x001ebf len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[075] @0x001f29 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[076] @0x001f93 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[077] @0x001ffd len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[078] @0x002067 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[079] @0x0020d1 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[080] @0x00213b len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[081] @0x0021a5 len=109 XNU: M30 FB: v=35400 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[082] @0x002212 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[083] @0x00227c len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[084] @0x0022e6 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[085] @0x002350 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[086] @0x0023ba len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[087] @0x002424 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[088] @0x00248e len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[089] @0x0024f8 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[090] @0x002562 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[091] @0x0025cc len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[092] @0x002636 len=109 XNU: M30 FB: v=36000 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[093] @0x0026a3 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[094] @0x00270d len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[095] @0x002777 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[096] @0x0027e1 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[097] @0x00284b len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[098] @0x0028b5 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[099] @0x00291f len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[100] @0x002989 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[101] @0x0029f3 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[102] @0x002a5d len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[103] @0x002ac7 len=109 XNU: M30 FB: v=36600 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[104] @0x002b34 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[105] @0x002b9e len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[106] @0x002c08 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[107] @0x002c72 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[108] @0x002cdc len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[109] @0x002d46 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[110] @0x002db0 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[111] @0x002e1a len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[112] @0x002e84 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[113] @0x002eee len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[114] @0x002f58 len=109 XNU: M30 FB: v=37200 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[115] @0x002fc5 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[116] @0x00302f len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[117] @0x003099 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[118] @0x003103 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[119] @0x00316d len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[120] @0x0031d7 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[121] @0x003241 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[122] @0x0032ab len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[123] @0x003315 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[124] @0x00337f len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[125] @0x0033e9 len=109 XNU: M30 FB: v=37800 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[126] @0x003456 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[127] @0x0034c0 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[128] @0x00352a len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[129] @0x003594 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[130] @0x0035fe len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[131] @0x003668 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[132] @0x0036d2 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[133] @0x00373c len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[134] @0x0037a6 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[135] @0x003810 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[136] @0x00387a len=109 XNU: M30 FB: v=38400 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[137] @0x0038e7 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[138] @0x003951 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[139] @0x0039bb len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[140] @0x003a25 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[141] @0x003a8f len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[142] @0x003af9 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[143] @0x003b63 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[144] @0x003bcd len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[145] @0x003c37 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[146] @0x003ca1 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[147] @0x003d0b len=109 XNU: M30 FB: v=39000 sw=5 pr=4 copied=40435200 skip=12 last=1 dirty=0 power=0 cl=1 ticks=2
+[148] @0x003d78 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[149] @0x003de2 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[150] @0x003e4c len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[151] @0x003eb6 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[152] @0x003f20 len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+[153] @0x003f8a len=106 XNU: M30 UI HB: sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown
+# ISSUE @0x000000 bad_magic: expected 0x6c, got 0x6b
+# WARNING: framing was not fully valid; output may be incomplete

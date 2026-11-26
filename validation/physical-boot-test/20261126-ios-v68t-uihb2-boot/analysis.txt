@@ -1,0 +1,36 @@
+# v68t-uihb2 physical boot — heartbeat analysis (read-only)
+
+Identity PASS. Pstore SHA256
+83c8cca8e6634c436e0473a5626adf0416ed8095822e27d58adceb99ab53a4ab,
+16372 bytes, 154 records, clean=False (wrapped ring).
+
+## Decisive heartbeat evidence
+- 140 `M30 UI HB` records survive, every one identical in the measured fields:
+  `sb=27 bb=57 reason=none irt=3 hid=unknown scene=unknown surface=unknown`.
+- The user also observed an earlier on-screen line with `irt=2`, so IRT moved
+  from 2 -> 3 before the surviving window; it stayed at 3 through the tail.
+- SpringBoard pid 27 and backboardd pid 57 stayed alive and unchanged for the
+  full 140-sample window (~140 s).
+- `reason=none` throughout; 0 `NSException`, 0 `BBERR`, 0 `SBERR`.
+- 14 interleaved `M30 FB: v=` heartbeats, `v=31200..39000`, `sw=5 pr=4
+  copied=40435200 skip=12 cl=1` — framebuffer presentation active.
+- 0 `M30 TOUCH` / Melfas records survive; probe/contact delivery remains
+  unproven (early records may have wrapped out).
+
+## Assessment
+This eliminates the previously plausible failure classes:
+- not a kernel panic or watchdog,
+- not an IRT failure (state 3 reached and held),
+- not SpringBoard/backboardd death (PIDs stable, no crash reason),
+- not a framebuffer/presentation failure (swaps and copies active).
+
+The boot stalls **after** userspace starts and IOKit/graphics are ready, at the
+transition where SpringBoard should construct/present the lock-screen scene.
+Because SpringBoard remains alive with no crash and no further safe kernel
+hook exposes scene state (`scene=unknown`, `surface=unknown`), the specific
+blocking dependency cannot be identified from this evidence.
+
+Confidence: high on the failure class (userspace UI scene construction stall),
+low on the exact cause. No functional source fix is justified.
+
+No flash, reboot, or partition write was performed for this analysis.
