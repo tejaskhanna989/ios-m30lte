@@ -173,7 +173,7 @@ jobs:
         import hashlib
         from pathlib import Path
         want = {
-          "bsd/dev/sweet_sample.c": "5e6c594e9ab1e5112c28ce43dcdd2f9d753edca4886f718bae63e772efed2c74",
+          "bsd/dev/sweet_sample.c": "d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0",
           "osfmk/vm/vm_fault.c": "de26a8e91b0fdb3504d4172f6a7324c532a9c82c8ff15f4da6699fc2c59ba133",
         }
         for rel, expect in want.items():
@@ -205,7 +205,7 @@ jobs:
         import hashlib
         from pathlib import Path
         want = {
-          "bsd/dev/sweet_sample.c": "5e6c594e9ab1e5112c28ce43dcdd2f9d753edca4886f718bae63e772efed2c74",
+          "bsd/dev/sweet_sample.c": "d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0",
           "iokit/Kernel/arm/SweetFramebuffer.cpp": "11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f",
         }
         for rel, expect in want.items():
