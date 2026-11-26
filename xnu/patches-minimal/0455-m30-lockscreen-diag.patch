@@ -1,9 +1,9 @@
 diff --git a/bsd/dev/sweet_sample.c b/bsd/dev/sweet_sample.c
---- a/bsd/dev/sweet_sample.c	2026-11-26 20:29:27.392642768 +0530
-+++ b/bsd/dev/sweet_sample.c	2026-11-26 20:29:27.501059311 +0530
-@@ -26,6 +26,14 @@
- extern void sweet_sample_start(void);
+--- a/bsd/dev/sweet_sample.c	2026-11-26 21:29:04.864639618 +0530
++++ b/bsd/dev/sweet_sample.c	2026-11-26 21:29:04.948954319 +0530
+@@ -27,6 +27,14 @@
  extern char m30_last_crash_reason[];   /* osfmk/kern/exception.c */
+ extern int m30_irt_state_snapshot(void);  /* osfmk/vm/vm_fault.c, read-only */
  
 +extern void m30_pmsg_diag_line(const char *line); /* pexpert/arm/pe_serial.c */
 +
@@ -16,8 +16,8 @@ diff --git a/bsd/dev/sweet_sample.c b/bsd/dev/sweet_sample.c
  static char sweet_sample_names[128];
  
  static bool
-@@ -106,10 +114,39 @@
- 	}
+@@ -157,11 +165,40 @@
+ 	printf("M30 UI HB: stopped after 1800 samples\n");
  }
  
 +/* Bounded durable sampler. No state changes, no injection, no UI code patched.
@@ -45,6 +45,7 @@ diff --git a/bsd/dev/sweet_sample.c b/bsd/dev/sweet_sample.c
  sweet_sample_start(void)
  {
  	thread_t thread;
+ 	int heartbeat = 0;
 +	int lsdiag = 0;
 +	(void)PE_parse_boot_argn("m30sblockdiag", &lsdiag, sizeof(lsdiag));
 +	if (lsdiag) {
@@ -53,12 +54,12 @@ diff --git a/bsd/dev/sweet_sample.c b/bsd/dev/sweet_sample.c
 +			thread_deallocate(thread);
 +		}
 +	}
- 	if (kernel_thread_start(sweet_sample_thread, NULL, &thread) == KERN_SUCCESS) {
- 		thread_deallocate(thread);
- 	}
+ 	(void)PE_parse_boot_argn("m30uihb", &heartbeat, sizeof(heartbeat));
+ 	if (heartbeat) {
+ 		if (kernel_thread_start(sweet_hb_thread, NULL, &thread) == KERN_SUCCESS) {
 diff --git a/osfmk/kern/exception.c b/osfmk/kern/exception.c
---- a/osfmk/kern/exception.c	2026-11-26 20:29:27.400150786 +0530
-+++ b/osfmk/kern/exception.c	2026-11-26 20:29:27.501601086 +0530
+--- a/osfmk/kern/exception.c	2026-11-26 21:29:04.871547677 +0530
++++ b/osfmk/kern/exception.c	2026-11-26 21:29:04.949369698 +0530
 @@ -1036,6 +1036,8 @@
   * SWEET process sampler (bsd/dev/sweet_sample.c): user pc/lr/sp and a frame
   * pointer backtrace of every thread of a task, from the saved user state.

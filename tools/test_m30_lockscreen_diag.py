@@ -7,7 +7,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0455-m30-lockscreen-diag.patch"
-BUILDTREE = Path("/home/tejas/opencode-work/v68t-buildtree/xnu")
+CI_TREE = Path("/home/tejas/opencode-work/v74-ci-buildtree/extracted/xnu")
+BUILDTREE = CI_TREE if (CI_TREE / "bsd/dev/sweet_sample.c").is_file() else Path("/home/tejas/opencode-work/v68t-buildtree/xnu")
 
 
 def main() -> None:
@@ -31,7 +32,7 @@ def main() -> None:
         r = subprocess.run(["git", "apply", "--check", str(PATCH)], cwd=BUILDTREE,
                            capture_output=True)
         assert r.returncode == 0, (r.stderr + r.stdout).decode()
-        print("[PASS] 0455 applies to v68 buildtree, gated, bounded, durable-only")
+        print("[PASS] 0455 applies to buildtree, gated, bounded, durable-only")
     else:
         print("[PASS] 0455 source checks (buildtree not present locally)")
 
