@@ -116,5 +116,19 @@ class ContainerMetadataTests(unittest.TestCase):
             self.assertTrue(not (base / "../../escaped-path-0000").exists())
 
 
+def test_rootfs_container_inventory(self):
+        import verify_rootfs_containers as vr
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            d = root / "private/var/containers/Data/System" / "6561B268-BDB7-42A2-986F-8A6E4861FBE0"
+            d.mkdir(parents=True)
+            with (d / verify.MCM_META).open("wb") as fh:
+                plistlib.dump({"MCMMetadataIdentifier": "com.apple.lsd",
+                               "MCMMetadataUUID": "AAD4FDC5-016A-4A46-8DCD-0C7E85EB53E2"}, fh)
+            tweaks.ensure_metadata_uuid_dirs(root)
+            rows, failures = vr.inventory(root)
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(failures, [])
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
