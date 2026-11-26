@@ -233,3 +233,4 @@ jobs:
           name: ios-abi-evidence
           path: ${{ env.WORK }}/out
           if-no-files-found: error
+          retention-days: 1

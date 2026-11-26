@@ -159,6 +159,7 @@ jobs:
             ${{ env.WORK }}/container-verification.log
             ${{ env.WORK }}/dmg-sha256.txt
 
+          retention-days: 1
       - name: Summary
         if: env.DRY != 'true'
         run: |

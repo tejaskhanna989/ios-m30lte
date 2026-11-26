@@ -103,5 +103,6 @@ jobs:
           name: ios-root-verification
           path: ${{ env.WORK }}/verification.txt
 
+          retention-days: 1
       - name: Final disk report
         run: df -h /

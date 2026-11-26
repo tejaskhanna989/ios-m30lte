@@ -263,7 +263,7 @@ jobs:
           xnu-source/BUILD/obj/**/mach_kernel
           xnu-source/BUILD/sym/**/kernel.*
           xnu-source/BUILD/sym/**/mach_kernel
-        retention-days: 30
+        retention-days: 1
     - name: Generate Build Summary
       if: always()
       run: |

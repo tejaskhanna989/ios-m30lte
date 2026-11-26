@@ -144,7 +144,7 @@ jobs:
         with:
           name: xnu-buildtree-${{ matrix.runner }}
           path: buildtree.tgz
-          retention-days: 7
+          retention-days: 1
 
       - name: Collect
         if: always()
@@ -160,6 +160,7 @@ jobs:
           name: xnu-kernel-${{ matrix.runner }}
           path: out/
           if-no-files-found: warn
+          retention-days: 1
 
       - name: Check Cortex-A53 compatibility (no ARMv8.1 LSE atomics)
         if: env.MACHINE_CONFIG == 'A5XELTE' || env.MACHINE_CONFIG == 'HEROLTE' || env.MACHINE_CONFIG == 'M20LTE' || env.MACHINE_CONFIG == 'M30LTE'
