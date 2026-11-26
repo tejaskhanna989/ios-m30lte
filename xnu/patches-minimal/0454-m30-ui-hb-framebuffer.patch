@@ -34,7 +34,7 @@ diff --git a/iokit/Kernel/arm/SweetFramebuffer.cpp b/iokit/Kernel/arm/SweetFrame
 +		if (hb_enabled) {
 +			static unsigned hb_ticks;
 +			if ((++hb_ticks % 60) == 0) {
-+				extern void m30_ui_snapshot(int *, int *, int *, const char **);
++				extern "C" void m30_ui_snapshot(int *, int *, int *, const char **);
 +				int sb = 0, bb = 0, irt = 0;
 +				const char *reason = "unknown";
 +				char hline[192];

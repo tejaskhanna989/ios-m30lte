@@ -73,7 +73,7 @@ def main():
     for token in (
         'PE_parse_boot_argn("m30uihb", &hb_enabled, sizeof(hb_enabled))',
         "if ((++hb_ticks % 60) == 0)",
-        "m30_ui_snapshot(&sb, &bb, &irt, &reason)",
+        "extern \"C\" void m30_ui_snapshot(int *, int *, int *, const char **)",
         "M30 UI HB: sb=%d bb=%d reason=%s irt=%d",
         "hid=unknown scene=unknown surface=unknown",
     ):
