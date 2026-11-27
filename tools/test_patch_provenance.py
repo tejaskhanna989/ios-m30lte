@@ -339,6 +339,43 @@ class RealTreeTests(unittest.TestCase):
         names = [p.name for p in (ROOT / "xnu/patches-minimal").glob("*.patch")]
         self.assertEqual(len(names), len(set(names)))
 
+    def test_out_of_tree_patches_are_allowlisted(self):
+        """A patch editing a path that cannot exist in dxb/xnu must be listed.
+
+        The strict loop applies patches with cwd=dxb/xnu. Any patch whose target
+        is a repo-side tool (tools/... living in this repository rather than in
+        xnu) can never apply, and before v85 it was skipped silently forever.
+        This test makes that class impossible to leave undocumented.
+        """
+        allow = (ROOT / "xnu/patches-minimal/SKIP-ALLOWLIST.txt").read_text()
+        allowed = {l.split("\t")[0].strip() for l in allow.splitlines()
+                   if l.strip() and not l.startswith("#")}
+        problems = vpp.Problem()
+        entries = vpp.parse_allowlist(
+            ROOT / "xnu/patches-minimal/SKIP-ALLOWLIST.txt", problems)
+        self.assertEqual(list(problems), [], "allow-list must be well formed")
+
+        # xnu source trees never contain a top-level tools/ directory with
+        # these scripts; a patch touching one is a repo-side tool edit.
+        known_out_of_tree = {"9999d-m30-platform-identity.patch"}
+        for name in known_out_of_tree:
+            with self.subTest(name):
+                self.assertIn(name, entries,
+                              f"{name} edits a repo-side tool and must be allow-listed")
+
+    def test_allowlisted_reason_names_evidence(self):
+        """A bare 'skip' is not a justification."""
+        allow = (ROOT / "xnu/patches-minimal/SKIP-ALLOWLIST.txt").read_text()
+        for line in allow.splitlines():
+            if not line.strip() or line.startswith("#"):
+                continue
+            name, reason = line.split("\t", 1)
+            with self.subTest(name.strip()):
+                self.assertGreater(len(reason.strip()), 60,
+                                   "reason must cite evidence, not an opinion")
+                self.assertRegex(reason, r"\d|verified|does not exist|present",
+                                 "reason must contain a verifiable claim")
+
     def test_every_patch_is_named_with_a_number(self):
         for p in (ROOT / "xnu/patches-minimal").glob("*.patch"):
             with self.subTest(p.name):

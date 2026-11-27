@@ -13,4 +13,11 @@
 #  * Adding an entry to silence a real failure is the exact behaviour this
 #    system exists to prevent. If a patch must not run, say why with a reference.
 #
-# Currently EMPTY: every patch in this directory is expected to apply.
+# ---------------------------------------------------------------------------
+# Active entries
+# ---------------------------------------------------------------------------
+#
+# The XNU build script runs `git apply` with cwd = dxb/xnu (the downloaded
+# darwin-xnu-build tree). A patch whose path does not exist there can never
+# apply, and before v85 it was skipped silently on every build.
+9999d-m30-platform-identity.patch	moved out of the XNU tree: edits tools/mkadt.py, a HOST-side ADT generator that generates the boot payload, not the kernel. dxb/xnu/tools/mkadt.py does not exist (verified on darwin-xnu-build@66390652), so this patch has always been skipped. Its content is already present in the repo copy tools/mkadt.py - all 5 added lines verified present, 0 missing. It is kept in the tree as provenance, not as a build step.
