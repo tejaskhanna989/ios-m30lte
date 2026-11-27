@@ -347,133 +347,182 @@ class VerifyProvenanceTests(unittest.TestCase):
 
 
 class EmbeddedCiScriptTests(unittest.TestCase):
-    """The python block inside xnu.yml must actually run.
+    """The python embedded in xnu.yml must actually run.
 
     A previous edit put `allowed_names` before its definition, which would have
-    crashed the CI step only after a 20-minute macOS build.
+    crashed the CI step only after a 20-minute macOS build. Each assertion is
+    now its own named step so a failure states its own defect (CI logs are not
+    retrievable here; check-run step names are).
     """
 
-    def extract(self, name_fragment: str) -> str:
+    WA = "Every patch on disk is applied or allow-listed"
+    WB = "No OUR patch was skipped"
+    WC = "No patch was silently skipped"
+    WD = "Every applied patch exists on disk"
+    PARSE = "Parse build log patch evidence"
+
+    def blocks(self) -> dict:
         import re
         import textwrap
         wf = (ROOT / ".github/workflows/xnu.yml").read_text()
-        blocks = re.findall(r"python3 - <<'PY'\n(.*?)\n        PY\n", wf, re.S)
-        self.assertTrue(blocks, "no embedded python blocks found")
-        for b in blocks:
-            code = textwrap.dedent(b)
-            if name_fragment in code:
-                return code
-        self.fail(f"no embedded block containing {name_fragment!r}")
+        raw = re.findall(r"python3 - <<'PY'\n(.*?)\n        PY\n", wf, re.S)
+        self.assertTrue(raw, "no embedded python blocks found")
+        out = {}
+        for name in (self.PARSE, self.WA, self.WB, self.WC, self.WD):
+            idx = wf.index(f"- name: {name}")
+            seg = wf[idx:idx + 6000]
+            m = re.search(r"python3 - <<'PY'\n(.*?)\n        PY\n", seg, re.S)
+            self.assertIsNotNone(m, f"no embedded python for step {name!r}")
+            out[name] = textwrap.dedent(m.group(1))
+        return out
 
-    def test_assert_block_is_valid_python(self):
+    def test_all_blocks_are_valid_python(self):
         import ast
-        ast.parse(self.extract("applied but not in tree"))
+        for name, code in self.blocks().items():
+            ast.parse(code)
 
-    def test_assert_block_names_are_defined_before_use(self):
-        import ast
-        tree = ast.parse(self.extract("applied but not in tree"))
-        assigned: set[str] = set()
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store):
-                assigned.add(node.id)
-        # every name the block reads must be assigned somewhere in the block
-        # (builtins aside)
-        for name in ("allowed_names", "ours", "upstream", "applied", "skipped"):
-            self.assertIn(name, assigned, f"{name} must be assigned in the CI block")
+    def build_log(self, tmp: Path, allowed, *, ansi=False, skip_wording="allowed",
+                  extra_applied=()):
+        """Create a workspace mirroring CI and return (tmp, allowed)."""
+        ours = tmp / "xnu/patches-minimal"
+        up = tmp / "dxb/patches"
+        ours.mkdir(parents=True)
+        up.mkdir(parents=True)
+        (ours / "SKIP-ALLOWLIST.txt").write_text(
+            (ROOT / "xnu/patches-minimal/SKIP-ALLOWLIST.txt").read_text())
+        (ours / "0001-a.patch").write_text("x")
+        for n in allowed:
+            (up / n).write_text("x")
+        # present on disk but NOT iterated for MACOS_VERSION=13.5
+        (up / "15.0").mkdir()
+        (up / "15.0/entitlements.patch").write_text("x")
+        C, R = ("\x1b[1;32m", "\x1b[0m") if ansi else ("", "")
+        lines = [f"{C}=> Applying patch: /w/dxb/patches/0001-a.patch{R}"]
+        lines += [f"{C}=> Applying patch: /w/dxb/patches/{p}{R}" for p in extra_applied]
+        if skip_wording == "allowed":
+            lines += [f"{C}[warning] Allowed skip of {n} (see SKIP-ALLOWLIST.txt){R}"
+                      for n in allowed]
+        elif skip_wording == "upstream":
+            lines += [f"{C}[warning] Skipping patch /w/dxb/patches/{n} (already upstream){R}"
+                      for n in allowed]
+        (tmp / "build.log").write_text("\n".join(lines))
+        return tmp, allowed
+
+    def run_ci(self, tmp: Path) -> dict:
+        """Run parse + all four assertions exactly as CI does."""
+        results = {}
+        for name, code in self.blocks().items():
+            script = tmp / ("s_" + str(abs(hash(name))) + ".py")
+            script.write_text(code)
+            r = subprocess.run([sys.executable, str(script)], cwd=tmp,
+                               capture_output=True, text=True)
+            results[name] = (r.returncode, r.stdout + r.stderr)
+        return results
+
+    def allowed_names(self):
+        allow = ROOT / "xnu/patches-minimal/SKIP-ALLOWLIST.txt"
+        return sorted({l.split("\t")[0].strip() for l in allow.read_text().splitlines()
+                       if l.strip() and not l.startswith("#")})
+
+    def test_passes_on_a_consistent_build(self):
+        import tempfile
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            self.build_log(tmp, self.allowed_names())
+            for name, (rc, out) in self.run_ci(tmp).items():
+                self.assertEqual(rc, 0, f"{name} failed:\n{out}")
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+    def test_passes_through_colourised_log(self):
+        import tempfile
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            self.build_log(tmp, self.allowed_names(), ansi=True)
+            for name, (rc, out) in self.run_ci(tmp).items():
+                self.assertEqual(rc, 0, f"{name} failed on ANSI log:\n{out}")
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+    def test_accepts_upstream_skip_wording(self):
+        import tempfile
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            self.build_log(tmp, self.allowed_names(), skip_wording="upstream")
+            for name, (rc, out) in self.run_ci(tmp).items():
+                self.assertEqual(rc, 0, f"{name} failed on upstream wording:\n{out}")
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+    def test_catches_missing_patch(self):
+        """A patch that is neither applied nor allow-listed must fail."""
+        import tempfile
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            self.build_log(tmp, self.allowed_names())
+            (tmp / "build.log").write_text(
+                (tmp / "build.log").read_text().replace(
+                    "=> Applying patch: /w/dxb/patches/0001-a.patch\n", ""))
+            res = self.run_ci(tmp)
+            self.assertNotEqual(res[self.WA][0], 0, "must fail: a patch vanished")
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+    def test_catches_our_patch_skipped(self):
+        """Even an allow-listed skip of OUR patch fails: the build would not
+        contain our work."""
+        import tempfile
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            allowed = self.allowed_names() + ["0001-a.patch"]
+            self.build_log(tmp, allowed)   # 0001 and every allowed name are skipped
+            res = self.run_ci(tmp)
+            self.assertEqual(res[self.WA][0], 0, "justified skips are allowed")
+            self.assertNotEqual(res[self.WB][0], 0,
+                                "must fail: our own patch was skipped")
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+    def test_catches_unjustified_skip(self):
+        import tempfile
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            self.build_log(tmp, self.allowed_names())
+            (tmp / "build.log").write_text(
+                (tmp / "build.log").read_text()
+                + "\n[warning] Allowed skip of rogue.patch (none)")
+            (tmp / "dxb/patches/rogue.patch").write_text("x")
+            res = self.run_ci(tmp)
+            self.assertNotEqual(res[self.WA][0], 0)
+            self.assertNotEqual(res[self.WC][0], 0, "must fail: unjustified skip")
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+    def test_catches_phantom_application(self):
+        import tempfile
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            self.build_log(tmp, self.allowed_names(), extra_applied=("ghost.patch",))
+            res = self.run_ci(tmp)
+            self.assertNotEqual(res[self.WD][0], 0, "must fail: applied but not on disk")
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
 
     def test_skip_wording_matches_the_real_patcher(self):
         """Guard the exact divergence that cost three CI runs.
 
         The strict loop emits "Allowed skip of <name>" with no path; upstream's
-        own loop emits "Skipping patch <path>". Fixtures must use the real
-        wording, and the CI regex must accept what the patcher really prints.
+        own loop emits "Skipping patch <path>". Both must be understood.
         """
         import re as _re
         patcher = (ROOT / "tools/patch_build_sh.py").read_text()
-        emitted = _re.findall(r'warning "([^"]*)"', patcher)
-        allowed = [m for m in emitted if "Allowed skip of" in m]
-        self.assertTrue(allowed, "patcher no longer emits an allowed-skip message")
-        sample = allowed[0].replace("$PATCH_NAME", "TrustCache.patch")
+        emitted = [m for m in _re.findall(r'warning "([^"]*)"', patcher)
+                   if "Allowed skip of" in m]
+        self.assertTrue(emitted, "patcher no longer emits an allowed-skip message")
+        sample = emitted[0].replace("$PATCH_NAME", "TrustCache.patch")
         self.assertRegex(sample, r"Allowed skip of ([^\s(]+\.patch)")
-        code = self.extract("applied but not in tree")
-        self.assertIn("Allowed skip of", code,
-                      "CI block must understand the patcher's own wording")
-
-    def test_assert_block_strips_ansi(self):
-        """build.sh colourises output; the block must parse through the escapes."""
-        import re as _re
-        code = self.extract("applied but not in tree")
-        self.assertIn("x1b", code, "the block must strip ANSI escapes")
-
-    def test_assert_block_handles_colourised_log(self):
-        import tempfile
-        code = self.extract("applied but not in tree")
-        tmp = Path(tempfile.mkdtemp())
-        try:
-            ours = tmp / "xnu/patches-minimal"
-            up = tmp / "dxb/patches"
-            ours.mkdir(parents=True)
-            up.mkdir(parents=True)
-            allow = ROOT / "xnu/patches-minimal/SKIP-ALLOWLIST.txt"
-            (ours / "SKIP-ALLOWLIST.txt").write_text(allow.read_text())
-            allowed = {l.split("\t")[0].strip() for l in allow.read_text().splitlines()
-                       if l.strip() and not l.startswith("#")}
-            (ours / "0001-a.patch").write_text("x")
-            for n in allowed:
-                (up / n).write_text("x")
-            C = "\x1b[1;32m"
-            R = "\x1b[0m"
-            lines = [f"{C}=> Applying patch: /w/dxb/patches/0001-a.patch{R}"]
-            lines += [f"{C}[warning] Allowed skip of {n} (see SKIP-ALLOWLIST.txt){R}"
-                      for n in allowed]
-            (tmp / "build.log").write_text("\n".join(lines))
-            (tmp / "chk.py").write_text(code)
-            r = subprocess.run([sys.executable, str(tmp / "chk.py")], cwd=tmp,
-                               capture_output=True, text=True)
-            self.assertEqual(r.returncode, 0, f"{r.stdout}\n{r.stderr}")
-        finally:
-            shutil.rmtree(tmp, ignore_errors=True)
-
-    def test_assert_block_passes_on_a_consistent_build_log(self):
-        """Execute it against a synthetic workspace that matches the allow-list."""
-        import os
-        import tempfile
-        code = self.extract("applied but not in tree")
-        tmp = Path(tempfile.mkdtemp())
-        try:
-            ours = tmp / "xnu/patches-minimal"
-            up = tmp / "dxb/patches"
-            ours.mkdir(parents=True)
-            up.mkdir(parents=True)
-            allow = ROOT / "xnu/patches-minimal/SKIP-ALLOWLIST.txt"
-            (ours / "SKIP-ALLOWLIST.txt").write_text(allow.read_text())
-            allowed = {l.split("\t")[0].strip() for l in allow.read_text().splitlines()
-                       if l.strip() and not l.startswith("#")}
-            # every allow-listed name must exist somewhere, otherwise the
-            # block correctly reports it as missing
-            (ours / "0001-a.patch").write_text("x")
-            for n in allowed:
-                (up / n).write_text("x")
-            # build.sh applies from a version subdirectory too (e.g. 15.0).
-            # Omitting that here is what let the real bug through.
-            (up / "15.0").mkdir()
-            (up / "15.0/entitlements.patch").write_text("x")
-            lines = ["=> Applying patch: /w/dxb/patches/0001-a.patch"]
-            # the strict loop's real wording: name only, no path
-            lines += [f"[warning] Allowed skip of {n} (see SKIP-ALLOWLIST.txt)"
-                      for n in allowed]
-            # 15.0/ exists on disk but is NOT iterated for MACOS_VERSION=13.5,
-            # so it must not be reported as applied either.
-            pass
-            (tmp / "build.log").write_text("\n".join(lines))
-            script = tmp / "chk.py"
-            script.write_text(code)
-            r = subprocess.run([sys.executable, str(script)], cwd=tmp,
-                               capture_output=True, text=True)
-            self.assertEqual(r.returncode, 0,
-                             f"CI block failed:\n{r.stdout}\n{r.stderr}")
-        finally:
-            shutil.rmtree(tmp, ignore_errors=True)
+        self.assertIn("Allowed skip of", self.blocks()[self.PARSE],
+                      "parser must understand the patcher's own wording")
 
 
 class RealTreeTests(unittest.TestCase):

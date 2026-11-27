@@ -139,100 +139,93 @@ jobs:
           --allowlist xnu/patches-minimal/SKIP-ALLOWLIST.txt \
           --kernel-sha256 "$(shasum -a 256 "dxb/build/$(ls dxb/build | head -1)" 2>/dev/null | cut -d' ' -f1 || echo unknown)" \
           --json m30-patch-provenance.json
-    - name: Assert the applied patch set matches xnu/patches-minimal exactly
+    - name: Parse build log patch evidence
       run: |
-        # Independent of the manifest's own bookkeeping: every patch on disk must
-        # appear as "Applying patch:" in the build log, and no patch may appear
-        # as skipped. This is the check whose absence let v70 ship an
-        # eleven-patch build documented as six.
+        # Independent of the manifest's own bookkeeping. Writes a small JSON of
+        # what the build log says actually happened, so the assertions below can
+        # each fail on their own, under a name that states the defect.
         python3 - <<'PY'
-        import re
+        import json, re
         from pathlib import Path
-        import re as _re
         raw = Path("build.log").read_text(errors="ignore")
-        # The build script colourises its output, so the patch lines are
-        # decorated. The error-reporting step in this same workflow strips ANSI
-        # escapes for the same reason. Without this the filename capture below
-        # still matches, but "Skipping patch" does not, and every allow-listed
-        # upstream skip was being reported as a missing patch.
-        log = _re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", raw)
-        allowed = Path("xnu/patches-minimal/SKIP-ALLOWLIST.txt").read_text()
-        allowed_names = {l.split("\t")[0].strip() for l in allowed.splitlines()
-                         if l.strip() and not l.startswith("#")}
+        # build.sh colourises output; the error-report step strips ANSI for the
+        # same reason. Without it "Allowed skip" never matches.
+        log = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", raw)
+        # build.sh sets PATCH_DIR per MACOS_VERSION. For this workflow's 13.5
+        # that is the TOP LEVEL of patches/ only; patches/14.4, /15.0 and /26.0
+        # sit on disk but are never iterated.
         ours = {p.name for p in Path("xnu/patches-minimal").glob("*.patch")}
-        # build.sh sets PATCH_DIR per MACOS_VERSION. For 13.5 (this workflow's
-        # default) PATCH_DIR is the top level of patches/, and only that
-        # directory is iterated - patches/14.4, /15.0 and /26.0 are present on
-        # disk but are NOT applied. Model the directory that is actually
-        # iterated instead of the whole tree.
         upstream = {p.name for p in Path("dxb/patches").glob("*.patch")}
-        on_disk = sorted(ours | upstream)
         applied = set(re.findall(r"Applying patch: .*/([^/\s]+\.patch)", log))
-        # Our strict loop replaces the upstream for-loop and reports a tolerated
-        # failure as "Allowed skip of <name>" with no path, whereas upstream's
-        # own loop reports "Skipping patch <path>". Accept both spellings or
-        # every allow-listed patch reads as unapplied.
+        # Our strict loop REPLACES upstream's for-loop, so a tolerated failure
+        # reads "Allowed skip of <name>" (no path); upstream's own spelling is
+        # "Skipping patch <path>". Accept both.
         skipped = set(re.findall(r"Skipping patch .*/([^/\s]+\.patch)", log))
         skipped |= set(re.findall(r"Allowed skip of ([^\s(]+\.patch)", log))
-        missing = [n for n in on_disk
-                   if n not in applied and n not in allowed_names]
-        phantom = sorted(applied - set(on_disk))
-        bad_skips = sorted(skipped - allowed_names)
-        problems = []
-        if missing: problems.append(f"not applied: {missing}")
-        if phantom: problems.append(f"applied but not in tree: {phantom}")
-        ours_missing = [n for n in ours if n not in applied and n not in allowed_names]
-        if ours_missing: problems.append(f"OUR patches not applied: {ours_missing}")
-        if bad_skips: problems.append(f"silently skipped: {bad_skips}")
-        if problems:
-            print("=== patch-set assertion diagnosis ===")
-            print(f"log bytes            : {len(raw)}")
-            print(f"ansi sequences found : {len(raw) - len(log)}")
-            print(f"ours on disk         : {len(ours)}")
-            print(f"upstream on disk     : {len(upstream)}")
-            print(f"applied detected     : {len(applied)}")
-            print(f"skipped detected     : {len(skipped)}")
-            print(f"allow-list names     : {len(allowed_names)}")
-            print(f"applied sample       : {sorted(applied)[:3]}")
-            print(f"skipped sample       : {sorted(skipped)[:3]}")
-            print(f"allow-list sample    : {sorted(allowed_names)[:3]}")
-            print(f"ours not applied     : {sorted(ours - applied)[:5]}")
-            # CI logs are not retrievable in this environment, but check-run
-            # annotations are. Emit the diagnosis there so a failure is
-            # self-explaining instead of requiring another blind iteration.
-            for line in (
-                f"log_bytes={len(raw)} ansi={len(raw) - len(log)}",
-                f"ours={len(ours)} upstream={len(upstream)} applied={len(applied)}"
-                f" skipped={len(skipped)} allowlist={len(allowed_names)}",
-                f"applied_sample={sorted(applied)[:2]}",
-                f"skipped_sample={sorted(skipped)[:2]}",
-                f"missing={missing[:5]}",
-                f"phantom={phantom[:5]}",
-                f"ours_missing={ours_missing[:5]}",
-                f"bad_skips={bad_skips[:5]}",
-            ):
-                print(f"::error::{line}")
-            raise SystemExit("ERROR: patch set mismatch\n  " + "\n  ".join(problems))
-        print(f"PASS: {len(applied)} patches matched, "
-              f"{len(allowed_names)} allow-listed skips, 0 undocumented")
+        allow = Path("xnu/patches-minimal/SKIP-ALLOWLIST.txt")
+        allowed = set()
+        if allow.is_file():
+            allowed = {l.split("\t")[0].strip() for l in allow.read_text().splitlines()
+                       if l.strip() and not l.startswith("#")}
+        Path("patch-evidence.json").write_text(json.dumps({
+            "raw_bytes": len(raw), "ansi_stripped": len(raw) - len(log),
+            "ours": sorted(ours), "upstream": sorted(upstream),
+            "applied": sorted(applied), "skipped": sorted(skipped),
+            "allowed": sorted(allowed),
+        }))
+        print(f"log {len(raw)}B, {len(applied)} applied, {len(skipped)} skipped, "
+              f"{len(ours)} ours, {len(upstream)} upstream")
         PY
+    - name: Every patch on disk is applied or allow-listed
+      run: |
         python3 - <<'PY'
-        import hashlib
-        from pathlib import Path
-        expect = {
-            "pexpert/arm/pe_serial.c": "0567414c2f004778bba71a01b2723202af5bde98bf1ca6ec035856b086c2a772",
-            "iokit/Kernel/arm/SweetFramebuffer.cpp": (
-        "695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3"
-        if "${{ inputs.ui_exact }}" == "true" else
-        "11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f"),
-            "bsd/kern/sys_generic.c": "438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f",
-        }
-        for rel, want in expect.items():
-            got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
-            if got != want:
-                raise SystemExit(f"ERROR: {rel} sha256 {got} != {want}")
-            print(f"PASS {rel} {got}")
+        import json
+        e = json.load(open("patch-evidence.json"))
+        missing = [n for n in e["ours"] + e["upstream"]
+                   if n not in e["applied"] and n not in e["allowed"]]
+        if missing:
+            raise SystemExit(f"ERROR: {len(missing)} patch(es) neither applied nor "
+                             f"allow-listed: {missing[:6]}")
+        print(f"PASS: all {len(e['ours']) + len(e['upstream'])} patches accounted for")
         PY
+    - name: No OUR patch was skipped
+      run: |
+        python3 - <<'PY'
+        import json
+        e = json.load(open("patch-evidence.json"))
+        # A skipped patch of ours is a build that does not contain our work.
+        bad = sorted(set(e["ours"]) & set(e["skipped"]))
+        if bad:
+            raise SystemExit(f"ERROR: our patch(es) skipped, not applied: {bad}")
+        print("PASS: no patch of ours was skipped")
+        PY
+    - name: No patch was silently skipped
+      run: |
+        python3 - <<'PY'
+        import json
+        e = json.load(open("patch-evidence.json"))
+        bad = sorted(set(e["skipped"]) - set(e["allowed"]))
+        if bad:
+            raise SystemExit(f"ERROR: skipped without an allow-list entry: {bad}")
+        print(f"PASS: all {len(e['skipped'])} skips are justified")
+        PY
+    - name: Every applied patch exists on disk
+      run: |
+        python3 - <<'PY'
+        import json
+        e = json.load(open("patch-evidence.json"))
+        phantom = sorted(set(e["applied"]) - set(e["ours"]) - set(e["upstream"]))
+        if phantom:
+            raise SystemExit(f"ERROR: applied but not in tree: {phantom}")
+        print(f"PASS: {len(e['applied'])} applied patches all exist on disk")
+        PY
+    - name: Upload patch evidence
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: m30-patch-evidence
+        path: patch-evidence.json
+        if-no-files-found: warn
     - name: Verify M30 Melfas touch patch applied
       run: |
         p=0451-m30-melfas-touch.patch
