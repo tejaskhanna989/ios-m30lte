@@ -317,49 +317,98 @@ experiment remains the accepted pair.
 
 ---
 
-## 9. Boot -> USERDATA provenance (the load-bearing assumption)
+## 9. Boot -> USERDATA provenance — CORRECTED (court-ordered audit)
 
-The whole ranking depends on **which data volume each boot actually ran**, and
-that is recorded only indirectly, through the staging revision in CI:
+This section replaces an earlier version that assigned a distinct USERDATA
+identity to every boot. **That assignment was wrong**, and the physical write
+records contradict it.
 
-| boot | outcome | staging rev (rootfs builder) | USERDATA identity per staging rev |
+### 9.1 What the parity failures actually ran
+
+Every recorded partition write on 2026-11-25 to 2026-11-27:
+
+| when | partition | image | release |
 |---|---|---|---|
-| v68 | PASS | `7e029cdd` (153 lines) | `5f2e2aa6…` |
-| v69 | A: NSException | `7e029cdd` + logging patches | `5f2e2aa6…` (no USERDATA write) |
-| v70 | A: NSException | same | `5f2e2aa6…` |
-| v68t | B: silent | `1042340…` (+`fix_container_metadata`) | `dea9110c…` |
-| v68t-native | B: silent | `1a85731…` (+mobile skeleton) | `b0f5dba6…` |
-| v81 | B: silent | `9cad333…` (+`ensure_ui_daemon_containers`) | `4f788a12…` |
+| 2026-11-25 | USERDATA | `ios-root-20H392.img` | **`45651107666`** |
+| 2026-11-27 | USERDATA | streamed parts | `45949747024` |
+| all other boots | BOOT only | — | — |
 
-If this table is right, the two failure modes line up exactly with the two axes:
+Twenty consecutive boots — v68 through v68t-native — each record *"No USERDATA,
+SYSTEM or RECOVERY write"*. So the parity failures **did not run successive data
+volumes**. The only USERDATA change between the v68 success and the v68t failures
+is the single install of release `45651107666`, on the same day and **before**
+v68 booted.
 
-- **v69/v70 fail on the BOOT axis with the accepted data volume** — so a
-  logging-only kernel delta is sufficient to break the UI into a fatal exception.
-- **v68t and later fail on the USERDATA axis with a kernel that no longer
-  contains 0447/0448** — silent mode instead of fatal.
+Therefore `dea9110c…` and `b0f5dba6…` were never booted. The earlier table's
+mapping of them to v68t and v68t-native was an inference from CI staging
+revisions and is hereby withdrawn.
 
-That is the most important structural finding in this document, and it is also
-the most fragile: the USERDATA column is inferred from CI staging revisions, not
-from a hash recorded at flash time. **A capture that records the USERDATA hash
-in pstore (or a read-only `/mnt/vendor/...` checksum at boot) would convert this
-whole table from inference to fact** and is worth more than any further
-diagnostic build.
+### 9.2 What actually varies
 
-## 10. Recommended next physical test (single variable, cheap)
+| boot | outcome | BOOT axis | USERDATA axis |
+|---|---|---|---|
+| v68 | PASS | accepted (unmodified since 11-25 05:57) | `5f2e2aa6…` (release `44905109656`) |
+| v69, v70 | A: NSException | **changed** (0446; 0447/0448 reverted) | same |
+| v68t, v68t-native | B: silent | changed | **same** |
+| v81 | B: silent | reverted to accepted | **changed** (release `45949747024`) |
 
-Two candidate next tests, and the choice depends on which mode is more useful:
+Both failure modes occur with the accepted data volume and with the accepted
+BOOT. **Neither axis alone accounts for the pattern**, and the "USERDATA is the
+controlling variable" reading is not supported by the write record.
 
-1. **Re-test the accepted pair** (v68 BOOT staging + USERDATA `5f2e2aa6…`) to
-   ≥15 min. This tells us whether the 06:07 success is reproducible at all. If
-   it reproduces, mode B is a USERDATA regression and the block is data-shaped.
-   If it does not reproduce, the original success was a one-off and every later
-   analysis has been chasing a configuration that never worked again.
-2. **Re-test v69 BOOT with USERDATA `dea9110c…`** to see whether mode A persists
-   on a different data volume. This distinguishes "the logging delta breaks
-   SpringBoard" from "the 11-25 data volume was already marginal".
+### 9.3 No volume identity exists anywhere
 
-Test 1 is strictly more informative and is the one to run.
+No candidate manifest records a filesystem or volume UUID (they are BOOT-image
+manifests: kernel, shim, payload, limit). No capture records USERDATA identity at
+boot. The `5f2e2aa6…` figure is a **release image hash**, not a device reading.
+The device has never told us which volume it is running.
 
-Whichever is run, capture **must** include the `wait/done` pair and the last
-`SBERR`/`NSException` record. Those two measurements decide between blockers 1
-and 2 with no further diagnostic build.
+### 9.4 What the accepted-pair retest would prove — and would not
+
+Restoring the image resets accumulated state in the same physical act, so a
+successful retest cannot attribute the outcome to image *contents*. It is a
+**falsifier only**: a failure would weaken the data-shaped story substantially;
+a success would prove little. This is why a boot-time volume identity record is
+worth more than the retest itself.
+
+## 10. Implication for the next test
+
+The accepted pair cannot be reconstructed from the recorded images, because
+release `44905109656` has not been booted since the `45651107666` install and no
+boot records which volume it ran. Any retest therefore starts from an unknown
+data volume unless §9.4's identity record exists first.
+
+Order of work, cheapest first:
+1. record the volume/filesystem identity at boot (read-only, one line);
+2. then, and only then, a bounded retest of a known volume.
+
+## 11. IRT state — court-ordered audit (2026-11-27)
+
+The apparent contradiction (v74 `final state=2` vs v68t-native "final state=3")
+is **a sampling-window artifact, not a behavioural difference.**
+
+- `M30 IRT status: state=2 …` records are emitted while `state == 2`, i.e.
+  **before** the patch lands.
+- `M30 IRT: patched _internal_release_type off 0xa432d84 (0 -> 3)` records the
+  transition itself.
+- `M30 IRT: patched (final state=3 …)` records follow.
+
+In full-boot captures the order is always `status(state=2)` -> `patched (0->3)`
+-> `patched (final state=3)`. v69, v70, v68t and v68t-native each show exactly
+this sequence. **v74's capture was pulled ~3 minutes after resume and its window
+ends at the `final: state=2` stage — before the patch.** None of its records
+carries `final state=3`, so it cannot be read as a failure to patch.
+
+Two consequences:
+
+1. No capture shows a boot that reached `state=2` and *stayed* there. The "state
+   2" of this document's earlier draft was a misreading of `final: state=2`,
+   which is a **pre-patch stage label**, not a terminal state.
+2. **The v68 success cannot be checked against IRT at all** — its capture contains
+   zero IRT records (rotated out). So IRT cannot be used to separate v68 from any
+   failure, and my round-1 hypothesis that "IRT state is not stable across boots"
+   was **wrong** and is withdrawn.
+
+Consequence for the map: the `0 -> 3` transition is **consistent in every boot
+where it is observable**, and must not be presented as disputed. It is simply
+**unobservable in the one boot that worked.**

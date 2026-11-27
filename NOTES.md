@@ -4193,3 +4193,24 @@ no partition write, no artifact rebuilt.
   "v68 BOOT alone was the magic", but it does not isolate USERDATA from the
   Stage-4 gap, and a USERDATA-only account leaves v69's fatal NSException
   unexplained.
+
+### v82 addendum — court-ordered audits (2026-11-27, read-only)
+
+Three audits; the first overturns the map's own §9.
+
+- **USERDATA provenance was wrong.** Every parity failure (v68t, v68t-native,
+  v81 excepted) records *"No USERDATA, SYSTEM or RECOVERY write"*. The only
+  USERDATA writes are release `45651107666` (2026-11-25, before v68 booted) and
+  `45949747024` (2026-11-27, v79). So `dea9110c…` and `b0f5dba6…` were **never
+  booted**; the v68t/v68t-native failures ran the *accepted* volume. Both
+  failure modes therefore occur on the accepted data volume, and "USERDATA is
+  the controlling variable" is not supported by the write record.
+- **No volume identity exists anywhere.** Candidate manifests are BOOT-only
+  (kernel/shim/payload); no capture records USERDATA identity at boot.
+  `5f2e2aa6…` is a release image hash, not a device reading.
+- **IRT "discrepancy" is a sampling artifact.** Order is always
+  `status(state=2)` -> `patched (0->3)` -> `patched (final state=3)`. v74 was
+  pulled ~3 min after resume and ends at the pre-patch `final: state=2` stage.
+  No boot is observed stuck at state 2. v68 has zero IRT records, so IRT cannot
+  separate success from failure at all — round-1 hypothesis withdrawn.
+- Tests: 4 new audit tests (18 total, PASS). No device access, no writes.

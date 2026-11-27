@@ -154,6 +154,53 @@ class KeystoreTests(unittest.TestCase):
                 self.assertEqual(ok, [], f"{label}: unexpected successful sel-10")
 
 
+class WriteRecordAuditTests(unittest.TestCase):
+    """Court-ordered audit: the parity failures never changed USERDATA."""
+
+    PT = ROOT / "validation/physical-boot-test"
+
+    def test_parity_boots_record_no_userdata_write(self):
+        for d in ("20261125-ios-v68-boot", "20261125-ios-v69-boot",
+                  "20261125-ios-v70-boot", "20261126-ios-v68t-native-boot"):
+            p = self.PT / d / "README.md"
+            if not p.exists():
+                continue
+            with self.subTest(d):
+                self.assertRegex(p.read_text(), r"[Nn]o USERDATA",
+                                 f"{d}: expected an explicit 'no USERDATA' record")
+
+    def test_only_two_userdata_writes_in_the_case_window(self):
+        hits = []
+        for p in self.PT.rglob("*"):
+            if p.is_file() and p.suffix in (".txt", ".md", ".log"):
+                try:
+                    t = p.read_text(errors="ignore")
+                except OSError:
+                    continue
+                if "of=/dev/block/by-name/USERDATA" in t and "bs=4194304" in t:
+                    hits.append(p)
+        dirs = {h.parent.name for h in hits if "raw" not in h.parts}
+        self.assertLessEqual(len(dirs), 3,
+                             f"unexpected extra USERDATA writes: {sorted(dirs)}")
+
+    def test_map_withdraws_the_per_boot_userdata_chain(self):
+        doc = (ROOT / "validation/input-analysis/"
+               "v82-springboard-lockscreen-dependency-map.md").read_text()
+        self.assertIn("CORRECTED (court-ordered audit)", doc)
+        self.assertIn("never booted", doc)
+
+    def test_irt_state_2_is_a_pre_patch_stage_not_a_failure(self):
+        doc = (ROOT / "validation/input-analysis/"
+               "v82-springboard-lockscreen-dependency-map.md").read_text()
+        self.assertIn("pre-patch stage label", doc)
+        # v74's window must not be read as a failed patch
+        v74 = (self.PT / "20261126-v74-lockdiag-boot/decoded-pmsg.txt").read_text(
+            errors="ignore")
+        self.assertIn("final: state=2", v74)
+        self.assertNotIn("final state=3", v74,
+                         "if v74 ever shows state=3 the artifact reading changes")
+
+
 class DocumentTests(unittest.TestCase):
     def test_map_names_the_earliest_gap_and_the_contradiction(self):
         doc = (ROOT / "validation/input-analysis/"
