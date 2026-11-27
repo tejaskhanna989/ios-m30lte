@@ -1,4 +1,4 @@
-Pstore pull — 2026-11-27 (device in TWRP recovery, before boot with v79 USERDATA)
+Pstore pull — 2026-11-27 (device in TWRP recovery AFTER the v79 boot)
 
 Raw: 16372 bytes, SHA256 48bf44a20107c565d331a60309af34d9d43ca4bf19fd40f3fa9e1ad440a32ff6.
 Decoded: 130 records, clean=False (wrapped ring).
@@ -10,6 +10,10 @@ has no sampler compiled in, so these are stale pstore contents).
 No SWEET SURF records in the surviving window; 24 framebuffer records with
 copied=0 (ring tail).
 
-IMPORTANT: this pstore predates the v79 USERDATA write — the device was in
-recovery during that write. It is NOT evidence about the v79 image. A fresh
-pstore pull after the next boot is required to assess v79.
+CORRECTION: the user rebooted the v79 image and let it run ~15 minutes,
+then returned to TWRP. This pstore is therefore from the v79 boot.
+
+RESULT: lsd remains stable (0 CRASH lsd, 0 corpses) with the completed SpringBoard
+MCM metadata. However the user reports XNU startup for ~15 min and NO visible
+lockscreen. The complete MCM record was NOT sufficient to produce UI. The
+blocker is downstream of container resolution and remains unnamed.
