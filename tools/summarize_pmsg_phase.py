@@ -120,11 +120,15 @@ def main() -> int:
         return 0
     w = max(len(r["label"]) for r in rows)
     print(f"{'boot':{w}}  {'window':4}  {'cov(min)':8}  {'done':4}  {'wait':4}  "
-          f"{'sw/pr/copied (flat)':22}  {'AKS':4}  {'lockfail':8}  ok?")
+          f"{'sw/pr/copied (flat)':22}  {'AKS':4}  {'lockfail':8}  frames")
     for r in rows:
         sw, pr, copied = r["stalled_at"]
-        # A boot cannot have produced a UI frame if backboardd out-waited presents.
-        suspect = "STALL" if r["wait_max"] > r["done_max"] else "-"
+        # wait_max > done_max is NOT a wedge: the final wait is closed by the
+        # present that follows it, and v68's wait records were rotated out of
+        # the ring entirely.  Frames composed is the only meaningful column:
+        # the accepted boot composed 8, every failure composed 3-5.
+        frames = r["stalled_at"][1]
+        suspect = "ok" if frames >= 8 else "starved"
         print(f"{r['label']:{w}}  {r['window']:4}  {r['coverage_min']:8.1f}  "
               f"{r['done_max']:4d}  {r['wait_max']:4d}  "
               f"{sw}/{pr}/{copied:<14}  {r['aks']:4d}  {r['aks_lockfail']:8d}  {suspect}")
