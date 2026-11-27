@@ -361,6 +361,24 @@ class EmbeddedCiScriptTests(unittest.TestCase):
         for name in ("allowed_names", "ours", "upstream", "applied", "skipped"):
             self.assertIn(name, assigned, f"{name} must be assigned in the CI block")
 
+    def test_skip_wording_matches_the_real_patcher(self):
+        """Guard the exact divergence that cost three CI runs.
+
+        The strict loop emits "Allowed skip of <name>" with no path; upstream's
+        own loop emits "Skipping patch <path>". Fixtures must use the real
+        wording, and the CI regex must accept what the patcher really prints.
+        """
+        import re as _re
+        patcher = (ROOT / "tools/patch_build_sh.py").read_text()
+        emitted = _re.findall(r'warning "([^"]*)"', patcher)
+        allowed = [m for m in emitted if "Allowed skip of" in m]
+        self.assertTrue(allowed, "patcher no longer emits an allowed-skip message")
+        sample = allowed[0].replace("$PATCH_NAME", "TrustCache.patch")
+        self.assertRegex(sample, r"Allowed skip of ([^\s(]+\.patch)")
+        code = self.extract("applied but not in tree")
+        self.assertIn("Allowed skip of", code,
+                      "CI block must understand the patcher's own wording")
+
     def test_assert_block_strips_ansi(self):
         """build.sh colourises output; the block must parse through the escapes."""
         import re as _re
@@ -386,7 +404,7 @@ class EmbeddedCiScriptTests(unittest.TestCase):
             C = "\x1b[1;32m"
             R = "\x1b[0m"
             lines = [f"{C}=> Applying patch: /w/dxb/patches/0001-a.patch{R}"]
-            lines += [f"{C}=> Skipping patch /w/dxb/patches/{n} (allowed){R}"
+            lines += [f"{C}[warning] Allowed skip of {n} (see SKIP-ALLOWLIST.txt){R}"
                       for n in allowed]
             (tmp / "build.log").write_text("\n".join(lines))
             (tmp / "chk.py").write_text(code)
@@ -421,8 +439,12 @@ class EmbeddedCiScriptTests(unittest.TestCase):
             (up / "15.0").mkdir()
             (up / "15.0/entitlements.patch").write_text("x")
             lines = ["=> Applying patch: /w/dxb/patches/0001-a.patch"]
-            lines += [f"=> Skipping patch /w/dxb/patches/{n} (allowed)" for n in allowed]
-            lines += ["=> Applying patch: /w/dxb/patches/15.0/entitlements.patch"]
+            # the strict loop's real wording: name only, no path
+            lines += [f"[warning] Allowed skip of {n} (see SKIP-ALLOWLIST.txt)"
+                      for n in allowed]
+            # 15.0/ exists on disk but is NOT iterated for MACOS_VERSION=13.5,
+            # so it must not be reported as applied either.
+            pass
             (tmp / "build.log").write_text("\n".join(lines))
             script = tmp / "chk.py"
             script.write_text(code)

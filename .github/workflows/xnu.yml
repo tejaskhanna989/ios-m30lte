@@ -160,14 +160,20 @@ jobs:
         allowed_names = {l.split("\t")[0].strip() for l in allowed.splitlines()
                          if l.strip() and not l.startswith("#")}
         ours = {p.name for p in Path("xnu/patches-minimal").glob("*.patch")}
-        # build.sh chooses PATCH_DIR=patches/<MACOS_VERSION> (e.g. 15.0 for the
-        # macos-15 runner), and those versioned patches are applied too. Glob
-        # the whole tree: the earlier top-level-only glob silently omitted 7
-        # patches that really are applied, failing this assertion.
-        upstream = {p.name for p in Path("dxb/patches").rglob("*.patch")}
+        # build.sh sets PATCH_DIR per MACOS_VERSION. For 13.5 (this workflow's
+        # default) PATCH_DIR is the top level of patches/, and only that
+        # directory is iterated - patches/14.4, /15.0 and /26.0 are present on
+        # disk but are NOT applied. Model the directory that is actually
+        # iterated instead of the whole tree.
+        upstream = {p.name for p in Path("dxb/patches").glob("*.patch")}
         on_disk = sorted(ours | upstream)
         applied = set(re.findall(r"Applying patch: .*/([^/\s]+\.patch)", log))
+        # Our strict loop replaces the upstream for-loop and reports a tolerated
+        # failure as "Allowed skip of <name>" with no path, whereas upstream's
+        # own loop reports "Skipping patch <path>". Accept both spellings or
+        # every allow-listed patch reads as unapplied.
         skipped = set(re.findall(r"Skipping patch .*/([^/\s]+\.patch)", log))
+        skipped |= set(re.findall(r"Allowed skip of ([^\s(]+\.patch)", log))
         missing = [n for n in on_disk
                    if n not in applied and n not in allowed_names]
         phantom = sorted(applied - set(on_disk))
@@ -191,6 +197,21 @@ jobs:
             print(f"skipped sample       : {sorted(skipped)[:3]}")
             print(f"allow-list sample    : {sorted(allowed_names)[:3]}")
             print(f"ours not applied     : {sorted(ours - applied)[:5]}")
+            # CI logs are not retrievable in this environment, but check-run
+            # annotations are. Emit the diagnosis there so a failure is
+            # self-explaining instead of requiring another blind iteration.
+            for line in (
+                f"log_bytes={len(raw)} ansi={len(raw) - len(log)}",
+                f"ours={len(ours)} upstream={len(upstream)} applied={len(applied)}"
+                f" skipped={len(skipped)} allowlist={len(allowed_names)}",
+                f"applied_sample={sorted(applied)[:2]}",
+                f"skipped_sample={sorted(skipped)[:2]}",
+                f"missing={missing[:5]}",
+                f"phantom={phantom[:5]}",
+                f"ours_missing={ours_missing[:5]}",
+                f"bad_skips={bad_skips[:5]}",
+            ):
+                print(f"::error::{line}")
             raise SystemExit("ERROR: patch set mismatch\n  " + "\n  ".join(problems))
         print(f"PASS: {len(applied)} patches matched, "
               f"{len(allowed_names)} allow-listed skips, 0 undocumented")
