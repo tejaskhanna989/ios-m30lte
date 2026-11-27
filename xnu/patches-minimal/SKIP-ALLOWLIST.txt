@@ -1,0 +1,16 @@
+# Patches that MAY fail to apply without failing the build.
+#
+# Format: patch-name<TAB>reason
+#
+# RULES
+#  * An entry here is a claim that the patch is *intentionally* not applied to
+#    the current buildtree (e.g. it is already upstream in the pinned
+#    darwin-xnu-build revision).
+#  * The reason must name the evidence, not an opinion.
+#  * tools/verify_patch_provenance.py fails the build if a patch is skipped
+#    without an entry here, AND fails if an entry here describes a patch that
+#    actually applied (stale justification).
+#  * Adding an entry to silence a real failure is the exact behaviour this
+#    system exists to prevent. If a patch must not run, say why with a reference.
+#
+# Currently EMPTY: every patch in this directory is expected to apply.

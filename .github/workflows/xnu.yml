@@ -97,6 +97,13 @@ jobs:
         MAKEFLAGS: ${{ inputs.keep_going == 'false' && '' || '-k' }}
       run: |
         set -o pipefail
+        # Export the patch manifest path and the allow-list so the strict loop
+        # records every patch it applies. The allow-list is the single
+        # documented place a skip can be justified.
+        export PATCH_MANIFEST="$PWD/../m30-patch-manifest.tsv"
+        export M30_PATCH_ALLOW_SKIP="$(grep -v '^#' "$PWD/../xnu/patches-minimal/SKIP-ALLOWLIST.txt" \
+          | grep -v '^$' | cut -f1 | tr '\n' ' ')"
+        : > "$PATCH_MANIFEST"
         bash build.sh 2>&1 | tee ../build.log
     - name: Verify libfirehose_kernel is iOS arm64
       if: env.XNU_TARGET == 'iphoneos'
@@ -122,15 +129,42 @@ jobs:
         python3 tools/verify_m30_buildtree.py \
           --tree dxb/xnu \
           --patch-dir dxb/patches | tee m30-buildtree-verification.json
-    - name: Verify M30 framebuffer fix patch chain applied
+    - name: Verify strict patch provenance (all patches, not just 0442-0445)
       run: |
-        for p in 0442-m30-framebuffer-commit-diag.patch 0443-m30-framebuffer-swapwait-handshake.patch 0444-m30-framebuffer-notify-push.patch 0445-m30-framebuffer-selector-trace.patch; do
-          grep -q "Applying patch: .*$p" build.log
-          if grep -q "Skipping patch .*$p" build.log; then
-            echo "ERROR: patch $p was skipped by the tolerant build script"
-            exit 1
-          fi
-        done
+        set -o pipefail
+        python3 tools/verify_patch_provenance.py \
+          --manifest m30-patch-manifest.tsv \
+          --patch-dir xnu/patches-minimal \
+          --allowlist xnu/patches-minimal/SKIP-ALLOWLIST.txt \
+          --kernel-sha256 "$(shasum -a 256 "dxb/build/$(ls dxb/build | head -1)" 2>/dev/null | cut -d' ' -f1 || echo unknown)" \
+          --json m30-patch-provenance.json
+    - name: Assert the applied patch set matches xnu/patches-minimal exactly
+      run: |
+        # Independent of the manifest's own bookkeeping: every patch on disk must
+        # appear as "Applying patch:" in the build log, and no patch may appear
+        # as skipped. This is the check whose absence let v70 ship an
+        # eleven-patch build documented as six.
+        python3 - <<'PY'
+        import re
+        from pathlib import Path
+        log = Path("build.log").read_text(errors="ignore")
+        on_disk = sorted(p.name for p in Path("xnu/patches-minimal").glob("*.patch"))
+        applied = set(re.findall(r"Applying patch: .*/([^/\s]+\.patch)", log))
+        skipped = set(re.findall(r"Skipping patch .*/([^/\s]+\.patch)", log))
+        missing = [n for n in on_disk if n not in applied]
+        phantom = sorted(applied - set(on_disk))
+        allowed = Path("xnu/patches-minimal/SKIP-ALLOWLIST.txt").read_text()
+        allowed_names = {l.split("\t")[0].strip() for l in allowed.splitlines()
+                         if l.strip() and not l.startswith("#")}
+        bad_skips = sorted(skipped - allowed_names)
+        problems = []
+        if missing: problems.append(f"not applied: {missing}")
+        if phantom: problems.append(f"applied but not in tree: {phantom}")
+        if bad_skips: problems.append(f"silently skipped: {bad_skips}")
+        if problems:
+            raise SystemExit("ERROR: patch set mismatch\n  " + "\n  ".join(problems))
+        print(f"PASS: {len(applied)} patches applied, 0 undocumented, 0 unexplained skips")
+        PY
         python3 - <<'PY'
         import hashlib
         from pathlib import Path
@@ -331,7 +365,14 @@ jobs:
       if: always()
       with:
         name: xnu-kernel-${{ matrix.runner }}
-        path: out/
+        # The patch manifest and its verification report travel WITH the kernel:
+        # a kernel whose applied-patch set is unknown must not be usable as a
+        # candidate. This is the artifact the provenance audit reads.
+        path: |
+          out/
+          m30-patch-manifest.tsv
+          m30-patch-provenance.json
+          build.log
         if-no-files-found: warn
         retention-days: 1
     - name: Check Cortex-A53 compatibility (no ARMv8.1 LSE atomics)
