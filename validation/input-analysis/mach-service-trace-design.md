@@ -7,8 +7,8 @@ bounded, no Apple binary modification.
 
 | Question | Kernel visibility | Method |
 |---|---|---|
-| Was a named Mach service port registered, by whom, when? | **Yes** | `mach_port_construct()` receives `mach_service_port_info_t` from userspace via `copyin()` before `ipc_service_port_label_alloc()`. The string name and calling process are available here regardless of `CONFIG_SERVICE_PORT_INFO`. |
-| Did SpringBoard send to a named service port? | **Yes**, with `CONFIG_SERVICE_PORT_INFO` enabled | `ipc_kmsg.c` extracts `sp_info` from the destination port's service label during `ipc_object_copyin`. Service name, process name, `msgh_id` and timestamp are available. |
+| Was a Mach port constructed with a given textual service name, by whom, when? | **Yes** | `mach_port_construct()` receives `mach_service_port_info_t` from userspace via `copyin()` before `ipc_service_port_label_alloc()`. The string name and calling process are available here regardless of `CONFIG_SERVICE_PORT_INFO`. This is kernel-side port creation, not proof of launchd directory advertisement. |
+| Did SpringBoard send to a port whose kernel label carries a given service name? | **Yes**, with `CONFIG_SERVICE_PORT_INFO` enabled | `ipc_kmsg.c` extracts `sp_info` from the destination port's service label during `ipc_object_copyin`. Name provenance is the REG record that created the label. |
 | Did SpringBoard call `mach_service_lookup("com.apple.frontboard.systemappservices")`? | **No, not by name** | `service_lookup`/`mach_service_checkin` are not in the open-source XNU tree; the kernel sees only IPC to launchd. The requested name lives in a MIG payload whose format is not defined in this repository. |
 | Was a FrontBoard scene created/activated? | **No** | Scene creation is private SpringBoard/FrontBoard userspace. No kernel event identifies it. |
 | Did a MIG call succeed or fail semantically? | **Partial** | Kernel return code from `mach_msg` is visible; the MIG `retCode` in the reply body is not decoded. |
@@ -22,18 +22,19 @@ claim of kernel visibility into SpringBoard scene internals would be false.
 1. `osfmk/ipc/mach_port.c`, inside `mach_port_construct()` immediately after a
    successful `ipc_service_port_label_alloc()`.
    - Emits `M30 SVC REG <ticks> <proc> <service_name>`.
-   - Proves: a service port with that name was created by that process at that
-     time. For `com.apple.frontboard.systemappservices` this is the kernel-side
-     registration/launchd-handoff event.
-   - Does not prove: the service was usable by SpringBoard, or that SpringBoard
-     looked it up successfully.
+   - Proves: that process constructed a Mach port and declared it with that
+     textual name via the kernel service-port API at that time.
+   - Does not prove: launchd advertised the name in its bootstrap directory,
+     or that SpringBoard looked it up successfully. See
+     `mach-service-name-mapping.md` for the exact source path.
 2. `osfmk/ipc/ipc_kmsg.c`, inside the existing `CONFIG_SERVICE_PORT_INFO` block
    where `sp_info` is extracted from the destination port.
    - Emits `M30 SVC SEND <ticks> <proc> -> <service_name> id=<msgh_id>`.
-   - Proves: a process sent a Mach message to a named service port, with the
-     MIG message ID. Repeated `SpringBoard -> com.apple.frontboard.systemappservices`
-     demonstrates access to that service.
-   - Does not prove: which FrontBoard method was called, or its result.
+   - Proves: a process sent a Mach message to a port whose kernel label carries
+     that textual name, with the MIG message ID. Correlate with the REG line to
+     establish who created the label (normally launchd).
+   - Does not prove: which FrontBoard method was called, that this was a
+     `mach_service_lookup`, or its result.
 
 ## Minimal patch design
 
@@ -54,8 +55,8 @@ M30 SVC SEND 1234600000 SpringBoard -> com.apple.frontboard.systemappservices id
 ```
 
 Interpretation:
-- REG for frontboard but no SEND from SpringBoard -> service exists, SpringBoard
-  never accesses it (Stage 4 blocker).
+- REG for frontboard by launchd but no SEND from SpringBoard -> named port was
+  constructed, SpringBoard never sent to it (Stage 4 blocker).
 - SEND present -> service access verified; failure is downstream (Stage 5/6).
 - No REG at all -> service never registered in that boot.
 - The trace cannot say whether scene creation succeeded.
