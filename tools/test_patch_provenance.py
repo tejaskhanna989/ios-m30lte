@@ -366,6 +366,7 @@ class RealTreeTests(unittest.TestCase):
             "skywalk_ventura.patch",                # upstream, mutually exclusive pair
             "syntax_checker_sonoma.patch",          # upstream, LLDB tooling
             "syntax_checker_ventura.patch",         # upstream, LLDB tooling
+            "TrustCache.patch",                     # upstream, already applied
         }
         for name in known_out_of_tree:
             with self.subTest(name):
