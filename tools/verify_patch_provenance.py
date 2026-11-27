@@ -37,11 +37,18 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 
 VALID_STATUSES = {"applied", "allowed-skip", "FAILED"}
 ALLOWLIST_HEADER = "# patch-name\treason"
+# Something a reader (or a future run) can actually check. Deliberately broad,
+# but it rejects pure opinion such as "known harmless" or "probably fine".
+EVIDENCE_PATTERN = re.compile(
+    r"\b(?:\d{8,}|[0-9a-f]{7,40}|[\w./-]+/[\w.-]+\.(?:py|sh|c|h|cpp|txt|md|patch)"
+    r"|(?:python3|git|grep|shasum|bash|ls|find)\s+[\w./-]+)\b"
+)
 
 
 class Problem(list):
@@ -103,6 +110,13 @@ def parse_allowlist(path: Path | None, problems: Problem) -> dict[str, str]:
         if not reason:
             problems.add("allowlist-malformed",
                          f"{path.name}:{lineno}: empty reason for {name}")
+        elif not EVIDENCE_PATTERN.search(reason):
+            # A free-text "reason" is the same unauditable claim this whole
+            # mechanism exists to eliminate. Require something falsifiable: a
+            # CI run id, a repo path, a commit sha, or a verification command.
+            problems.add("allowlist-no-evidence",
+                         f"{path.name}:{lineno}: {name} has a reason but no "
+                         f"checkable evidence (need a run id, path, sha or command)")
         allowed[name] = reason
     return allowed
 

@@ -295,8 +295,28 @@ class VerifyProvenanceTests(unittest.TestCase):
     def test_justified_skip_is_accepted(self):
         h = self.make("0001-a.patch")
         self.write_manifest([(1, "0001-a.patch", h, "allowed-skip")])
-        self.allow.write_text("# patch-name\treason\n0001-a.patch\ttest reason\n")
+        self.allow.write_text("# patch-name\treason\n"
+                             "0001-a.patch\tsee tools/mkadt.py, verified\n")
         self.assertEqual(self.result()["result"], "PASS")
+
+    def test_allowlist_entry_needs_checkable_evidence(self):
+        """A free-text reason is an unauditable claim; require something falsifiable."""
+        h = self.make("0001-a.patch")
+        self.write_manifest([(1, "0001-a.patch", h, "allowed-skip")])
+        for vague in ("known harmless", "probably fine", "safely skipped"):
+            self.allow.write_text(f"0001-a.patch\t{vague}\n")
+            self.assertIn("allowlist-no-evidence", self.codes(),
+                          f"{vague!r} must not be accepted as justification")
+
+    def test_allowlist_entry_accepts_real_evidence(self):
+        h = self.make("0001-a.patch")
+        self.write_manifest([(1, "0001-a.patch", h, "allowed-skip")])
+        for good in ("CI run 46061485024 evidence",
+                     "edits tools/mkadt.py, a host-side generator",
+                     "verified on darwin-xnu-build@66390652",
+                     "zero of 176 patches touch bsd/skywalk/packet/os_packet.h"):
+            self.allow.write_text(f"0001-a.patch\t{good}\n")
+            self.assertNotIn("allowlist-no-evidence", self.codes(), good)
 
     def test_stale_allowlist_entry(self):
         h = self.make("0001-a.patch")
