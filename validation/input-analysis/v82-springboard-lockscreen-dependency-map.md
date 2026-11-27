@@ -52,7 +52,7 @@ because no further layer is staged. See §3.3.
 
 | Needs | Evidence | Status |
 |---|---|---|
-| Process alive | `M30 UI: sb=27 bb=57 reason=none` (v81 rec 26) | **proven** |
+| Process alive **at the moment of the record** | `M30 UI: sb=27 bb=57 reason=none` (v81 rec 26) | **proven for one instant only** — v74's durable sampler showed this; it does not establish continued health, and §3.5 shows mode-B boots stop composing ~90 s later |
 | Reads its preferences | `com.apple.springboard` plist with `BKNoWatchdogs=True`, `MCForceShowCloudConfigurationUI=False`, `FBLaunchWatchdogExceptions={com.apple.purplebuddy:100.0}` (extracted, `…20261125-ios-v68t-boot/host-logs/0004e807_…plist`) | **proven** |
 | Activation gate satisfied | `mobileactivationd.log.0`: `Hactivation is enabled, short circuiting activation state to Activated` | **proven** |
 | Setup gate satisfied | `SetupDone=True SetupFinishedAllSteps=True SetupVersion=11` (`0004e761_…purplebuddy.plist`) | **proven** (but see §5 — migration still re-runs) |
