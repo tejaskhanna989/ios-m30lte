@@ -24,4 +24,4 @@ jobs:
       - name: v82 lockscreen dependency-map invariants
         run: python3 tools/test_v82_dependency_map.py
       - name: Compile changed tools
-        run: python3 -m py_compile tools/m30lte-root-tweaks.py tools/verify_ios_container_metadata.py tools/hfsplus_ro.py tools/summarize_pmsg_phase.py
+        run: python3 -m py_compile tools/m30lte-root-tweaks.py tools/verify_ios_container_metadata.py tools/hfsplus_ro.py tools/summarize_pmsg_phase.py tools/boot_axis_matrix.py

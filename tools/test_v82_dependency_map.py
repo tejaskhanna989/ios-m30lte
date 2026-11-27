@@ -201,6 +201,47 @@ class WriteRecordAuditTests(unittest.TestCase):
                          "if v74 ever shows state=3 the artifact reading changes")
 
 
+class BootAxisTests(unittest.TestCase):
+    """Round 3: the BOOT axis contains two regressions and no reproducible one."""
+
+    def setUp(self):
+        import boot_axis_matrix as bam
+        self.rows = {r["label"]: r for r in
+                     (bam.row(*c) for c in bam.CANDIDATES)}
+
+    def test_0446_cap_present_in_every_fatal_boot(self):
+        for label in ("v69", "v70"):
+            with self.subTest(label):
+                self.assertEqual(self.rows[label]["cap_0446"], "yes",
+                                 f"{label}: fatal boots carry the 0446 cap")
+
+    def test_0446_cap_absent_from_both_silent_parity_boots(self):
+        """0446 cannot cause a mode it does not appear in."""
+        for label in ("v68t", "v68t-native"):
+            with self.subTest(label):
+                self.assertEqual(self.rows[label]["cap_0446"], "no", label)
+
+    def test_only_fatal_boots_emit_nsexception(self):
+        for label, r in self.rows.items():
+            if r.get("err"):
+                continue
+            with self.subTest(label):
+                expect = "YES" if label in ("v69", "v70") else "no"
+                self.assertEqual(r["fatal"], expect, label)
+
+    def test_0446_patch_is_missing_from_the_tree(self):
+        """The one isolated experiment on this axis cannot be rebuilt."""
+        present = list((ROOT / "xnu/patches-minimal").glob("0446-*"))
+        self.assertEqual(present, [],
+                         "0446 was restored: update the report's reproducibility finding")
+
+    def test_v69_v70_manifests_do_not_exist(self):
+        for d in ("ios-candidate-v69-out", "ios-candidate-v70-out"):
+            with self.subTest(d):
+                self.assertFalse((ROOT / "validation" / d).exists(),
+                                 f"{d} now exists: the provenance table should be updated")
+
+
 class DocumentTests(unittest.TestCase):
     def test_map_names_the_earliest_gap_and_the_contradiction(self):
         doc = (ROOT / "validation/input-analysis/"

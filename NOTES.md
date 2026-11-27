@@ -4214,3 +4214,30 @@ Three audits; the first overturns the map's own §9.
   No boot is observed stuck at state 2. v68 has zero IRT records, so IRT cannot
   separate success from failure at all — round-1 hypothesis withdrawn.
 - Tests: 4 new audit tests (18 total, PASS). No device access, no writes.
+
+### v83 — Case #167 round 3: BOOT-axis forensics (2026-11-27, offline)
+
+Report: `validation/input-analysis/v83-boot-axis-forensics.md`. Tool:
+`tools/boot_axis_matrix.py` (matrix reproducible in ~1s). Tests: 23 total, PASS.
+
+- **0446 cannot be the cause.** Measured, not asserted: the cap leaves <=8
+  heartbeats, so v68(138)/v68t(28)/v68t-native(34) provably lack it while
+  v69(4)/v70(5) carry it. It is absent from a silent failure, so it cannot
+  explain that mode.
+- **Fatal and silent modes are produced by disjoint BOOT changes.** Fatal =
+  logging only (0446/0447/0448). Silent = logging + 0451 Melfas touch +
+  0453/0454/0455. No patch is common to both except 0446, which is contradicted.
+- **The hard unexplained fact:** v70 = v68 + a logging cap only, and it produced
+  a fatal NSException. It is the only isolated experiment on this axis.
+- **Reproducibility failure (most consequential):** `0446` is absent from
+  `xnu/patches-minimal/`; v69/v70 candidate manifests do not exist; v70 source
+  `528bb276` is unreachable; the v81 capture lives only on `origin/main`, not on
+  this branch. The accepted baseline therefore cannot be rebuilt or re-verified
+  from this tree. Restoring 0446 + a CI patch-provenance check is the top
+  offline action.
+- `0454` does insert `proc_iterate(PROC_ALLPROCLIST)` into the framebuffer
+  present path, but gated behind `m30uihb` + every 60th present; 0 `M30 UI HB`
+  records in any case boot, and the armed uihb2 boot still produced only 5
+  presents. Negative result for 0454 as cause, not proof of harmlessness.
+- No device access, no flash, no partition write, no functional patch. v68
+  remains the accepted baseline.
