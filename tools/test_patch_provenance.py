@@ -357,7 +357,12 @@ class RealTreeTests(unittest.TestCase):
 
         # xnu source trees never contain a top-level tools/ directory with
         # these scripts; a patch touching one is a repo-side tool edit.
-        known_out_of_tree = {"9999d-m30-platform-identity.patch"}
+        known_out_of_tree = {
+            "9999d-m30-platform-identity.patch",   # repo-side host tool
+            "iobuffermemd_monterey.patch",          # upstream, shadowed by 0009/0046
+            "kas_info.patch",                       # upstream, shadowed by vm_unix patches
+            "machine_routines.patch",               # upstream, shadowed by 0008/9998c
+        }
         for name in known_out_of_tree:
             with self.subTest(name):
                 self.assertIn(name, entries,
