@@ -88,11 +88,17 @@ void ipc_service_port_label_get_info(ipc_service_port_label_t port_splabel, mach
 #endif
 ```
 
-`CONFIG_SERVICE_PORT_INFO` is **not enabled** in the current M30 config
-(`config/MASTER.arm64.m30lte` has no enabling line; the generic MASTER only lists
-it in a commented template at line 768). Patch 0456 enables it so the name is
-stored and readable. Without that config change the send-side name would be
-unavailable — this is a real dependency, not an assumption.
+`CONFIG_SERVICE_PORT_INFO` is **not enabled** in the current M30 config. An
+earlier patch revision enabled it via `config/MASTER.arm64.m30lte`, but that
+broke the verifier's replay of critical patch `0400-m30lte-board-target.patch`
+(which touches the same file). The committed patch instead makes the name field,
+its storage in `ipc_service_port_label_alloc()`, and
+`ipc_service_port_label_get_info()` conditional on
+`defined(ARM64_BOARD_CONFIG_M30LTE) || CONFIG_SERVICE_PORT_INFO` in
+`ipc_service_port.h` and `ipc_service_port.c`. The send-side hook in `ipc_kmsg.c`
+was moved outside the `CONFIG_SERVICE_PORT_INFO` block and calls the getter
+directly. No config file is modified. Verified with `git apply --check` against
+the current CI build tree.
 
 **What `M30 SVC SEND <ticks> <proc> -> <name> id=<msgh_id>` proves:** process
 `<proc>` sent a Mach message to a port whose kernel service label carries the
