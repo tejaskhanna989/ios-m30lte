@@ -173,6 +173,16 @@ jobs:
         assert all("m30_hid_enabled" in lines[i - 1] for i in calls[1:])
         print("PASS Melfas driver hash, IRQ sampler, and 4 gated HID calls")
         PY
+    - name: Verify M30 Mach service trace patch applied
+      run: |
+        p=0456-m30-mach-service-trace.patch
+        grep -q "Applying patch: .*$p" build.log
+        if grep -q "Skipping patch .*$p" build.log; then
+          echo "ERROR: patch $p was skipped by the tolerant build script"
+          exit 1
+        fi
+        python3 tools/test_m30_mach_service_trace.py
+
     - name: Verify M30 UI heartbeat diagnostic patch applied
       if: inputs.ui_exact != 'true'
       run: |

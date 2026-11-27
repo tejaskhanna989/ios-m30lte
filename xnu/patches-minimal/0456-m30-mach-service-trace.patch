@@ -1,0 +1,11 @@
+diff --git a/config/MASTER.arm64.m30lte b/config/MASTER.arm64.m30lte
+--- a/config/MASTER.arm64.m30lte	2026-11-28 00:33:27.627081909 +0530
++++ b/config/MASTER.arm64.m30lte	2026-11-28 00:35:41.609241480 +0530
+@@ -104,6 +104,7 @@
+ options		ALTERNATE_DEBUGGER	# <alternate_debugger>
+ 
+ options   CONFIG_VNODES=1024		# <xsmall>
++options   config_service_port_info	# bounded Mach service tracing
+ 
+ options   CONFIG_FREEZE_SUSPENDED_MIN=4		# <xsmall>
+ 
