@@ -416,8 +416,13 @@ class EmbeddedCiScriptTests(unittest.TestCase):
             (ours / "0001-a.patch").write_text("x")
             for n in allowed:
                 (up / n).write_text("x")
+            # build.sh applies from a version subdirectory too (e.g. 15.0).
+            # Omitting that here is what let the real bug through.
+            (up / "15.0").mkdir()
+            (up / "15.0/entitlements.patch").write_text("x")
             lines = ["=> Applying patch: /w/dxb/patches/0001-a.patch"]
             lines += [f"=> Skipping patch /w/dxb/patches/{n} (allowed)" for n in allowed]
+            lines += ["=> Applying patch: /w/dxb/patches/15.0/entitlements.patch"]
             (tmp / "build.log").write_text("\n".join(lines))
             script = tmp / "chk.py"
             script.write_text(code)

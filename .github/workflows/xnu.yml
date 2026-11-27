@@ -160,7 +160,11 @@ jobs:
         allowed_names = {l.split("\t")[0].strip() for l in allowed.splitlines()
                          if l.strip() and not l.startswith("#")}
         ours = {p.name for p in Path("xnu/patches-minimal").glob("*.patch")}
-        upstream = {p.name for p in Path("dxb/patches").glob("*.patch")}
+        # build.sh chooses PATCH_DIR=patches/<MACOS_VERSION> (e.g. 15.0 for the
+        # macos-15 runner), and those versioned patches are applied too. Glob
+        # the whole tree: the earlier top-level-only glob silently omitted 7
+        # patches that really are applied, failing this assertion.
+        upstream = {p.name for p in Path("dxb/patches").rglob("*.patch")}
         on_disk = sorted(ours | upstream)
         applied = set(re.findall(r"Applying patch: .*/([^/\s]+\.patch)", log))
         skipped = set(re.findall(r"Skipping patch .*/([^/\s]+\.patch)", log))
@@ -175,8 +179,21 @@ jobs:
         if ours_missing: problems.append(f"OUR patches not applied: {ours_missing}")
         if bad_skips: problems.append(f"silently skipped: {bad_skips}")
         if problems:
+            print("=== patch-set assertion diagnosis ===")
+            print(f"log bytes            : {len(raw)}")
+            print(f"ansi sequences found : {len(raw) - len(log)}")
+            print(f"ours on disk         : {len(ours)}")
+            print(f"upstream on disk     : {len(upstream)}")
+            print(f"applied detected     : {len(applied)}")
+            print(f"skipped detected     : {len(skipped)}")
+            print(f"allow-list names     : {len(allowed_names)}")
+            print(f"applied sample       : {sorted(applied)[:3]}")
+            print(f"skipped sample       : {sorted(skipped)[:3]}")
+            print(f"allow-list sample    : {sorted(allowed_names)[:3]}")
+            print(f"ours not applied     : {sorted(ours - applied)[:5]}")
             raise SystemExit("ERROR: patch set mismatch\n  " + "\n  ".join(problems))
-        print(f"PASS: {len(applied)} patches applied, 0 undocumented, 0 unexplained skips")
+        print(f"PASS: {len(applied)} patches matched, "
+              f"{len(allowed_names)} allow-listed skips, 0 undocumented")
         PY
         python3 - <<'PY'
         import hashlib
