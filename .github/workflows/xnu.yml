@@ -148,7 +148,14 @@ jobs:
         python3 - <<'PY'
         import re
         from pathlib import Path
-        log = Path("build.log").read_text(errors="ignore")
+        import re as _re
+        raw = Path("build.log").read_text(errors="ignore")
+        # The build script colourises its output, so the patch lines are
+        # decorated. The error-reporting step in this same workflow strips ANSI
+        # escapes for the same reason. Without this the filename capture below
+        # still matches, but "Skipping patch" does not, and every allow-listed
+        # upstream skip was being reported as a missing patch.
+        log = _re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", raw)
         allowed = Path("xnu/patches-minimal/SKIP-ALLOWLIST.txt").read_text()
         allowed_names = {l.split("\t")[0].strip() for l in allowed.splitlines()
                          if l.strip() and not l.startswith("#")}

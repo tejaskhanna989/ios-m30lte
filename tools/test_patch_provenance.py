@@ -361,6 +361,41 @@ class EmbeddedCiScriptTests(unittest.TestCase):
         for name in ("allowed_names", "ours", "upstream", "applied", "skipped"):
             self.assertIn(name, assigned, f"{name} must be assigned in the CI block")
 
+    def test_assert_block_strips_ansi(self):
+        """build.sh colourises output; the block must parse through the escapes."""
+        import re as _re
+        code = self.extract("applied but not in tree")
+        self.assertIn("x1b", code, "the block must strip ANSI escapes")
+
+    def test_assert_block_handles_colourised_log(self):
+        import tempfile
+        code = self.extract("applied but not in tree")
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            ours = tmp / "xnu/patches-minimal"
+            up = tmp / "dxb/patches"
+            ours.mkdir(parents=True)
+            up.mkdir(parents=True)
+            allow = ROOT / "xnu/patches-minimal/SKIP-ALLOWLIST.txt"
+            (ours / "SKIP-ALLOWLIST.txt").write_text(allow.read_text())
+            allowed = {l.split("\t")[0].strip() for l in allow.read_text().splitlines()
+                       if l.strip() and not l.startswith("#")}
+            (ours / "0001-a.patch").write_text("x")
+            for n in allowed:
+                (up / n).write_text("x")
+            C = "\x1b[1;32m"
+            R = "\x1b[0m"
+            lines = [f"{C}=> Applying patch: /w/dxb/patches/0001-a.patch{R}"]
+            lines += [f"{C}=> Skipping patch /w/dxb/patches/{n} (allowed){R}"
+                      for n in allowed]
+            (tmp / "build.log").write_text("\n".join(lines))
+            (tmp / "chk.py").write_text(code)
+            r = subprocess.run([sys.executable, str(tmp / "chk.py")], cwd=tmp,
+                               capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0, f"{r.stdout}\n{r.stderr}")
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
     def test_assert_block_passes_on_a_consistent_build_log(self):
         """Execute it against a synthetic workspace that matches the allow-list."""
         import os
