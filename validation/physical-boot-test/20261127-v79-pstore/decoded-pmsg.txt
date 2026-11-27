@@ -1,0 +1,136 @@
+# M30LTE pstore pmsg decode
+# input_sha256=48bf44a20107c565d331a60309af34d9d43ca4bf19fd40f3fa9e1ad440a32ff6
+# input_bytes=16372 records=130 consumed=16372 clean=False
+[000] @0x000021 len= 32 out 0/4096 ->: 
+[001] @0x000046 len= 81 XNU: SWEET AKS: remindd sel 35 arg0 0 in 1/0 out 0/4096 -> 0x0
+[002] @0x000097 len= 55 XNU: M30 UI: sb=27 bb=57 reason=none
+[003] @0x0000ce len= 40 XNU: SMP --- sample 2
+[004] @0x0000f6 len= 74 XNU: SMP backboardd[57] slide 0x4f730000 mh 0x1008d8000
+[005] @0x000140 len=177 XNU: SMP backboardd t0 pc 0x211d41030 lr 0x211d52b18 sp 0x16f526880 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1008e1e40 0x1f3d54344 0x0
+[006] @0x0001f1 len=197 XNU: SMP backboardd t1 pc 0x211d41ad0 lr 0x1dd268908 sp 0x16f63a850 bt 0x1dd268ca0 0x1008f0a78 0x1dd2c77a8 0x1dd2c8780 0x1dd26e298 0x1dd26eda0 0x1dd278dc8 0x2212cabd0 0x2212ca720
+[007] @0x0002b6 len=197 XNU: SMP backboardd t2 pc 0x211d41030 lr 0x211d52b18 sp 0x16f751eb0 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1ddcd2f70 0x2212cc0ec 0x2212ca72c
+[008] @0x00037b len=161 XNU: SMP backboardd t3 pc 0x211d41030 lr 0x211d52b18 sp 0x16f9729b0 bt 0x211d52db8 0x211d41524 0x1d79fc884 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[009] @0x00041c len=209 XNU: SMP backboardd t4 pc 0x211d41030 lr 0x211d52b18 sp 0x16fb0dd90 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1d7c31ccc 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[010] @0x0004ed len=209 XNU: SMP backboardd t5 pc 0x211d41030 lr 0x211d52b18 sp 0x16fc19d90 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1d7c31ccc 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[011] @0x0005be len=209 XNU: SMP backboardd t6 pc 0x211d41030 lr 0x211d52b18 sp 0x16fd25d90 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1d7c31ccc 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[012] @0x00068f len=209 XNU: SMP backboardd t7 pc 0x211d41030 lr 0x211d52b18 sp 0x16fe31d90 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1d7c31ccc 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[013] @0x000760 len=197 XNU: SMP backboardd t8 pc 0x211d41030 lr 0x211d52b18 sp 0x16f6c5e40 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1e10edfac 0x2212cc0ec 0x2212ca72c
+[014] @0x000825 len=253 XNU: SMP backboardd t9 pc 0x211d41030 lr 0x211d52b18 sp 0x16f864910 bt 0x211d52db8 0x211d41524 0x1dd27eec4 0x1dd27f25c 0x22131e0ec 0x1d093c224 0x1d08d5cb0 0x1d08d46e0 0x1d08d461c 0x1d13297c4 0x1d13b98e4 0x1d1320bc0 0x1d13e6238 0x1d133
+[015] @0x000922 len=174 XNU: SMP backboardd t11 pc 0x1ff2c63c8 lr 0x1fe7825f4 sp 0x16febed20 bt 0x1dd2c8780 0x1dd26a73c 0x1dd27c7ac 0x1dd277ab0 0x1dd2782ac 0x2212cab94 0x2212ca720
+[016] @0x0009d0 len=102 XNU: SMP backboardd t12 pc 0x211d414f0 lr 0x2212cac1c sp 0x16f7deb40 bt 0x2212ca720
+[017] @0x000a36 len= 75 XNU: SMP SpringBoard[27] slide 0x4f730000 mh 0x100b84000
+[018] @0x000a81 len=253 XNU: SMP SpringBoard t0 pc 0x211d41030 lr 0x211d52b18 sp 0x16f275970 bt 0x211d52db8 0x211d41524 0x1dd27eec4 0x1dd27f25c 0x22131e0ec 0x1d093c224 0x1d08d5cb0 0x1d08d46e0 0x1d08d461c 0x1d13297c4 0x1d13b98e4 0x1d1320bc0 0x1d13e6238 0x1d13
+[019] @0x000b7e len=222 XNU: SMP SpringBoard t2 pc 0x211d41ad0 lr 0x1dd268908 sp 0x16f5be680 bt 0x1dd2686f4 0x1dd275ad4 0x1dd2756ec 0x1ec0f4980 0x1dd2c77a8 0x1dd2c8780 0x1dd26e298 0x1dd26eda0 0x1dd278dc8 0x2212cabd0 0x2212ca720
+[020] @0x000c5c len=102 XNU: SMP SpringBoard t3 pc 0x211d414f0 lr 0x2212cac1c sp 0x16f64ab30 bt 0x2212ca720
+[021] @0x000cc2 len=102 XNU: SMP SpringBoard t4 pc 0x211d414f0 lr 0x2212cac1c sp 0x16f6d6b30 bt 0x2212ca720
+[022] @0x000d28 len=137 XNU: CODE SIGNING: cs_invalid_page(0x101432000): p=63[locationd] final status 0x22000000, allowing (remove VALID) page
+[023] @0x000db1 len=101 XNU: M30 FB: v=15600 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[024] @0x000e16 len=144 XNU: CODE SIGNING: cs_invalid_page(0x1fa685000): p=143[ScreenTimeAgent] final status 0x22000000, allowing (remove VALID) page
+[025] @0x000ea6 len=135 XNU: CODE SIGNING: cs_invalid_page(0x1eb7f8000): p=35[healthd] final status 0x22000000, allowing (remove VALID) page
+[026] @0x000f2d len=101 XNU: M30 FB: v=16200 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[027] @0x000f92 len=101 XNU: M30 FB: v=16800 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[028] @0x000ff7 len=139 XNU: CODE SIGNING: cs_invalid_page(0x22782f000): p=188[bluetoothd] final status 0x22000000, allowing (remove VALID) page
+[029] @0x001082 len= 55 XNU: M30 UI: sb=27 bb=57 reason=none
+[030] @0x0010b9 len=133 XNU: CODE SIGNING: cs_invalid_page(0x1007d4000): p=106[apsd] final status 0x22000000, allowing (remove VALID) page
+[031] @0x00113e len=101 XNU: M30 FB: v=17400 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[032] @0x0011a3 len=141 XNU: CODE SIGNING: cs_invalid_page(0x1009a6000): p=185[searchpartyd] final status 0x22000000, allowing (remove VALID) page
+[033] @0x001230 len=101 XNU: M30 FB: v=18000 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[034] @0x001295 len= 79 XNU: SWEET AKS: maild sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[035] @0x0012e4 len=141 XNU: CODE SIGNING: cs_invalid_page(0x2219ec000): p=196[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page
+[036] @0x001371 len=101 XNU: M30 FB: v=18600 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[037] @0x0013d6 len= 55 XNU: M30 UI: sb=27 bb=57 reason=none
+[038] @0x00140d len=101 XNU: M30 FB: v=19200 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[039] @0x001472 len=144 XNU: CODE SIGNING: cs_invalid_page(0x101021000): p=53[identityservices] final status 0x22000000, allowing (remove VALID) page
+[040] @0x001502 len=101 XNU: M30 FB: v=19800 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[041] @0x001567 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[042] @0x0015ba len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[043] @0x00160d len=101 XNU: M30 FB: v=20400 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[044] @0x001672 len= 55 XNU: M30 UI: sb=27 bb=57 reason=none
+[045] @0x0016a9 len= 82 XNU: SWEET AKS: searchpartyd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[046] @0x0016fb len= 86 XNU: SWEET AKS: searchpartyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[047] @0x001751 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[048] @0x0017a4 len= 83 XNU: SWEET AKS: coreduetd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[049] @0x0017f7 len=101 XNU: M30 FB: v=21000 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[050] @0x00185c len= 89 XNU: SWEET AKS: ScreenTimeAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[051] @0x0018b5 len= 86 XNU: SWEET AKS: searchpartyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[052] @0x00190b len=101 XNU: M30 FB: v=21600 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[053] @0x001970 len= 89 XNU: SWEET AKS: networkserviceproxy sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[054] @0x0019c9 len= 89 XNU: SWEET AKS: networkserviceproxy sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[055] @0x001a22 len= 70 XNU: SWEET Sandbox: accountsd privilege 1002 denied
+[056] @0x001a68 len=101 XNU: M30 FB: v=22200 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[057] @0x001acd len= 55 XNU: M30 UI: sb=27 bb=57 reason=none
+[058] @0x001b04 len= 40 XNU: SMP --- sample 3
+[059] @0x001b2c len= 74 XNU: SMP backboardd[57] slide 0x4f730000 mh 0x1008d8000
+[060] @0x001b76 len=177 XNU: SMP backboardd t0 pc 0x211d41030 lr 0x211d52b18 sp 0x16f526880 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1008e1e40 0x1f3d54344 0x0
+[061] @0x001c27 len=197 XNU: SMP backboardd t1 pc 0x211d41ad0 lr 0x1dd268908 sp 0x16f63a850 bt 0x1dd268ca0 0x1008f0a78 0x1dd2c77a8 0x1dd2c8780 0x1dd26e298 0x1dd26eda0 0x1dd278dc8 0x2212cabd0 0x2212ca720
+[062] @0x001cec len=197 XNU: SMP backboardd t2 pc 0x211d41030 lr 0x211d52b18 sp 0x16f751eb0 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1ddcd2f70 0x2212cc0ec 0x2212ca72c
+[063] @0x001db1 len=161 XNU: SMP backboardd t3 pc 0x211d41030 lr 0x211d52b18 sp 0x16f9729b0 bt 0x211d52db8 0x211d41524 0x1d79fc884 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[064] @0x001e52 len=209 XNU: SMP backboardd t4 pc 0x211d41030 lr 0x211d52b18 sp 0x16fb0dd90 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1d7c31ccc 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[065] @0x001f23 len=209 XNU: SMP backboardd t5 pc 0x211d41030 lr 0x211d52b18 sp 0x16fc19d90 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1d7c31ccc 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[066] @0x001ff4 len=209 XNU: SMP backboardd t6 pc 0x211d41030 lr 0x211d52b18 sp 0x16fd25d90 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1d7c31ccc 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[067] @0x0020c5 len=209 XNU: SMP backboardd t7 pc 0x211d41030 lr 0x211d52b18 sp 0x16fe31d90 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1d7c31ccc 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[068] @0x002196 len=197 XNU: SMP backboardd t8 pc 0x211d41030 lr 0x211d52b18 sp 0x16f6c5e40 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1e10edfac 0x2212cc0ec 0x2212ca72c
+[069] @0x00225b len=253 XNU: SMP backboardd t9 pc 0x211d41030 lr 0x211d52b18 sp 0x16f864910 bt 0x211d52db8 0x211d41524 0x1dd27eec4 0x1dd27f25c 0x22131e0ec 0x1d093c224 0x1d08d5cb0 0x1d08d46e0 0x1d08d461c 0x1d13297c4 0x1d13b98e4 0x1d1320bc0 0x1d13e6238 0x1d133
+[070] @0x002358 len=102 XNU: SMP backboardd t11 pc 0x211d414f0 lr 0x2212cac1c sp 0x16f5aefc0 bt 0x2212ca720
+[071] @0x0023be len=246 XNU: SMP backboardd t12 pc 0x1fe782b40 lr 0x1fe782b1c sp 0x16fa02550 bt 0x1dd2c77a8 0x1dd2c8780 0x1dd280534 0x1dd26a60c 0x1dd282228 0x1dd27e774 0x1dd26e168 0x1dd280e78 0x1dd26e168 0x1dd26eda0 0x1dd278dc8 0x2212cabd0 0x2212ca720
+[072] @0x0024b4 len=102 XNU: SMP backboardd t13 pc 0x211d414f0 lr 0x2212cac1c sp 0x16f7deb40 bt 0x2212ca720
+[073] @0x00251a len= 75 XNU: SMP SpringBoard[27] slide 0x4f730000 mh 0x100b84000
+[074] @0x002565 len=253 XNU: SMP SpringBoard t0 pc 0x211d41030 lr 0x211d52b18 sp 0x16f275970 bt 0x211d52db8 0x211d41524 0x1dd27eec4 0x1dd27f25c 0x22131e0ec 0x1d093c224 0x1d08d5cb0 0x1d08d46e0 0x1d08d461c 0x1d13297c4 0x1d13b98e4 0x1d1320bc0 0x1d13e6238 0x1d13
+[075] @0x002662 len=222 XNU: SMP SpringBoard t2 pc 0x211d41ad0 lr 0x1dd268908 sp 0x16f5be680 bt 0x1dd2686f4 0x1dd275ad4 0x1dd2756ec 0x1ec0f4980 0x1dd2c77a8 0x1dd2c8780 0x1dd26e298 0x1dd26eda0 0x1dd278dc8 0x2212cabd0 0x2212ca720
+[076] @0x002740 len=102 XNU: SMP SpringBoard t3 pc 0x211d414f0 lr 0x2212cac1c sp 0x16f64aa80 bt 0x2212ca720
+[077] @0x0027a6 len= 89 XNU: SWEET AKS: ScreenTimeAgent sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[078] @0x0027ff len=101 XNU: M30 FB: v=22800 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[079] @0x002864 len= 86 XNU: SWEET AKS: searchpartyd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[080] @0x0028ba len=101 XNU: M30 FB: v=23400 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[081] @0x00291f len=101 XNU: M30 FB: v=24000 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[082] @0x002984 len= 55 XNU: M30 UI: sb=27 bb=57 reason=none
+[083] @0x0029bb len= 78 XNU: SWEET AKS: routined sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[084] @0x002a09 len= 82 XNU: SWEET AKS: routined sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[085] @0x002a5b len= 91 XNU: SWEET AKS: WirelessRadioManagerd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[086] @0x002ab6 len= 95 XNU: SWEET AKS: WirelessRadioManagerd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[087] @0x002b15 len= 77 XNU: SWEET AKS: healthd sel 0 arg0 0 in 0/0 out 0/0 -> 0x0
+[088] @0x002b62 len= 81 XNU: SWEET AKS: healthd sel 17 arg0 0 in 1/0 out 0/4096 -> 0x0
+[089] @0x002bb3 len= 77 XNU: SWEET AKS: healthd sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[090] @0x002c00 len=101 XNU: M30 FB: v=24600 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[091] @0x002c65 len=139 XNU: CODE SIGNING: cs_invalid_page(0x2104d9000): p=204[bluetoothd] final status 0x22000000, allowing (remove VALID) page
+[092] @0x002cf0 len=135 XNU: CODE SIGNING: cs_invalid_page(0x100cef000): p=79[remindd] final status 0x22000000, allowing (remove VALID) page
+[093] @0x002d77 len=101 XNU: M30 FB: v=25200 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[094] @0x002ddc len=101 XNU: M30 FB: v=25800 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[095] @0x002e41 len= 55 XNU: M30 UI: sb=27 bb=57 reason=none
+[096] @0x002e78 len=141 XNU: CODE SIGNING: cs_invalid_page(0x223551000): p=212[fairplayd.H2] final status 0x22000000, allowing (remove VALID) page
+[097] @0x002f05 len=139 XNU: CODE SIGNING: cs_invalid_page(0x1d5b55000): p=213[bluetoothd] final status 0x22000000, allowing (remove VALID) page
+[098] @0x002f90 len=101 XNU: M30 FB: v=26400 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[099] @0x002ff5 len=101 XNU: M30 FB: v=27000 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[100] @0x00305a len= 55 XNU: M30 UI: sb=27 bb=57 reason=none
+[101] @0x003091 len=101 XNU: M30 FB: v=27600 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[102] @0x0030f6 len=101 XNU: M30 FB: v=28200 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[103] @0x00315b len= 78 XNU: SWEET AKS: routined sel 7 arg0 0 in 1/0 out 1/0 -> 0x0
+[104] @0x0031a9 len=101 XNU: M30 FB: v=28800 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[105] @0x00320e len= 55 XNU: M30 UI: sb=27 bb=57 reason=none
+[106] @0x003245 len= 40 XNU: SMP --- sample 4
+[107] @0x00326d len= 74 XNU: SMP backboardd[57] slide 0x4f730000 mh 0x1008d8000
+[108] @0x0032b7 len=177 XNU: SMP backboardd t0 pc 0x211d41030 lr 0x211d52b18 sp 0x16f526880 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1008e1e40 0x1f3d54344 0x0
+[109] @0x003368 len=197 XNU: SMP backboardd t1 pc 0x211d41ad0 lr 0x1dd268908 sp 0x16f63a850 bt 0x1dd268ca0 0x1008f0a78 0x1dd2c77a8 0x1dd2c8780 0x1dd26e298 0x1dd26eda0 0x1dd278dc8 0x2212cabd0 0x2212ca720
+[110] @0x00342d len=197 XNU: SMP backboardd t2 pc 0x211d41030 lr 0x211d52b18 sp 0x16f751eb0 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1ddcd2f70 0x2212cc0ec 0x2212ca72c
+[111] @0x0034f2 len=161 XNU: SMP backboardd t3 pc 0x211d41030 lr 0x211d52b18 sp 0x16f9729b0 bt 0x211d52db8 0x211d41524 0x1d79fc884 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[112] @0x003593 len=209 XNU: SMP backboardd t4 pc 0x211d41030 lr 0x211d52b18 sp 0x16fb0dd90 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1d7c31ccc 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[113] @0x003664 len=209 XNU: SMP backboardd t5 pc 0x211d41030 lr 0x211d52b18 sp 0x16fc19d90 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1d7c31ccc 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[114] @0x003735 len=209 XNU: SMP backboardd t6 pc 0x211d41030 lr 0x211d52b18 sp 0x16fd25d90 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1d7c31ccc 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[115] @0x003806 len=209 XNU: SMP backboardd t7 pc 0x211d41030 lr 0x211d52b18 sp 0x16fe31d90 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1d7c31ccc 0x1d7c3b418 0x2212cc0ec 0x2212ca72c
+[116] @0x0038d7 len=197 XNU: SMP backboardd t8 pc 0x211d41030 lr 0x211d52b18 sp 0x16f6c5e40 bt 0x211d52db8 0x211d41524 0x1d658c148 0x1d658d2e0 0x1d6591d20 0x1d65d0bec 0x1e10edfac 0x2212cc0ec 0x2212ca72c
+[117] @0x00399c len=253 XNU: SMP backboardd t9 pc 0x211d41030 lr 0x211d52b18 sp 0x16f864910 bt 0x211d52db8 0x211d41524 0x1dd27eec4 0x1dd27f25c 0x22131e0ec 0x1d093c224 0x1d08d5cb0 0x1d08d46e0 0x1d08d461c 0x1d13297c4 0x1d13b98e4 0x1d1320bc0 0x1d13e6238 0x1d133
+[118] @0x003a99 len=174 XNU: SMP backboardd t11 pc 0x1fe8b0524 lr 0x1fe782654 sp 0x16f5aed20 bt 0x1dd2c8780 0x1dd26a73c 0x1dd27c7ac 0x1dd277ab0 0x1dd2782ac 0x2212cab94 0x2212ca720
+[119] @0x003b47 len=102 XNU: SMP backboardd t12 pc 0x211d414f0 lr 0x2212cac1c sp 0x16fa02b40 bt 0x2212ca720
+[120] @0x003bad len=102 XNU: SMP backboardd t13 pc 0x211d414f0 lr 0x2212cac1c sp 0x16f7deb30 bt 0x2212ca720
+[121] @0x003c13 len= 75 XNU: SMP SpringBoard[27] slide 0x4f730000 mh 0x100b84000
+[122] @0x003c5e len=253 XNU: SMP SpringBoard t0 pc 0x211d41030 lr 0x211d52b18 sp 0x16f275970 bt 0x211d52db8 0x211d41524 0x1dd27eec4 0x1dd27f25c 0x22131e0ec 0x1d093c224 0x1d08d5cb0 0x1d08d46e0 0x1d08d461c 0x1d13297c4 0x1d13b98e4 0x1d1320bc0 0x1d13e6238 0x1d13
+[123] @0x003d5b len=222 XNU: SMP SpringBoard t2 pc 0x211d41ad0 lr 0x1dd268908 sp 0x16f5be680 bt 0x1dd2686f4 0x1dd275ad4 0x1dd2756ec 0x1ec0f4980 0x1dd2c77a8 0x1dd2c8780 0x1dd26e298 0x1dd26eda0 0x1dd278dc8 0x2212cabd0 0x2212ca720
+[124] @0x003e39 len=102 XNU: SMP SpringBoard t3 pc 0x211d414f0 lr 0x2212cac1c sp 0x16f64aa80 bt 0x2212ca720
+[125] @0x003e9f len=101 XNU: M30 FB: v=29400 sw=0 pr=0 copied=0 skip=0 last=0 dirty=0 power=0 cl=1 ticks=2
+[126] @0x003f04 len= 60 XNU: A5XELTE KEYS: key=0 down=1 gpio=0x20
+[127] @0x003f40 len= 60 XNU: SWEET HID: key 0x30 down (1 clients)
+[128] @0x003f7c len= 60 XNU: A5XELTE KEYS: key=2 down=1 gpio=0x20
+[129] @0x003fb8 len= 60 XNU: SWEET HID: key 0xea down (1 clients)
+# ISSUE @0x000000 bad_magic: expected 0x6c, got 0x00
+# ISSUE @0x000041 bad_magic: expected 0x6c, got 0x20
+# WARNING: framing was not fully valid; output may be incomplete

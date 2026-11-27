@@ -1,0 +1,15 @@
+Pstore pull — 2026-11-27 (device in TWRP recovery, before boot with v79 USERDATA)
+
+Raw: 16372 bytes, SHA256 48bf44a20107c565d331a60309af34d9d43ca4bf19fd40f3fa9e1ad440a32ff6.
+Decoded: 130 records, clean=False (wrapped ring).
+
+Counts: CRASH 0, lsd 0, NSException 0, SBERR 0, BBERR 0.
+M30 UI: sb=27 bb=57 reason=none (9 records).
+SMP backtrace records 57 (retained from an earlier diagnostic boot; v78 kernel
+has no sampler compiled in, so these are stale pstore contents).
+No SWEET SURF records in the surviving window; 24 framebuffer records with
+copied=0 (ring tail).
+
+IMPORTANT: this pstore predates the v79 USERDATA write — the device was in
+recovery during that write. It is NOT evidence about the v79 image. A fresh
+pstore pull after the next boot is required to assess v79.
