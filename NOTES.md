@@ -4088,3 +4088,20 @@ authorization for a BOOT-only test of candidate v6.
 - NEXT: user visual observation of this boot; then choose (a) a second pull with
   sampler disabled to assess framebuffer/scene, or (b) targeted symbolication,
   before any functional patch.
+
+## 2026-11-27 - v79 complete SpringBoard MCM metadata (USERDATA fix, CI built, not written)
+
+- Compared generated SpringBoard MCM plist (3 keys) with every real system
+  container plist on device (backboardd/lsd system): real records carry
+  MCMMetadataContentClass=12, SchemaVersion=1, ActiveDPClass=-1,
+  MCMMetadataInfo ContentProtectionClass=-1. Sparse record is not a valid MCM
+  system container -> BaseBoard path resolution can fail.
+- Source fix in tools/m30lte-root-tweaks.py: complete metadata format + upgrades
+  sparse v75 records in place; tests tools/test_springboard_container.py (7 PASS,
+  incl. upgrade + fail-closed conflicts); verifier upgraded. Commit `9cad3336`.
+- CI rootfs `45949747024` GREEN; release `ios-root-20H392-45949747024`, image
+  SHA `4f788a12c3e8874fa829b35c951b64e0e36e97b25484f0f4dc67e3b6db76eaaf`,
+  gate PASS: complete SpringBoard metadata, 5/5 MCM, SetupDone=True preserved.
+  Host CI `45949750910` GREEN.
+- Requires USERDATA rewrite to take effect; NOT written. BOOT remains v78
+  UI-exact `48e45bf7...`. No flash. lsd fix preserved.
