@@ -108,12 +108,20 @@ def parse_allowlist(path: Path | None, problems: Problem) -> dict[str, str]:
 
 
 def check(manifest_path: Path, patch_dir: Path, allowlist_path: Path | None,
-          kernel_sha256: str | None) -> dict:
+          kernel_sha256: str | None,
+          upstream_dir: Path | None = None) -> dict:
     problems = Problem()
     rows = parse_manifest(manifest_path, problems)
     allowed = parse_allowlist(allowlist_path, problems)
 
     disk = {p.name: sha256_of(p) for p in sorted(patch_dir.glob("*.patch"))}
+    # The build iterates the *staged* patch directory, which contains our
+    # patches plus whatever darwin-xnu-build ships. Upstream patches are in
+    # scope for accounting but not for the "undocumented" check, because they
+    # are not ours to track; they are recorded so skips are explained.
+    upstream = {}
+    if upstream_dir is not None and upstream_dir.is_dir():
+        upstream = {p.name: sha256_of(p) for p in sorted(upstream_dir.glob("*.patch"))}
     recorded = {r["name"]: r for r in rows}
 
     # duplicates
@@ -139,19 +147,26 @@ def check(manifest_path: Path, patch_dir: Path, allowlist_path: Path | None,
                          f"{name}: manifest {rec['sha256'][:16]} != disk {sha[:16]}")
 
     for name in recorded:
-        if name not in disk:
-            problems.add("phantom", f"{name} is in the manifest but not on disk")
+        if name not in disk and name not in upstream:
+            problems.add("phantom", f"{name} is in the manifest but not in either patch source")
 
     # allowed-skip must be justified, and justification must not be stale
     for r in rows:
         if r["status"] == "allowed-skip" and r["name"] not in allowed:
             problems.add("unjustified-skip",
                          f"{r['name']} was skipped without a SKIP-ALLOWLIST.txt entry")
+    warnings: list[dict] = []
     for name, reason in allowed.items():
         rec = recorded.get(name)
         if rec is not None and rec["status"] == "applied":
-            problems.add("stale-allowlist",
-                         f"{name} is allow-listed ({reason!r}) but applied successfully")
+            msg = f"{name} is allow-listed ({reason!r}) but applied successfully"
+            # Our own patches are ours to keep accurate: a stale entry means the
+            # documented reason is wrong, so fail. An upstream patch that starts
+            # applying is upstream's change, not a defect in this repo: warn.
+            if name in disk:
+                problems.add("stale-allowlist", msg)
+            else:
+                warnings.append({"code": "stale-allowlist-upstream", "detail": msg})
 
     # order must match the sorted patch-name order the build uses
     expected_order = {n: i + 1 for i, n in enumerate(disk)}
@@ -166,6 +181,7 @@ def check(manifest_path: Path, patch_dir: Path, allowlist_path: Path | None,
         "patch_dir": str(patch_dir),
         "counts": {
             "on_disk": len(disk),
+            "upstream_on_disk": len(upstream),
             "manifest_rows": len(rows),
             "applied": sum(1 for r in rows if r["status"] == "applied"),
             "allowed_skip": sum(1 for r in rows if r["status"] == "allowed-skip"),
@@ -178,6 +194,7 @@ def check(manifest_path: Path, patch_dir: Path, allowlist_path: Path | None,
             for r in sorted(rows, key=lambda r: r["order"]) if r["status"] == "applied"
         ],
         "problems": list(problems),
+        "warnings": warnings,
     }
 
 
@@ -187,23 +204,29 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--manifest", required=True, type=Path)
     ap.add_argument("--patch-dir", required=True, type=Path)
     ap.add_argument("--allowlist", type=Path, default=None)
+    ap.add_argument("--upstream-dir", type=Path, default=None,
+                    help="darwin-xnu-build's own patch directory (dxb/patches)")
     ap.add_argument("--kernel-sha256", default=None)
     ap.add_argument("--json", type=Path, default=None)
     args = ap.parse_args(argv)
 
-    report = check(args.manifest, args.patch_dir, args.allowlist, args.kernel_sha256)
+    report = check(args.manifest, args.patch_dir, args.allowlist,
+                   args.kernel_sha256, args.upstream_dir)
 
     if args.json:
         args.json.write_text(json.dumps(report, indent=2) + "\n")
 
     c = report["counts"]
     print(f"patch provenance: {report['result']}")
-    print(f"  on disk        : {c['on_disk']}")
+    print(f"  on disk (ours) : {c['on_disk']}")
+    print(f"  on disk (upstr): {c['upstream_on_disk']}")
     print(f"  manifest rows  : {c['manifest_rows']}")
     print(f"  applied        : {c['applied']}")
     print(f"  allowed-skip   : {c['allowed_skip']}")
     if report["kernel_sha256"]:
         print(f"  kernel sha256  : {report['kernel_sha256']}")
+    for w in report.get("warnings", []):
+        print(f"  WARNING [{w['code']}] {w['detail']}", file=sys.stderr)
     for p in report["problems"]:
         print(f"  PROBLEM [{p['code']}] {p['detail']}", file=sys.stderr)
     return 0 if report["result"] == "PASS" else 1

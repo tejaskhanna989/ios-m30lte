@@ -135,6 +135,7 @@ jobs:
         python3 tools/verify_patch_provenance.py \
           --manifest m30-patch-manifest.tsv \
           --patch-dir xnu/patches-minimal \
+          --upstream-dir dxb/patches \
           --allowlist xnu/patches-minimal/SKIP-ALLOWLIST.txt \
           --kernel-sha256 "$(shasum -a 256 "dxb/build/$(ls dxb/build | head -1)" 2>/dev/null | cut -d' ' -f1 || echo unknown)" \
           --json m30-patch-provenance.json
@@ -148,18 +149,23 @@ jobs:
         import re
         from pathlib import Path
         log = Path("build.log").read_text(errors="ignore")
-        on_disk = sorted(p.name for p in Path("xnu/patches-minimal").glob("*.patch"))
-        applied = set(re.findall(r"Applying patch: .*/([^/\s]+\.patch)", log))
-        skipped = set(re.findall(r"Skipping patch .*/([^/\s]+\.patch)", log))
-        missing = [n for n in on_disk if n not in applied]
-        phantom = sorted(applied - set(on_disk))
         allowed = Path("xnu/patches-minimal/SKIP-ALLOWLIST.txt").read_text()
         allowed_names = {l.split("\t")[0].strip() for l in allowed.splitlines()
                          if l.strip() and not l.startswith("#")}
+        ours = {p.name for p in Path("xnu/patches-minimal").glob("*.patch")}
+        upstream = {p.name for p in Path("dxb/patches").glob("*.patch")}
+        on_disk = sorted(ours | upstream)
+        applied = set(re.findall(r"Applying patch: .*/([^/\s]+\.patch)", log))
+        skipped = set(re.findall(r"Skipping patch .*/([^/\s]+\.patch)", log))
+        missing = [n for n in on_disk
+                   if n not in applied and n not in allowed_names]
+        phantom = sorted(applied - set(on_disk))
         bad_skips = sorted(skipped - allowed_names)
         problems = []
         if missing: problems.append(f"not applied: {missing}")
         if phantom: problems.append(f"applied but not in tree: {phantom}")
+        ours_missing = [n for n in ours if n not in applied and n not in allowed_names]
+        if ours_missing: problems.append(f"OUR patches not applied: {ours_missing}")
         if bad_skips: problems.append(f"silently skipped: {bad_skips}")
         if problems:
             raise SystemExit("ERROR: patch set mismatch\n  " + "\n  ".join(problems))

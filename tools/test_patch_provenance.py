@@ -326,6 +326,74 @@ class VerifyProvenanceTests(unittest.TestCase):
         self.assertEqual(bad, 1)
 
 
+class EmbeddedCiScriptTests(unittest.TestCase):
+    """The python block inside xnu.yml must actually run.
+
+    A previous edit put `allowed_names` before its definition, which would have
+    crashed the CI step only after a 20-minute macOS build.
+    """
+
+    def extract(self, name_fragment: str) -> str:
+        import re
+        import textwrap
+        wf = (ROOT / ".github/workflows/xnu.yml").read_text()
+        blocks = re.findall(r"python3 - <<'PY'\n(.*?)\n        PY\n", wf, re.S)
+        self.assertTrue(blocks, "no embedded python blocks found")
+        for b in blocks:
+            code = textwrap.dedent(b)
+            if name_fragment in code:
+                return code
+        self.fail(f"no embedded block containing {name_fragment!r}")
+
+    def test_assert_block_is_valid_python(self):
+        import ast
+        ast.parse(self.extract("applied but not in tree"))
+
+    def test_assert_block_names_are_defined_before_use(self):
+        import ast
+        tree = ast.parse(self.extract("applied but not in tree"))
+        assigned: set[str] = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store):
+                assigned.add(node.id)
+        # every name the block reads must be assigned somewhere in the block
+        # (builtins aside)
+        for name in ("allowed_names", "ours", "upstream", "applied", "skipped"):
+            self.assertIn(name, assigned, f"{name} must be assigned in the CI block")
+
+    def test_assert_block_passes_on_a_consistent_build_log(self):
+        """Execute it against a synthetic workspace that matches the allow-list."""
+        import os
+        import tempfile
+        code = self.extract("applied but not in tree")
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            ours = tmp / "xnu/patches-minimal"
+            up = tmp / "dxb/patches"
+            ours.mkdir(parents=True)
+            up.mkdir(parents=True)
+            allow = ROOT / "xnu/patches-minimal/SKIP-ALLOWLIST.txt"
+            (ours / "SKIP-ALLOWLIST.txt").write_text(allow.read_text())
+            allowed = {l.split("\t")[0].strip() for l in allow.read_text().splitlines()
+                       if l.strip() and not l.startswith("#")}
+            # every allow-listed name must exist somewhere, otherwise the
+            # block correctly reports it as missing
+            (ours / "0001-a.patch").write_text("x")
+            for n in allowed:
+                (up / n).write_text("x")
+            lines = ["=> Applying patch: /w/dxb/patches/0001-a.patch"]
+            lines += [f"=> Skipping patch /w/dxb/patches/{n} (allowed)" for n in allowed]
+            (tmp / "build.log").write_text("\n".join(lines))
+            script = tmp / "chk.py"
+            script.write_text(code)
+            r = subprocess.run([sys.executable, str(script)], cwd=tmp,
+                               capture_output=True, text=True)
+            self.assertEqual(r.returncode, 0,
+                             f"CI block failed:\n{r.stdout}\n{r.stderr}")
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
 class RealTreeTests(unittest.TestCase):
     """The repository's own patch directory must be internally consistent."""
 
