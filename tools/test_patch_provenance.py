@@ -362,6 +362,10 @@ class RealTreeTests(unittest.TestCase):
             "iobuffermemd_monterey.patch",          # upstream, shadowed by 0009/0046
             "kas_info.patch",                       # upstream, shadowed by vm_unix patches
             "machine_routines.patch",               # upstream, shadowed by 0008/9998c
+            "skywalk_sonoma.patch",                 # upstream, wrong xnu revision
+            "skywalk_ventura.patch",                # upstream, mutually exclusive pair
+            "syntax_checker_sonoma.patch",          # upstream, LLDB tooling
+            "syntax_checker_ventura.patch",         # upstream, LLDB tooling
         }
         for name in known_out_of_tree:
             with self.subTest(name):
