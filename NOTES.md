@@ -4154,3 +4154,42 @@ authorization for a BOOT-only test of candidate v6.
   post-v68 boot, followed by a 31-service XPC burst including
   `com.apple.purplebuddy.budd`. Why migration repeats is not in any surviving log.
 - No device access, no flash, no partition write, no new kernel/rootfs artifact.
+
+### v82 — independent SpringBoard→lockscreen trace (2026-11-27, read-only)
+
+Deliverable: `validation/input-analysis/v82-springboard-lockscreen-dependency-map.md`
+(10 sections). Tool: `tools/summarize_pmsg_phase.py`. Tests:
+`tools/test_v82_dependency_map.py` (14, local PASS). No device access, no flash,
+no partition write, no artifact rebuilt.
+
+- **The framebuffer "stall" is not a bug.** v68's heartbeat runs 138 records to
+  `v=97800` (~27 min) with every frame at `dirty=0`, i.e. ~5,800 vsync firings
+  *after* its last present. The timer is alive; `present()` finds nothing
+  because no layer was staged. The passing boot stopped composing at 7.0 min and
+  still showed a lock screen 3 min later, so "presents stopped" carries no
+  diagnostic weight at all.
+- **The apparent SwapWait deadlock is a logging artifact.** v81's last wait is
+  `wait #7 token=3 before=2 done=2`, satisfied by the `present #3` that follows
+  it. `wait` records are bounded to `fPresentCalls <= 4`, so v68 rotated them
+  away. `wait # > done #` was never evidence of a wedge.
+- **Two failure modes, not one.** A (fatal): v69/v70 die with
+  `SBERR libc++abi:` + `NSException`. B (silent): v68t/v68t-native/v81 keep
+  SpringBoard alive (`sb=27 bb=57`), 0 fatal records, 3-5 frames composed.
+  PASS (v68) composed 8.
+- **The keystore `sel 10` rejection is not a candidate cause.** v69 — the first
+  failing boot — has zero. All ring windows are rotated, and no capture contains
+  a single *successful* `sel 10`, so the metric cannot be compared across boots.
+- **BOOT→USERDATA provenance table** (§9) is the load-bearing assumption: v69/v70
+  fail on the BOOT axis with the accepted data volume; v68t+ fail on the USERDATA
+  axis with a kernel lacking 0447/0448. Column is inferred from CI staging
+  revisions, not a flash-time hash — recording that hash is the highest-value
+  next instrumentation.
+- Earliest unverified transition remains Stage 4 (SpringBoard's
+  `bootstrap_check_in` of `com.apple.frontboard.systemappservices`); it is a
+  visibility gap, not a proven failure. No `frontboard` evidence exists in any
+  capture.
+- Other investigation: no written USERDATA report exists in the repo or on any
+  branch. Assessed the experiment instead (§8): the v81 result is real and kills
+  "v68 BOOT alone was the magic", but it does not isolate USERDATA from the
+  Stage-4 gap, and a USERDATA-only account leaves v69's fatal NSException
+  unexplained.

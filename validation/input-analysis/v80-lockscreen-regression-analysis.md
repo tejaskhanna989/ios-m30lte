@@ -162,6 +162,38 @@ Any change to SpringBoard, its container metadata, entitlements or scene code is
 out of scope: those binaries are Apple's and were byte-identical in the accepted
 and failing boots.
 
+## 7a. Correction from v81 (2026-11-27) — capture time, proven
+
+The v81 and v68 pmsg zones are both full rings (identical 16,372 B, first 12
+header bytes overwritten by record text), so a surviving window is the **newest**
+records, and the last record is the newest one. Applying the heartbeat period
+(600 ticks x 16,667 us) to `M30 FB: v=` gives a wall clock:
+
+| boot | window covered | presents reached | last present | frozen for |
+|---|---|---|---|---|
+| v68 (lock screen) | 4.3 → 27.2 min | 4 → 8 | **7.0 min** | 20.2 min after |
+| v68t | 0.7 → 5.2 min | 0 → 5 | 1.5 min | 3.7 min after |
+| v68t-native | 0.7 → 6.2 min | 0 → 3 | 1.7 min | 4.5 min after |
+| v81 | 0.8 → 5.2 min | 0 → 3 | 1.5 min | 3.7 min after |
+
+Two conclusions, both different from the earlier guess that the two windows
+were simply "head vs tail":
+
+1. **The failing captures are cut short, not quiet.** They end at 5.2-6.2 min
+   although the device was on the Apple logo for 6-12 min. Nothing (not just the
+   heartbeat) is recorded after that point, and the ring still rotated later, so
+   kernel logging itself stopped. The boot did not continue normal operation.
+2. **The accepted boot also loses framebuffer presents, ~3 min before the lock
+   screen.** Its last present is at 7.0 min; the lock screen was observed at
+   ~10 min. So the lock screen was composited before present stopped, and the
+   panel kept showing a frame the driver had already copied.
+
+The only framebuffer property that separates success from failure is therefore
+**how long presentation survived** (7.0 min vs 1.5 min), not whether it
+eventually stopped. That is a duration effect, and a duration effect is much
+better explained by *the userspace caller stopping* than by *a kernel timer
+failing*, since the kernel timer is the same code in both boots.
+
 ## 8. Validation
 
 - `tools/test_v80_lockscreen_regression.py` — 11 tests, local PASS.
