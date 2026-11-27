@@ -1,0 +1,28 @@
+v81 BOOT-compatibility experiment — pstore analysis (2026-11-27)
+
+Configuration: exact original v68 BOOT (629843b5...) + CURRENT v79 USERDATA
+(4f788a12...). BOOT-only flash verified; user resumed manually.
+
+User-observed timeline: XNU console at ~1 min; Apple logo at ~3 min; still
+Apple logo at ~12 min; user ended observation and returned device to TWRP.
+
+Pstore: 16372 bytes, SHA256 952a048430f8e47226ebdf2701320dae18d8312c940fdba66ea75a3d64c15eb5,
+161 records, clean=False.
+
+- CRASH 0, lsd 0, NSException 0, SBERR 0, BBERR 0.
+- M30 UI: sb=27 bb=57 reason=none (one record).
+- SWEET SURF: backboardd created surface 1080x2340, 8 records.
+- 27 FB records, v=3000..18600 (~5 min of boot captured), copied reaches
+  30326400 (3 frames) then stalls.
+- 0 SMP records: the v68 kernel has no sampler, so no diagnostic flooding.
+
+Interpretation: lsd remains stable (v73/v79 MCM fix preserved across BOOT
+change). SpringBoard/backboardd alive, surface created, but NO visible
+lockscreen at >12 min. The original v68 lockscreen appeared at ~10 min with
+USERDATA 5f2e2aa6... and persisted; here the same BOOT with USERDATA 4f788a12...
+did not. This is a COMPATIBILITY FAILURE as pre-defined — it does not disprove
+the original v68 success because USERDATA and device state differ.
+
+The experiment isolates USERDATA as the differing variable relative to the
+accepted v68 configuration (BOOT is bit-identical). It does NOT by itself prove
+which USERDATA property is responsible.
