@@ -1,6 +1,6 @@
 diff --git a/config/MASTER.arm64.m30lte b/config/MASTER.arm64.m30lte
 --- a/config/MASTER.arm64.m30lte	2026-11-28 00:33:27.627081909 +0530
-+++ b/config/MASTER.arm64.m30lte	2026-11-28 00:35:41.609241480 +0530
++++ b/config/MASTER.arm64.m30lte	2026-11-28 00:38:31.599059311 +0530
 @@ -104,6 +104,7 @@
  options		ALTERNATE_DEBUGGER	# <alternate_debugger>
  
@@ -9,3 +9,95 @@ diff --git a/config/MASTER.arm64.m30lte b/config/MASTER.arm64.m30lte
  
  options   CONFIG_FREEZE_SUSPENDED_MIN=4		# <xsmall>
  
+diff --git a/osfmk/ipc/mach_port.c b/osfmk/ipc/mach_port.c
+--- a/osfmk/ipc/mach_port.c	2026-11-28 00:33:27.595323482 +0530
++++ b/osfmk/ipc/mach_port.c	2026-11-28 00:38:31.600064821 +0530
+@@ -100,6 +100,15 @@
+ #include <kern/coalition.h>
+ #include <ipc/ipc_service_port.h>
+ #include <kern/mach_filter.h>
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++extern void m30_pmsg_diag_line(const char *line);
++#ifdef MACH_BSD
++extern char *proc_name_address(struct proc *p);
++#endif
++static uint32_t m30_svc_reg_lines;
++static int m30_svc_reg_parsed;
++static int m30_svc_reg_enabled;
++#endif
+ 
+ #if IMPORTANCE_INHERITANCE
+ #include <ipc/ipc_importance.h>
+@@ -2644,6 +2653,28 @@
+ 		if (kr != KERN_SUCCESS) {
+ 			return kr;
+ 		}
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++		if (!m30_svc_reg_parsed) {
++			(void)PE_parse_boot_argn("m30svctrace", &m30_svc_reg_enabled,
++			    sizeof(m30_svc_reg_enabled));
++			m30_svc_reg_parsed = 1;
++		}
++		if (m30_svc_reg_enabled && m30_svc_reg_lines < 24) {
++			char line[192];
++			char *pname = (char *)"unknown";
++#ifdef MACH_BSD
++			task_t ctask = current_task();
++			if (ctask != TASK_NULL) {
++				pname = proc_name_address(get_bsdtask_info(ctask));
++			}
++#endif
++			snprintf(line, sizeof(line), "M30 SVC REG %llu %s %s",
++			    (unsigned long long)mach_absolute_time(),
++			    pname != NULL ? pname : "unknown", sp_info.mspi_string_name);
++			m30_pmsg_diag_line(line);
++			m30_svc_reg_lines++;
++		}
++#endif
+ 		/* Always filter messages on service ports */
+ 		init_flags |= IPC_PORT_INIT_FILTER_MESSAGE;
+ 	}
+diff --git a/osfmk/ipc/ipc_kmsg.c b/osfmk/ipc/ipc_kmsg.c
+--- a/osfmk/ipc/ipc_kmsg.c	2026-11-28 00:33:27.614454052 +0530
++++ b/osfmk/ipc/ipc_kmsg.c	2026-11-28 00:38:31.602093900 +0530
+@@ -192,6 +192,12 @@
+ mach_validate_desc_type(mach_msg_guarded_port_descriptor64_t);
+ 
+ extern char *proc_name_address(struct proc *p);
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++extern void m30_pmsg_diag_line(const char *line);
++static uint32_t m30_svc_send_lines;
++static int m30_svc_send_parsed;
++static int m30_svc_send_enabled;
++#endif
+ static mach_msg_return_t ipc_kmsg_option_check(ipc_port_t port, mach_msg_option64_t option64);
+ 
+ /*
+@@ -4152,6 +4158,27 @@
+ 		ipc_service_port_label_get_info((ipc_service_port_label_t)dport->ip_splabel, &sp_info_filled);
+ 		sp_info = &sp_info_filled;
+ 	}
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++	if (!m30_svc_send_parsed) {
++		(void)PE_parse_boot_argn("m30svctrace", &m30_svc_send_enabled,
++		    sizeof(m30_svc_send_enabled));
++		m30_svc_send_parsed = 1;
++	}
++	if (m30_svc_send_enabled && sp_info != NULL && m30_svc_send_lines < 48) {
++		char line[192];
++		char *pname = (char *)"unknown";
++		task_t task = current_task_early();
++		if (task != TASK_NULL) {
++			pname = proc_name_address(get_bsdtask_info(task));
++		}
++		snprintf(line, sizeof(line), "M30 SVC SEND %llu %s -> %s id=%d",
++		    (unsigned long long)mach_absolute_time(),
++		    pname != NULL ? pname : "unknown", sp_info->mspi_string_name,
++		    (int)ikm_header(kmsg)->msgh_id);
++		m30_pmsg_diag_line(line);
++		m30_svc_send_lines++;
++	}
++#endif
+ #endif /* CONFIG_SERVICE_PORT_INFO */
+ 
+ 	if (!ip_active(dport) || (ip_is_kobject(dport) &&
