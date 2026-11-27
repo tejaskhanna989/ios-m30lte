@@ -27,7 +27,7 @@ import verify_patch_provenance as vpp  # noqa: E402
 STUB_BUILD_SH = '''#!/bin/bash
 ARCHS="x86_64 arm64e" VALID_ARCHS="x86_64 arm64e"
 patches() {
-    running "PATCHING xnu files"
+    running "🩹 Patching xnu files"
     (
         cd "${XNU_DIR}"
         for PATCH in "${PATCH_DIR}"/*.patch; do
@@ -87,6 +87,34 @@ class BuildScriptPatchTests(unittest.TestCase):
 
     def test_refuses_changed_upstream_loop(self):
         self.build.write_text("# upstream changed\n")
+        self.assertEqual(patch_build_sh.main(["x", str(self.build), "M30LTE"]), 1)
+
+    def test_banner_text_is_not_hardcoded(self):
+        """Regression: upstream's banner is 'Patching' and has carried an emoji.
+
+        Anchoring on a literal banner string previously made the whole build
+        abort at 'patches() entry point changed', while the original
+        assert-based code merely altered the file and failed later.
+        """
+        variants = [
+            'running "🩹 Patching xnu files"\n',
+            'running "Patching xnu files"\n',
+            'running "PATCHING xnu files"\n',
+        ]
+        for banner in variants:
+            with self.subTest(banner.strip()):
+                body = STUB_BUILD_SH.replace(
+                    'running "🩹 Patching xnu files"\n', banner)
+                self.build.write_text(body)
+                self.assertEqual(
+                    patch_build_sh.main(["x", str(self.build), "M30LTE"]), 0,
+                    f"patcher must tolerate banner {banner!r}")
+                out = self.build.read_text()
+                self.assertIn(banner, out, "the original banner must be preserved")
+                self.assertIn("$MF", out, "the strict loop must still be injected")
+
+    def test_missing_patches_function_fails(self):
+        self.build.write_text('#!/bin/bash\nARCHS="x86_64 arm64e" VALID_ARCHS="x86_64 arm64e"\n')
         self.assertEqual(patch_build_sh.main(["x", str(self.build), "M30LTE"]), 1)
 
 

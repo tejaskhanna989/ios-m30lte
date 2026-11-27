@@ -87,3 +87,39 @@ Pre-existing suite: 16 pass, 28 fail — all 28 from absent
 Whether every patch in the tree actually applies to the pinned
 `darwin-xnu-build` revision. This change does not answer that; it makes the
 answer impossible to miss.
+
+## Post-CI fix: the banner anchor (2026-11-27)
+
+The first strict-provenance CI run (`46059738404`) **failed at step 3, "Fetch
+build script"**, before `Deps` or `Build` ever ran. Artifacts confirm it:
+`xnu-buildtree-macos-15-intel` is 266 bytes and `xnu-kernel-*` is 144 bytes —
+nothing was compiled.
+
+**Cause.** Upstream `darwin-xnu-build@66390652` opens `patches()` with
+
+    running "🩹 Patching xnu files"
+
+and my replacement anchored on the literal `running "PATCHING xnu files"` —
+wrong case *and* missing the emoji. The original code merely `assert`ed here,
+so a mismatch would have raised later at the loop anchor. I had converted the
+entry-point check into a hard `return 1`, which turned a silent miss into an
+immediate abort. **That regression was mine, introduced in v85.**
+
+**Fix.** The entry anchor is now a regex on the `patches() {` header plus
+whatever `running "..."` banner follows it, so version-dependent banner text
+(including emoji) is preserved rather than matched. The patch loop itself is
+still an exact-match assertion — it is the contract that matters.
+
+**Verified against the real upstream file**, not a stub:
+
+- `patch_build_sh.py` on `darwin-xnu-build@66390652` → exit 0;
+- `patch_build_sh_ios.py` on the same file → exit 0;
+- both applied in sequence (the CI order) → `bash -n` clean;
+- re-running the patcher on already-patched output → exit 1 (refuses to
+  double-patch).
+
+**New regression test.** `test_banner_text_is_not_hardcoded` runs the patcher
+against three banner variants — `🩹 Patching xnu files`, `Patching xnu files`,
+`PATCHING xnu files` — and requires success with the original banner preserved
+in the output. `test_missing_patches_function_fails` covers the genuine
+malformed case. Suite: **28 tests, PASS.**

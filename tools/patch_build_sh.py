@@ -118,20 +118,28 @@ def main(argv: list[str]) -> int:
         return 1
     text = text.replace(old, new)
 
-    old_patches = 'patches() {\n    running "PATCHING xnu files"\n'
-    if text.count(old_patches) != 1:
-        print("ERROR: patches() entry point changed", file=sys.stderr)
+    # The upstream marker is `patches() {` followed by a `running` line whose
+    # text is version-dependent and has carried an emoji ("Patching xnu files").
+    # Anchoring on the exact banner previously broke the whole build, so match
+    # the function header and inject after it. The patch loop below is matched
+    # on its own text and remains an exact-match assertion.
+    import re as _re
+    entry = _re.search(r"^patches\(\) \{\n(    running \"[^\"]*\"\n)", text,
+                       _re.MULTILINE)
+    if entry is None:
+        print("ERROR: patches() entry point not found", file=sys.stderr)
         return 1
+    banner = entry.group(1)
     new_patches = (
         'patches() {\n'
-        '    if [ -n "${SKIP_PATCHES:-}" ]; then\n'
-        '        running "Skipping ALL patches (SKIP_PATCHES=1) - manifest will be empty"\n'
-        '        : > "${PATCH_MANIFEST:-/tmp/m30-patch-manifest.tsv}"\n'
-        '        return 0\n'
-        '    fi\n'
-        '    running "PATCHING xnu files"\n'
+        + banner
+        + '    if [ -n "${SKIP_PATCHES:-}" ]; then\n'
+          '        running "Skipping ALL patches (SKIP_PATCHES=1) - manifest will be empty"\n'
+          '        : > "${PATCH_MANIFEST:-/tmp/m30-patch-manifest.tsv}"\n'
+          '        return 0\n'
+          '    fi\n'
     )
-    text = text.replace(old_patches, new_patches)
+    text = text.replace('patches() {\n' + banner, new_patches, 1)
 
     old_loop = (
         '        for PATCH in "${PATCH_DIR}"/*.patch; do\n'
