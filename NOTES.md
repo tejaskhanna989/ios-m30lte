@@ -4144,7 +4144,8 @@ authorization for a BOOT-only test of candidate v6.
   `tools/test_m30_native_bootargs.py` so every post-v68 rebuild must be
   distinguishable from the accepted BOOT.
 - CI: `ios-root-tests.yml` runs the new tests; `ios-root-build.yml` records a
-  staging profile against the `5f2e2aa6…` baseline.
+  staging profile against `5f2e2aa6…`. Host CI `46044138006` **GREEN**
+  (container, SpringBoard, MCM-input, v80 invariants, compile — 8/8 steps).
 - Five USERDATA-era boots (v69, v70, v68t, v68t-native, v79) all failed with
   distinct BOOTs. The one combination never re-tested is the accepted pair.
   Verification procedure (NOT executed):

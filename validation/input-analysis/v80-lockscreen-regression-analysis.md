@@ -162,7 +162,18 @@ Any change to SpringBoard, its container metadata, entitlements or scene code is
 out of scope: those binaries are Apple's and were byte-identical in the accepted
 and failing boots.
 
-## 8. Limitations
+## 8. Validation
+
+- `tools/test_v80_lockscreen_regression.py` — 11 tests, local PASS.
+- `tools/test_m30_native_bootargs.py` — extended, local PASS.
+- Host CI run `46044138006` (branch `arena/f8de43b7-ios-m30lte`, commit
+  `53b4deb`) **GREEN**: container metadata, SpringBoard registration, explicit
+  MCM input, v80 invariants, and compile steps all passed.
+- No kernel or rootfs artifact was rebuilt: this change alters staging defaults
+  and tests only, so the accepted BOOT and the proven USERDATA remain the
+  reference artifacts.
+
+## 9. Limitations
 
 - The full image `5f2e2aa6…` is not in this workspace; only its SHA-256 and part
   hashes. Re-derivation happens in CI from the same IPSW DMGs.
