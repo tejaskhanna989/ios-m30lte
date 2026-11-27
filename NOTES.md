@@ -4241,3 +4241,30 @@ Report: `validation/input-analysis/v83-boot-axis-forensics.md`. Tool:
   presents. Negative result for 0454 as cause, not proof of harmlessness.
 - No device access, no flash, no partition write, no functional patch. v68
   remains the accepted baseline.
+
+### v84 — Case #167 final joint verdict (2026-11-27, offline)
+
+Report: `validation/input-analysis/v84-joint-verdict.md`. **Verdict: ROOT CAUSE
+UNRESOLVED.**
+
+- **0446 recovered and disproved as a mechanism.** Patches 0446-0450 were absent
+  from the tree but intact at `528bb2760e`; now restored with
+  `xnu/patches-minimal/RECOVERED-0446-0450.sha256`. 0446's body is a print cap
+  only (`++fDiagTick` + `<=4800` guard) and touches no counter, staging,
+  notification or power state. It cannot raise an ObjC exception, yet the
+  0446-cap <-> NSException correlation is perfect across all five observable
+  boots. Read it as a **build-lineage marker**, not a cause.
+- **The documented v70 composition was false.** `528bb276` carries 11 patches vs
+  v68's `18322e15` with 6: v70 adds 0446, 0447, 0448 **and their reverts 0449,
+  0450 in the same build**. The prose said "0446 only".
+- **New systemic risk (top finding):** the build script skips patches that fail
+  to apply and continues, and CI verifies applied-ness for only 0442-0445.
+  0446-0455 are never checked. Builds are not guaranteed to match their
+  documentation, and nothing detects it.
+- Recovery is partial: patches recoverable; v69/v70 build artifacts are gone
+  (`total_count: 0` for runs 45575704483, 45592281185); v69/v70 binary
+  manifests never existed.
+- Recommended next experiment (offline, no device): make build provenance
+  auditable — every patch in the tree must appear as applied or be explicitly
+  allow-listed, hashes pinned alongside the kernel hash.
+- Tests: 25 total, PASS. No device access, no flash, no functional patch.

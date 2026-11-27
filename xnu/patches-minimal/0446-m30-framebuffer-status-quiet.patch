@@ -1,0 +1,20 @@
+diff --git a/iokit/Kernel/arm/SweetFramebuffer.cpp b/iokit/Kernel/arm/SweetFramebuffer.cpp
+--- a/iokit/Kernel/arm/SweetFramebuffer.cpp
++++ b/iokit/Kernel/arm/SweetFramebuffer.cpp
+@@ -322,9 +322,13 @@
+ 		client->notify(SWEET_FB_NOTIFY_VSYNC, values, 6);
+ 	}
+ #if defined(ARM64_BOARD_CONFIG_M30LTE)
+-	/* Replay a compact commit-path status every 600 vsyncs (~10 s at 60 Hz).
+-	 * Direct pstore emission keeps it durable even after console muting. */
+-	if ((++fb->fDiagTick % 600) == 0) {
++	/* Emit only the first eight compact status lines (ticks 600..4800,
++	 * about 10 s apart at 60 Hz).  v68 proved an unbounded heartbeat fills
++	 * the 16 KiB ramoops ring and destroys early ABI diagnostics; this
++	 * logging-only cap preserves early evidence without changing display
++	 * counters, swap staging, notifications, or power behavior. */
++	++fb->fDiagTick;
++	if ((fb->fDiagTick % 600) == 0 && fb->fDiagTick <= 4800) {
+ 		char line[192];
+ 		snprintf(line, sizeof(line),
+ 		    "M30 FB: v=%llu sw=%llu pr=%llu copied=%llu skip=%u last=%u dirty=%d power=%d cl=%u ticks=%u",

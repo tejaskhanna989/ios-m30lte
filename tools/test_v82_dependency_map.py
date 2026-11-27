@@ -229,11 +229,36 @@ class BootAxisTests(unittest.TestCase):
                 expect = "YES" if label in ("v69", "v70") else "no"
                 self.assertEqual(r["fatal"], expect, label)
 
-    def test_0446_patch_is_missing_from_the_tree(self):
-        """The one isolated experiment on this axis cannot be rebuilt."""
-        present = list((ROOT / "xnu/patches-minimal").glob("0446-*"))
-        self.assertEqual(present, [],
-                         "0446 was restored: update the report's reproducibility finding")
+    def test_0446_is_recovered_and_hash_pinned(self):
+        """Recovered from 528bb276 this round; must stay verifiable."""
+        d = ROOT / "xnu/patches-minimal"
+        present = list(d.glob("0446-*"))
+        self.assertTrue(present, "0446 must remain in the tree once recovered")
+        man = d / "RECOVERED-0446-0450.sha256"
+        self.assertTrue(man.exists(), "recovered patches need a hash manifest")
+        import hashlib
+        for line in man.read_text().splitlines():
+            want, name = line.split()
+            got = hashlib.sha256((d / name).read_bytes()).hexdigest()
+            self.assertEqual(got, want, f"{name} hash drifted")
+
+    def test_0446_is_a_print_cap_not_a_behaviour_change(self):
+        """A print guard cannot raise an ObjC exception - the mechanism must be elsewhere."""
+        body = (ROOT / "xnu/patches-minimal"
+                / "0446-m30-framebuffer-status-quiet.patch").read_text()
+        self.assertIn("fDiagTick <= 4800", body)
+        for forbidden in ("fPresentCalls", "fDirty", "fSwapWaitCalls",
+                          "setTimeoutUS", "IOLockLock"):
+            self.assertNotIn(forbidden, body,
+                             f"0446 touches {forbidden}: re-open the verdict")
+
+    def test_ci_only_pins_0442_to_0445(self):
+        """The provenance gap the verdict depends on."""
+        wf = (ROOT / ".github/workflows/xnu.yml").read_text()
+        self.assertIn("0442-m30-framebuffer-commit-diag.patch", wf)
+        for unpinned in ("0446-m30", "0451-m30", "0453-m30", "0455-m30"):
+            self.assertNotIn(unpinned, wf.split("for p in")[1].split("; do")[0],
+                             f"{unpinned} is now pinned: update the verdict")
 
     def test_v69_v70_manifests_do_not_exist(self):
         for d in ("ios-candidate-v69-out", "ios-candidate-v70-out"):

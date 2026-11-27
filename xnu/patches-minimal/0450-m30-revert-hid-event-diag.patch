@@ -1,0 +1,121 @@
+--- a/iokit/Kernel/arm/hid/SweetHID.cpp
++++ b/iokit/Kernel/arm/hid/SweetHID.cpp
+@@ -29,13 +29,6 @@
+ #include "IOHIDPrivateKeys.h"
+ #include "IOHIDUsageTables.h"
+ 
+-#if defined(ARM64_BOARD_CONFIG_M30LTE)
+-#include <libkern/libkern.h>    /* snprintf for bounded pstore diagnostics */
+-extern "C" void m30_pmsg_diag_line(const char *line);
+-static uint8_t m30_hid_key_diag_count;
+-static uint8_t m30_hid_touch_diag_count;
+-#endif
+-
+ extern "C" uint64_t mach_absolute_time(void);
+ 
+ /* One open client: the user client and its event callback. */
+@@ -400,9 +393,6 @@
+ 	gSweetButtons = this;
+ 	registerService();
+ 	IOLog("SWEET HID: buttons registered (test every %u s)\n", fTestSecs);
+-#if defined(ARM64_BOARD_CONFIG_M30LTE)
+-	m30_pmsg_diag_line("M30 HID: buttons registered");
+-#endif
+ 	return true;
+ }
+ 
+@@ -414,17 +404,6 @@
+ 	if (event) {
+ 		IOLog("SWEET HID: key 0x%x %s (%u clients)\n", (unsigned)usage, down ? "down" : "up",
+ 		    _clients ? _clients->getCount() : 0);
+-#if defined(ARM64_BOARD_CONFIG_M30LTE)
+-		if (m30_hid_key_diag_count < 4) {
+-			char line[128];
+-			m30_hid_key_diag_count++;
+-			snprintf(line, sizeof(line),
+-			    "M30 HID: key usage=0x%x down=%d clients=%u",
+-			    (unsigned)usage, down ? 1 : 0,
+-			    _clients ? _clients->getCount() : 0);
+-			m30_pmsg_diag_line(line);
+-		}
+-#endif
+ 		dispatchEvent(event);
+ 		event->release();
+ 	}
+@@ -476,9 +455,6 @@
+ 	gSweetTouch = this;
+ 	registerService();
+ 	IOLog("SWEET HID: touch registered\n");
+-#if defined(ARM64_BOARD_CONFIG_M30LTE)
+-	m30_pmsg_diag_line("M30 HID: touch registered");
+-#endif
+ 	return true;
+ }
+ 
+@@ -567,17 +543,6 @@
+ 	if (was != down) {
+ 		IOLog("SWEET HID: touch %d %s at %d,%d%s\n", finger, down ? "down" : "up", x, y,
+ 		    fEdge[finger] ? " edge" : "");
+-#if defined(ARM64_BOARD_CONFIG_M30LTE)
+-		if (m30_hid_touch_diag_count < 4) {
+-			char line[160];
+-			m30_hid_touch_diag_count++;
+-			snprintf(line, sizeof(line),
+-			    "M30 HID: touch finger=%d down=%d x=%d y=%d clients=%u",
+-			    finger, down ? 1 : 0, x, y,
+-			    _clients ? _clients->getCount() : 0);
+-			m30_pmsg_diag_line(line);
+-		}
+-#endif
+ 	}
+ 	dispatchEvent(collection);
+ 	collection->release();
+--- a/iokit/Kernel/arm/hid/IOHIDEventServiceUserClient.cpp
++++ b/iokit/Kernel/arm/hid/IOHIDEventServiceUserClient.cpp
+@@ -32,12 +32,6 @@
+ #include "IOHIDShared.h"
+ #include "IOHIDFamilyTrace.h"
+ #include <pexpert/pexpert.h>
+-#if defined(ARM64_BOARD_CONFIG_M30LTE)
+-#include <libkern/libkern.h>    /* snprintf for bounded pstore diagnostics */
+-extern "C" void m30_pmsg_diag_line(const char *line);
+-static uint8_t m30_hid_uc_open_diag_count;
+-static uint8_t m30_hid_uc_enqueue_diag_count;
+-#endif
+ 
+ #define kQueueSizeMin   0
+ #define kQueueSizeFake  128
+@@ -389,17 +383,6 @@
+     }
+     
+     _state = kUserClientStateOpen;
+-
+-#if defined(ARM64_BOARD_CONFIG_M30LTE)
+-    if (m30_hid_uc_open_diag_count < 4) {
+-        char line[160];
+-        const char *name = _owner ? _owner->getName() : NULL;
+-        m30_hid_uc_open_diag_count++;
+-        snprintf(line, sizeof(line), "M30 HID: uc open service=%s opts=0x%x",
+-                 name ? name : "?", (unsigned)options);
+-        m30_pmsg_diag_line(line);
+-    }
+-#endif
+     
+     return kIOReturnSuccess;
+ }
+@@ -649,15 +632,6 @@
+         _lastEventTime = mach_continuous_time();
+         _lastEventType = event->getType();
+         Boolean result = _queue->enqueueEvent(event);
+-#if defined(ARM64_BOARD_CONFIG_M30LTE)
+-        if (result && event && m30_hid_uc_enqueue_diag_count < 4) {
+-            char line[160];
+-            m30_hid_uc_enqueue_diag_count++;
+-            snprintf(line, sizeof(line), "M30 HID: uc enqueue type=%u count=%u",
+-                     (unsigned)event->getType(), (unsigned)_eventCount);
+-            m30_pmsg_diag_line(line);
+-        }
+-#endif
+         if (result == false) {
+             _lastDroppedEventTime = _lastEventTime;
+             ++_droppedEventCount;
