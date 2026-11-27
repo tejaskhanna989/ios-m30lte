@@ -26,6 +26,17 @@ screen (image versions v8-v14 in NOTES.md):
   activation      mobileactivationd data ark seeded; the actual Activated state
                   comes from its Hactivation branch, selected by the /chosen
                   security-status properties in tools/mkadt.py
+
+MCM metadata (v80 regression evidence, see
+validation/input-analysis/v80-lockscreen-regression-analysis.md):
+  The staged container metadata is left untouched unless one of two explicit
+  switches is given, because the image that physically displayed the lock
+  screen (SHA256 5f2e2aa6..., release ios-root-20H392-44905109656) was staged
+  without any metadata rewrite:
+    MCM_BUILD_INPUT=<json>  apply the allow-listed device records (mcm_reconcile)
+    M30_MCM_REWRITE=1       apply the generic MCMMetadataUUID alignment
+  With neither set the build prints M30_MCM_REWRITE: disabled and produces the
+  proven baseline layout.
 """
 import glob, os, plistlib, re, shutil, stat, sys
 
@@ -321,6 +332,25 @@ def main():
             print('MCM ' + line)
     else:
         print('MCM_BUILD_INPUT: absent; no MCM reconciliation performed')
+    # v80: the generic MCM rewrite is explicit and conservative.
+    #
+    # The image that physically produced the lock screen (SHA256 5f2e2aa6...,
+    # release ios-root-20H392-44905109656) does NOT contain this rewrite;
+    # it was introduced afterwards by 1042340248 and is inert on the IPSW
+    # OS volume because that volume carries zero metadata plists.  It is
+    # therefore never applied by default: keeping the proven staging output
+    # byte-identical is the only reproducible baseline.
+    #   M30_MCM_REWRITE=1  -> apply the generic MCMMetadataUUID alignment
+    mcm_rewrite = os.environ.get('M30_MCM_REWRITE', '0') == '1'
+    if mcm_rewrite:
+        if build_input:
+            raise SystemExit('M30_MCM_REWRITE=1 conflicts with MCM_BUILD_INPUT; '
+                             'use the explicit allow-listed input instead')
+        print('M30_MCM_REWRITE: enabled (generic MCMMetadataUUID alignment)')
+        fix_container_metadata(root)
+    else:
+        print('M30_MCM_REWRITE: disabled; staged container metadata left untouched')
+
     activation(root)
     audio(root)
     merge_pref(root, 'com.apple.migration', {

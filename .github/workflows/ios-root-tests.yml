@@ -15,5 +15,11 @@ jobs:
           python-version: '3.11'
       - name: Container metadata tests
         run: python3 tools/test_ios_container_metadata.py
+      - name: SpringBoard container registration tests
+        run: python3 tools/test_springboard_container.py
+      - name: Explicit MCM build input tests
+        run: python3 tools/test_mcm_build_input.py
+      - name: v80 lock-screen regression invariants
+        run: python3 tools/test_v80_lockscreen_regression.py
       - name: Compile changed tools
         run: python3 -m py_compile tools/m30lte-root-tweaks.py tools/verify_ios_container_metadata.py tools/hfsplus_ro.py

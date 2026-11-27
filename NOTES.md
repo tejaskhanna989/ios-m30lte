@@ -4105,3 +4105,51 @@ authorization for a BOOT-only test of candidate v6.
   Host CI `45949750910` GREEN.
 - Requires USERDATA rewrite to take effect; NOT written. BOOT remains v78
   UI-exact `48e45bf7...`. No flash. lsd fix preserved.
+
+## 2026-11-27 - v80 lock-screen regression attribution (no device write)
+
+- Reconstructed the write/flash chronology from committed records only. The
+  accepted lock screen (2026-11-25T06:07:50Z) ran on USERDATA `5f2e2aa6…`
+  (release `ios-root-20H392-44905109656`, written 2026-11-21) with BOOT
+  `629843b5…` (v68). The **first failing boot was v69 at 09:17Z the same day,
+  while that same USERDATA was still on the device** — the USERDATA was not
+  rewritten until 17:00Z (`dea9110c…`). The regression therefore cannot be a
+  USERDATA change.
+- The BOOT delta v68→v69 is three patches (0446 logging cap, 0447/0448
+  diagnostics) and v70 reverted 0447/0448 and still failed. Patch 0446 is
+  logging-only. No source-level cause is established; the v69 failure is
+  unexplained by the repository's code changes.
+- Root cause of the "no evidence" pattern: the 16 KiB pstore ring covers only
+  the newest ~1630 s. v68 was the only capture taken at the END of a boot (last
+  `v=97800`, ~27 min, `sw=11 pr=8 copied=70761600`). Every later capture covers
+  the HEAD of a boot (v69/v70 `v=4800`; v68t `v=18600`; v73 `v=40800`), i.e. the
+  window where the accepted configuration also shows nothing (lock screen took
+  ~10 min). `copied=0` in v79 vs `copied=70761600` in v68 is a capture-time
+  difference, not a framebuffer regression.
+- `launchd.log` used for v68t/v73/v74 analyses is extracted from the HFS+ image,
+  not captured live, so it cannot date the regression either.
+- Staging-script history reconstructed from CI (`contents?ref=<head_sha>`):
+  image `5f2e2aa6…` was staged at `7e029cdd` (script A); `fix_container_metadata()`
+  was introduced at `1042340248` (script B, image `dea9110c…`). It is inert on
+  the IPSW OS volume (0 metadata plists, CI `45812788743`) but it is still a
+  change from the proven baseline.
+- Source change (tools only): the generic MCM rewrite is now explicit. Default
+  runs print `M30_MCM_REWRITE: disabled` and leave staged metadata untouched;
+  `M30_MCM_REWRITE=1` opts in; combining it with `MCM_BUILD_INPUT` fails closed.
+  SpringBoard container registration is unchanged and still unconditional.
+- New `tools/test_v80_lockscreen_regression.py` (11 tests): default staging is
+  byte-identical, opt-in rewrite works, conflict fails closed, SpringBoard
+  registration unaffected, v68 BOOT/kernel/cmdline identity pinned, known-good
+  USERDATA hash and first-failing-boot ordering locked in. Extended
+  `tools/test_m30_native_bootargs.py` so every post-v68 rebuild must be
+  distinguishable from the accepted BOOT.
+- CI: `ios-root-tests.yml` runs the new tests; `ios-root-build.yml` records a
+  staging profile against the `5f2e2aa6…` baseline.
+- Five USERDATA-era boots (v69, v70, v68t, v68t-native, v79) all failed with
+  distinct BOOTs. The one combination never re-tested is the accepted pair.
+  Verification procedure (NOT executed):
+  `validation/input-analysis/v80-lockscreen-verification-procedure.md`.
+- Lead, not cause: migration runs 5× in the v73/v74 logs vs 1× in the first
+  post-v68 boot, followed by a 31-service XPC burst including
+  `com.apple.purplebuddy.budd`. Why migration repeats is not in any surviving log.
+- No device access, no flash, no partition write, no new kernel/rootfs artifact.

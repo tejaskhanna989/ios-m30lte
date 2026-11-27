@@ -188,6 +188,27 @@ jobs:
           echo "## Staged container verification" >> "$GITHUB_STEP_SUMMARY"
           cat "$WORK/container-verification.log" >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Record staging profile (v80 regression baseline)
+        if: env.DRY != 'true'
+        run: |
+          # The image that physically displayed the lock screen
+          # (5f2e2aa6..., release ios-root-20H392-44905109656) was staged with
+          # neither the generic MCM rewrite nor a diagnostic kernel.  The
+          # profile is recorded so every later image can be compared against it.
+          M30_MCM_REWRITE_VALUE="${M30_MCM_REWRITE:-0}"
+          {
+            echo "## Staging profile"
+            echo "M30_MCM_REWRITE=${M30_MCM_REWRITE_VALUE}"
+            if [ -f "$RUNNER_TEMP/mcm-input.json" ]; then
+              echo "MCM build input: present"
+            else
+              echo "MCM build input: absent"
+            fi
+            grep -E '^(M30_MCM_REWRITE|MCM_BUILD_INPUT):' "$WORK/build.log" || true
+            echo "Baseline: 5f2e2aa6a80aea489946287d8cc32ef0ff6a1905a0d2923e8d4324163bb699b5 (lockscreen observed)"
+            echo "Image: $(sha256sum "$WORK/ios-root-20H392.img" | cut -d' ' -f1)"
+          } | tee "$WORK/staging-profile.log" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Verify device-derived MCM reconciliation in final image
         if: env.DRY != 'true'
         run: |
