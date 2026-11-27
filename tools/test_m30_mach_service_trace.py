@@ -19,7 +19,7 @@ def main() -> None:
     assert 'm30_pmsg_diag_line' in text, "must use the durable pstore sink"
     assert 'm30_svc_reg_lines < 24' in text
     assert 'm30_svc_send_lines < 48' in text
-    assert 'config_service_port_info' in text
+    assert 'CONFIG_SERVICE_PORT_INFO' in text
     # Diagnostic-only: no changes to return values, locks or service semantics.
     for banned in ('return KERN_', 'ip_mq_lock', 'ip_mq_unlock', 'kalloc', 'zalloc'):
         added = [l for l in text.splitlines() if l.startswith('+') and banned in l]
