@@ -34,6 +34,11 @@ class SpringBoardContainerTests(unittest.TestCase):
             data = plistlib.loads(meta.read_bytes())
             self.assertEqual(data["MCMMetadataIdentifier"], IDENT)
             self.assertEqual(data["MCMMetadataUUID"], UUID)
+            self.assertEqual(data["MCMMetadataContentClass"], 12)
+            self.assertEqual(data["MCMMetadataSchemaVersion"], 1)
+            self.assertEqual(data["MCMMetadataActiveDPClass"], -1)
+            self.assertEqual(data["MCMMetadataInfo"],
+                             {"com.apple.MobileInstallation.ContentProtectionClass": -1})
             self.assertEqual(stat.S_IMODE(meta.stat().st_mode), 0o644)
 
     def test_idempotent_and_preserves_existing(self):
@@ -44,6 +49,19 @@ class SpringBoardContainerTests(unittest.TestCase):
             before = meta.read_bytes()
             self.assertEqual(tweaks.ensure_ui_daemon_containers(root), 0)
             self.assertEqual(meta.read_bytes(), before)
+
+    def test_upgrades_sparse_v75_record(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            d = root / "private/var/containers/Data/System" / UUID
+            d.mkdir(parents=True)
+            with (d / tweaks.MCM_META).open("wb") as fh:
+                plistlib.dump({"MCMMetadataIdentifier": IDENT,
+                               "MCMMetadataUUID": UUID}, fh)
+            self.assertEqual(tweaks.ensure_ui_daemon_containers(root), 1)
+            data = plistlib.loads((d / tweaks.MCM_META).read_bytes())
+            self.assertEqual(data["MCMMetadataContentClass"], 12)
+            self.assertEqual(tweaks.ensure_ui_daemon_containers(root), 0)
 
     def test_conflicting_metadata_fails_closed(self):
         with tempfile.TemporaryDirectory() as td:

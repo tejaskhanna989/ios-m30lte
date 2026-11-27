@@ -197,17 +197,26 @@ UI_DAEMON_CONTAINERS = {
 
 
 def ensure_ui_daemon_containers(root):
-    """Register the native SpringBoard system container in the staged rootfs.
+    """Register native system-daemon containers with full MCM metadata.
 
-    BaseBoard resolves a daemon's system/data container from its MCM metadata
-    plist.  With no SpringBoard metadata in the IPSW-derived image the path is
-    nil and SpringBoard cannot build a window scene.  Create the container at
-    the UUID recorded on the known-good device, with a matching metadata plist
-    (UUID == directory name, the invariant fix_container_metadata enforces).
-    Existing valid metadata is never overwritten.
+    BaseBoard/MCM resolves a daemon's container from its metadata plist.  A
+    sparse record is not a valid system-container record: every real system
+    container recovered from the device (backboardd, lsd system) carries
+    ContentClass=12, SchemaVersion=1, ActiveDPClass=-1 and the MobileInstallation
+    ContentProtectionClass key.  Create/upgrade the SpringBoard container at
+    the UUID recorded in v68-container-metadata-finding.md, with UUID == path.
     """
     created = 0
     base = os.path.join(root, 'private/var/containers/Data/System')
+    plist = {
+        'MCMMetadataIdentifier': None,
+        'MCMMetadataInfo': {'com.apple.MobileInstallation.ContentProtectionClass': -1},
+        'MCMMetadataVersion': 6,
+        'MCMMetadataContentClass': 12,
+        'MCMMetadataUUID': None,
+        'MCMMetadataSchemaVersion': 1,
+        'MCMMetadataActiveDPClass': -1,
+    }
     for identifier, uuid in UI_DAEMON_CONTAINERS.items():
         d = os.path.join(base, uuid)
         if not os.path.isdir(d):
@@ -222,27 +231,31 @@ def ensure_ui_daemon_containers(root):
                 os.chown(caches, 0, 0)
             os.chmod(caches, 0o755)
         meta = os.path.join(d, MCM_META)
+        st = None
         if os.path.isfile(meta):
             try:
                 data = load(meta)
-                if (data.get('MCMMetadataIdentifier') == identifier
-                        and data.get('MCMMetadataUUID') == uuid):
-                    continue
             except Exception:
-                pass
-            raise RuntimeError(f'{identifier}: conflicting MCM metadata in {d}')
-        plist = {
-            'MCMMetadataIdentifier': identifier,
-            'MCMMetadataUUID': uuid,
-            'MCMMetadataVersion': 6,
-        }
+                raise RuntimeError(f'{identifier}: malformed MCM metadata in {d}')
+            if (data.get('MCMMetadataIdentifier') != identifier
+                    or data.get('MCMMetadataUUID') != uuid):
+                raise RuntimeError(f'{identifier}: conflicting MCM metadata in {d}')
+            if (data.get('MCMMetadataContentClass') == 12
+                    and data.get('MCMMetadataSchemaVersion') == 1
+                    and 'MCMMetadataInfo' in data):
+                continue
+            # v75 wrote a sparse record; upgrade in place, preserving ownership.
+            st = os.stat(meta)
+        record = dict(plist)
+        record['MCMMetadataIdentifier'] = identifier
+        record['MCMMetadataUUID'] = uuid
         with open(meta, 'wb') as fh:
-            plistlib.dump(plist, fh)
+            plistlib.dump(record, fh)
         if hasattr(os, 'geteuid') and os.geteuid() == 0:
-            os.chown(meta, 0, 0)
-        os.chmod(meta, 0o644)
+            os.chown(meta, st.st_uid if st else 0, st.st_gid if st else 0)
+        os.chmod(meta, stat.S_IMODE(st.st_mode) if st else 0o644)
         created += 1
-    print(f'UI daemon containers: {created} registered')
+    print(f'UI daemon containers: {created} registered/upgraded')
     return created
 
 

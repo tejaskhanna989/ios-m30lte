@@ -41,7 +41,16 @@ def main() -> int:
     if data.get("MCMMetadataIdentifier") != ident or data.get("MCMMetadataUUID") != uuid:
         print("FAIL SpringBoard metadata values do not match")
         return 1
-    print(f"PASS SpringBoard container {ident} {uuid} present with metadata")
+    for key, want in (("MCMMetadataContentClass", 12),
+                      ("MCMMetadataSchemaVersion", 1),
+                      ("MCMMetadataActiveDPClass", -1)):
+        if data.get(key) != want:
+            print(f"FAIL SpringBoard metadata {key}={data.get(key)!r} != {want}")
+            return 1
+    if "MCMMetadataInfo" not in data:
+        print("FAIL SpringBoard metadata missing MCMMetadataInfo")
+        return 1
+    print(f"PASS SpringBoard container {ident} {uuid} present with complete MCM metadata")
     return 0
 
 
