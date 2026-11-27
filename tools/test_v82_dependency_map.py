@@ -252,13 +252,23 @@ class BootAxisTests(unittest.TestCase):
             self.assertNotIn(forbidden, body,
                              f"0446 touches {forbidden}: re-open the verdict")
 
-    def test_ci_only_pins_0442_to_0445(self):
-        """The provenance gap the verdict depends on."""
+    def test_ci_pins_every_patch_not_just_0442_to_0445(self):
+        """v85 closed the provenance gap; this pins the closure, not the gap.
+
+        Before v85 CI grep'd only 0442-0445, which is how an eleven-patch v70
+        build came to be documented as six. The invariant now is the opposite:
+        the whole patch directory is verified, and the old narrow loop is gone.
+        """
         wf = (ROOT / ".github/workflows/xnu.yml").read_text()
-        self.assertIn("0442-m30-framebuffer-commit-diag.patch", wf)
-        for unpinned in ("0446-m30", "0451-m30", "0453-m30", "0455-m30"):
-            self.assertNotIn(unpinned, wf.split("for p in")[1].split("; do")[0],
-                             f"{unpinned} is now pinned: update the verdict")
+        self.assertIn("verify_patch_provenance.py", wf,
+                      "the full-set verifier must gate the build")
+        self.assertIn("SKIP-ALLOWLIST.txt", wf,
+                      "skips must be justified against the allow-list")
+        self.assertNotIn(
+            "for p in 0442-m30-framebuffer-commit-diag.patch", wf,
+            "the narrow 0442-0445 loop must stay replaced by the full-set check")
+        # the independent set-equality assertion must be present too
+        self.assertIn("applied but not in tree", wf)
 
     def test_v69_v70_manifests_do_not_exist(self):
         for d in ("ios-candidate-v69-out", "ios-candidate-v70-out"):
