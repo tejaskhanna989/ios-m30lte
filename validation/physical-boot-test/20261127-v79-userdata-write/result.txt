@@ -1,0 +1,19 @@
+Authorized v79 USERDATA write — 2026-11-27
+
+Identity: m30lte / Samsung Galaxy M30 / bootloader M305FDDU8CVK1 /
+serial 320081735bb166a3 / recovery (TWRP) state.
+USERDATA -> /dev/block/mmcblk0p28, capacity 57038340096 bytes.
+BOOT p12, SYSTEM p20, RECOVERY p13 — not touched.
+Original BOOT backup 469c12d2... intact.
+
+Release ios-root-20H392-45949747024; manifest image SHA256
+4f788a12c3e8874fa829b35c951b64e0e36e97b25484f0f4dc67e3b6db76eaaf.
+All four gz part hashes verified OK against release parts-sha256.txt;
+concatenated gzip -t PASS.
+
+Streamed: cat parts | gunzip | adb shell dd of=/dev/block/by-name/USERDATA bs=4194304
+21474836480 bytes copied in 765.46 s (26.8 MB/s); sync issued.
+Bounded 64 MiB readback SHA256 3d9af75d... == source prefix: PASS.
+
+NO REBOOT performed. No BOOT/SYSTEM/RECOVERY write.
+Lockscreen success not claimed; requires visual confirmation.

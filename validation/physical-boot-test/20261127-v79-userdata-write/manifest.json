@@ -1,0 +1,11 @@
+{
+  "ipsw_url": "https://updates.cdn-apple.com/2025FallFCS/fullrestores/122-77006/1158E502-D76D-4226-AA06-ED5E30CD1111/iPhone10,3,iPhone10,6_16.7.16_20H392_Restore.ipsw",
+  "ipsw_sha256": "ece1194f7e233e9109c5790a8d23a4564a10a254e15ec5b09978a343265568fb",
+  "image_size_arg": "20G",
+  "dmgs": ["087-86698-044.dmg", "087-86593-047.dmg", "087-86715-047.dmg"],
+  "image": "ios-root-20H392.img",
+  "image_size_bytes": "21474836480",
+  "image_sha256": "4f788a12c3e8874fa829b35c951b64e0e36e97b25484f0f4dc67e3b6db76eaaf",
+  "hfsx_signature": "4858",
+  "launchd": "present"
+}

@@ -1,0 +1,4 @@
+88d6775d521ce785f48a8b168b2eea07a87808dee06742b8f2cb7479ac95e0d1  ios-root-20H392.img.gz.part-aa
+9e4c005e667d17e16681bee078a94d548cf7641b0b8287a55df12cac0f70ddfb  ios-root-20H392.img.gz.part-ab
+1bffabca8dca13129e77ad511b30fd5869a987fe2cf22cf6661a5b06390a021b  ios-root-20H392.img.gz.part-ac
+01126a8e15a89cb9af3a94950062f54e7af38b40e5cb76896fe0afd60a8942ac  ios-root-20H392.img.gz.part-ad
