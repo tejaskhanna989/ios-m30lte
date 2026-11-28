@@ -1,0 +1,219 @@
+name: minimal-lockscreen stage 1 (CI-only rootfs build)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ramdisk_mb:
+        description: 'HFSX ramdisk image size in MiB'
+        required: false
+        default: '1536'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  RELEASE: ios-root-20H392-44905109656
+  IMAGE_SHA: 5f2e2aa6a80aea489946287d8cc32ef0ff6a1905a0d2923e8d4324163bb699b5
+  BOOT_LIMIT: 33554432
+  WORK: /home/runner/work/m30min
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preflight disk and tools
+        run: |
+          set -euxo pipefail
+          echo "=== disk before ==="; df -h / /home/runner
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android /opt/hostedtoolcache/CodeQL || true
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq hfsprogs rsync coreutils
+          gh --version | head -1
+          python3 --version
+          for t in mkfs.hfsplus fsck.hfsplus; do command -v "$t"; done
+          python3 validation/minimal-lockscreen/check_manifest.py
+          python3 tools/make_ramdisk.py --help >/dev/null
+          python3 tools/mkpayload.py --help >/dev/null || true
+          echo "=== disk after cleanup ==="; df -h / /home/runner
+
+      - name: Fetch and verify pinned rootfs release asset (CI only)
+        run: |
+          set -euxo pipefail
+          mkdir -p "$WORK/parts" "$WORK/rootfs" "$WORK/out"
+          cd "$WORK/parts"
+          for p in aa ab ac ad; do
+            gh release download "$RELEASE" -p "ios-root-20H392.img.gz.part-$p" --clobber
+          done
+          gh release download "$RELEASE" -p parts-sha256.txt -O parts-sha256.txt --clobber
+          echo "=== part hashes ==="
+          cat parts-sha256.txt
+          sha256sum -c parts-sha256.txt
+          echo "=== disk before decompress ==="; df -h "$WORK"
+          cat ios-root-20H392.img.gz.part-?? | gzip -dc > "$WORK/ios-root.img"
+          echo "=== disk after decompress ==="; df -h "$WORK"
+          echo "$IMAGE_SHA  $WORK/ios-root.img" | sha256sum -c -
+          ls -l "$WORK/ios-root.img"
+
+      - name: Inspect verified rootfs read-only
+        run: |
+          set -euxo pipefail
+          MNT="$WORK/rootfs"
+          sudo mount -t hfsplus -o loop,force,ro "$WORK/ios-root.img" "$MNT"
+          {
+            echo "# verified rootfs inspection"
+            date -u +%Y-%m-%dT%H:%M:%SZ
+            echo "release=$RELEASE"
+            echo "image_sha256=$IMAGE_SHA"
+            echo "launchd=$(sha256sum "$MNT/usr/sbin/launchd" | cut -d' ' -f1)"
+            echo "springboard=$(sha256sum "$MNT/System/Library/CoreServices/SpringBoard.app/SpringBoard" | cut -d' ' -f1)"
+            echo "dyld=$(sha256sum "$MNT/usr/lib/dyld" | cut -d' ' -f1)"
+            du -sh "$MNT/System/Library/Caches/com.apple.dyld"
+            find "$MNT/System/Library/Caches/com.apple.dyld" -maxdepth 1 -type f -printf '%f %s\n'
+          } | tee "$WORK/out/rootfs-inspection.txt"
+          sudo umount "$MNT"
+
+      - name: Build minimal stage-A ramdisk
+        run: |
+          set -euxo pipefail
+          MNT="$WORK/rootfs"
+          sudo mount -t hfsplus -o loop,force,ro "$WORK/ios-root.img" "$MNT"
+          python3 tools/make_ramdisk.py \
+            --rootfs "$MNT" \
+            --rootfs-sha256 "$IMAGE_SHA" \
+            --manifest validation/minimal-lockscreen/minimal-jobs.json \
+            --out "$WORK/out/minimal-ramdisk.img" \
+            --size-mb "${{ inputs.ramdisk_mb }}" \
+            --staging "$WORK/staging" \
+            --report "$WORK/out/ramdisk-report.json"
+          RC=$?
+          sudo umount "$MNT" || true
+          echo "make_ramdisk_rc=$RC" | tee "$WORK/out/make-ramdisk-rc.txt"
+          exit "$RC"
+
+      - name: Build payload via mkpayload.py --ramdisk and BOOT image
+        run: |
+          set -euxo pipefail
+          K=validation/ios-candidate-v87-fbtransition-out/inputs/kernel.development.m30lte
+          ADT=validation/ios-candidate-v87-fbtransition-out/inputs/m30lte-corrected.adt
+          SHIM=validation/ios-candidate-v87-fbtransition-out/build/shim_fixed.Image
+          echo "$K" | xargs sha256sum
+          echo "expected 9258c524ad258bae5e1fca8855d3c40aa7e192c2e5ad8f3100703c47a9cb42fa" > "$WORK/out/expected-kernel.txt"
+          echo "$(sha256sum "$K" | cut -d' ' -f1)  $K" > "$WORK/out/kernel-actual.txt"
+          python3 tools/mkpayload.py "$K" "$ADT" "$WORK/out/payload.bin" \
+            --cmdline "debug=0xc serial=3 cpus=6 keepsyms=1 maxmem=292 rd=md0 a5fb_noconsole=1 a5fb_keep_on=1" \
+            --ramdisk "$WORK/out/minimal-ramdisk.img" \
+            | tee "$WORK/out/mkpayload.log"
+          python3 - "$WORK/out/payload.bin" <<'PY'
+          import sys, struct
+          b=open(sys.argv[1],'rb').read()
+          assert b[:8]==b'M30LTXNU', 'bad payload magic'
+          n=struct.unpack_from('<I',b,12)[0]
+          print('payload_segments=',n)
+          print('payload_cmdline=',b[0x48:0x48+608].split(b'\0')[0].decode())
+          assert b'rd=md0' in b[0x48:0x48+608], 'rd=md0 missing'
+          assert b'USERDATA' not in b[0x48:0x48+608], 'USERDATA in cmdline'
+          PY
+          SHA=$(python3 - <<'PY'
+          import sys; sys.path.insert(0,'tools'); import mkpayload
+          from pathlib import Path
+          print(mkpayload.__file__)
+          PY
+          )
+          # combined = shim + pad to 0x20000 + payload
+          python3 - "$SHIM" "$WORK/out/payload.bin" "$WORK/out/combined.bin" <<'PY'
+          import sys
+          shim=open(sys.argv[1],'rb').read()
+          payload=open(sys.argv[2],'rb').read()
+          assert len(shim)<=0x20000
+          open(sys.argv[3],'wb').write(shim + b'\0'*(0x20000-len(shim)) + payload)
+          print('combined_bytes=',0x20000+len(payload))
+          PY
+          python3 tools/write_bootimg.py "$WORK/out/combined.bin" "$WORK/out/shim-boot.img" \
+            --cmdline "console=null"
+          python3 tools/write_bootimg.py "$WORK/out/combined.bin" "$WORK/out/ios-boot.img" \
+            --cmdline "debug=0xc serial=3 keepsyms=1 maxmem=292 rd=md0 a5fb_noconsole=1 a5fb_keep_on=1"
+
+      - name: Size gate and provenance report
+        run: |
+          set -euxo pipefail
+          python3 - "$WORK/out" "$BOOT_LIMIT" <<'PY'
+          import hashlib, json, sys
+          from pathlib import Path
+          out=Path(sys.argv[1]); limit=int(sys.argv[2])
+          rep=json.loads((out/'ramdisk-report.json').read_text())
+          sizes={p.name:p.stat().st_size for p in out.iterdir() if p.is_file()}
+          verdict='PASS' if rep.get('closure')=='PASS' and sizes.get('ios-boot.img',0)<=limit else 'FAIL'
+          reasons=[]
+          if rep.get('closure')!='PASS': reasons.append('dependency_closure')
+          if sizes.get('ios-boot.img',0)>limit: reasons.append('boot_image_exceeds_32MiB')
+          summary={
+            'verdict':verdict,'reasons':reasons,'closure':rep.get('closure'),
+            'included_files':rep.get('included_file_count'),
+            'included_bytes':rep.get('included_bytes'),
+            'boot_partition_limit_bytes':limit,
+            'sizes':sizes,
+            'hashes':{n:hashlib.sha256((out/n).read_bytes()).hexdigest()
+                      for n in sorted(sizes) if n in ('minimal-ramdisk.img','payload.bin','combined.bin','shim-boot.img','ios-boot.img')},
+            'flashable':verdict=='PASS',
+          }
+          (out/'stage1-result.json').write_text(json.dumps(summary,indent=2,sort_keys=True))
+          print(json.dumps(summary,indent=2,sort_keys=True))
+          PY
+
+      - name: Publish artifacts (large binaries split if needed)
+        uses: actions/upload-artifact@v4
+        with:
+          name: minimal-lockscreen-stage1-reports
+          path: |
+            ${{ env.WORK }}/out/rootfs-inspection.txt
+            ${{ env.WORK }}/out/ramdisk-report.json
+            ${{ env.WORK }}/out/mkpayload.log
+            ${{ env.WORK }}/out/stage1-result.json
+            ${{ env.WORK }}/out/kernel-actual.txt
+            ${{ env.WORK }}/out/expected-kernel.txt
+          if-no-files-found: error
+
+      - name: Split and publish binaries
+        run: |
+          set -euxo pipefail
+          mkdir -p "$WORK/upload"
+          cp "$WORK"/out/* "$WORK/upload/" 2>/dev/null || true
+          cd "$WORK/upload"
+          for f in minimal-ramdisk.img payload.bin combined.bin shim-boot.img ios-boot.img; do
+            [ -f "$f" ] || continue
+            if [ "$(stat -c %s "$f")" -gt 400000000 ]; then
+              split -b 400M "$f" "$f.part-"
+              rm "$f"
+            fi
+          done
+          sha256sum * > "$WORK/upload/SHA256SUMS" || true
+          ls -lh "$WORK/upload" | head -40
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: minimal-lockscreen-stage1-binaries
+          path: ${{ env.WORK }}/upload/*
+          if-no-files-found: warn
+
+      - name: Cleanup and final disk check
+        if: always()
+        run: |
+          sudo umount "$WORK/rootfs" 2>/dev/null || true
+          rm -rf "$WORK/parts" "$WORK/ios-root.img" "$WORK/staging"
+          echo "=== final disk ==="; df -h /
+
+      - name: Final verdict
+        run: |
+          set -euo pipefail
+          python3 - "$WORK/out/stage1-result.json" <<'PY'
+          import json,sys
+          r=json.load(open(sys.argv[1]))
+          print('VERDICT:',r['verdict'],'REASONS:',r['reasons'])
+          if r['verdict']!='PASS':
+              print('Concrete result: build completed but candidate is NOT flashable.')
+          PY
+          grep -q '"verdict": "PASS"' "$WORK/out/stage1-result.json"
