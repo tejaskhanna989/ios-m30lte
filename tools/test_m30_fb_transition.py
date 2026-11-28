@@ -300,8 +300,11 @@ class SourceInvariantTests(unittest.TestCase):
         path = Path(tree) / "iokit/Kernel/arm/SweetFramebuffer.cpp"
         if not path.is_file():
             self.skipTest(f"not found: {path}")
+        # A complete translation unit ends at depth 0. This catches the class
+        # of error that broke CI twice: a deleted block taking its enclosing
+        # `}` with it, which pushes later code out of its function.
         self.assertEqual(brace_depth(path.read_text()), 0,
-                         "patched SweetFramebuffer.cpp does not balance")
+                         "patched SweetFramebuffer.cpp is not brace-balanced")
 
     def test_touches_exactly_one_file(self):
         files = [l for l in PATCH.read_text().splitlines() if l.startswith("+++")]
