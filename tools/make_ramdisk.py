@@ -166,6 +166,25 @@ class Builder:
                 return c
         return None
 
+    def find_plist(self, job):
+        """Locate a launchd job plist from the pinned rootfs, case-insensitively."""
+        base = "com.apple." + job + ".plist"
+        alt = "com.apple." + job[0].upper() + job[1:] + ".plist"
+        scan_roots = [
+            "System/Library/LaunchDaemons",
+            "System/Library/LaunchAgents",
+            "Library/LaunchAgents",
+            "System/Library/CoreServices/SpringBoard.app",
+        ]
+        for scan in scan_roots:
+            root = self.src(scan)
+            if not root.is_dir():
+                continue
+            for p in sorted(root.rglob("*")):
+                if p.is_file() and p.name.lower() in (base.lower(), alt.lower()):
+                    return str(p.relative_to(self.rootfs))
+        return None
+
     def walk(self, exe_rel, seen=None):
         seen = seen if seen is not None else set()
         if exe_rel in seen:
@@ -215,10 +234,10 @@ def main():
             b.add(exe)
             jobs[job] = {"plist": None, "executable": exe}
             continue
-        plist_rel = "System/Library/LaunchDaemons/" + PLIST_NAMES[job]
-        if not b.add(plist_rel, required=False):
-            plist_rel = "System/Library/LaunchAgents/" + PLIST_NAMES[job]
-            b.add(plist_rel)
+        plist_rel = b.find_plist(job)
+        if plist_rel is None:
+            raise SystemExit(f"no launchd plist found for job {job}")
+        b.add(plist_rel)
         with open(b.src(plist_rel), "rb") as f:
             pl = plistlib.load(f)
         argv = pl.get("ProgramArguments") or ([pl["Program"]] if "Program" in pl else [])
