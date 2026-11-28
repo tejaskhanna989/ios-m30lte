@@ -133,12 +133,26 @@ jobs:
     - name: Verify strict patch provenance (all patches, not just 0442-0445)
       run: |
         set -o pipefail
+        # Hash the kernel that step "Verify exact M30 kernel binary" actually
+        # verifies. The previous expression hashed dxb/build/<first entry>,
+        # which is a build directory, not the kernel that gets packaged - so
+        # the recorded kernel sha256 did not describe the shipped image.
+        kc=$(echo "$KERNEL_CONFIG" | tr A-Z a-z)
+        kpath="dxb/fakeroot/System/Library/Kernels/kernel.${kc}.m30lte"
+        [ -f "$kpath" ] || kpath="dxb/fakeroot/mach.${kc}.m30lte"
+        if [ -f "$kpath" ]; then
+          ksha=$(shasum -a 256 "$kpath" | cut -d' ' -f1)
+          echo "kernel sha256: $ksha  ($kpath)"
+        else
+          ksha=unknown
+          echo "ERROR: kernel not found at either expected path" >&2
+        fi
         python3 tools/verify_patch_provenance.py \
           --manifest m30-patch-manifest.tsv \
           --patch-dir xnu/patches-minimal \
           --upstream-dir dxb/patches \
           --allowlist xnu/patches-minimal/SKIP-ALLOWLIST.txt \
-          --kernel-sha256 "$(shasum -a 256 "dxb/build/$(ls dxb/build | head -1)" 2>/dev/null | cut -d' ' -f1 || echo unknown)" \
+          --kernel-sha256 "$ksha" \
           --json m30-patch-provenance.json
     - name: Parse build log patch evidence
       run: |
@@ -434,6 +448,47 @@ jobs:
         print('::error title=build log tail::' + esc(tail[-30000:]))
         PYEOF
         exit 1
+    - name: Publish kernel identity
+      if: always()
+      run: |
+        # A kernel must not be consumable without its identity. Logs are not
+        # always retrievable, so write the hash to a small artifact AND to the
+        # step summary, which is readable through the API.
+        kc=$(echo "$KERNEL_CONFIG" | tr A-Z a-z)
+        kpath="dxb/fakeroot/System/Library/Kernels/kernel.${kc}.m30lte"
+        [ -f "$kpath" ] || kpath="dxb/fakeroot/mach.${kc}.m30lte"
+        {
+          echo "{"
+          echo "  \"kernel_config\": \"$KERNEL_CONFIG\","
+          echo "  \"machine_config\": \"$MACHINE_CONFIG\","
+          echo "  \"xnu_target\": \"$XNU_TARGET\","
+          echo "  \"macos_version\": \"$MACOS_VERSION\","
+          echo "  \"dxb_sha\": \"$DXB_SHA\","
+          echo "  \"commit\": \"$GITHUB_SHA\","
+          echo "  \"run_id\": \"$GITHUB_RUN_ID\","
+          if [ -f "$kpath" ]; then
+            echo "  \"kernel_path\": \"$kpath\","
+            echo "  \"kernel_sha256\": \"$(shasum -a 256 "$kpath" | cut -d' ' -f1)\","
+            echo "  \"kernel_size_bytes\": $(wc -c < "$kpath" | tr -d ' ')"
+          else
+            echo "  \"kernel_path\": null,"
+            echo "  \"kernel_sha256\": null,"
+            echo "  \"kernel_size_bytes\": null"
+          fi
+          echo "}"
+        } > m30-kernel-identity.json
+        cat m30-kernel-identity.json
+        echo "### Kernel identity" >> $GITHUB_STEP_SUMMARY
+        echo '```json' >> $GITHUB_STEP_SUMMARY
+        cat m30-kernel-identity.json >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+    - name: Upload kernel identity
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: m30-kernel-identity
+        path: m30-kernel-identity.json
+        if-no-files-found: warn
     - name: Package build tree for local compiles
       if: always()
       run: |

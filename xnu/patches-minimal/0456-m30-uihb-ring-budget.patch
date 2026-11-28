@@ -29,10 +29,114 @@ index 5be9ce8..8d412db 100644
  	if (sweet_sample_names[0] == '-') {
  		return;
 diff --git a/osfmk/kern/exception.c b/osfmk/kern/exception.c
-index b7043ff..c74a5d5 100644
+index b7043ff..340427a 100644
 --- a/osfmk/kern/exception.c
 +++ b/osfmk/kern/exception.c
-@@ -1053,9 +1053,43 @@ sweet_sample_task(const char *name, int pid, task_t task)
+@@ -1038,6 +1038,103 @@ sweet_crash_strings(const char *name)
+  */
+ extern int  m30_ls_diag_enabled;     /* bsd/dev/sweet_sample.c */
+ extern void m30_ls_diag_line(const char *line); /* bsd/dev/sweet_sample.c */
++/*
++ * v85 diagnostic volume control.
++ *
++ * The pmsg ring is 16384 bytes and holds roughly 100 records. Measured from our
++ * own captures (v74, v79) one sample of SpringBoard plus backboardd is 29-58
++ * lines of 101-253 bytes, i.e. a quarter to a half of the ring per sample, so a
++ * few samples evict everything older - including the framebuffer records that
++ * are the actual lock-screen evidence.
++ *
++ * Everything this file emits for a sample passes through m30_smp_emit(), which
++ * enforces a hard TOTAL byte budget: headers, per-thread lines and truncation
++ * all count. Space for the truncation marker is reserved up front, so the
++ * marker itself always fits and the budget can never be exceeded. A line that
++ * would cross the boundary is emitted truncated and suffixed "..." rather than
++ * dropped, so a short line is never mistaken for a complete one.
++ *
++ * Read-only: no state change, no injection, no timing change beyond skipping
++ * further output.
++ */
++#define M30_SMP_MARKER	"M30 SMP budget reached, output truncated"
++#define M30_SMP_DEFAULT_KIB	2
++
++static int
++m30_smp_budget_kib(void)
++{
++	static int kib = -1;
++	if (kib < 0) {
++		int v = M30_SMP_DEFAULT_KIB;
++		(void)PE_parse_boot_argn("m30samplebudget", &v, sizeof(v));
++		kib = (v < 1) ? 1 : v;
++	}
++	return kib;
++}
++
++static void
++m30_smp_emit(const char *line)
++{
++	static int used;
++	static bool capped;
++	const int reserve = (int)strlen(M30_SMP_MARKER) + 1; /* text + newline */
++	const int budget = m30_smp_budget_kib() * 1024;
++	char buf[256];
++	int len, room;
++
++	if (capped) {
++		return;
++	}
++	/* Keep the marker's space free at all times. */
++	room = budget - reserve - used;
++	if (room <= 0) {
++		if (m30_ls_diag_enabled) {
++			m30_ls_diag_line(M30_SMP_MARKER);
++		} else {
++			printf("%s\n", M30_SMP_MARKER);
++		}
++		used += reserve;
++		capped = true;
++		return;
++	}
++
++	len = (int)strlen(line);
++	/*
++	 * Clip to the local buffer first. Lines are capped at 400 bytes by the
++	 * caller, so this is a guard, not the normal path; when it does fire the
++	 * "..." below marks the cut so a clipped line is never read as complete.
++	 */
++	if (len > (int)sizeof(buf) - 1) {
++		len = (int)sizeof(buf) - 1;
++	}
++	memcpy(buf, line, (size_t)len);
++	buf[len] = '\0';
++
++	if (len + 1 > room) {
++		/*
++		 * Truncate to fit. `room` is the number of bytes available
++		 * INCLUDING the trailing newline, so the text is clamped to
++		 * room - 1; using room here would emit one byte more than it
++		 * charges and the total would exceed the budget by one byte per
++		 * truncation. Three dots mark the cut.
++		 */
++		len = room - 1;
++		if (len >= 3) {
++			buf[len - 3] = '.';
++			buf[len - 2] = '.';
++			buf[len - 1] = '.';
++		}
++		buf[len] = '\0';
++	}
++
++	if (m30_ls_diag_enabled) {
++		m30_ls_diag_line(buf);
++	} else {
++		printf("%s\n", buf);
++	}
++	used += len + 1;
++}
++
+ void sweet_sample_task(const char *name, int pid, task_t task);
+ 
+ void
+@@ -1053,9 +1150,35 @@ sweet_sample_task(const char *name, int pid, task_t task)
  		slide = sr->sr_slide;
  		vm_shared_region_deallocate(sr);
  	}
@@ -60,42 +164,22 @@ index b7043ff..c74a5d5 100644
 +	 * mistaken for a silent sampler. Read-only: no state, no injection, no
 +	 * timing change beyond skipping further output.
 +	 */
-+	static int m30_sample_bytes;
-+	static bool m30_sample_capped;
-+	int m30_sample_budget_kib = 2;
-+	(void)PE_parse_boot_argn("m30samplebudget", &m30_sample_budget_kib,
-+	    sizeof(m30_sample_budget_kib));
-+	if (m30_sample_budget_kib < 1) {
-+		m30_sample_budget_kib = 1;
-+	}
  	char hdr[192];
 -	snprintf(hdr, sizeof(hdr), "SMP %s[%d] slide 0x%llx mh 0x%llx", name, pid, slide, task->mach_header_vm_address);
+-	if (m30_ls_diag_enabled) m30_ls_diag_line(hdr); else printf("%s\n", hdr);
 +	snprintf(hdr, sizeof(hdr), "SMP %s[%d] slide 0x%llx mh 0x%llx budget %d KiB",
-+	    name, pid, slide, task->mach_header_vm_address, m30_sample_budget_kib);
- 	if (m30_ls_diag_enabled) m30_ls_diag_line(hdr); else printf("%s\n", hdr);
-+	m30_sample_bytes += (int)strlen(hdr) + 1;
++	    name, pid, slide, task->mach_header_vm_address, m30_smp_budget_kib());
++	/* Every emitted byte goes through the budget, header included. */
++	m30_smp_emit(hdr);
  
  	task_lock(task);
  	queue_iterate(&task->threads, thread, thread_t, task_threads) {
-@@ -1081,7 +1115,21 @@ sweet_sample_task(const char *name, int pid, task_t task)
+@@ -1081,7 +1204,7 @@ sweet_sample_task(const char *name, int pid, task_t task)
  			}
  			fp = frame[0];
  		}
-+		if (m30_sample_capped) {
-+			continue;
-+		}
-+		if (m30_sample_bytes > m30_sample_budget_kib * 1024) {
-+			/* One marker, so a wrapped ring is never read as a silent sampler. */
-+			if (m30_ls_diag_enabled) {
-+				m30_ls_diag_line("M30 SMP budget reached, further samples suppressed");
-+			} else {
-+				printf("M30 SMP budget reached, further samples suppressed\n");
-+			}
-+			m30_sample_capped = true;
-+			continue;
-+		}
- 		if (m30_ls_diag_enabled) m30_ls_diag_line(line); else printf("%s\n", line);
-+		m30_sample_bytes += (int)strlen(line) + 1;
+-		if (m30_ls_diag_enabled) m30_ls_diag_line(line); else printf("%s\n", line);
++		m30_smp_emit(line);
  	}
  	task_unlock(task);
  }

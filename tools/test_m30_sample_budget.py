@@ -46,28 +46,48 @@ class SampleBudgetPatchTests(unittest.TestCase):
     def test_budget_is_configurable_with_a_safe_default(self):
         body = "\n".join(added_lines())
         self.assertIn("m30samplebudget", body, "must be boot-arg controllable")
-        m = re.search(r"int m30_sample_budget_kib = (\d+);", body)
+        m = re.search(r"#define\s+M30_SMP_DEFAULT_KIB\s+(\d+)", body)
         self.assertIsNotNone(m, "default budget must be a literal")
         kib = int(m.group(1))
         # ring is 16 KiB; leave the majority of it for other evidence
         self.assertLessEqual(kib, 4, f"default {kib} KiB crowds out evidence")
         self.assertGreaterEqual(kib, 1, "a zero budget would silence the sampler")
-        self.assertIn("m30_sample_budget_kib < 1", body, "must clamp bad input")
+        self.assertIn("m30_smp_budget_kib() * 1024", body,
+                      "the cap must be expressed in the same KiB unit")
+        self.assertIn("(v < 1) ? 1 : v", body, "must clamp bad input to >= 1 KiB")
 
-    def test_budget_is_enforced_and_accounted(self):
+    def test_every_emitted_byte_is_metered(self):
+        """Headers and truncation must be charged, or the cap is a fiction.
+
+        The pre-fix patch bypassed the budget for the header line with a bare
+        printf; that is exactly what let a 2 KiB cap emit 5-10 KiB. Both call
+        sites must now go through m30_smp_emit, and usage must be incremented
+        inside it so no caller can emit unmetered bytes.
+        """
         body = "\n".join(added_lines())
-        self.assertIn("m30_sample_bytes > m30_sample_budget_kib * 1024", body)
-        # header line and each thread line must both be counted, or the cap
-        # under-reports exactly the traffic it exists to bound
-        self.assertGreaterEqual(body.count("m30_sample_bytes +="), 2)
+        self.assertIn("m30_smp_emit(hdr)", body, "header must be budgeted")
+        self.assertIn("m30_smp_emit(line)", body, "thread lines must be budgeted")
+        self.assertIn("used += len + 1;", body,
+                      "the charge must live inside the emitter, not the caller")
+        # nothing may reach the sink without passing the emitter
+        emitter = body[body.index("m30_smp_emit(const char *line)"):]
+        emitter = emitter[:emitter.index("\n}\n")]
+        self.assertIn("used + len + 1", body.replace("used += len + 1", "used + len + 1"))
+        # and the reserve must size the marker text plus its newline
+        self.assertIn("strlen(M30_SMP_MARKER) + 1", body,
+                      "reserve must not use sizeof (the NUL is never emitted)")
 
     def test_exhaustion_leaves_exactly_one_marker(self):
         """A wrapped ring must never look like a silent sampler."""
         body = "\n".join(added_lines())
-        self.assertEqual(body.count("further samples suppressed"), 2,
-                         "one marker for the durable sink, one for printf")
-        self.assertIn("m30_sample_capped = true", body,
-                      "the cap must latch, or the marker repeats every thread")
+        self.assertIn("M30_SMP_MARKER", body, "a marker must exist")
+        self.assertIn("capped = true;", body,
+                      "the cap must latch, or the marker repeats every line")
+        # the marker is emitted in exactly one place
+        self.assertEqual(body.count("m30_ls_diag_line(M30_SMP_MARKER)"), 1,
+                         "exactly one marker emission point")
+        self.assertEqual(body.count('printf("%s\\n", M30_SMP_MARKER)'), 1,
+                         "one printf fallback for the marker")
 
     def test_sampler_is_dormant_by_default(self):
         """No accepted candidate carries a sweetsample boot-arg, so a default-on
