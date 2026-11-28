@@ -1,0 +1,5 @@
+2ee2c8d8085661b1b1eaf3871cd93a7cecaf5b28b3d2c92748b0aa69af26aca1  0446-m30-framebuffer-status-quiet.patch
+167c070b37cdd5a809b40fbbcd497f91c02cf49b8450174169ab5069dcb488f9  0447-m30-key-input-diag.patch
+62a8846f56e860850ae19ccca5ceeb56a008aa3baf750a6a5e8a597cb604a1eb  0448-m30-hid-event-diag.patch
+a55c3f655b55e34ed8e0f824f1b4ca8b5fb97b71bbd690c551766178e34eb70f  0449-m30-revert-key-input-diag.patch
+d2f666b567d83a4aff573402c0ee641cc889d3727acc351676818af7edec931a  0450-m30-revert-hid-event-diag.patch

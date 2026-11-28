@@ -4105,3 +4105,166 @@ authorization for a BOOT-only test of candidate v6.
   Host CI `45949750910` GREEN.
 - Requires USERDATA rewrite to take effect; NOT written. BOOT remains v78
   UI-exact `48e45bf7...`. No flash. lsd fix preserved.
+
+## 2026-11-27 - v80 lock-screen regression attribution (no device write)
+
+- Reconstructed the write/flash chronology from committed records only. The
+  accepted lock screen (2026-11-25T06:07:50Z) ran on USERDATA `5f2e2aa6…`
+  (release `ios-root-20H392-44905109656`, written 2026-11-21) with BOOT
+  `629843b5…` (v68). The **first failing boot was v69 at 09:17Z the same day,
+  while that same USERDATA was still on the device** — the USERDATA was not
+  rewritten until 17:00Z (`dea9110c…`). The regression therefore cannot be a
+  USERDATA change.
+- The BOOT delta v68→v69 is three patches (0446 logging cap, 0447/0448
+  diagnostics) and v70 reverted 0447/0448 and still failed. Patch 0446 is
+  logging-only. No source-level cause is established; the v69 failure is
+  unexplained by the repository's code changes.
+- Root cause of the "no evidence" pattern: the 16 KiB pstore ring covers only
+  the newest ~1630 s. v68 was the only capture taken at the END of a boot (last
+  `v=97800`, ~27 min, `sw=11 pr=8 copied=70761600`). Every later capture covers
+  the HEAD of a boot (v69/v70 `v=4800`; v68t `v=18600`; v73 `v=40800`), i.e. the
+  window where the accepted configuration also shows nothing (lock screen took
+  ~10 min). `copied=0` in v79 vs `copied=70761600` in v68 is a capture-time
+  difference, not a framebuffer regression.
+- `launchd.log` used for v68t/v73/v74 analyses is extracted from the HFS+ image,
+  not captured live, so it cannot date the regression either.
+- Staging-script history reconstructed from CI (`contents?ref=<head_sha>`):
+  image `5f2e2aa6…` was staged at `7e029cdd` (script A); `fix_container_metadata()`
+  was introduced at `1042340248` (script B, image `dea9110c…`). It is inert on
+  the IPSW OS volume (0 metadata plists, CI `45812788743`) but it is still a
+  change from the proven baseline.
+- Source change (tools only): the generic MCM rewrite is now explicit. Default
+  runs print `M30_MCM_REWRITE: disabled` and leave staged metadata untouched;
+  `M30_MCM_REWRITE=1` opts in; combining it with `MCM_BUILD_INPUT` fails closed.
+  SpringBoard container registration is unchanged and still unconditional.
+- New `tools/test_v80_lockscreen_regression.py` (11 tests): default staging is
+  byte-identical, opt-in rewrite works, conflict fails closed, SpringBoard
+  registration unaffected, v68 BOOT/kernel/cmdline identity pinned, known-good
+  USERDATA hash and first-failing-boot ordering locked in. Extended
+  `tools/test_m30_native_bootargs.py` so every post-v68 rebuild must be
+  distinguishable from the accepted BOOT.
+- CI: `ios-root-tests.yml` runs the new tests; `ios-root-build.yml` records a
+  staging profile against `5f2e2aa6…`. Host CI `46044138006` **GREEN**
+  (container, SpringBoard, MCM-input, v80 invariants, compile — 8/8 steps).
+- Five USERDATA-era boots (v69, v70, v68t, v68t-native, v79) all failed with
+  distinct BOOTs. The one combination never re-tested is the accepted pair.
+  Verification procedure (NOT executed):
+  `validation/input-analysis/v80-lockscreen-verification-procedure.md`.
+- Lead, not cause: migration runs 5× in the v73/v74 logs vs 1× in the first
+  post-v68 boot, followed by a 31-service XPC burst including
+  `com.apple.purplebuddy.budd`. Why migration repeats is not in any surviving log.
+- No device access, no flash, no partition write, no new kernel/rootfs artifact.
+
+### v82 — independent SpringBoard→lockscreen trace (2026-11-27, read-only)
+
+Deliverable: `validation/input-analysis/v82-springboard-lockscreen-dependency-map.md`
+(10 sections). Tool: `tools/summarize_pmsg_phase.py`. Tests:
+`tools/test_v82_dependency_map.py` (14, local PASS). No device access, no flash,
+no partition write, no artifact rebuilt.
+
+- **The framebuffer "stall" is not a bug.** v68's heartbeat runs 138 records to
+  `v=97800` (~27 min) with every frame at `dirty=0`, i.e. ~5,800 vsync firings
+  *after* its last present. The timer is alive; `present()` finds nothing
+  because no layer was staged. The passing boot stopped composing at 7.0 min and
+  still showed a lock screen 3 min later, so "presents stopped" carries no
+  diagnostic weight at all.
+- **The apparent SwapWait deadlock is a logging artifact.** v81's last wait is
+  `wait #7 token=3 before=2 done=2`, satisfied by the `present #3` that follows
+  it. `wait` records are bounded to `fPresentCalls <= 4`, so v68 rotated them
+  away. `wait # > done #` was never evidence of a wedge.
+- **Two failure modes, not one.** A (fatal): v69/v70 die with
+  `SBERR libc++abi:` + `NSException`. B (silent): v68t/v68t-native/v81 keep
+  SpringBoard alive (`sb=27 bb=57`), 0 fatal records, 3-5 frames composed.
+  PASS (v68) composed 8.
+- **The keystore `sel 10` rejection is not a candidate cause.** v69 — the first
+  failing boot — has zero. All ring windows are rotated, and no capture contains
+  a single *successful* `sel 10`, so the metric cannot be compared across boots.
+- **BOOT→USERDATA provenance table** (§9) is the load-bearing assumption: v69/v70
+  fail on the BOOT axis with the accepted data volume; v68t+ fail on the USERDATA
+  axis with a kernel lacking 0447/0448. Column is inferred from CI staging
+  revisions, not a flash-time hash — recording that hash is the highest-value
+  next instrumentation.
+- Earliest unverified transition remains Stage 4 (SpringBoard's
+  `bootstrap_check_in` of `com.apple.frontboard.systemappservices`); it is a
+  visibility gap, not a proven failure. No `frontboard` evidence exists in any
+  capture.
+- Other investigation: no written USERDATA report exists in the repo or on any
+  branch. Assessed the experiment instead (§8): the v81 result is real and kills
+  "v68 BOOT alone was the magic", but it does not isolate USERDATA from the
+  Stage-4 gap, and a USERDATA-only account leaves v69's fatal NSException
+  unexplained.
+
+### v82 addendum — court-ordered audits (2026-11-27, read-only)
+
+Three audits; the first overturns the map's own §9.
+
+- **USERDATA provenance was wrong.** Every parity failure (v68t, v68t-native,
+  v81 excepted) records *"No USERDATA, SYSTEM or RECOVERY write"*. The only
+  USERDATA writes are release `45651107666` (2026-11-25, before v68 booted) and
+  `45949747024` (2026-11-27, v79). So `dea9110c…` and `b0f5dba6…` were **never
+  booted**; the v68t/v68t-native failures ran the *accepted* volume. Both
+  failure modes therefore occur on the accepted data volume, and "USERDATA is
+  the controlling variable" is not supported by the write record.
+- **No volume identity exists anywhere.** Candidate manifests are BOOT-only
+  (kernel/shim/payload); no capture records USERDATA identity at boot.
+  `5f2e2aa6…` is a release image hash, not a device reading.
+- **IRT "discrepancy" is a sampling artifact.** Order is always
+  `status(state=2)` -> `patched (0->3)` -> `patched (final state=3)`. v74 was
+  pulled ~3 min after resume and ends at the pre-patch `final: state=2` stage.
+  No boot is observed stuck at state 2. v68 has zero IRT records, so IRT cannot
+  separate success from failure at all — round-1 hypothesis withdrawn.
+- Tests: 4 new audit tests (18 total, PASS). No device access, no writes.
+
+### v83 — Case #167 round 3: BOOT-axis forensics (2026-11-27, offline)
+
+Report: `validation/input-analysis/v83-boot-axis-forensics.md`. Tool:
+`tools/boot_axis_matrix.py` (matrix reproducible in ~1s). Tests: 23 total, PASS.
+
+- **0446 cannot be the cause.** Measured, not asserted: the cap leaves <=8
+  heartbeats, so v68(138)/v68t(28)/v68t-native(34) provably lack it while
+  v69(4)/v70(5) carry it. It is absent from a silent failure, so it cannot
+  explain that mode.
+- **Fatal and silent modes are produced by disjoint BOOT changes.** Fatal =
+  logging only (0446/0447/0448). Silent = logging + 0451 Melfas touch +
+  0453/0454/0455. No patch is common to both except 0446, which is contradicted.
+- **The hard unexplained fact:** v70 = v68 + a logging cap only, and it produced
+  a fatal NSException. It is the only isolated experiment on this axis.
+- **Reproducibility failure (most consequential):** `0446` is absent from
+  `xnu/patches-minimal/`; v69/v70 candidate manifests do not exist; v70 source
+  `528bb276` is unreachable; the v81 capture lives only on `origin/main`, not on
+  this branch. The accepted baseline therefore cannot be rebuilt or re-verified
+  from this tree. Restoring 0446 + a CI patch-provenance check is the top
+  offline action.
+- `0454` does insert `proc_iterate(PROC_ALLPROCLIST)` into the framebuffer
+  present path, but gated behind `m30uihb` + every 60th present; 0 `M30 UI HB`
+  records in any case boot, and the armed uihb2 boot still produced only 5
+  presents. Negative result for 0454 as cause, not proof of harmlessness.
+- No device access, no flash, no partition write, no functional patch. v68
+  remains the accepted baseline.
+
+### v84 — Case #167 final joint verdict (2026-11-27, offline)
+
+Report: `validation/input-analysis/v84-joint-verdict.md`. **Verdict: ROOT CAUSE
+UNRESOLVED.**
+
+- **0446 recovered and disproved as a mechanism.** Patches 0446-0450 were absent
+  from the tree but intact at `528bb2760e`; now restored with
+  `xnu/patches-minimal/RECOVERED-0446-0450.sha256`. 0446's body is a print cap
+  only (`++fDiagTick` + `<=4800` guard) and touches no counter, staging,
+  notification or power state. It cannot raise an ObjC exception, yet the
+  0446-cap <-> NSException correlation is perfect across all five observable
+  boots. Read it as a **build-lineage marker**, not a cause.
+- **The documented v70 composition was false.** `528bb276` carries 11 patches vs
+  v68's `18322e15` with 6: v70 adds 0446, 0447, 0448 **and their reverts 0449,
+  0450 in the same build**. The prose said "0446 only".
+- **New systemic risk (top finding):** the build script skips patches that fail
+  to apply and continues, and CI verifies applied-ness for only 0442-0445.
+  0446-0455 are never checked. Builds are not guaranteed to match their
+  documentation, and nothing detects it.
+- Recovery is partial: patches recoverable; v69/v70 build artifacts are gone
+  (`total_count: 0` for runs 45575704483, 45592281185); v69/v70 binary
+  manifests never existed.
+- Recommended next experiment (offline, no device): make build provenance
+  auditable — every patch in the tree must appear as applied or be explicitly
+  allow-listed, hashes pinned alongside the kernel hash.
+- Tests: 25 total, PASS. No device access, no flash, no functional patch.

@@ -8,6 +8,15 @@ As of **2026-10-18** the phone boots to the **iOS home screen**. You can unlock 
 
 > Experimental bring-up, not a usable phone OS. Many things are missing or stubbed (see below), and Apple's security model is mostly switched off. It installs into the `userdata` partition and so **erases Android's user data**.
 
+## Project status
+
+**Development is still active.** We're currently working on stricter kernel build
+verification, patch provenance, and improving runtime diagnostics for the native
+iOS lockscreen investigation. Recent internal CI builds are passing, and
+physical-device testing will follow once the next candidate is verified.
+
+<sub>Last updated 2026-11-27.</sub>
+
 ## What works
 
 | Area | State |

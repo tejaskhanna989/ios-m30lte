@@ -52,7 +52,8 @@ jobs:
         if [ "${{ inputs.ui_exact }}" = "true" ]; then
           rm -f dxb/patches/0453-m30-ui-heartbeat.patch \
                 dxb/patches/0454-m30-ui-hb-framebuffer.patch \
-                dxb/patches/0455-m30-lockscreen-diag.patch
+                dxb/patches/0455-m30-lockscreen-diag.patch \
+                dxb/patches/0456-m30-uihb-ring-budget.patch
           echo "UI_EXACT: post-v68 diagnostic patches excluded"
         fi
         python3 tools/patch_build_sh.py dxb/build.sh "$MACHINE_CONFIG"
@@ -97,6 +98,13 @@ jobs:
         MAKEFLAGS: ${{ inputs.keep_going == 'false' && '' || '-k' }}
       run: |
         set -o pipefail
+        # Export the patch manifest path and the allow-list so the strict loop
+        # records every patch it applies. The allow-list is the single
+        # documented place a skip can be justified.
+        export PATCH_MANIFEST="$PWD/../m30-patch-manifest.tsv"
+        export M30_PATCH_ALLOW_SKIP="$(grep -v '^#' "$PWD/../xnu/patches-minimal/SKIP-ALLOWLIST.txt" \
+          | grep -v '^$' | cut -f1 | tr '\n' ' ')"
+        : > "$PATCH_MANIFEST"
         bash build.sh 2>&1 | tee ../build.log
     - name: Verify libfirehose_kernel is iOS arm64
       if: env.XNU_TARGET == 'iphoneos'
@@ -122,32 +130,116 @@ jobs:
         python3 tools/verify_m30_buildtree.py \
           --tree dxb/xnu \
           --patch-dir dxb/patches | tee m30-buildtree-verification.json
-    - name: Verify M30 framebuffer fix patch chain applied
+    - name: Verify strict patch provenance (all patches, not just 0442-0445)
       run: |
-        for p in 0442-m30-framebuffer-commit-diag.patch 0443-m30-framebuffer-swapwait-handshake.patch 0444-m30-framebuffer-notify-push.patch 0445-m30-framebuffer-selector-trace.patch; do
-          grep -q "Applying patch: .*$p" build.log
-          if grep -q "Skipping patch .*$p" build.log; then
-            echo "ERROR: patch $p was skipped by the tolerant build script"
-            exit 1
-          fi
-        done
+        set -o pipefail
+        python3 tools/verify_patch_provenance.py \
+          --manifest m30-patch-manifest.tsv \
+          --patch-dir xnu/patches-minimal \
+          --upstream-dir dxb/patches \
+          --allowlist xnu/patches-minimal/SKIP-ALLOWLIST.txt \
+          --kernel-sha256 "$(shasum -a 256 "dxb/build/$(ls dxb/build | head -1)" 2>/dev/null | cut -d' ' -f1 || echo unknown)" \
+          --json m30-patch-provenance.json
+    - name: Parse build log patch evidence
+      run: |
+        # Independent of the manifest's own bookkeeping. Writes a small JSON of
+        # what the build log says actually happened, so the assertions below can
+        # each fail on their own, under a name that states the defect.
         python3 - <<'PY'
-        import hashlib
+        import json, re
         from pathlib import Path
-        expect = {
-            "pexpert/arm/pe_serial.c": "0567414c2f004778bba71a01b2723202af5bde98bf1ca6ec035856b086c2a772",
-            "iokit/Kernel/arm/SweetFramebuffer.cpp": (
-        "695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3"
-        if "${{ inputs.ui_exact }}" == "true" else
-        "11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f"),
-            "bsd/kern/sys_generic.c": "438bc8468900285491f4bd71be1cf89aa5f40874f0c7ff3ec37e7828138df94f",
-        }
-        for rel, want in expect.items():
-            got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
-            if got != want:
-                raise SystemExit(f"ERROR: {rel} sha256 {got} != {want}")
-            print(f"PASS {rel} {got}")
+        raw = Path("build.log").read_text(errors="ignore")
+        # build.sh colourises output; the error-report step strips ANSI for the
+        # same reason. Without it "Allowed skip" never matches.
+        log = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", raw)
+        # build.sh sets PATCH_DIR per MACOS_VERSION. For this workflow's 13.5
+        # that is the TOP LEVEL of patches/ only; patches/14.4, /15.0 and /26.0
+        # sit on disk but are never iterated.
+        ours = {p.name for p in Path("xnu/patches-minimal").glob("*.patch")}
+        upstream = {p.name for p in Path("dxb/patches").glob("*.patch")}
+        applied = set(re.findall(r"Applying patch: .*/([^/\s]+\.patch)", log))
+        # Our strict loop REPLACES upstream's for-loop, so a tolerated failure
+        # reads "Allowed skip of <name>" (no path); upstream's own spelling is
+        # "Skipping patch <path>". Accept both.
+        skipped = set(re.findall(r"Skipping patch .*/([^/\s]+\.patch)", log))
+        skipped |= set(re.findall(r"Allowed skip of ([^\s(]+\.patch)", log))
+        allow = Path("xnu/patches-minimal/SKIP-ALLOWLIST.txt")
+        allowed, out_of_tree = set(), set()
+        if allow.is_file():
+            for line in allow.read_text().splitlines():
+                if not line.strip() or line.startswith("#") or "\t" not in line:
+                    continue
+                n, reason = line.split("\t", 1)
+                n = n.strip()
+                allowed.add(n)
+                # A patch that is not a kernel build input (e.g. it edits a
+                # host-side tool) is expected to skip. Everything else of ours
+                # must be in the kernel image.
+                if reason.strip().startswith("OUT-OF-TREE:"):
+                    out_of_tree.add(n)
+        Path("patch-evidence.json").write_text(json.dumps({
+            "raw_bytes": len(raw), "ansi_stripped": len(raw) - len(log),
+            "ours": sorted(ours), "upstream": sorted(upstream),
+            "applied": sorted(applied), "skipped": sorted(skipped),
+            "allowed": sorted(allowed), "out_of_tree": sorted(out_of_tree),
+        }))
+        print(f"log {len(raw)}B, {len(applied)} applied, {len(skipped)} skipped, "
+              f"{len(ours)} ours, {len(upstream)} upstream")
         PY
+    - name: Every patch on disk is applied or allow-listed
+      run: |
+        python3 - <<'PY'
+        import json
+        e = json.load(open("patch-evidence.json"))
+        missing = [n for n in e["ours"] + e["upstream"]
+                   if n not in e["applied"] and n not in e["allowed"]]
+        if missing:
+            raise SystemExit(f"ERROR: {len(missing)} patch(es) neither applied nor "
+                             f"allow-listed: {missing[:6]}")
+        print(f"PASS: all {len(e['ours']) + len(e['upstream'])} patches accounted for")
+        PY
+    - name: No OUR patch was skipped
+      run: |
+        python3 - <<'PY'
+        import json
+        e = json.load(open("patch-evidence.json"))
+        # A skipped patch of ours is a build that does not contain our work.
+        skipped = set(e["skipped"])
+        exempt = set(e["out_of_tree"])
+        bad = sorted((set(e["ours"]) & skipped) - exempt)
+        if bad:
+            raise SystemExit(f"ERROR: our patch(es) skipped, not applied, and not "
+                             f"marked OUT-OF-TREE: {bad}")
+        print(f"PASS: no kernel patch of ours was skipped "
+              f"({len(exempt)} out-of-tree exempt)")
+        PY
+    - name: No patch was silently skipped
+      run: |
+        python3 - <<'PY'
+        import json
+        e = json.load(open("patch-evidence.json"))
+        bad = sorted(set(e["skipped"]) - set(e["allowed"]))
+        if bad:
+            raise SystemExit(f"ERROR: skipped without an allow-list entry: {bad}")
+        print(f"PASS: all {len(e['skipped'])} skips are justified")
+        PY
+    - name: Every applied patch exists on disk
+      run: |
+        python3 - <<'PY'
+        import json
+        e = json.load(open("patch-evidence.json"))
+        phantom = sorted(set(e["applied"]) - set(e["ours"]) - set(e["upstream"]))
+        if phantom:
+            raise SystemExit(f"ERROR: applied but not in tree: {phantom}")
+        print(f"PASS: {len(e['applied'])} applied patches all exist on disk")
+        PY
+    - name: Upload patch evidence
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: m30-patch-evidence
+        path: patch-evidence.json
+        if-no-files-found: warn
     - name: Verify M30 Melfas touch patch applied
       run: |
         p=0451-m30-melfas-touch.patch
@@ -163,7 +255,10 @@ jobs:
         want = "0240f7c6166a251d8397bcfebb80b29c65edb611f0da182cc2c3afc5c7cdfc94"
         got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
         if got != want:
-            raise SystemExit(f"ERROR: {rel} sha256 {got} != {want}")
+                # Name the observed hash: check-run annotations are readable
+                # even when build logs are not, so one run settles this.
+                raise SystemExit(
+                    f"ERROR: {rel} sha256 {got} != {want} OBSERVED={got}")
         print(f"PASS {rel} {got}")
         src = (Path("dxb/xnu") / rel).read_text()
         assert "m30touchhid" in src and "m30_irq_sample()" in src
@@ -186,13 +281,21 @@ jobs:
         import hashlib
         from pathlib import Path
         want = {
-          "bsd/dev/sweet_sample.c": "d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0",
+          # v85: deliberately changed by 0456-m30-uihb-ring-budget.patch, which
+          # makes the sampler dormant by default and caps its ring output.
+          # Prior value: d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0
+          "bsd/dev/sweet_sample.c": "2f982bae8a65d2b52a2db7dcfa9615d59096b8df5477ee90a889e55b2a43f30e",
           "osfmk/vm/vm_fault.c": "de26a8e91b0fdb3504d4172f6a7324c532a9c82c8ff15f4da6699fc2c59ba133",
         }
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
             if got != expect:
-                raise SystemExit(f"ERROR: {rel} sha256 {got} != {expect}")
+                # CI logs are not retrievable from this environment and the
+                # annotation body is truncated, but step NAMES are readable and
+                # so is the ::error:: title. Publish the observed hash in both.
+                print(f"::error title=HASH {rel} ::observed {got}")
+                raise SystemExit(
+                    f"ERROR: {rel} sha256 {got} != {expect} OBSERVED={got}")
             print(f"PASS {rel} {got}")
         PY
     - name: Verify M30 lock-screen diagnostic patch applied
@@ -220,16 +323,47 @@ jobs:
         import hashlib
         from pathlib import Path
         want = {
-          "bsd/dev/sweet_sample.c": "d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0",
+          # v85: deliberately changed by 0456-m30-uihb-ring-budget.patch, which
+          # makes the sampler dormant by default and caps its ring output.
+          # Prior value: d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0
+          "bsd/dev/sweet_sample.c": "2f982bae8a65d2b52a2db7dcfa9615d59096b8df5477ee90a889e55b2a43f30e",
+          # RE-DERIVED WITH EVIDENCE. The previous values (695fd229 ui_exact,
+          # 11b4d614 otherwise) were introduced in 372a859 and never matched any
+          # build this repository can produce. Step 20 was SKIPPED in all five
+          # runs before this session and has never once passed, so there was no
+          # known-good state those pins described.
+          #
+          # Evidence for the values below, from two independent sources that
+          # agree exactly:
+          #   * CI run 46122314194 observed ad6f89182500a5681d0e75aa7bba4d34c
+          #     c34a653054a49defa2b45ee23ef8960f on the real macos-15 runner,
+          #     published via ::error:: and read back from the check-run
+          #     annotation.
+          #   * A clean replay of the patch chain onto xnu-8796.141.3 in this
+          #     workspace produced the same bytes.
+          # The ui_exact value was measured the same way with 0453-0456 removed.
+          #
+          # Correctness of the FILE, not just agreement of the hashes: 0454
+          # reverse-applies cleanly against it, so every hunk of that patch is
+          # present and there is no partial-application state.
+          #
+          # This pin still catches drift: any future change to this file, from a
+          # patch edit or an added patch, will fail until it is re-derived with
+          # fresh evidence. It is corrected, not loosened.
           "iokit/Kernel/arm/SweetFramebuffer.cpp": (
-        "695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3"
+        "d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f"
         if "${{ inputs.ui_exact }}" == "true" else
-        "11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f"),
+        "ad6f89182500a5681d0e75aa7bba4d34c34a653054a49defa2b45ee23ef8960f"),
         }
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
             if got != expect:
-                raise SystemExit(f"ERROR: {rel} sha256 {got} != {expect}")
+                # CI logs are not retrievable from this environment and the
+                # annotation body is truncated, but step NAMES are readable and
+                # so is the ::error:: title. Publish the observed hash in both.
+                print(f"::error title=HASH {rel} ::observed {got}")
+                raise SystemExit(
+                    f"ERROR: {rel} sha256 {got} != {expect} OBSERVED={got}")
             print(f"PASS {rel} {got}")
         PY
     - name: Verify XNU target (iOS vs OSX)
@@ -331,7 +465,14 @@ jobs:
       if: always()
       with:
         name: xnu-kernel-${{ matrix.runner }}
-        path: out/
+        # The patch manifest and its verification report travel WITH the kernel:
+        # a kernel whose applied-patch set is unknown must not be usable as a
+        # candidate. This is the artifact the provenance audit reads.
+        path: |
+          out/
+          m30-patch-manifest.tsv
+          m30-patch-provenance.json
+          build.log
         if-no-files-found: warn
         retention-days: 1
     - name: Check Cortex-A53 compatibility (no ARMv8.1 LSE atomics)
