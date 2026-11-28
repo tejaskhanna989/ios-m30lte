@@ -325,13 +325,17 @@ jobs:
           # makes the sampler dormant by default and caps its ring output.
           # Prior value: d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0
           "bsd/dev/sweet_sample.c": "2f982bae8a65d2b52a2db7dcfa9615d59096b8df5477ee90a889e55b2a43f30e",
+          # UNCHANGED project pins (introduced in 372a859). 0454 rewrites this
+          # file, so these values describe the intended 0453/0454 state and are
+          # NOT derived from a local replay: my local chain applies 167 of 176
+          # patches and is missing upstream's 15.0 set, so it cannot certify a
+          # hash. Do not update these from a local build; the failure below now
+          # reports OBSERVED=<hash> so the CI tree can be identified from an
+          # annotation and the discrepancy investigated on its own merits.
           "iokit/Kernel/arm/SweetFramebuffer.cpp": (
-        # v85: re-derived by replaying the real chain onto xnu-8796.141.3.
-        # The previous values matched no reproducible tree. Verified:
-        #   without 0453-0456 -> d3199f92...   with 0454 -> ad6f8918...
-        "d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f"
+        "695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3"
         if "${{ inputs.ui_exact }}" == "true" else
-        "ad6f89182500a5681d0e75aa7bba4d34c34a653054a49defa2b45ee23ef8960f"),
+        "11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f"),
         }
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
