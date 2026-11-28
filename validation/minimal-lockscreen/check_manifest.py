@@ -26,6 +26,8 @@ def main():
     failures = []
 
     src = Path(m["inventory_source"]["path"])
+    if not src.is_absolute():
+        src = HERE.parent.parent / src
     if not src.exists():
         failures.append(f"inventory log missing: {src}")
     else:

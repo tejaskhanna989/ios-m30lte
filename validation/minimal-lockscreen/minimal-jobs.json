@@ -2,7 +2,7 @@
   "schema": "m30lte-minimal-lockscreen-v1",
   "created": "2026-11-28",
   "inventory_source": {
-    "path": "/home/tejas/opencode-work/v73-userdata-evidence/0004e79f_launchd.log",
+    "path": "validation/minimal-lockscreen/evidence/0004e79f_launchd.log",
     "sha256": "051a4b0affd1b2ab3d0e1a4c56a98508a99bbd7714a7fd3608e3f8136d3b6931",
     "spawn_events": 212,
     "unique_job_names": 146,
@@ -58,37 +58,93 @@
   },
   "excluded_categories": {
     "media_and_graphics_services": [
-      "mediaserverd", "mediaremoted", "corecaptured", "corespeechd",
-      "iconservicesagent", "fontservicesd"
+      "mediaserverd",
+      "mediaremoted",
+      "corecaptured",
+      "corespeechd",
+      "iconservicesagent",
+      "fontservicesd"
     ],
     "cloud_accounts_sync": [
-      "accountsd", "apsd", "cloudd", "CloudKeychainProxy", "cloudpaird",
-      "iTunesCloudDaemon", "itunescloudd", "identityservicesd",
-      "appleaccountd", "AMSAccountDaemon", "amsaccountsd", "syncdefaultsd",
-      "remindd", "notesd", "SharedWebCredentials"
+      "accountsd",
+      "apsd",
+      "cloudd",
+      "CloudKeychainProxy",
+      "cloudpaird",
+      "iTunesCloudDaemon",
+      "itunescloudd",
+      "identityservicesd",
+      "appleaccountd",
+      "AMSAccountDaemon",
+      "amsaccountsd",
+      "syncdefaultsd",
+      "remindd",
+      "notesd",
+      "SharedWebCredentials"
     ],
     "telephony_radio_network": [
-      "CommCenter", "CommCenterMobileHelper", "callservicesd", "imagent",
-      "bluetoothd", "bluetoothuserd", "wifianalyticsd",
-      "WirelessRadioManagerd", "nehelper", "mDNSResponder", "geod",
-      "naprd", "sharingd", "remoted", "remotepairingdeviced"
+      "CommCenter",
+      "CommCenterMobileHelper",
+      "callservicesd",
+      "imagent",
+      "bluetoothd",
+      "bluetoothuserd",
+      "wifianalyticsd",
+      "WirelessRadioManagerd",
+      "nehelper",
+      "mDNSResponder",
+      "geod",
+      "naprd",
+      "sharingd",
+      "remoted",
+      "remotepairingdeviced"
     ],
     "first_boot_and_migration": [
-      "datamigrator", "budd", "MobileBackup", "backupd", "OTACrashCopier",
-      "softwareupdated", "installcoordinationd", "triald", "dmd"
+      "datamigrator",
+      "budd",
+      "MobileBackup",
+      "backupd",
+      "OTACrashCopier",
+      "softwareupdated",
+      "installcoordinationd",
+      "triald",
+      "dmd"
     ],
     "diagnostics_crash_reporting": [
-      "ReportCrash", "ReportMemoryException", "DumpPanic", "analyticsd",
-      "awdd", "symptomsd", "logd_helper", "peakpowermanagerd"
+      "ReportCrash",
+      "ReportMemoryException",
+      "DumpPanic",
+      "analyticsd",
+      "awdd",
+      "symptomsd",
+      "logd_helper",
+      "peakpowermanagerd"
     ],
     "privacy_health_siri": [
-      "healthd", "locationd", "nfcd", "siriactionsd", "assistantd",
-      "corespeechd", "ScreenTimeAgent", "ManagedSettingsAgent",
-      "familycircled", "familynotificationd", "findmydeviced"
+      "healthd",
+      "locationd",
+      "nfcd",
+      "siriactionsd",
+      "assistantd",
+      "corespeechd",
+      "ScreenTimeAgent",
+      "ManagedSettingsAgent",
+      "familycircled",
+      "familynotificationd",
+      "findmydeviced"
     ],
     "power_thermal_misc": [
-      "thermalmonitord", "powerd", "watchdogd", "sleepd", "peakpowermanagerd",
-      "timed", "chronod", "UserEventAgent", "ptpd", "navd", "mapspushd"
+      "thermalmonitord",
+      "powerd",
+      "watchdogd",
+      "sleepd",
+      "peakpowermanagerd",
+      "timed",
+      "chronod",
+      "UserEventAgent",
+      "ptpd",
+      "navd",
+      "mapspushd"
     ]
   },
   "framework_closure_required": [
@@ -118,7 +174,12 @@
     "System/Library/LaunchDaemons/com.apple.mobileactivationd.plist"
   ],
   "explicit_non_goals": [
-    "touch input", "full iOS functionality", "network", "app launching",
-    "wallet", "biometrics", "cellular"
+    "touch input",
+    "full iOS functionality",
+    "network",
+    "app launching",
+    "wallet",
+    "biometrics",
+    "cellular"
   ]
 }
