@@ -1,0 +1,159 @@
+name: minimal-lockscreen pruned HFSX root image (CI-only)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  RELEASE: ios-root-20H392-44905109656
+  IMAGE_SHA: 5f2e2aa6a80aea489946287d8cc32ef0ff6a1905a0d2923e8d4324163bb699b5
+  WORK: /home/runner/work/m30minroot
+  GH_TOKEN: ${{ github.token }}
+  BOOT_CMDLINE: "debug=0xc serial=3 cpus=6 keepsyms=1 maxmem=292 rd=emmcroot0 emmcroot=USERDATA emmcprobe=1 emmcwrite=1 a5fb_noconsole=1 a5fb_keep_on=1"
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: arena/f8de43b7-ios-m30lte
+
+      - name: Preflight disk and tools
+        run: |
+          set -euxo pipefail
+          echo "=== disk before ==="; df -h /
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android /opt/hostedtoolcache/CodeQL || true
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq hfsprogs rsync coreutils
+          for t in mkfs.hfsplus fsck.hfsplus; do command -v "$t"; done
+          python3 validation/minimal-lockscreen/check_manifest.py
+          python3 tools/prune_rootfs.py --help >/dev/null
+          echo "=== disk after cleanup ==="; df -h /
+
+      - name: Fetch and verify pinned rootfs release
+        run: |
+          set -euxo pipefail
+          mkdir -p "$WORK/parts" "$WORK/src" "$WORK/dst" "$WORK/out"
+          cd "$WORK/parts"
+          for p in aa ab ac ad; do
+            gh release download "$RELEASE" --repo "$GITHUB_REPOSITORY" \
+              -p "ios-root-20H392.img.gz.part-$p" --clobber
+          done
+          gh release download "$RELEASE" --repo "$GITHUB_REPOSITORY" \
+            -p parts-sha256.txt -O parts-sha256.txt --clobber
+          sha256sum -c parts-sha256.txt
+          cat ios-root-20H392.img.gz.part-?? | gzip -dc > "$WORK/ios-root.img"
+          echo "$IMAGE_SHA  $WORK/ios-root.img" | sha256sum -c -
+          echo "=== disk after decompress ==="; df -h "$WORK"
+
+      - name: Create and populate writable HFSX image
+        run: |
+          set -euxo pipefail
+          truncate -s 20G "$WORK/out/minimal-root.img"
+          mkfs.hfsplus -s -v M30MINROOT "$WORK/out/minimal-root.img" \
+            || mkfs.hfsplus -v M30MINROOT "$WORK/out/minimal-root.img"
+          sudo mount -t hfsplus -o loop,force,ro "$WORK/ios-root.img" "$WORK/src"
+          sudo mount -t hfsplus -o loop,force,rw "$WORK/out/minimal-root.img" "$WORK/dst"
+          sudo cp -a "$WORK/src"/. "$WORK/dst"/
+          sudo umount "$WORK/src"
+          echo "=== disk after copy ==="; df -h "$WORK"
+
+      - name: Prune optional services with dependency safety checks
+        run: |
+          set -euxo pipefail
+          sudo python3 tools/prune_rootfs.py \
+            --rootfs "$WORK/dst" \
+            --manifest validation/minimal-lockscreen/minimal-jobs.json \
+            --report "$WORK/out/prune-report.json"
+          sudo fsck.hfsplus -n "$WORK/out/minimal-root.img"
+          sudo umount "$WORK/dst"
+
+      - name: Verify image, boot configuration and publish manifest/hashes
+        run: |
+          set -euxo pipefail
+          IMG="$WORK/out/minimal-root.img"
+          SHA=$(sha256sum "$IMG" | cut -d' ' -f1)
+          SIZE=$(stat -c %s "$IMG")
+          python3 - "$IMG" "$SHA" "$SIZE" "$WORK/out" "$BOOT_CMDLINE" <<'PY'
+          import json, sys
+          import plistlib
+          from pathlib import Path
+          img, sha, size, out, cmdline = sys.argv[1:]
+          rep=json.loads((Path(out)/'prune-report.json').read_text())
+          checks={
+            'image_sha256':sha,
+            'image_size_bytes':int(size),
+            'source_image_sha256':'5f2e2aa6a80aea489946287d8cc32ef0ff6a1905a0d2923e8d4324163bb699b5',
+            'hfsx_signature':'4858 (mkfs.hfsplus -s)',
+            'boot_configuration':{
+              'cmdline':cmdline,
+              'root_device':'USERDATA via emmcroot=USERDATA / rd=emmcroot0',
+              'requires_ramdisk':False,
+              'userdata_partition_bytes':57038340096,
+            },
+            'dependency_closure':rep['dependency_closure'],
+            'retained_jobs':rep['retained_jobs'],
+            'removed_plists':rep['removed_plists_count'],
+            'removed_executables':rep['removed_executables_count'],
+            'system_version':rep['system_version'],
+            'launchd_present':rep['launchd_present'],
+            'dyld_cache_present':rep['dyld_cache_present'],
+          }
+          ok=(rep['dependency_closure']=='PASS' and rep['launchd_present']
+              and rep['dyld_cache_present']
+              and rep['system_version'].get('ProductVersion')=='16.7.16')
+          checks['verdict']='PASS' if ok else 'FAIL'
+          checks['physical_write_authorized']=False
+          checks['required_userdata_change']=(
+            'Write this image to /dev/block/by-name/USERDATA (57,038,340,096 bytes) '
+            'after a verified read-only backup and explicit authorization. '
+            'It replaces the existing USERDATA volume; BOOT/SYSTEM/RECOVERY unchanged.')
+          (Path(out)/'build-report.json').write_text(json.dumps(checks,indent=2,sort_keys=True))
+          print(json.dumps(checks,indent=2,sort_keys=True))
+          PY
+          echo "$SHA  minimal-root.img" > "$WORK/out/SHA256SUMS"
+          sha256sum "$IMG" > "$WORK/out/actual-sha256.txt"
+
+      - name: Compress and split image for artifact upload
+        run: |
+          set -euxo pipefail
+          cd "$WORK/out"
+          gzip -1 -c minimal-root.img > minimal-root.img.gz.part-aa.tmp
+          split -b 512M minimal-root.img.gz.part-aa.tmp minimal-root.img.gz.part-
+          rm minimal-root.img.gz.part-aa.tmp minimal-root.img
+          sha256sum minimal-root.img.gz.part-* > parts-sha256.txt
+          ls -lh | head -60
+          echo "=== disk before upload ==="; df -h "$WORK"
+
+      - name: Publish reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: minimal-lockscreen-root-reports
+          path: |
+            ${{ env.WORK }}/out/build-report.json
+            ${{ env.WORK }}/out/prune-report.json
+            ${{ env.WORK }}/out/actual-sha256.txt
+            ${{ env.WORK }}/out/SHA256SUMS
+            ${{ env.WORK }}/out/parts-sha256.txt
+          if-no-files-found: warn
+
+      - name: Publish image parts
+        uses: actions/upload-artifact@v4
+        with:
+          name: minimal-lockscreen-root-image
+          path: ${{ env.WORK }}/out/minimal-root.img.gz.part-*
+          if-no-files-found: error
+
+      - name: Cleanup
+        if: always()
+        run: |
+          sudo umount "$WORK/src" 2>/dev/null || true
+          sudo umount "$WORK/dst" 2>/dev/null || true
+          rm -rf "$WORK/parts" "$WORK/ios-root.img"
+          echo "=== final disk ==="; df -h /
