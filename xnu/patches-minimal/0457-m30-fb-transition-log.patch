@@ -1,8 +1,7 @@
 diff --git a/iokit/Kernel/arm/SweetFramebuffer.cpp b/iokit/Kernel/arm/SweetFramebuffer.cpp
-index 758af6d..20bddcf 100644
 --- a/iokit/Kernel/arm/SweetFramebuffer.cpp
 +++ b/iokit/Kernel/arm/SweetFramebuffer.cpp
-@@ -44,6 +44,248 @@ extern "C" int sweet_console_muted;     /* osfmk/console/serial_console.c */
+@@ -44,6 +44,248 @@
  #if defined(ARM64_BOARD_CONFIG_M30LTE)
  extern "C" void m30_pmsg_diag_line(const char *line);  /* pexpert/arm/pe_serial.c */
  #endif
@@ -251,7 +250,7 @@ index 758af6d..20bddcf 100644
  
  #if defined(ARM64_BOARD_CONFIG_SWEET) || defined(ARM64_BOARD_CONFIG_A5XELTE)
  #include <IOKit/IOService.h>
-@@ -138,6 +380,9 @@ public:
+@@ -138,6 +380,9 @@
  	uint32_t      fLastSkip;
  	uint64_t      fSwapWaitCalls; /* bounded SwapWait handshake telemetry */
  	uint64_t      fSwapDone;      /* present() completions observed by userland */
@@ -261,7 +260,7 @@ index 758af6d..20bddcf 100644
  #endif
  #if defined(ARM64_BOARD_CONFIG_A5XELTE)
  	bool          fPerfLog;       /* A5-only copy timing; never on the donor */
-@@ -279,6 +524,8 @@ AppleCLCD::start(IOService *provider)
+@@ -279,6 +524,8 @@
  	fLastSkip = 0;
  	fSwapWaitCalls = 0;
  	fSwapDone = 0;
@@ -270,7 +269,7 @@ index 758af6d..20bddcf 100644
  	int m30_noconsole = 0;
  	int m30_keepon = 0;
  	PE_parse_boot_argn("a5fb_noconsole", &m30_noconsole, sizeof(m30_noconsole));
-@@ -323,25 +570,24 @@ AppleCLCD::vsyncFired(OSObject *owner, IOTimerEventSource *sender)
+@@ -323,25 +570,24 @@
  		client->notify(SWEET_FB_NOTIFY_VSYNC, values, 6);
  	}
  #if defined(ARM64_BOARD_CONFIG_M30LTE)
@@ -314,14 +313,7 @@ index 758af6d..20bddcf 100644
  	/* v72 diagnostic heartbeat on a path proven active every boot. */
  	{
  		int hb_enabled = 0;
-@@ -361,6 +607,6 @@ AppleCLCD::vsyncFired(OSObject *owner, IOTimerEventSource *sender)
- 			}
- 		}
- 	}
- #endif
- 	if (fb->fPowerOff) {
- 		/* Fade out: halve every channel each vsync, then black, then idle. */
-@@ -625,12 +871,14 @@ AppleCLCD::present(const uint8_t *rec)
+@@ -625,12 +871,14 @@
  	 * left SwapWait as a no-op and never emitted a swap-done notification, so
  	 * a modern backboardd can stall after its first few SwapEnd calls. */
  	fSwapDone = fPresentCalls;
