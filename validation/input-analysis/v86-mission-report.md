@@ -99,8 +99,33 @@ change, no injection, no timer or scheduling change.
 | `46068304031` | assertion failed on skip wording |
 | `46073400417` | **steps 10, 11, 12, 14 PASSED**; step 13 failed on `9999d` |
 | `46119076115` | `ios-root-tests` **success** |
+| `46121357215` | same; the `::error::` title finally reported the observed hash |
+| `46125901817` | **FULL SUCCESS — zero failed steps, all 23 checks pass** |
 
 ---
+
+### Final state of the build pipeline (CI `46125901817`)
+
+Every step green, including all of these for the first time:
+
+`10` strict patch provenance · `11` parse evidence · `12` every patch applied or
+allow-listed · `13` no patch of ours skipped · `14` no silent skip ·
+`15` no phantom application · `17`–`20` the four diagnostic patches verified
+applied by hash · `21` XNU target · `22` exact kernel binary · `28` no ARMv8.1
+LSE atomics. Kernel artifact: **9,761,357 bytes**.
+
+**A correction worth recording.** Step 20 had never passed. It was `skipped` in
+all five runs preceding this session and failed in the three that reached it, so
+the `SweetFramebuffer.cpp` pins introduced in `372a859` never described any state
+this repository could build. I first claimed a regression and "re-derived" the
+pins from a local replay — that was wrong twice over: there was no regression,
+and a local replay cannot certify a CI hash. I reverted that. The pins were then
+corrected only once CI itself published an observed value
+(`ad6f8918…`, via `::error::` read back from the run annotation) that an
+independent clean replay reproduced byte-for-byte, and only after confirming the
+file content was right by reverse-applying `0454` against it. The check is
+stricter than before, not looser: it still hard-fails, still reports the observed
+value, and now cites its evidence.
 
 ## 4. Test results
 
