@@ -17,6 +17,7 @@ env:
   IMAGE_SHA: 5f2e2aa6a80aea489946287d8cc32ef0ff6a1905a0d2923e8d4324163bb699b5
   BOOT_LIMIT: 33554432
   WORK: /home/runner/work/m30min
+  GH_TOKEN: ${{ github.token }}
 
 jobs:
   build:
@@ -48,9 +49,9 @@ jobs:
           mkdir -p "$WORK/parts" "$WORK/rootfs" "$WORK/out"
           cd "$WORK/parts"
           for p in aa ab ac ad; do
-            gh release download "$RELEASE" -p "ios-root-20H392.img.gz.part-$p" --clobber
+            gh release download "$RELEASE" --repo "$GITHUB_REPOSITORY" -p "ios-root-20H392.img.gz.part-$p" --clobber
           done
-          gh release download "$RELEASE" -p parts-sha256.txt -O parts-sha256.txt --clobber
+          gh release download "$RELEASE" --repo "$GITHUB_REPOSITORY" -p parts-sha256.txt -O parts-sha256.txt --clobber
           echo "=== part hashes ==="
           cat parts-sha256.txt
           sha256sum -c parts-sha256.txt
