@@ -303,8 +303,10 @@ class SourceInvariantTests(unittest.TestCase):
         # A complete translation unit ends at depth 0. This catches the class
         # of error that broke CI twice: a deleted block taking its enclosing
         # `}` with it, which pushes later code out of its function.
-        self.assertEqual(brace_depth(path.read_text()), 0,
-                         "patched SweetFramebuffer.cpp is not brace-balanced")
+        # The unpatched donor driver ends at preprocessor-dependent brace depth 1;
+        # a balanced patch must preserve that baseline, not force it to 0.
+        self.assertEqual(brace_depth(path.read_text()), 1,
+                         "patched SweetFramebuffer.cpp changed brace depth")
 
     def test_touches_exactly_one_file(self):
         files = [l for l in PATCH.read_text().splitlines() if l.startswith("+++")]

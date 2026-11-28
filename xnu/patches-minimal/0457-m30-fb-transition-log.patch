@@ -318,7 +318,6 @@ index 758af6d..20bddcf 100644
  			}
  		}
  	}
-+	}
  #endif
  	if (fb->fPowerOff) {
  		/* Fade out: halve every channel each vsync, then black, then idle. */
