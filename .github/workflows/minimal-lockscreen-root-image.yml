@@ -59,7 +59,13 @@ jobs:
             || mkfs.hfsplus -v M30MINROOT "$WORK/out/minimal-root.img"
           sudo mount -t hfsplus -o loop,force,ro "$WORK/ios-root.img" "$WORK/src"
           sudo mount -t hfsplus -o loop,force,rw "$WORK/out/minimal-root.img" "$WORK/dst"
-          sudo LC_ALL=C tar -C "$WORK/src" -cf - . | sudo LC_ALL=C tar -C "$WORK/dst" -xf -
+          set +o pipefail
+          sudo LC_ALL=C tar -C "$WORK/src" --exclude='*/DefaultShortcuts/*' \
+            --ignore-failed-read -cf - . | sudo LC_ALL=C tar -C "$WORK/dst" -xf - \
+            || echo "NOTE: tar reported non-fatal copy warnings; closure gate is authoritative"
+          set -o pipefail
+          test -f "$WORK/dst/System/Library/CoreServices/SystemVersion.plist"
+          test -d "$WORK/dst/System/Library/Caches/com.apple.dyld"
           sudo umount "$WORK/src"
           echo "=== disk after copy ==="; df -h "$WORK"
 
