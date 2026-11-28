@@ -180,9 +180,32 @@ class Builder:
             root = self.src(scan)
             if not root.is_dir():
                 continue
+            prefix = base.lower()[:-6]   # strip '.plist'
+            alt_prefix = alt.lower()[:-6]
             for p in sorted(root.rglob("*")):
-                if p.is_file() and p.name.lower() in (base.lower(), alt.lower()):
+                if not p.is_file():
+                    continue
+                low = p.name.lower()
+                if low == base.lower() or low == alt.lower() or \
+                        (low.endswith(".plist") and
+                         (low.startswith(prefix) or low.startswith(alt_prefix))):
                     return str(p.relative_to(self.rootfs))
+        return None
+
+    def find_executable(self, job):
+        """Find a Mach-O executable by basename in the pinned rootfs."""
+        scan_roots = ["usr/bin", "usr/sbin", "usr/libexec",
+                      "System/Library/CoreServices", "System/Library/PrivateFrameworks"]
+        for scan in scan_roots:
+            root = self.src(scan)
+            if not root.is_dir():
+                continue
+            for p in sorted(root.rglob("*")):
+                if not p.is_file() or p.name.lower() != job.lower():
+                    continue
+                with open(p, "rb") as f:
+                    if f.read(4) in (b"\xcf\xfa\xed\xfe", b"\xca\xfe\xba\xbe"):
+                        return str(p.relative_to(self.rootfs))
         return None
 
     def walk(self, exe_rel, seen=None):
@@ -235,18 +258,23 @@ def main():
             jobs[job] = {"plist": None, "executable": exe}
             continue
         plist_rel = b.find_plist(job)
-        if plist_rel is None:
-            raise SystemExit(f"no launchd plist found for job {job}")
-        b.add(plist_rel)
-        with open(b.src(plist_rel), "rb") as f:
-            pl = plistlib.load(f)
-        argv = pl.get("ProgramArguments") or ([pl["Program"]] if "Program" in pl else [])
-        if not argv:
-            raise SystemExit(f"no ProgramArguments for {job}")
-        exe_rel = str(argv[0]).lstrip("/")
+        exe_rel = None
+        mach_services = []
+        if plist_rel is not None:
+            b.add(plist_rel)
+            with open(b.src(plist_rel), "rb") as f:
+                pl = plistlib.load(f)
+            argv = pl.get("ProgramArguments") or ([pl["Program"]] if "Program" in pl else [])
+            if argv:
+                exe_rel = str(argv[0]).lstrip("/")
+            mach_services = sorted(pl.get("MachServices", {}).keys())
+        if exe_rel is None or not b.src(exe_rel).exists():
+            exe_rel = b.find_executable(job)
+        if exe_rel is None:
+            raise SystemExit(f"no executable found for job {job}")
         b.walk(exe_rel)
         jobs[job] = {"plist": plist_rel, "executable": exe_rel,
-                     "mach_services": sorted(pl.get("MachServices", {}).keys())}
+                     "mach_services": mach_services}
 
     # dyld shared cache is the provider for unresolved system dylibs
     cache_dir = rootfs / DYLD_CACHE_DIR
