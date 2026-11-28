@@ -24,6 +24,8 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: arena/f8de43b7-ios-m30lte
 
       - name: Preflight disk and tools
         run: |
