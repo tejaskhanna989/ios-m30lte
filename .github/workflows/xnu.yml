@@ -163,15 +163,24 @@ jobs:
         skipped = set(re.findall(r"Skipping patch .*/([^/\s]+\.patch)", log))
         skipped |= set(re.findall(r"Allowed skip of ([^\s(]+\.patch)", log))
         allow = Path("xnu/patches-minimal/SKIP-ALLOWLIST.txt")
-        allowed = set()
+        allowed, out_of_tree = set(), set()
         if allow.is_file():
-            allowed = {l.split("\t")[0].strip() for l in allow.read_text().splitlines()
-                       if l.strip() and not l.startswith("#")}
+            for line in allow.read_text().splitlines():
+                if not line.strip() or line.startswith("#") or "\t" not in line:
+                    continue
+                n, reason = line.split("\t", 1)
+                n = n.strip()
+                allowed.add(n)
+                # A patch that is not a kernel build input (e.g. it edits a
+                # host-side tool) is expected to skip. Everything else of ours
+                # must be in the kernel image.
+                if reason.strip().startswith("OUT-OF-TREE:"):
+                    out_of_tree.add(n)
         Path("patch-evidence.json").write_text(json.dumps({
             "raw_bytes": len(raw), "ansi_stripped": len(raw) - len(log),
             "ours": sorted(ours), "upstream": sorted(upstream),
             "applied": sorted(applied), "skipped": sorted(skipped),
-            "allowed": sorted(allowed),
+            "allowed": sorted(allowed), "out_of_tree": sorted(out_of_tree),
         }))
         print(f"log {len(raw)}B, {len(applied)} applied, {len(skipped)} skipped, "
               f"{len(ours)} ours, {len(upstream)} upstream")
@@ -194,10 +203,14 @@ jobs:
         import json
         e = json.load(open("patch-evidence.json"))
         # A skipped patch of ours is a build that does not contain our work.
-        bad = sorted(set(e["ours"]) & set(e["skipped"]))
+        skipped = set(e["skipped"])
+        exempt = set(e["out_of_tree"])
+        bad = sorted((set(e["ours"]) & skipped) - exempt)
         if bad:
-            raise SystemExit(f"ERROR: our patch(es) skipped, not applied: {bad}")
-        print("PASS: no patch of ours was skipped")
+            raise SystemExit(f"ERROR: our patch(es) skipped, not applied, and not "
+                             f"marked OUT-OF-TREE: {bad}")
+        print(f"PASS: no kernel patch of ours was skipped "
+              f"({len(exempt)} out-of-tree exempt)")
         PY
     - name: No patch was silently skipped
       run: |

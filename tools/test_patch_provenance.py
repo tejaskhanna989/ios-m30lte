@@ -476,6 +476,7 @@ class EmbeddedCiScriptTests(unittest.TestCase):
         try:
             allowed = self.allowed_names() + ["0001-a.patch"]
             self.build_log(tmp, allowed)   # 0001 and every allowed name are skipped
+            # 0001 is OURS and is not marked OUT-OF-TREE, so W2 must fail
             res = self.run_ci(tmp)
             self.assertEqual(res[self.WA][0], 0, "justified skips are allowed")
             self.assertNotEqual(res[self.WB][0], 0,

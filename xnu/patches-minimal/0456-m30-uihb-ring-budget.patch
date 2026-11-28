@@ -1,0 +1,71 @@
+diff --git a/osfmk/kern/exception.c b/osfmk/kern/exception.c
+index b7043ff..c74a5d5 100644
+--- a/osfmk/kern/exception.c
++++ b/osfmk/kern/exception.c
+@@ -1053,9 +1053,43 @@ sweet_sample_task(const char *name, int pid, task_t task)
+ 		slide = sr->sr_slide;
+ 		vm_shared_region_deallocate(sr);
+ 	}
++	/*
++	 * v85 diagnostic-volume budget.
++	 *
++	 * The pmsg ring these lines are written to is 16384 bytes and holds about
++	 * 100 records. Measured from our own captures: one sample of SpringBoard
++	 * plus backboardd is 29-58 lines of 101-253 bytes (v74 and v79 pstore
++	 * decodes under validation/physical-boot-test/). A sample therefore
++	 * consumes a quarter to a half of the ring, so three or four samples
++	 * evict everything older, including the framebuffer and SWEET SURF
++	 * records that are the actual lock-screen evidence.
++	 *
++	 * In v74 only ONE sample ran and the framebuffer still shrank to 4
++	 * records, because the rest of the ring was spent on AKS access logging
++	 * (46 lines in that capture). Bounding the sampler alone is therefore
++	 * not sufficient; sampler output is bounded here so it stops being the
++	 * largest single evictor, and the remaining work is to stop the sampler
++	 * from being enabled by default at all (it currently is, via 0054).
++	 *
++	 * m30samplebudget (KiB, default 2) caps total sampler output per boot so
++	 * at least ~12 KiB of the ring is left for other evidence. On exhaustion
++	 * exactly one marker line is emitted, so a wrapped ring can never be
++	 * mistaken for a silent sampler. Read-only: no state, no injection, no
++	 * timing change beyond skipping further output.
++	 */
++	static int m30_sample_bytes;
++	static bool m30_sample_capped;
++	int m30_sample_budget_kib = 2;
++	(void)PE_parse_boot_argn("m30samplebudget", &m30_sample_budget_kib,
++	    sizeof(m30_sample_budget_kib));
++	if (m30_sample_budget_kib < 1) {
++		m30_sample_budget_kib = 1;
++	}
+ 	char hdr[192];
+-	snprintf(hdr, sizeof(hdr), "SMP %s[%d] slide 0x%llx mh 0x%llx", name, pid, slide, task->mach_header_vm_address);
++	snprintf(hdr, sizeof(hdr), "SMP %s[%d] slide 0x%llx mh 0x%llx budget %d KiB",
++	    name, pid, slide, task->mach_header_vm_address, m30_sample_budget_kib);
+ 	if (m30_ls_diag_enabled) m30_ls_diag_line(hdr); else printf("%s\n", hdr);
++	m30_sample_bytes += (int)strlen(hdr) + 1;
+ 
+ 	task_lock(task);
+ 	queue_iterate(&task->threads, thread, thread_t, task_threads) {
+@@ -1081,7 +1115,21 @@ sweet_sample_task(const char *name, int pid, task_t task)
+ 			}
+ 			fp = frame[0];
+ 		}
++		if (m30_sample_capped) {
++			continue;
++		}
++		if (m30_sample_bytes > m30_sample_budget_kib * 1024) {
++			/* One marker, so a wrapped ring is never read as a silent sampler. */
++			if (m30_ls_diag_enabled) {
++				m30_ls_diag_line("M30 SMP budget reached, further samples suppressed");
++			} else {
++				printf("M30 SMP budget reached, further samples suppressed\n");
++			}
++			m30_sample_capped = true;
++			continue;
++		}
+ 		if (m30_ls_diag_enabled) m30_ls_diag_line(line); else printf("%s\n", line);
++		m30_sample_bytes += (int)strlen(line) + 1;
+ 	}
+ 	task_unlock(task);
+ }

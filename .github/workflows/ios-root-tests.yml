@@ -25,5 +25,7 @@ jobs:
         run: python3 tools/test_v82_dependency_map.py
       - name: strict patch provenance system
         run: python3 tools/test_patch_provenance.py
+      - name: Sample budget regression (0456)
+        run: python3 tools/test_m30_sample_budget.py
       - name: Compile changed tools
         run: python3 -m py_compile tools/m30lte-root-tweaks.py tools/verify_ios_container_metadata.py tools/hfsplus_ro.py tools/summarize_pmsg_phase.py tools/boot_axis_matrix.py tools/verify_patch_provenance.py tools/patch_build_sh.py
