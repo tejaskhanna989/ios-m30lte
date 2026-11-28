@@ -227,6 +227,22 @@ class SourceInvariantTests(unittest.TestCase):
     def test_clamp_leaves_room_for_newline(self):
         self.assertIn("len = room - 1;", added_text())
 
+    def test_only_kernel_headers_are_included(self):
+        """The build failed once on <osfmk/kern/clock.h>: osfmk is itself an
+        include root, so kernel code spells it <kern/clock.h>. Userspace SDK
+        headers are not on the kernel path at all. Pin both lessons."""
+        body = added_text()
+        # Check only the real #include lines: the explanatory comment mentions
+        # the wrong spellings on purpose.
+        includes = [l.strip() for l in body.splitlines()
+                    if l.strip().startswith("#include")]
+        self.assertIn("#include <kern/clock.h>", includes,
+                      "osfmk headers are included relative to osfmk")
+        for bad in ("<osfmk/", "<string.h>", "<stdint.h>", "<stdio.h>",
+                    "<stdlib.h>"):
+            self.assertFalse(any(bad in inc for inc in includes),
+                             f"{bad} is not on the kernel include path")
+
     def test_touches_exactly_one_file(self):
         files = [l for l in PATCH.read_text().splitlines() if l.startswith("+++")]
         self.assertEqual(len(files), 1)

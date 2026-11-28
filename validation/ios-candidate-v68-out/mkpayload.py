@@ -32,6 +32,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import adt  # noqa: E402
 
 LC_SEGMENT_64, LC_UNIXTHREAD, LC_DYLD_CHAINED_FIXUPS = 0x19, 0x5, 0x80000034
+LC_BUILD_VERSION, LC_VERSION_MIN_IPHONEOS = 0x32, 0x25
+PLATFORM_IOS = 2
 PAGE = 0x4000
 BOOT_LINE_LENGTH = 608
 CMDLINE = 0x48
@@ -41,7 +43,7 @@ SEG_TABLE = CMDLINE + BOOT_LINE_LENGTH	# 0x2a8
 def parse_macho(buf):
     magic, cputype, cpusub, ftype, ncmds, sizeofcmds, flags, _ = struct.unpack_from('<8I', buf, 0)
     assert magic == 0xfeedfacf, 'not a 64-bit Mach-O'
-    segs, entry, fixups = [], None, None
+    segs, entry, fixups, build = [], None, None, None
     off = 32
     for _ in range(ncmds):
         cmd, size = struct.unpack_from('<II', buf, off)
@@ -55,8 +57,15 @@ def parse_macho(buf):
             entry, = struct.unpack_from('<Q', buf, off + 16 + 32 * 8)
         elif cmd == LC_DYLD_CHAINED_FIXUPS:
             fixups = struct.unpack_from('<II', buf, off + 8)	# dataoff, datasize
+        elif cmd == LC_BUILD_VERSION:
+            platform, minos, sdk = struct.unpack_from('<3I', buf, off + 8)
+            build = dict(platform=platform, minos=minos, sdk=sdk)
+        elif cmd == LC_VERSION_MIN_IPHONEOS:
+            ver, sdk = struct.unpack_from('<2I', buf, off + 8)
+            build = dict(platform=PLATFORM_IOS, minos=ver, sdk=sdk, legacy=True)
         off += size
-    return dict(cputype=cputype, cpusub=cpusub & 0xff, segs=segs, entry=entry, fixups=fixups)
+    return dict(cputype=cputype, cpusub=cpusub & 0xff, segs=segs, entry=entry,
+                fixups=fixups, build=build)
 
 
 def apply_chained_fixups(buf, m):
@@ -140,9 +149,36 @@ def adt_dram(adt_blob):
             struct.unpack('<Q', chosen.prop('dram-size'))[0])
 
 
-def build(kernel_path, adt_path, cmdline, ramdisk_path=None):
+def build(kernel_path, adt_path, cmdline, ramdisk_path=None,
+          allow_non_ios=False, text_vmaddr_expected=True):
     buf = bytearray(open(kernel_path, 'rb').read())
     m = parse_macho(buf)
+    # Refuse a kernel that was not built for iOS.
+    #
+    # An m30 kernel must be an iOS build: the acceptance baseline
+    # (ios-candidate-v68) carries LC_BUILD_VERSION platform=2 and links at
+    # 0xfffffff007004000, which xnu gives only to non-MacOSX platforms. A
+    # MacOSX build links 32 MB away at 0xfffffe0007004000, so the derived
+    # virt_base would be wrong and the shim would map the kernel to the wrong
+    # physical address. Failing here is far cheaper than failing on the panel.
+    # --allow-non-ios exists so this can be tested, not so it can be used.
+    if not allow_non_ios:
+        b = m['build']
+        if b is None:
+            raise SystemExit('refusing to package: kernel has no '
+                             'LC_BUILD_VERSION/LC_VERSION_MIN_IPHONEOS, so its '
+                             'target cannot be established')
+        if b['platform'] != PLATFORM_IOS:
+            raise SystemExit(
+                'refusing to package: LC_BUILD_VERSION platform=%d, expected %d '
+                '(iOS). This kernel was not built with SDKROOT=iphoneos, so its '
+                'link address and platform do not match the M30 pipeline.'
+                % (b['platform'], PLATFORM_IOS))
+        if text_vmaddr_expected and m['segs'][0]['vmaddr'] != 0xfffffff007004000:
+            raise SystemExit(
+                'refusing to package: __TEXT vmaddr=0x%x, expected '
+                '0xfffffff007004000 (non-MacOSX ARM64_LINK_ADDR)'
+                % m['segs'][0]['vmaddr'])
     nfix = apply_chained_fixups(buf, m)
     segs = [s for s in m['segs'] if s['vmsize']]
     text = m['segs'][0]

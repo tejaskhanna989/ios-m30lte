@@ -399,7 +399,7 @@ jobs:
           "iokit/Kernel/arm/SweetFramebuffer.cpp": (
         "d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f"
         if "${{ inputs.ui_exact }}" == "true" else
-        "0dba16d6cdd4c01c6fd0feb555e930467f0c65cadc5fed4f491ca6489589c302"),
+        "d3f71211e39f2e8cc878280915765fb565f65533d5164a226e4c0a2cebf88744"),
         }
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()

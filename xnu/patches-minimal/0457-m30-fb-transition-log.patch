@@ -1,13 +1,17 @@
 diff --git a/iokit/Kernel/arm/SweetFramebuffer.cpp b/iokit/Kernel/arm/SweetFramebuffer.cpp
-index 758af6d..726860d 100644
+index 758af6d..252377f 100644
 --- a/iokit/Kernel/arm/SweetFramebuffer.cpp
 +++ b/iokit/Kernel/arm/SweetFramebuffer.cpp
-@@ -44,6 +44,243 @@ extern "C" int sweet_console_muted;     /* osfmk/console/serial_console.c */
+@@ -44,6 +44,248 @@ extern "C" int sweet_console_muted;     /* osfmk/console/serial_console.c */
  #if defined(ARM64_BOARD_CONFIG_M30LTE)
  extern "C" void m30_pmsg_diag_line(const char *line);  /* pexpert/arm/pe_serial.c */
  #endif
 +#if defined(ARM64_BOARD_CONFIG_M30LTE)
-+#include <osfmk/kern/clock.h>   /* absolutetime_to_nanoseconds */
++/* absolutetime_to_nanoseconds().  Include path is <kern/clock.h>, not
++ * <osfmk/kern/clock.h>: osfmk is itself an include root, and every other
++ * IOKit file that needs osfmk headers - SweetCPU.cpp next to this one does -
++ * spells it this way. */
++#include <kern/clock.h>
 +
 +/* ---- v87 framebuffer transition logger ---------------------------------- */
 +/*
@@ -16,8 +20,9 @@ index 758af6d..726860d 100644
 + * involved.  Everything below is a plain static function operating on state
 + * owned by the driver instance.
 + */
-+#include <string.h>
-+#include <stdint.h>
++/* strlen/memcpy/snprintf come from <libkern/libkern.h>, already included
++ * above.  <string.h> and <stdint.h> are userspace SDK headers and are not on
++ * the kernel include path. */
 +
 +/*
 + * v87 diagnostic: framebuffer state-transition logger.
@@ -246,7 +251,7 @@ index 758af6d..726860d 100644
  
  #if defined(ARM64_BOARD_CONFIG_SWEET) || defined(ARM64_BOARD_CONFIG_A5XELTE)
  #include <IOKit/IOService.h>
-@@ -138,6 +375,9 @@ public:
+@@ -138,6 +380,9 @@ public:
  	uint32_t      fLastSkip;
  	uint64_t      fSwapWaitCalls; /* bounded SwapWait handshake telemetry */
  	uint64_t      fSwapDone;      /* present() completions observed by userland */
@@ -256,7 +261,7 @@ index 758af6d..726860d 100644
  #endif
  #if defined(ARM64_BOARD_CONFIG_A5XELTE)
  	bool          fPerfLog;       /* A5-only copy timing; never on the donor */
-@@ -279,6 +519,8 @@ AppleCLCD::start(IOService *provider)
+@@ -279,6 +524,8 @@ AppleCLCD::start(IOService *provider)
  	fLastSkip = 0;
  	fSwapWaitCalls = 0;
  	fSwapDone = 0;
@@ -265,7 +270,7 @@ index 758af6d..726860d 100644
  	int m30_noconsole = 0;
  	int m30_keepon = 0;
  	PE_parse_boot_argn("a5fb_noconsole", &m30_noconsole, sizeof(m30_noconsole));
-@@ -323,24 +565,24 @@ AppleCLCD::vsyncFired(OSObject *owner, IOTimerEventSource *sender)
+@@ -323,24 +570,24 @@ AppleCLCD::vsyncFired(OSObject *owner, IOTimerEventSource *sender)
  		client->notify(SWEET_FB_NOTIFY_VSYNC, values, 6);
  	}
  #if defined(ARM64_BOARD_CONFIG_M30LTE)
@@ -308,7 +313,7 @@ index 758af6d..726860d 100644
  	}
  	/* v72 diagnostic heartbeat on a path proven active every boot. */
  	{
-@@ -625,12 +867,14 @@ AppleCLCD::present(const uint8_t *rec)
+@@ -625,12 +872,14 @@ AppleCLCD::present(const uint8_t *rec)
  	 * left SwapWait as a no-op and never emitted a swap-done notification, so
  	 * a modern backboardd can stall after its first few SwapEnd calls. */
  	fSwapDone = fPresentCalls;
