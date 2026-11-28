@@ -4318,3 +4318,41 @@ untouched.
 6. On success freeze candidate; on failure add exactly one Stage-B dependency.
 
 No device operation performed in this handoff.
+
+### Stage 1 CI result — 2026-11-28 (first concrete build, run 46149055860)
+
+All rootfs work ran in GitHub Actions; ZERO local rootfs operations and ZERO
+device operations. Workflow `.github/workflows/minimal-lockscreen-stage1.yml`
+(also on main for workflow_dispatch; it checks out the arena branch for tools).
+
+PASSED in CI:
+- Downloaded 4 release parts directly from `ios-root-20H392-44905109656`,
+  verified `parts-sha256.txt` and then the full image SHA `5f2e2aa6…`.
+- Decompressed and mounted the 20 GiB HFSX image read-only; recorded hashes of
+  launchd/SpringBoard/dyld and the dyld cache layout.
+- `make_ramdisk.py`: all **12 stage-A jobs resolved**, dependency closure
+  **PASS**, 0 unresolved dependencies, 65 files, 3,338,332,860 bytes.
+  Provenance: every included file copied from the pinned rootfs with source
+  and staged SHA-256 equality.
+
+VERDICT: **FAIL** (not flashable). Reason: ramdisk requires 3,184 MiB; the
+requested image was 1,536 MiB, and the hard BOOT partition limit is 32 MiB.
+Size driver is the dyld shared cache: 592,101,376 B `.symbols` plus 42 split
+subcache files (largest 334,102,528 B `.dyldlinkedit`). This rules out a
+ramdisk-root (`rd=md0`) delivery of a full SpringBoard userspace under the
+existing 32 MiB BOOT image.
+
+Artifacts: `minimal-lockscreen-stage1-reports` (ramdisk-report.json with full
+file list/top-12 sizes, rootfs-inspection.txt, stage1-result.json) downloaded
+and preserved locally at `/tmp/opencode/stage1-reports/`. No binary artifacts
+were produced because the size gate stopped image creation.
+
+Commits: `e35e9db6` (CI pipeline), `ae3cf078` (workflow on main), plus fixes
+for branch checkout, evidence vendoring, `gh --repo`, plist discovery and
+diagnostic publishing. No USERDATA/SYSTEM/RECOVERY or BOOT write; accepted
+baseline and original BOOT backup untouched.
+
+Next design consequence (not executed): minimizing userspace must be delivered
+by an artifact that is not embedded in the 32 MiB BOOT image — e.g. a pruned
+HFSX root image built in CI and tested only after explicit USERDATA-write
+authorization plus a verified backup. No such device action is authorized.
