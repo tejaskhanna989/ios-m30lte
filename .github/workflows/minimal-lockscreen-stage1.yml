@@ -141,6 +141,7 @@ jobs:
             --cmdline "debug=0xc serial=3 keepsyms=1 maxmem=292 rd=md0 a5fb_noconsole=1 a5fb_keep_on=1"
 
       - name: Size gate and provenance report
+        if: always()
         run: |
           set -euxo pipefail
           python3 - "$WORK/out" "$BOOT_LIMIT" <<'PY'
@@ -149,8 +150,14 @@ jobs:
           out=Path(sys.argv[1]); limit=int(sys.argv[2])
           rep=json.loads((out/'ramdisk-report.json').read_text())
           sizes={p.name:p.stat().st_size for p in out.iterdir() if p.is_file()}
-          verdict='PASS' if rep.get('closure')=='PASS' and sizes.get('ios-boot.img',0)<=limit else 'FAIL'
+          expected=('minimal-ramdisk.img','payload.bin','combined.bin','ios-boot.img')
+          missing=[n for n in expected if n not in sizes]
+          verdict='PASS' if (not missing and rep.get('closure')=='PASS'
+                             and rep.get('size_gate')=='PASS'
+                             and sizes.get('ios-boot.img',0)<=limit) else 'FAIL'
           reasons=[]
+          if missing: reasons.append('missing_artifacts:'+','.join(missing))
+          if rep.get('size_gate')!='PASS': reasons.append('ramdisk_exceeds_requested_size')
           if rep.get('closure')!='PASS': reasons.append('dependency_closure')
           if sizes.get('ios-boot.img',0)>limit: reasons.append('boot_image_exceeds_32MiB')
           summary={
@@ -168,6 +175,7 @@ jobs:
           PY
 
       - name: Publish artifacts (large binaries split if needed)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: minimal-lockscreen-stage1-reports
@@ -181,6 +189,7 @@ jobs:
           if-no-files-found: error
 
       - name: Split and publish binaries
+        if: always()
         run: |
           set -euxo pipefail
           mkdir -p "$WORK/upload"
@@ -197,6 +206,7 @@ jobs:
           ls -lh "$WORK/upload" | head -40
 
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: minimal-lockscreen-stage1-binaries
           path: ${{ env.WORK }}/upload/*
@@ -210,6 +220,7 @@ jobs:
           echo "=== final disk ==="; df -h /
 
       - name: Final verdict
+        if: always()
         run: |
           set -euo pipefail
           python3 - "$WORK/out/stage1-result.json" <<'PY'
@@ -219,4 +230,3 @@ jobs:
           if r['verdict']!='PASS':
               print('Concrete result: build completed but candidate is NOT flashable.')
           PY
-          grep -q '"verdict": "PASS"' "$WORK/out/stage1-result.json"

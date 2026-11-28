@@ -322,6 +322,11 @@ def main():
         "all_files_from_pinned_rootfs": all(
             v["source_sha256"] == v["staged_sha256"] for v in b.files.values()),
         "files": b.files,
+        "top_files_by_size": sorted(
+            [{"path": k, "size": v["size"]} for k, v in b.files.items()],
+            key=lambda x: -x["size"])[:12],
+        "required_image_mb": (total + 1024 * 1024 - 1) // (1024 * 1024),
+        "size_gate": "PASS" if (total <= a.size_mb * 1024 * 1024) else "FAIL",
     }
     if unresolved_after_cache:
         report["closure"] = "FAIL"
