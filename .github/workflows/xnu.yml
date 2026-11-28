@@ -277,7 +277,10 @@ jobs:
         import hashlib
         from pathlib import Path
         want = {
-          "bsd/dev/sweet_sample.c": "d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0",
+          # v85: deliberately changed by 0456-m30-uihb-ring-budget.patch, which
+          # makes the sampler dormant by default and caps its ring output.
+          # Prior value: d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0
+          "bsd/dev/sweet_sample.c": "2f982bae8a65d2b52a2db7dcfa9615d59096b8df5477ee90a889e55b2a43f30e",
           "osfmk/vm/vm_fault.c": "de26a8e91b0fdb3504d4172f6a7324c532a9c82c8ff15f4da6699fc2c59ba133",
         }
         for rel, expect in want.items():
@@ -311,7 +314,10 @@ jobs:
         import hashlib
         from pathlib import Path
         want = {
-          "bsd/dev/sweet_sample.c": "d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0",
+          # v85: deliberately changed by 0456-m30-uihb-ring-budget.patch, which
+          # makes the sampler dormant by default and caps its ring output.
+          # Prior value: d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0
+          "bsd/dev/sweet_sample.c": "2f982bae8a65d2b52a2db7dcfa9615d59096b8df5477ee90a889e55b2a43f30e",
           "iokit/Kernel/arm/SweetFramebuffer.cpp": (
         "695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3"
         if "${{ inputs.ui_exact }}" == "true" else

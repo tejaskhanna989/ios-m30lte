@@ -101,5 +101,36 @@ class SampleBudgetPatchTests(unittest.TestCase):
         self.assertIn("m30_ls_diag_line", body, "must route through the pmsg sink")
 
 
+class PinnedHashConsistencyTests(unittest.TestCase):
+    """CI pins sha256 of patched files. When a patch changes a pinned file the
+    pin must be updated deliberately, not discovered by a 20-minute build."""
+
+    def test_pinned_hashes_are_labelled_with_their_template(self):
+        wf = (ROOT / ".github/workflows/xnu.yml").read_text()
+        # every pinned hash line must either be the live value or a comment
+        import re
+        live = re.findall(r'^\s+"([\w./-]+)": "([0-9a-f]{64})"', wf, re.M)
+        self.assertTrue(live, "no pinned hashes found")
+        for rel, h in live:
+            self.assertRegex(rel, r"^(bsd|osfmk|iokit|pexpert)/", rel)
+
+    def test_sampler_pin_matches_the_patch_chain(self):
+        """0456 rewrites sweet_sample.c, so the pinned value must be 0456's."""
+        wf = (ROOT / ".github/workflows/xnu.yml").read_text()
+        self.assertIn("2f982bae8a65d2b52a2db7dcfa9615d59096b8df5477ee90a889e55b2a43f30e", wf,
+                      "0456 changes bsd/dev/sweet_sample.c; its pinned hash must match")
+        self.assertNotIn('"d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0",', wf,
+                         "the pre-0456 hash must not remain as a live pin")
+
+    def test_written_patch_actually_produces_that_hash(self):
+        """Apply 0456 to a copy of the pre-0456 file and check the result."""
+        import hashlib
+        anchor = 'strlcpy(sweet_sample_names, "SpringBoard,backboardd", sizeof(sweet_sample_names));'
+        body = PATCH.read_text()
+        self.assertIn(anchor, body, "0456 must replace the default-on line")
+        self.assertIn('strlcpy(sweet_sample_names, "-", sizeof(sweet_sample_names));',
+                      body, "0456 must install the off default")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
