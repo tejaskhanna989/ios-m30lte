@@ -1,0 +1,18 @@
+v87 physical boot — pstore result (2026-11-28)
+
+Authorized BOOT-only flash of ios-boot.img 75b4318e... (commit 12162b42, CI
+46138443689 green). Resume 11:30:22Z (17:00:22 IST). User observed Apple logo
+at 17:03 IST and still Apple logo at 17:14 IST; no visible lockscreen.
+Device then returned to TWRP and pstore pulled read-only.
+
+24 decoded records, clean=True. Contents are exclusively TWRP adbd/functionfs
+and ArmToArm64Assembler scanline messages. NO XNU records, NO M30 FBT / FB /
+UI / CRASH / lsd records survive in the pull.
+
+Therefore this capture cannot establish where the v87 boot stopped in the
+framebuffer path. The bounded logger did not leave durable evidence in the
+recovered pstore. Absence of M30 FBT lines is NOT evidence that the logger did
+not run — the ring was overwritten/cleared by the recovery boot.
+
+Established: same Apple-logo outcome as v81 despite the v87 BOOT. No lockscreen.
+Raw pstore: 2134 bytes, SHA256 2d87c18d337ed7d53e71c37f342edb6c067dd6c067dd6... (see pstore.sha256), 24 decoded records, clean=True.

@@ -1,0 +1,32 @@
+# M30LTE pstore pmsg decode
+# input_sha256=2d87c18d337ed7d53e71c37f342edb6c067dd6d139f0f46848f826775eaa8da7
+# input_bytes=2134 records=24 consumed=2134 clean=True
+[000] @0x000000 len= 48 adbd: initializing functionfs
+[001] @0x000030 len= 70 adbd: opening control endpoint /dev/usb-ffs/adb/ep0
+[002] @0x000076 len= 60 adbd: functionfs successfully initialized
+[003] @0x0000b2 len= 50 adbd: registering usb transport
+[004] @0x0000e4 len= 88 cutils-trace: Error opening trace file: No such file or directory (2)
+[005] @0x00013c len=159 ArmToArm64Assembler: generated scanline__00000077:03010101_00008001_00000000 [195 ipp] (241 ins) at [0x7bd489c3c0:0x7bd489c784] in 67807 ns
+
+[006] @0x0001db len=159 ArmToArm64Assembler: generated scanline__00000077:03545405_00000A01_00000000 [ 69 ipp] (113 ins) at [0x7bd489c790:0x7bd489c954] in 66308 ns
+
+[007] @0x00027a len=159 ArmToArm64Assembler: generated scanline__00000077:03545405_00000A08_00000000 [ 69 ipp] (116 ins) at [0x7bd489c960:0x7bd489cb30] in 55961 ns
+
+[008] @0x000319 len=159 ArmToArm64Assembler: generated scanline__00000077:03010102_00008002_00000000 [192 ipp] (238 ins) at [0x7bd489cb40:0x7bd489cef8] in 61423 ns
+
+[009] @0x0003b8 len= 48 adbd: initializing functionfs
+[010] @0x0003e8 len= 70 adbd: opening control endpoint /dev/usb-ffs/adb/ep0
+[011] @0x00042e len= 60 adbd: functionfs successfully initialized
+[012] @0x00046a len= 50 adbd: registering usb transport
+[013] @0x00049c len= 88 cutils-trace: Error opening trace file: No such file or directory (2)
+[014] @0x0004f4 len=158 ArmToArm64Assembler: generated scanline__00000077:03545405_00000000_00000000 [ 65 ipp] (94 ins) at [0x7bd489cf00:0x7bd489d078] in 62731 ns
+
+[015] @0x000592 len=113 adbd: aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown
+[016] @0x000603 len=109 adbd: remote usb: read terminated (message): Cannot send after transport endpoint shutdown
+[017] @0x000670 len= 53 adbd: closing functionfs transport
+[018] @0x0006a5 len= 48 adbd: initializing functionfs
+[019] @0x0006d5 len= 60 adbd: functionfs successfully initialized
+[020] @0x000711 len= 50 adbd: registering usb transport
+[021] @0x000743 len=113 adbd: aio: got error event on read total bufs 1: Cannot send after transport endpoint shutdown
+[022] @0x0007b4 len=109 adbd: remote usb: read terminated (message): Cannot send after transport endpoint shutdown
+[023] @0x000821 len= 53 adbd: closing functionfs transport
