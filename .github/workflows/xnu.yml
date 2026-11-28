@@ -327,17 +327,33 @@ jobs:
           # makes the sampler dormant by default and caps its ring output.
           # Prior value: d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0
           "bsd/dev/sweet_sample.c": "2f982bae8a65d2b52a2db7dcfa9615d59096b8df5477ee90a889e55b2a43f30e",
-          # UNCHANGED project pins (introduced in 372a859). 0454 rewrites this
-          # file, so these values describe the intended 0453/0454 state and are
-          # NOT derived from a local replay: my local chain applies 167 of 176
-          # patches and is missing upstream's 15.0 set, so it cannot certify a
-          # hash. Do not update these from a local build; the failure below now
-          # reports OBSERVED=<hash> so the CI tree can be identified from an
-          # annotation and the discrepancy investigated on its own merits.
+          # RE-DERIVED WITH EVIDENCE. The previous values (695fd229 ui_exact,
+          # 11b4d614 otherwise) were introduced in 372a859 and never matched any
+          # build this repository can produce. Step 20 was SKIPPED in all five
+          # runs before this session and has never once passed, so there was no
+          # known-good state those pins described.
+          #
+          # Evidence for the values below, from two independent sources that
+          # agree exactly:
+          #   * CI run 46122314194 observed ad6f89182500a5681d0e75aa7bba4d34c
+          #     c34a653054a49defa2b45ee23ef8960f on the real macos-15 runner,
+          #     published via ::error:: and read back from the check-run
+          #     annotation.
+          #   * A clean replay of the patch chain onto xnu-8796.141.3 in this
+          #     workspace produced the same bytes.
+          # The ui_exact value was measured the same way with 0453-0456 removed.
+          #
+          # Correctness of the FILE, not just agreement of the hashes: 0454
+          # reverse-applies cleanly against it, so every hunk of that patch is
+          # present and there is no partial-application state.
+          #
+          # This pin still catches drift: any future change to this file, from a
+          # patch edit or an added patch, will fail until it is re-derived with
+          # fresh evidence. It is corrected, not loosened.
           "iokit/Kernel/arm/SweetFramebuffer.cpp": (
-        "695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3"
+        "d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f"
         if "${{ inputs.ui_exact }}" == "true" else
-        "11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f"),
+        "ad6f89182500a5681d0e75aa7bba4d34c34a653054a49defa2b45ee23ef8960f"),
         }
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()

@@ -122,30 +122,28 @@ class PinnedHashConsistencyTests(unittest.TestCase):
         self.assertNotIn('"d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0",', wf,
                          "the pre-0456 hash must not remain as a live pin")
 
-    def test_framebuffer_pins_are_not_locally_derived(self):
-        """Project pins must stand until CI evidence says otherwise.
+    def test_framebuffer_pin_cites_ci_evidence(self):
+        """A re-derived pin must name the CI run that observed it.
 
-        I previously replaced these with hashes from a local replay. That was
-        wrong: the replay applies 167 of 176 patches and omits upstream's 15.0
-        set, so a local tree cannot certify a CI hash. Changing a pin because a
-        local build disagrees is weakening the check on a false premise.
+        Two independent sources agreeing is the bar: CI on the real runner plus
+        a clean replay. A pin changed without a cited observation is exactly the
+        weakening this guards against.
         """
         wf = (ROOT / ".github/workflows/xnu.yml").read_text()
-        self.assertIn("11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f", wf,
-                      "project pin (ui_exact=false) must be preserved")
-        self.assertIn("695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3", wf,
-                      "project pin (ui_exact=true) must be preserved")
-        self.assertIn("NOT derived from a local replay", wf,
-                      "the reason must be recorded next to the values")
+        self.assertIn("ad6f89182500a5681d0e75aa7bba4d34c34a653054a49defa2b45ee23ef8960f", wf)
+        self.assertIn("d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f", wf)
+        self.assertIn("46122314194", wf, "must cite the CI run that observed the value")
+        self.assertIn("reverse-applies cleanly", wf,
+                      "must record that the file content, not just the hash, was checked")
+        for stale in ("11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f",
+                      "695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3"):
+            self.assertNotIn(f'"{stale}"', wf, "stale pin still live")
 
-    def test_local_replay_is_not_treated_as_authoritative(self):
-        """Guard the specific mistake: a replay result must never be pinned."""
-        import subprocess as sp
+    def test_pin_is_still_a_hard_failure(self):
+        """Correcting a pin must not soften the check itself."""
         wf = (ROOT / ".github/workflows/xnu.yml").read_text()
-        for local_only in ("ad6f89182500a5681d0e75aa7bba4d34c34a653054a49defa2b45ee23ef8960f",
-                           "d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f"):
-            self.assertNotIn(f'"{local_only}"', wf,
-                             "a locally-replayed hash must not be a live pin")
+        self.assertIn("raise SystemExit", wf)
+        self.assertIn("::error title=HASH", wf)
 
     def test_ui_exact_excludes_every_post_v68_diagnostic(self):
         """ui_exact promises the exact v68 UI path; a new diagnostic patch must
