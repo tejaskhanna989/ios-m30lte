@@ -314,14 +314,14 @@ index 758af6d..20bddcf 100644
  	/* v72 diagnostic heartbeat on a path proven active every boot. */
  	{
  		int hb_enabled = 0;
-@@ -361,6 +607,7 @@ AppleCLCD::vsyncFired(OSObject *owner, IOTimerEventSource *sender)
+@@ -361,6 +607,6 @@ AppleCLCD::vsyncFired(OSObject *owner, IOTimerEventSource *sender)
  			}
  		}
  	}
  #endif
  	if (fb->fPowerOff) {
  		/* Fade out: halve every channel each vsync, then black, then idle. */
-@@ -625,12 +872,14 @@ AppleCLCD::present(const uint8_t *rec)
+@@ -625,12 +871,14 @@ AppleCLCD::present(const uint8_t *rec)
  	 * left SwapWait as a no-op and never emitted a swap-done notification, so
  	 * a modern backboardd can stall after its first few SwapEnd calls. */
  	fSwapDone = fPresentCalls;
