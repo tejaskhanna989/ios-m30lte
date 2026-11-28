@@ -1,0 +1,37 @@
+v87 second pstore pull — 0457 now has durable evidence (2026-11-28)
+
+Pull: pmsg-ramoops-0-boot2.bin, 16372 bytes, SHA256
+4a30b527d663c2378855c2d4457437fa6fc9550433cac22aa603f1a4d60f676a.
+Decode: 172 records, 171 XNU, clean=False (ring wrapped at start; first two
+records have bad_magic). User confirms: NO LOCKSCREEN on this boot.
+
+What ran:
+- IRT patch applied: "patched _internal_release_type off 0xa432d84 (0 -> 3)",
+  final state=3 (off 0xa432d84, sym 0x1e1d3ad84).
+- 0457 M30 FBT logger ran: sw=0->4, pr=0->3, done=0->3, copied up to
+  30326400 bytes (3 x 10108800). Matches the previously observed v68/v81
+  matched-window copy volume exactly.
+- FB path healthy: "SWEET FB: display on"; backboardd created surface id 2
+  1080x2340 BGRA bpe=4 bpr=4352 size=10186752; staged/present/notify/wait
+  cycles present #1..#3 all completed.
+
+Where it stopped vs accepted v68 baseline:
+- v87 last FB state: done=3, copied=30326400 (sw=4, pr=3).
+- v68 accepted lockscreen pstore: v=97800, sw=11, pr=8,
+  copied=70761600, and 3 SBERR objc[27] SpringBoard messages (SpringBoard
+  alive and drawing). v87 has ZERO SMP/SBERR/SpringBoard/FrontBoard records.
+- v79 pstore (current USERDATA install verification) had 13 SMP SpringBoard
+  records with a repeatable hang at t0 pc 0x211d41030.
+
+Other anomalous signals in v87:
+- CRASH driverkitd[68] sig 9 (SIGKILL), bt present.
+- 32 x "SWEET AKS: securityd sel 10 ... -> 0xe00002c7" failures.
+- "M30 CS diag 3: 16K readback allocation failed"; csfail rose 3->4.
+
+Conclusion: the framebuffer copy machinery and backboardd presentation work
+through the Apple-logo-equivalent frame. The divergence from the accepted
+v68 lockscreen is upstream of further UI presents: no SpringBoard-driven
+frames are recorded and presentation halts at done=3 instead of continuing
+to pr=8 / 70.7 MB. Root cause is still unobserved; this capture rules out
+the FB copy path as the stopping point but does not prove SpringBoard never
+started (ring wrapped at start). No lockscreen claim.
