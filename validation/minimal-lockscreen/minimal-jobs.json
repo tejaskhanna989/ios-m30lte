@@ -1,0 +1,124 @@
+{
+  "schema": "m30lte-minimal-lockscreen-v1",
+  "created": "2026-11-28",
+  "inventory_source": {
+    "path": "/home/tejas/opencode-work/v73-userdata-evidence/0004e79f_launchd.log",
+    "sha256": "051a4b0affd1b2ab3d0e1a4c56a98508a99bbd7714a7fd3608e3f8136d3b6931",
+    "spawn_events": 212,
+    "unique_job_names": 146,
+    "note": "job names are exact 'Successfully spawned NAME[pid]' labels from the known-good boot"
+  },
+  "rootfs_source": {
+    "release": "ios-root-20H392-44905109656",
+    "image": "ios-root-20H392.img",
+    "image_sha256": "5f2e2aa6a80aea489946287d8cc32ef0ff6a1905a0d2923e8d4324163bb699b5",
+    "image_size_bytes": 21474836480,
+    "hfsx_signature": "4858",
+    "role": "verified source of genuine Apple binaries only; NEVER written to device"
+  },
+  "kernel": {
+    "role": "current proven kernel (0425 XCTest + 0426 IRT fix-ups) is retained unchanged",
+    "required_fixups": [
+      "0425-m30-xctest-class-probe",
+      "0426-m30-internal-release-type",
+      "AppleCLCD/SweetFB framebuffer",
+      "a5xelte eMMC (unused with rd=md0 but retained)"
+    ],
+    "cmdline": "debug=0xc serial=3 cpus=6 keepsyms=1 maxmem=292 rd=md0 a5fb_noconsole=1 a5fb_keep_on=1"
+  },
+  "stage_a_allowlist": [
+    "launchd",
+    "SpringBoard",
+    "backboardd",
+    "runningboardd",
+    "lsd",
+    "notifyd",
+    "cfprefsd",
+    "distnoted",
+    "configd",
+    "securityd",
+    "amfid",
+    "mobileactivationd"
+  ],
+  "stage_b_addback": [
+    "MobileGestaltHelper",
+    "IOMFB_FDR_Loader",
+    "watchdogd",
+    "logd",
+    "UserFontManager",
+    "iconservicesagent",
+    "UserEventAgent",
+    "keybagd",
+    "containermanagerd"
+  ],
+  "baked_instead_of_daemon": {
+    "budd": "pre-baked SetupDone/SetupFinishedAllSteps/SetupVersion preference in ramdisk /var",
+    "datamigrator": "excluded entirely; no migration in a fresh ramdisk",
+    "mobileactivationd_activation_record": "pre-baked activated record so SpringBoard does not enter setup flow"
+  },
+  "excluded_categories": {
+    "media_and_graphics_services": [
+      "mediaserverd", "mediaremoted", "corecaptured", "corespeechd",
+      "iconservicesagent", "fontservicesd"
+    ],
+    "cloud_accounts_sync": [
+      "accountsd", "apsd", "cloudd", "CloudKeychainProxy", "cloudpaird",
+      "iTunesCloudDaemon", "itunescloudd", "identityservicesd",
+      "appleaccountd", "AMSAccountDaemon", "amsaccountsd", "syncdefaultsd",
+      "remindd", "notesd", "SharedWebCredentials"
+    ],
+    "telephony_radio_network": [
+      "CommCenter", "CommCenterMobileHelper", "callservicesd", "imagent",
+      "bluetoothd", "bluetoothuserd", "wifianalyticsd",
+      "WirelessRadioManagerd", "nehelper", "mDNSResponder", "geod",
+      "naprd", "sharingd", "remoted", "remotepairingdeviced"
+    ],
+    "first_boot_and_migration": [
+      "datamigrator", "budd", "MobileBackup", "backupd", "OTACrashCopier",
+      "softwareupdated", "installcoordinationd", "triald", "dmd"
+    ],
+    "diagnostics_crash_reporting": [
+      "ReportCrash", "ReportMemoryException", "DumpPanic", "analyticsd",
+      "awdd", "symptomsd", "logd_helper", "peakpowermanagerd"
+    ],
+    "privacy_health_siri": [
+      "healthd", "locationd", "nfcd", "siriactionsd", "assistantd",
+      "corespeechd", "ScreenTimeAgent", "ManagedSettingsAgent",
+      "familycircled", "familynotificationd", "findmydeviced"
+    ],
+    "power_thermal_misc": [
+      "thermalmonitord", "powerd", "watchdogd", "sleepd", "peakpowermanagerd",
+      "timed", "chronod", "UserEventAgent", "ptpd", "navd", "mapspushd"
+    ]
+  },
+  "framework_closure_required": [
+    "System/Library/CoreServices/SpringBoard.app/SpringBoard",
+    "System/Library/PrivateFrameworks/BackBoardServices.framework",
+    "System/Library/PrivateFrameworks/FrontBoardServices.framework",
+    "System/Library/PrivateFrameworks/SpringBoardServices.framework",
+    "System/Library/Frameworks/UIKit.framework",
+    "System/Library/Frameworks/CoreGraphics.framework",
+    "System/Library/Frameworks/QuartzCore.framework",
+    "System/Library/Frameworks/IOKit.framework",
+    "System/Library/Frameworks/Foundation.framework",
+    "System/Library/Frameworks/CoreFoundation.framework",
+    "usr/lib/libobjc.A.dylib",
+    "usr/lib/dyld",
+    "System/Library/Caches/com.apple.dyld/ (dyld shared cache + .symbols)",
+    "System/Library/LaunchDaemons/com.apple.springboard.plist",
+    "System/Library/LaunchDaemons/com.apple.backboardd.plist",
+    "System/Library/LaunchDaemons/com.apple.runningboardd.plist",
+    "System/Library/LaunchDaemons/com.apple.lsd.plist",
+    "System/Library/LaunchDaemons/com.apple.notifyd.plist",
+    "System/Library/LaunchDaemons/com.apple.cfprefsd.plist",
+    "System/Library/LaunchDaemons/com.apple.distnoted.plist",
+    "System/Library/LaunchDaemons/com.apple.configd.plist",
+    "System/Library/LaunchDaemons/com.apple.securityd.plist",
+    "System/Library/LaunchDaemons/com.apple.amfid.plist",
+    "System/Library/LaunchDaemons/com.apple.mobileactivationd.plist"
+  ],
+  "explicit_non_goals": [
+    "touch input", "full iOS functionality", "network", "app launching",
+    "wallet", "biometrics", "cellular"
+  ]
+}

@@ -4268,3 +4268,53 @@ UNRESOLVED.**
   auditable — every patch in the tree must appear as applied or be explicitly
   allow-listed, hashes pinned alongside the kernel hash.
 - Tests: 25 total, PASS. No device access, no flash, no functional patch.
+
+## ACTIVE HANDOFF — 2026-11-28 — NEW STRATEGY: minimal native lockscreen
+
+User directed: STOP version-comparison / framebuffer-counter / diagnostic-patch
+investigation. Goal is smallest viable native iOS startup configuration that
+shows a real lockscreen on the physical M30, then add dependencies back
+incrementally. No flash/reboot without explicit authorization. USERDATA,
+SYSTEM, RECOVERY, the accepted baseline and the original BOOT backup are
+untouched.
+
+### v87 physical outcome (recorded before pivot)
+- v87 BOOT `75b4318e…` flashed with authorization; Apple logo at 17:03 and
+  17:14 IST, NO lockscreen. First pstore pull (2134 B) held only TWRP adbd
+  records; second pull (`4a30b527…`, 16372 B, 171 XNU records) showed 0457
+  `M30 FBT` ran (sw=0→4, pr=0→3, done=3, 30,326,400 B) with healthy backboardd
+  presentation, but 0 SpringBoard/FrontBoard/scene records, `CRASH driverkitd
+  sig 9`, 32× securityd `0xe00002c7`. v68 accepted boot composed 8 frames to
+  70,761,600 B with SpringBoard alive. No success claim. Evidence commits
+  `3dbe77e8`, `3054ae68`.
+
+### Stage 0 COMPLETE (offline, no device access)
+- New isolated workspace: `validation/minimal-lockscreen/`.
+  - `README.md` — plan, safety boundary, milestone, stage table.
+  - `minimal-jobs.json` — 12 stage-A jobs, 9 stage-B add-back jobs, 75 excluded,
+    pinned verified rootfs and `rd=md0` cmdline.
+  - `check_manifest.py` — PASS (12/9/75, rootfs pinned, USERDATA-free cmdline).
+  - `build_minimal_ramdisk.sh --check` — PASS; notes missing `mkfs.hfsplus` /
+    `fsck.hfsplus` (needed only for a real build).
+- Key enabler: verified rootfs release `ios-root-20H392-44905109656` (image SHA
+  `5f2e2aa6…`, 20 GiB HFSX) is available from GitHub releases, and
+  `tools/mkpayload.py --ramdisk` already supports `rd=md0`. Therefore userspace
+  can be minimized OFFLINE and tested with BOOT-only flashes, without ever
+  writing USERDATA. Reversal = restore original BOOT backup `469c12d2…`.
+- Inventory source: `v73-userdata-evidence/0004e79f_launchd.log` (212 spawn
+  events / 146 unique jobs).
+
+### Next work (in order; no physical action until authorized)
+1. Install HFS tooling on host only if needed; fetch and verify the 4 compressed
+   rootfs parts (6.2 GB) and decompress to 20 GiB image in
+   `/home/tejas/opencode-work/minimal-lockscreen-build/` (outside git).
+2. Implement `tools/make_ramdisk.py`: mount HFSX read-only, copy only
+   Stage-A paths from `minimal-jobs.json`, bake activation/setup prefs, produce
+   deterministic HFSX ramdisk, record SHA-256.
+3. Package BOOT: proven shim + current kernel + ramdisk via `mkpayload.py
+   --ramdisk`, cmdline `rd=md0`; verify offline.
+4. Ask user for explicit authorization for a BOOT-only flash + one boot.
+5. Observe for native lockscreen (primary milestone). Record timestamp.
+6. On success freeze candidate; on failure add exactly one Stage-B dependency.
+
+No device operation performed in this handoff.
