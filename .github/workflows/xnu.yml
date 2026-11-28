@@ -290,8 +290,10 @@ jobs:
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
             if got != expect:
-                # Name the observed hash: check-run annotations are readable
-                # even when build logs are not, so one run settles this.
+                # CI logs are not retrievable from this environment and the
+                # annotation body is truncated, but step NAMES are readable and
+                # so is the ::error:: title. Publish the observed hash in both.
+                print(f"::error title=HASH {rel} ::observed {got}")
                 raise SystemExit(
                     f"ERROR: {rel} sha256 {got} != {expect} OBSERVED={got}")
             print(f"PASS {rel} {got}")
@@ -340,8 +342,10 @@ jobs:
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
             if got != expect:
-                # Name the observed hash: check-run annotations are readable
-                # even when build logs are not, so one run settles this.
+                # CI logs are not retrievable from this environment and the
+                # annotation body is truncated, but step NAMES are readable and
+                # so is the ::error:: title. Publish the observed hash in both.
+                print(f"::error title=HASH {rel} ::observed {got}")
                 raise SystemExit(
                     f"ERROR: {rel} sha256 {got} != {expect} OBSERVED={got}")
             print(f"PASS {rel} {got}")
