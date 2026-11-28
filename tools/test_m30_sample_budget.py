@@ -30,16 +30,18 @@ class SampleBudgetPatchTests(unittest.TestCase):
         self.assertTrue(PATCH.is_file())
         self.assertGreater(len(added_lines()), 10)
 
-    def test_targets_only_the_sampler(self):
+    def test_targets_only_sampler_files(self):
         """A diagnostic-volume fix must not reach into functional code."""
         files = re.findall(r"^\+\+\+ b/(\S+)", PATCH.read_text(), re.M)
-        self.assertEqual(files, ["osfmk/kern/exception.c"])
+        self.assertEqual(sorted(set(files)),
+                         ["bsd/dev/sweet_sample.c", "osfmk/kern/exception.c"])
 
     def test_header_lines_parse(self):
         out = subprocess.run(["git", "apply", "--numstat", str(PATCH)],
                              capture_output=True, text=True)
         self.assertEqual(out.returncode, 0, out.stderr)
         self.assertIn("osfmk/kern/exception.c", out.stdout)
+        self.assertIn("bsd/dev/sweet_sample.c", out.stdout)
 
     def test_budget_is_configurable_with_a_safe_default(self):
         body = "\n".join(added_lines())
@@ -67,6 +69,14 @@ class SampleBudgetPatchTests(unittest.TestCase):
         self.assertIn("m30_sample_capped = true", body,
                       "the cap must latch, or the marker repeats every thread")
 
+    def test_sampler_is_dormant_by_default(self):
+        """No accepted candidate carries a sweetsample boot-arg, so a default-on
+        sampler runs on every boot and, at 50% of the ring, evicts the evidence.
+        """
+        body = "\n".join(added_lines())
+        self.assertIn('strlcpy(sweet_sample_names, "-"', body,
+                      "the default must be off, not SpringBoard,backboardd")
+
     def test_stays_read_only(self):
         body = "\n".join(added_lines())
         forbidden = [
@@ -78,7 +88,9 @@ class SampleBudgetPatchTests(unittest.TestCase):
         for token in forbidden:
             self.assertNotIn(token, body, f"diagnostic patch must not use {token!r}")
         self.assertNotIn("m30_ls_diag_enabled =", body,
-                         "must not change the sampler's enable state")
+                         "must not change the lock-screen diagnostic's enable state")
+        # flipping the DEFAULT is allowed and is the point; forcing it on is not
+        self.assertNotIn('strlcpy(sweet_sample_names, "SpringBoard', body)
 
     def test_uses_existing_sink_rather_than_inventing_one(self):
         body = "\n".join(added_lines())

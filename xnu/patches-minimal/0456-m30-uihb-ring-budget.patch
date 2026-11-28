@@ -1,3 +1,33 @@
+diff --git a/bsd/dev/sweet_sample.c b/bsd/dev/sweet_sample.c
+index 5be9ce8..8d412db 100644
+--- a/bsd/dev/sweet_sample.c
++++ b/bsd/dev/sweet_sample.c
+@@ -106,7 +106,24 @@ sweet_sample_thread(__unused void *arg, __unused wait_result_t wr)
+ {
+ 	static int chan;
+ 	if (!PE_parse_boot_argn("sweetsample", sweet_sample_names, sizeof(sweet_sample_names))) {
+-		strlcpy(sweet_sample_names, "SpringBoard,backboardd", sizeof(sweet_sample_names));
++		/*
++		 * v85: was "SpringBoard,backboardd", i.e. ON BY DEFAULT.
++		 *
++		 * No accepted candidate has ever carried a sweetsample boot-arg
++		 * (tools/test_m30_native_bootargs.py asserts its absence from the
++		 * pinned v68 cmdline), so this default has run on EVERY boot,
++		 * including the accepted baseline - while the ring it writes into
++		 * is only 16384 bytes. Measured on v79
++		 * (validation/physical-boot-test/20261127-v79-pstore): 57 sampler
++		 * lines = 8190 bytes = 50% of the ring, and ZERO SWEET SURF records
++		 * survived the wrap. The diagnostic was evicting the very evidence
++		 * it exists to protect.
++		 *
++		 * Dormant by default. Pass sweetsample=SpringBoard (or a comma list)
++		 * to enable. The 0455 lock-screen diagnostic sets the names itself
++		 * and is unaffected.
++		 */
++		strlcpy(sweet_sample_names, "-", sizeof(sweet_sample_names));
+ 	}
+ 	if (sweet_sample_names[0] == '-') {
+ 		return;
 diff --git a/osfmk/kern/exception.c b/osfmk/kern/exception.c
 index b7043ff..c74a5d5 100644
 --- a/osfmk/kern/exception.c
