@@ -1,0 +1,331 @@
+diff --git a/iokit/Kernel/arm/SweetFramebuffer.cpp b/iokit/Kernel/arm/SweetFramebuffer.cpp
+index 758af6d..726860d 100644
+--- a/iokit/Kernel/arm/SweetFramebuffer.cpp
++++ b/iokit/Kernel/arm/SweetFramebuffer.cpp
+@@ -44,6 +44,243 @@ extern "C" int sweet_console_muted;     /* osfmk/console/serial_console.c */
+ #if defined(ARM64_BOARD_CONFIG_M30LTE)
+ extern "C" void m30_pmsg_diag_line(const char *line);  /* pexpert/arm/pe_serial.c */
+ #endif
++#if defined(ARM64_BOARD_CONFIG_M30LTE)
++#include <osfmk/kern/clock.h>   /* absolutetime_to_nanoseconds */
++
++/* ---- v87 framebuffer transition logger ---------------------------------- */
++/*
++ * This file is C++, so the helpers are given internal linkage explicitly and
++ * the struct is POD-like; there are no constructors, exceptions or allocation
++ * involved.  Everything below is a plain static function operating on state
++ * owned by the driver instance.
++ */
++#include <string.h>
++#include <stdint.h>
++
++/*
++ * v87 diagnostic: framebuffer state-transition logger.
++ *
++ * The problem this solves
++ * -----------------------
++ * Measured from our own captures, the existing framebuffer diagnostic emits a
++ * status line every 600 vsyncs (about 10 s at 60 Hz).  On the accepted v68 boot
++ * that produced 143 lines of roughly 109 bytes - about 15.6 KiB of a 16 KiB
++ * pstore ring, i.e. roughly 100% of it, retaining about 1.5 minutes.  The ring
++ * therefore wraps before the interesting failure, which is the diagnostic defect
++ * identified in the v86 review: the instrument destroys the evidence it exists
++ * to collect.
++ *
++ * Approach: log transitions, not events
++ * -------------------------------------
++ * Frames arrive at vsync rate and are not interesting individually.  What is
++ * interesting is when the observable state CHANGES.  The state is the tuple
++ *
++ *     (sw, pr, copied > 0, copied MiB bucket, done_rec)
++ *
++ * A line is emitted only when that tuple differs from the last one emitted,
++ * plus a heartbeat every 60 s of monotonic time so that a stalled boot is still
++ * distinguishable from a silent one.
++ *
++ * Ring cost is bounded by the number of DISTINCT states, not by the event rate.
++ * The pathological case - a caller toggling state every frame - is capped by
++ * the hard byte budget below.
++ *
++ * Hard budget
++ * -----------
++ * Every emitted byte, including headers, partial lines and the truncation
++ * marker, is charged against m30_fbt_budget().  Space for the marker is
++ * reserved up front so the marker itself always fits.  A line that would cross
++ * the boundary is emitted truncated and suffixed "..." rather than dropped, so
++ * a short line is never mistaken for a complete one.  This mirrors the contract
++ * already verified for 0456 (tools/test_m30_smp_budget_boundary.py).
++ *
++ * Why this is safe
++ * ----------------
++ * Logging only.  No return value, output byte, counter, notification, wait or
++ * timing is altered beyond skipping further output.  No allocation, no lock
++ * taken beyond the caller's, no blocking call.
++ */
++
++#define M30_FBT_MARKER   "M30 FBT budget reached, output truncated"
++#define M30_FBT_DEFAULT_KIB 3
++/* A pmsg record is <= 255 bytes total (19 hdr + 3 tag + 2 seps), so a single
++ * message can never exceed 230 bytes; pexpert/arm/pe_serial.c enforces the
++ * same limit with m30_line[230].  A longer line would be silently dropped by
++ * the sink, so clip here and mark the cut. */
++#define M30_FBT_LINE_MAX 230
++#define M30_FBT_HEARTBEAT_MS 60000ULL
++/* Bound the number of records, not just the bytes.  A pathological caller that
++ * changes state every frame would otherwise spend the whole byte budget on
++ * many tiny lines and emit ~55 records; capping at 40 keeps the ring share
++ * predictable and still leaves room for ~5 minutes of heartbeats. */
++#define M30_FBT_MAX_LINES 40
++
++typedef struct {
++	int      budget_kib;
++	int      used;          /* bytes charged, marker space excluded */
++	int      capped;        /* latched once the marker has been emitted */
++	int      have_last;     /* false until the first state is recorded */
++	uint64_t last_sw;
++	uint64_t last_pr;
++	uint64_t last_copied;
++	uint64_t last_bucket;   /* copied >> 20 */
++	uint64_t last_done;
++	uint64_t last_hb_ms;    /* monotonic ms of the last heartbeat */
++	uint64_t emitted_lines;
++	uint64_t suppressed;    /* state observations that changed nothing */
++	int      line_cap;      /* hard ceiling on lines, independent of bytes */
++	uint64_t nanos_per_tick;/* 0 until measured; see m30_fbt_now_ms() */
++} m30_fbt_state;
++
++/* Monotonic milliseconds.
++ *
++ * mach_absolute_time() is a tick count, not nanoseconds; multiplying by a
++ * hardcoded timebase would be wrong on any SoC whose timebase is not 24 MHz.
++ * absolutetime_to_nanoseconds() is the kernel's own conversion and is what the
++ * rest of osfmk uses.  mach_timebase_info() is deliberately NOT used: the only
++ * prototype available in-kernel is the MIG trap, which must not be called from
++ * a display interrupt path. */
++static uint64_t
++m30_fbt_now_ms(m30_fbt_state *st)
++{
++	uint64_t ns = 0;
++	if (st->nanos_per_tick) {
++		return (mach_absolute_time() * st->nanos_per_tick) / 1000000ULL;
++	}
++	absolutetime_to_nanoseconds(mach_absolute_time(), &ns);
++	return ns / 1000000ULL;
++}
++
++/* Read once, on first use.  Kept in the state struct rather than a function
++ * static so the budget is part of the object being tested and cannot leak
++ * between instances. */
++static int
++m30_fbt_budget_kib(m30_fbt_state *st)
++{
++	if (st->budget_kib == 0) {
++		int v = M30_FBT_DEFAULT_KIB;
++		(void)PE_parse_boot_argn("m30fbtbudget", &v, sizeof(v));
++		st->budget_kib = (v < 1) ? 1 : v;
++	}
++	return st->budget_kib;
++}
++
++static void
++m30_fbt_emit(m30_fbt_state *st, const char *line)
++{
++	const int reserve = (int)strlen(M30_FBT_MARKER) + 1;   /* text + newline */
++	const int budget = m30_fbt_budget_kib(st) * 1024;
++	char buf[M30_FBT_LINE_MAX + 1];
++	int len, room;
++
++	if (st->capped) {
++		return;
++	}
++	if (st->line_cap && (int)st->emitted_lines >= st->line_cap) {
++		const int reserve = (int)strlen(M30_FBT_MARKER) + 1;
++		const int budget = m30_fbt_budget_kib(st) * 1024;
++		/* Charge the marker like any other line; if the byte budget
++		 * would not have allowed it, the budget path below emits and
++		 * charges it, so this cannot exceed either bound. */
++		if (st->used + reserve <= budget) {
++			m30_pmsg_diag_line(M30_FBT_MARKER);
++			st->used += reserve;
++		}
++		st->capped = 1;
++		st->emitted_lines++;
++		return;
++	}
++	room = budget - reserve - st->used;
++	if (room <= 0) {
++		m30_pmsg_diag_line(M30_FBT_MARKER);
++		st->used += reserve;
++		st->capped = 1;
++		st->emitted_lines++;
++		return;
++	}
++
++	len = (int)strlen(line);
++	if (len > M30_FBT_LINE_MAX) {
++		len = M30_FBT_LINE_MAX;
++	}
++	memcpy(buf, line, (size_t)len);
++	buf[len] = '\0';
++
++	if (len + 1 > room) {
++		/* room counts the trailing newline, so the text is clamped to
++		 * room - 1.  Charging len + 1 after emitting len bytes would
++		 * overrun the budget by one byte per truncation. */
++		len = room - 1;
++		if (len >= 3) {
++			buf[len - 3] = '.';
++			buf[len - 2] = '.';
++			buf[len - 1] = '.';
++		}
++		buf[len] = '\0';
++	}
++
++	m30_pmsg_diag_line(buf);
++	st->used += len + 1;
++	st->emitted_lines++;
++}
++
++/*
++ * Record one observation.  Emits only if the state tuple changed, the
++ * heartbeat is due, or this is the first observation.  Safe to call at vsync
++ * rate.
++ *
++ * Returns non-zero if a line was emitted, for the test harness.
++ */
++static int
++m30_fbt_observe(m30_fbt_state *st, uint64_t sw, uint64_t pr, uint64_t copied,
++    uint64_t done, int dirty, int power, unsigned clients)
++{
++	uint64_t bucket = copied >> 20;
++	uint64_t now = m30_fbt_now_ms(st);
++	int changed, hb_due;
++	char line[M30_FBT_LINE_MAX + 1];
++
++	if (!st->have_last) {
++		changed = 1;                 /* always record the first state */
++		hb_due = 0;
++	} else {
++		changed = sw != st->last_sw || pr != st->last_pr ||
++		    (copied > 0) != (st->last_copied > 0) ||
++		    bucket != st->last_bucket || done != st->last_done;
++		if (!changed && now >= st->last_hb_ms &&
++		    now - st->last_hb_ms >= M30_FBT_HEARTBEAT_MS) {
++			hb_due = 1;
++		} else {
++			hb_due = 0;
++		}
++		if (!changed && !hb_due) {
++			st->suppressed++;
++			return 0;
++		}
++	}
++
++	/* "hb" marks a line emitted by the heartbeat rather than by a change,
++	 * so a reader can tell a stalled boot from a progressing one without
++	 * having to infer it from timestamps. */
++	snprintf(line, sizeof(line),
++	    "M30 FBT: sw=%llu pr=%llu copied=%llu done=%llu d=%d p=%d cl=%u%s",
++	    (unsigned long long)sw, (unsigned long long)pr,
++	    (unsigned long long)copied, (unsigned long long)done,
++	    dirty, power, clients, hb_due ? " hb" : "");
++
++	st->last_sw = sw;
++	st->last_pr = pr;
++	st->last_copied = copied;
++	st->last_bucket = bucket;
++	st->last_done = done;
++	st->last_hb_ms = now;
++	st->have_last = 1;
++
++	m30_fbt_emit(st, line);
++	return 1;
++}
++
++#endif /* ARM64_BOARD_CONFIG_M30LTE */
+ 
+ #if defined(ARM64_BOARD_CONFIG_SWEET) || defined(ARM64_BOARD_CONFIG_A5XELTE)
+ #include <IOKit/IOService.h>
+@@ -138,6 +375,9 @@ public:
+ 	uint32_t      fLastSkip;
+ 	uint64_t      fSwapWaitCalls; /* bounded SwapWait handshake telemetry */
+ 	uint64_t      fSwapDone;      /* present() completions observed by userland */
++	/* v87: transition logger state.  Replaces the fixed 600-vsync poller
++	 * that filled the 16 KiB ring (143 lines, ~15.6 KiB on v68). */
++	m30_fbt_state fFbt;
+ #endif
+ #if defined(ARM64_BOARD_CONFIG_A5XELTE)
+ 	bool          fPerfLog;       /* A5-only copy timing; never on the donor */
+@@ -279,6 +519,8 @@ AppleCLCD::start(IOService *provider)
+ 	fLastSkip = 0;
+ 	fSwapWaitCalls = 0;
+ 	fSwapDone = 0;
++	memset(&fFbt, 0, sizeof(fFbt));
++	fFbt.line_cap = M30_FBT_MAX_LINES;
+ 	int m30_noconsole = 0;
+ 	int m30_keepon = 0;
+ 	PE_parse_boot_argn("a5fb_noconsole", &m30_noconsole, sizeof(m30_noconsole));
+@@ -323,24 +565,24 @@ AppleCLCD::vsyncFired(OSObject *owner, IOTimerEventSource *sender)
+ 		client->notify(SWEET_FB_NOTIFY_VSYNC, values, 6);
+ 	}
+ #if defined(ARM64_BOARD_CONFIG_M30LTE)
+-	/* Emit only the first eight compact status lines (ticks 600..4800,
+-	 * about 10 s apart at 60 Hz).  v68 proved an unbounded heartbeat fills
+-	 * the 16 KiB ramoops ring and destroys early ABI diagnostics; this
+-	 * logging-only cap preserves early evidence without changing display
+-	 * counters, swap staging, notifications, or power behavior. */
+-	++fb->fDiagTick;
+-	if ((fb->fDiagTick % 600) == 0 && fb->fDiagTick <= 4800) {
+-		char line[192];
+-		snprintf(line, sizeof(line),
+-		    "M30 FB: v=%llu sw=%llu pr=%llu copied=%llu skip=%u last=%u dirty=%d power=%d cl=%u ticks=%u",
+-		    (unsigned long long)count,
+-		    (unsigned long long)fb->fSwapCalls,
+-		    (unsigned long long)fb->fPresentCalls,
+-		    (unsigned long long)fb->fPresentBytes,
+-		    fb->fPresentSkips, fb->fLastSkip,
+-		    fb->fDirty ? 1 : 0, fb->fPowerOff ? 1 : 0,
+-		    fb->fClients->getCount(), fb->fFlushTicks);
+-		m30_pmsg_diag_line(line);
++	/* v87: log state TRANSITIONS, not every poll.
++	 *
++	 * The previous diagnostic emitted a fixed status line every 600 vsyncs
++	 * (~10 s), which on the accepted v68 boot produced 143 lines of ~109 B
++	 * - about 15.6 KiB of the 16 KiB ring, so the ring wrapped before the
++	 * interesting failure and destroyed the evidence it exists to collect.
++	 * Here a line is emitted only when the observable tuple
++	 * (sw, pr, copied>0, copied MiB bucket, done) changes, plus a 60 s
++	 * heartbeat so a stalled boot is still distinguishable from a silent
++	 * one.  Ring cost is bounded by distinct states and by a hard byte
++	 * budget, not by frame rate.
++	 *
++	 * Logging only: no counter, return value, notification or timing is
++	 * changed.  Called with fLock held, as the old poller was.
++	 */
++	(void)m30_fbt_observe(&fb->fFbt, fb->fSwapCalls, fb->fPresentCalls,
++	    fb->fPresentBytes, fb->fSwapDone, fb->fDirty ? 1 : 0,
++	    fb->fPowerOff ? 1 : 0, fb->fClients->getCount());
+ 	}
+ 	/* v72 diagnostic heartbeat on a path proven active every boot. */
+ 	{
+@@ -625,12 +867,14 @@ AppleCLCD::present(const uint8_t *rec)
+ 	 * left SwapWait as a no-op and never emitted a swap-done notification, so
+ 	 * a modern backboardd can stall after its first few SwapEnd calls. */
+ 	fSwapDone = fPresentCalls;
+-	if (fSwapDone <= 8) {
+-		char line[160];
+-		snprintf(line, sizeof(line), "M30 FB: done #%llu copied=%llu",
+-		    (unsigned long long)fSwapDone, (unsigned long long)copied);
+-		m30_pmsg_diag_line(line);
+-	}
++	/* The first completed copy and every completion-count transition are
++	 * recorded by the transition logger: done is part of the observed
++	 * tuple, so this replaces the old "done <= 8" flood with one line per
++	 * genuine change.  A copy of 0 is still visible as copied=0, which is
++	 * the signal that nothing was presented. */
++	(void)m30_fbt_observe(&fFbt, fSwapCalls, fPresentCalls, fPresentBytes,
++	    fSwapDone, fDirty ? 1 : 0, fPowerOff ? 1 : 0,
++	    fClients->getCount());
+ 	{
+ 		uint64_t values[4] = { fSwapDone, copied, 0, 0 };
+ 		uint64_t vsync_values[6] = { fSwapDone, 0, copied, 0, 0, 0 };

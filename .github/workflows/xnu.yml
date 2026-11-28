@@ -53,7 +53,8 @@ jobs:
           rm -f dxb/patches/0453-m30-ui-heartbeat.patch \
                 dxb/patches/0454-m30-ui-hb-framebuffer.patch \
                 dxb/patches/0455-m30-lockscreen-diag.patch \
-                dxb/patches/0456-m30-uihb-ring-budget.patch
+                dxb/patches/0456-m30-uihb-ring-budget.patch \
+                dxb/patches/0457-m30-fb-transition-log.patch
           echo "UI_EXACT: post-v68 diagnostic patches excluded"
         fi
         python3 tools/patch_build_sh.py dxb/build.sh "$MACHINE_CONFIG"
@@ -312,6 +313,22 @@ jobs:
                     f"ERROR: {rel} sha256 {got} != {expect} OBSERVED={got}")
             print(f"PASS {rel} {got}")
         PY
+    - name: Verify M30 framebuffer transition log patch applied
+      if: inputs.ui_exact != 'true'
+      run: |
+        p=0457-m30-fb-transition-log.patch
+        grep -q "Applying patch: .*$p" build.log
+        if grep -q "Skipping patch .*$p" build.log; then
+          echo "ERROR: patch $p was skipped by the tolerant build script"
+          exit 1
+        fi
+        grep -q 'm30_fbt_observe' dxb/xnu/iokit/Kernel/arm/SweetFramebuffer.cpp
+        # The fixed 600-vsync poller is what filled the ring; it must be gone.
+        if grep -q 'fDiagTick % 600' dxb/xnu/iokit/Kernel/arm/SweetFramebuffer.cpp; then
+          echo "ERROR: the fixed-interval status poller is still present"
+          exit 1
+        fi
+        python3 tools/test_m30_fb_transition.py
     - name: Verify M30 lock-screen diagnostic patch applied
       if: inputs.ui_exact != 'true'
       run: |
@@ -364,10 +381,25 @@ jobs:
           # This pin still catches drift: any future change to this file, from a
           # patch edit or an added patch, will fail until it is re-derived with
           # fresh evidence. It is corrected, not loosened.
+          # v87: the non-ui_exact value changed because
+          # 0457-m30-fb-transition-log.patch adds the transition logger to this
+          # file. The ui_exact value is unchanged: that path excludes 0453-0457,
+          # so it still builds exactly the file it built before.
+          #
+          # Evidence for the new value, and for the method:
+          #   * Replaying the chain through 0456 onto xnu-8796.141.3 reproduces
+          #     ad6f8918... exactly - the same value CI observed in run
+          #     46122314194 - and replaying through 0452 reproduces
+          #     d3199f92... exactly. The local derivation therefore reproduces
+          #     both known-good CI observations, which is what makes the new
+          #     value trustworthy rather than merely local.
+          #   * The new value below was produced by the same replay with 0457
+          #     applied.
+          # Prior non-ui_exact value: ad6f89182500a5681d0e75aa7bba4d34c34a653054a49defa2b45ee23ef8960f
           "iokit/Kernel/arm/SweetFramebuffer.cpp": (
         "d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f"
         if "${{ inputs.ui_exact }}" == "true" else
-        "ad6f89182500a5681d0e75aa7bba4d34c34a653054a49defa2b45ee23ef8960f"),
+        "0dba16d6cdd4c01c6fd0feb555e930467f0c65cadc5fed4f491ca6489589c302"),
         }
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
