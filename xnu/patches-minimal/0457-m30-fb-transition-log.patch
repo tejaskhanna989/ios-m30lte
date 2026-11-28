@@ -1,5 +1,5 @@
 diff --git a/iokit/Kernel/arm/SweetFramebuffer.cpp b/iokit/Kernel/arm/SweetFramebuffer.cpp
-index 758af6d..252377f 100644
+index 758af6d..20bddcf 100644
 --- a/iokit/Kernel/arm/SweetFramebuffer.cpp
 +++ b/iokit/Kernel/arm/SweetFramebuffer.cpp
 @@ -44,6 +44,248 @@ extern "C" int sweet_console_muted;     /* osfmk/console/serial_console.c */
@@ -270,7 +270,7 @@ index 758af6d..252377f 100644
  	int m30_noconsole = 0;
  	int m30_keepon = 0;
  	PE_parse_boot_argn("a5fb_noconsole", &m30_noconsole, sizeof(m30_noconsole));
-@@ -323,24 +570,24 @@ AppleCLCD::vsyncFired(OSObject *owner, IOTimerEventSource *sender)
+@@ -323,25 +570,24 @@ AppleCLCD::vsyncFired(OSObject *owner, IOTimerEventSource *sender)
  		client->notify(SWEET_FB_NOTIFY_VSYNC, values, 6);
  	}
  #if defined(ARM64_BOARD_CONFIG_M30LTE)
@@ -292,6 +292,7 @@ index 758af6d..252377f 100644
 -		    fb->fDirty ? 1 : 0, fb->fPowerOff ? 1 : 0,
 -		    fb->fClients->getCount(), fb->fFlushTicks);
 -		m30_pmsg_diag_line(line);
+-	}
 +	/* v87: log state TRANSITIONS, not every poll.
 +	 *
 +	 * The previous diagnostic emitted a fixed status line every 600 vsyncs
@@ -310,9 +311,17 @@ index 758af6d..252377f 100644
 +	(void)m30_fbt_observe(&fb->fFbt, fb->fSwapCalls, fb->fPresentCalls,
 +	    fb->fPresentBytes, fb->fSwapDone, fb->fDirty ? 1 : 0,
 +	    fb->fPowerOff ? 1 : 0, fb->fClients->getCount());
- 	}
  	/* v72 diagnostic heartbeat on a path proven active every boot. */
  	{
+ 		int hb_enabled = 0;
+@@ -361,6 +607,7 @@ AppleCLCD::vsyncFired(OSObject *owner, IOTimerEventSource *sender)
+ 			}
+ 		}
+ 	}
++	}
+ #endif
+ 	if (fb->fPowerOff) {
+ 		/* Fade out: halve every channel each vsync, then black, then idle. */
 @@ -625,12 +872,14 @@ AppleCLCD::present(const uint8_t *rec)
  	 * left SwapWait as a no-op and never emitted a swap-done notification, so
  	 * a modern backboardd can stall after its first few SwapEnd calls. */

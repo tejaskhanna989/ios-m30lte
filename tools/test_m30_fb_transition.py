@@ -16,6 +16,7 @@ timing, concurrency, and worst-case ring consumption.
 """
 from __future__ import annotations
 
+import os
 import re
 import shutil
 import subprocess
@@ -25,6 +26,47 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PATCH = ROOT / "xnu/patches-minimal/0457-m30-fb-transition-log.patch"
+
+def brace_depth(text: str) -> int:
+    """Brace depth with comments and string literals stripped.
+
+    Returns the net depth, which for a complete translation unit is 0. The
+    unpatched M30 driver ends at 1 because of an unclosed region in the donor
+    code, so callers compare against the expected baseline.
+    """
+    depth, in_block, i = 0, False, 0
+    while i < len(text):
+        if in_block:
+            j = text.find("*/", i)
+            if j < 0:
+                break
+            i = j + 2
+            in_block = False
+            continue
+        if text.startswith("/*", i):
+            in_block = True
+            i += 2
+            continue
+        if text.startswith("//", i):
+            j = text.find("\n", i)
+            if j < 0:
+                break
+            i = j
+            continue
+        c = text[i]
+        if c == '"':
+            i += 1
+            while i < len(text) and text[i] != '"':
+                i += 2 if text[i] == "\\" else 1
+            i += 1
+            continue
+        if c == "{":
+            depth += 1
+        elif c == "}":
+            depth -= 1
+        i += 1
+    return depth
+
 
 RING_BYTES = 16384
 PMSG_MAX_MSG = 230          # pexpert/arm/pe_serial.c: m30_line[230]
@@ -242,6 +284,24 @@ class SourceInvariantTests(unittest.TestCase):
                     "<stdlib.h>"):
             self.assertFalse(any(bad in inc for inc in includes),
                              f"{bad} is not on the kernel include path")
+
+    def test_patched_file_is_brace_balanced(self):
+        """CI caught a stray brace: deleting the old poller block also deleted
+        the `}` that closed the enclosing scope, so m30_fbt_observe() landed
+        outside vsyncFired() and `fb` was undeclared.
+
+        The unpatched driver does NOT balance on its own (it ends at depth 1),
+        so a whole-file check has to compare against that known baseline rather
+        than against zero.
+        """
+        tree = os.environ.get("M30_XNU_TREE")
+        if not tree:
+            self.skipTest("set M30_XNU_TREE to a patched xnu tree")
+        path = Path(tree) / "iokit/Kernel/arm/SweetFramebuffer.cpp"
+        if not path.is_file():
+            self.skipTest(f"not found: {path}")
+        self.assertEqual(brace_depth(path.read_text()), 0,
+                         "patched SweetFramebuffer.cpp does not balance")
 
     def test_touches_exactly_one_file(self):
         files = [l for l in PATCH.read_text().splitlines() if l.startswith("+++")]

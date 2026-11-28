@@ -328,7 +328,9 @@ jobs:
           echo "ERROR: the fixed-interval status poller is still present"
           exit 1
         fi
-        python3 tools/test_m30_fb_transition.py
+        # Runs against the real patched tree, so the brace-balance check has
+        # something to inspect (it skips without M30_XNU_TREE).
+        M30_XNU_TREE=dxb/xnu python3 tools/test_m30_fb_transition.py
     - name: Verify M30 lock-screen diagnostic patch applied
       if: inputs.ui_exact != 'true'
       run: |
@@ -399,7 +401,7 @@ jobs:
           "iokit/Kernel/arm/SweetFramebuffer.cpp": (
         "d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f"
         if "${{ inputs.ui_exact }}" == "true" else
-        "d3f71211e39f2e8cc878280915765fb565f65533d5164a226e4c0a2cebf88744"),
+        "529ead3d60f0fbde205d57baceb5550ff5f78916e2145cc728c547a4dc3017f5"),
         }
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
