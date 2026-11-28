@@ -122,6 +122,32 @@ class PinnedHashConsistencyTests(unittest.TestCase):
         self.assertNotIn('"d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0",', wf,
                          "the pre-0456 hash must not remain as a live pin")
 
+    def test_framebuffer_pins_match_the_reproduced_chain(self):
+        """Both ui_exact variants must name a hash that a real tree produces."""
+        wf = (ROOT / ".github/workflows/xnu.yml").read_text()
+        self.assertIn("ad6f89182500a5681d0e75aa7bba4d34c34a653054a49defa2b45ee23ef8960f", wf,
+                      "full-chain SweetFramebuffer hash")
+        self.assertIn("d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f", wf,
+                      "ui_exact SweetFramebuffer hash (0453-0456 absent)")
+        for stale in ("11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f",
+                      "695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3"):
+            self.assertNotIn(f'"{stale}"', wf, "stale pin still live")
+
+    def test_ui_exact_excludes_every_post_v68_diagnostic(self):
+        """ui_exact promises the exact v68 UI path; a new diagnostic patch must
+        be excluded from it, or the mode silently stops meaning what it says."""
+        wf = (ROOT / ".github/workflows/xnu.yml").read_text()
+        for n in ("0453", "0454", "0455", "0456"):
+            self.assertTrue(re.search(rf"rm -f .*{n}-m30-", wf, re.S),
+                            f"{n} must be removed under ui_exact")
+        # (the rm -f list spans several lines, hence DOTALL semantics in assertRegex)
+
+    def test_hash_mismatch_error_reports_observed_value(self):
+        """Check-run annotations are readable when logs are not, so the failure
+        must carry the observed hash."""
+        wf = (ROOT / ".github/workflows/xnu.yml").read_text()
+        self.assertIn("OBSERVED=", wf)
+
     def test_written_patch_actually_produces_that_hash(self):
         """Apply 0456 to a copy of the pre-0456 file and check the result."""
         import hashlib

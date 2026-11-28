@@ -52,7 +52,8 @@ jobs:
         if [ "${{ inputs.ui_exact }}" = "true" ]; then
           rm -f dxb/patches/0453-m30-ui-heartbeat.patch \
                 dxb/patches/0454-m30-ui-hb-framebuffer.patch \
-                dxb/patches/0455-m30-lockscreen-diag.patch
+                dxb/patches/0455-m30-lockscreen-diag.patch \
+                dxb/patches/0456-m30-uihb-ring-budget.patch
           echo "UI_EXACT: post-v68 diagnostic patches excluded"
         fi
         python3 tools/patch_build_sh.py dxb/build.sh "$MACHINE_CONFIG"
@@ -254,7 +255,10 @@ jobs:
         want = "0240f7c6166a251d8397bcfebb80b29c65edb611f0da182cc2c3afc5c7cdfc94"
         got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
         if got != want:
-            raise SystemExit(f"ERROR: {rel} sha256 {got} != {want}")
+                # Name the observed hash: check-run annotations are readable
+                # even when build logs are not, so one run settles this.
+                raise SystemExit(
+                    f"ERROR: {rel} sha256 {got} != {want} OBSERVED={got}")
         print(f"PASS {rel} {got}")
         src = (Path("dxb/xnu") / rel).read_text()
         assert "m30touchhid" in src and "m30_irq_sample()" in src
@@ -286,7 +290,10 @@ jobs:
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
             if got != expect:
-                raise SystemExit(f"ERROR: {rel} sha256 {got} != {expect}")
+                # Name the observed hash: check-run annotations are readable
+                # even when build logs are not, so one run settles this.
+                raise SystemExit(
+                    f"ERROR: {rel} sha256 {got} != {expect} OBSERVED={got}")
             print(f"PASS {rel} {got}")
         PY
     - name: Verify M30 lock-screen diagnostic patch applied
@@ -319,14 +326,20 @@ jobs:
           # Prior value: d6a394dfd49c144e0e223d67d2d430b6b779c6758c95eaffd69ab361fa0493b0
           "bsd/dev/sweet_sample.c": "2f982bae8a65d2b52a2db7dcfa9615d59096b8df5477ee90a889e55b2a43f30e",
           "iokit/Kernel/arm/SweetFramebuffer.cpp": (
-        "695fd229053168433a2aec5b55af4d40d09d8f3a6508d3e02b7ffa7f131436e3"
+        # v85: re-derived by replaying the real chain onto xnu-8796.141.3.
+        # The previous values matched no reproducible tree. Verified:
+        #   without 0453-0456 -> d3199f92...   with 0454 -> ad6f8918...
+        "d3199f92c608b8c7d874d83087c0a8409b6488a3acc93d40599deb0bc32e3c8f"
         if "${{ inputs.ui_exact }}" == "true" else
-        "11b4d614e8f641d71da1cdbb010995c42e621f5ebbb0aef5ea06250223aa8e5f"),
+        "ad6f89182500a5681d0e75aa7bba4d34c34a653054a49defa2b45ee23ef8960f"),
         }
         for rel, expect in want.items():
             got = hashlib.sha256((Path("dxb/xnu") / rel).read_bytes()).hexdigest()
             if got != expect:
-                raise SystemExit(f"ERROR: {rel} sha256 {got} != {expect}")
+                # Name the observed hash: check-run annotations are readable
+                # even when build logs are not, so one run settles this.
+                raise SystemExit(
+                    f"ERROR: {rel} sha256 {got} != {expect} OBSERVED={got}")
             print(f"PASS {rel} {got}")
         PY
     - name: Verify XNU target (iOS vs OSX)
